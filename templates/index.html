@@ -1,22 +1,66 @@
 {% extends 'base.html' %}
 
-{% block title %}Inicio | Premium Modular App{% endblock %}
-
 {% block content %}
-<div class="flex flex-col items-center justify-center space-y-6 text-center py-20">
-    <h1 class="text-5xl font-extrabold tracking-tight sm:text-6xl text-primary">
-        Arquitectura Redefinida
-    </h1>
-    <p class="max-w-2xl text-lg text-secondary">
-        Proyecto reiniciado bajo el framework **AI DEV v8**. Modular, escalable y con diseño basado en tokens.
-    </p>
-    <div class="flex gap-4">
-        <button class="bg-primary text-white px-6 py-3 rounded-base font-medium hover:opacity-90 transition-all active:scale-95 shadow-md">
-            Comenzar Exploración
-        </button>
-        <button class="border border-primary text-primary px-6 py-3 rounded-base font-medium hover:bg-primary/5 transition-all active:scale-95">
-            Documentación
-        </button>
+<div class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <!-- Header Page -->
+    <div>
+        <h1 class="text-3xl font-bold tracking-tight">Bienvenido, Admin</h1>
+        <p class="text-secondary mt-2">Aquí tienes el resumen de tu proyecto modular.</p>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-base border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all">
+            <p class="text-xs font-bold text-secondary uppercase tracking-wider">Usuarios Activos</p>
+            <div class="flex items-end justify-between mt-4">
+                <h3 class="text-2xl font-bold">1,284</h3>
+                <span class="text-green-500 text-xs font-bold bg-green-500/10 px-2 py-1 rounded-full">+12%</span>
+            </div>
+        </div>
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-base border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all">
+            <p class="text-xs font-bold text-secondary uppercase tracking-wider">Módulos Cargados</p>
+            <div class="flex items-end justify-between mt-4">
+                <h3 class="text-2xl font-bold">12</h3>
+                <span class="text-blue-500 text-xs font-bold bg-blue-500/10 px-2 py-1 rounded-full">Estable</span>
+            </div>
+        </div>
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-base border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all">
+            <p class="text-xs font-bold text-secondary uppercase tracking-wider">Tiempo de Carga</p>
+            <div class="flex items-end justify-between mt-4">
+                <h3 class="text-2xl font-bold">420ms</h3>
+                <span class="text-green-500 text-xs font-bold bg-green-500/10 px-2 py-1 rounded-full">-50ms</span>
+            </div>
+        </div>
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-base border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all">
+            <p class="text-xs font-bold text-secondary uppercase tracking-wider">Versión System</p>
+            <div class="flex items-end justify-between mt-4">
+                <h3 class="text-2xl font-bold text-primary">v8.2</h3>
+                <span class="text-accent text-xs font-bold bg-accent/10 px-2 py-1 rounded-full">PRO</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Large Section Example -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 bg-white dark:bg-slate-900 p-8 rounded-base border border-gray-200 dark:border-gray-800">
+            <h4 class="text-lg font-bold mb-6">Actividad Reciente</h4>
+            <div class="h-64 flex items-center justify-center border-2 border-dashed border-gray-100 dark:border-gray-800 rounded-lg">
+                <p class="text-secondary text-sm">Cargando gráfico de actividad...</p>
+            </div>
+        </div>
+        <div class="bg-gradient-to-br from-primary to-accent p-8 rounded-base text-white shadow-xl shadow-primary/20 relative overflow-hidden">
+            <div class="relative z-10">
+                <h4 class="text-xl font-bold mb-4">Nexus Core AI</h4>
+                <p class="text-sm text-white/80 mb-8 leading-relaxed">
+                    El sistema de auto-generación está activo. Pronto podrás crear módulos completos con un solo comando.
+                </p>
+                <button class="bg-white text-primary px-4 py-2 rounded-base text-sm font-bold shadow-lg active:scale-95 transition-all">
+                    Ver Roadmap
+                </button>
+            </div>
+            <!-- Decorative Circle -->
+            <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
+        </div>
     </div>
 </div>
 {% endblock %}

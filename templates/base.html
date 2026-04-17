@@ -3,17 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Premium App{% endblock %}</title>
+    <title>{% block title %}Nexus | Premium Dashboard{% endblock %}</title>
     
     <!-- Meta SEO -->
-    <meta name="description" content="Una aplicación de arquitectura modular construida con los más altos estándares.">
+    <meta name="description" content="Dashboard de alta densidad con diseño basado en tokens y arquitectura modular.">
     
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <!-- Styles -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/tokens.css') }}">
-    <link rel="stylesheet" href="/assets/css/global.css">
-    <link rel="stylesheet" href="/assets/css/main.css">
     
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--color-primary); border-radius: 10px; opacity: 0.1; }
+    </style>
+
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -23,6 +33,8 @@
                         primary: 'var(--color-primary)',
                         bg: 'var(--color-bg)',
                         text: 'var(--color-text)',
+                        accent: 'var(--color-accent)',
+                        secondary: 'var(--color-secondary)',
                     },
                     borderRadius: {
                         'base': 'var(--radius-base)',
@@ -32,19 +44,42 @@
         }
     </script>
 </head>
-<body class="bg-bg text-text h-full transition-colors duration-300">
-    <div class="min-h-screen flex flex-col">
-        {% include 'components/navbar.html' ignore missing %}
-        
-        <main class="flex-grow container mx-auto px-4 py-8">
-            {% block content %}{% endblock %}
-        </main>
-        
-        {% include 'components/footer.html' ignore missing %}
+<body class="bg-bg text-text h-full overflow-hidden transition-colors duration-300">
+    <div class="flex h-full">
+        <!-- Sidebar -->
+        {% include 'components/sidebar.html' %}
+
+        <!-- Main Wrapper -->
+        <div class="flex-grow flex flex-col h-full min-w-0 overflow-hidden bg-gray-50/50 dark:bg-slate-950/50">
+            <!-- Topbar -->
+            {% include 'components/topbar.html' %}
+            
+            <!-- Main Content -->
+            <main class="flex-grow overflow-y-auto custom-scrollbar p-6">
+                <div class="max-w-7xl mx-auto">
+                    {% block content %}{% endblock %}
+                </div>
+            </main>
+        </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="/assets/js/global.js"></script>
+    <!-- Scripts Globales -->
+    <script>
+        // Sidebar Toggle Logic
+        const sidebar = document.getElementById('sidebar');
+        const toggle = document.getElementById('sidebarToggle');
+        
+        if (toggle) {
+            toggle.addEventListener('click', () => {
+                sidebar.classList.toggle('-translate-x-full');
+            });
+        }
+
+        // Auto Dark Mode Check (Opcional)
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
     {% block scripts %}{% endblock %}
 </body>
 </html>
