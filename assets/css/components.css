@@ -379,3 +379,17 @@
     border-radius: 50%;
     border: 2px solid var(--bg-primary);
 }
+
+.user-profile__info {
+    flex-grow: 1;
+}
+
+.icon-btn--sm {
+    width: 32px;
+    height: 32px;
+    font-size: 0.9rem;
+}
+
+.sidebar--collapsed .icon-btn#themeToggle {
+    display: none;
+}
