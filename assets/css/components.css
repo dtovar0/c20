@@ -161,3 +161,20 @@
 .sidebar--collapsed .nav__icon {
     margin-right: 0;
 }
+
+/* Font Awesome adjustments */
+.nav__icon {
+    font-size: 1.1rem;
+    min-width: 20px;
+    text-align: center;
+}
+
+.hamburger__icon {
+    font-size: 1.25rem;
+    color: var(--text-main);
+    transition: color 0.2s ease;
+}
+
+.hamburger:hover .hamburger__icon {
+    color: var(--accent-solid);
+}
