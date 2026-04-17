@@ -1,12 +1,9 @@
-# UI Design Guide
+# UI Guide - Design System Tokens
 
-## Design Tokens
-- **Grid**: 8pt system
-- **Spacing**: 8px, 16px, 24px, 32px
-- **Colors**: (To be defined)
+## Design Tokens Reutilizables
+- `text-primary`: Color de texto principal.
+- `bg-main`: Fondo de la aplicación.
+- `radius-base`: Radio de borde estándar (8px).
 
-## Component Classes (BEM)
-- `.button`
-- `.button--primary`
-- `.card`
-- `.card__title`
+## Componentes
+- (Pendiente de definición)

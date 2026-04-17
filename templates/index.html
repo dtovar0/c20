@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Inicio | Premium Modular App{% endblock %}
+
+{% block content %}
+<div class="flex flex-col items-center justify-center space-y-6 text-center py-20">
+    <h1 class="text-5xl font-extrabold tracking-tight sm:text-6xl text-primary">
+        Arquitectura Redefinida
+    </h1>
+    <p class="max-w-2xl text-lg text-secondary">
+        Proyecto reiniciado bajo el framework **AI DEV v8**. Modular, escalable y con diseño basado en tokens.
+    </p>
+    <div class="flex gap-4">
+        <button class="bg-primary text-white px-6 py-3 rounded-base font-medium hover:opacity-90 transition-all active:scale-95 shadow-md">
+            Comenzar Exploración
+        </button>
+        <button class="border border-primary text-primary px-6 py-3 rounded-base font-medium hover:bg-primary/5 transition-all active:scale-95">
+            Documentación
+        </button>
+    </div>
+</div>
+{% endblock %}

@@ -1,12 +1,11 @@
-# Business Rules
+# Business Rules - Multi-Agent System
 
-## Core System
+## Módulo: Core
+### Regla: Arquitectura Modular
+Todo el backend debe estar estructurado en Blueprints dentro de `app/modules/`.
+### Impacto: Backend
 
-### Modularity
-The system must be built using Flask Blueprints to ensure independent modules.
-
-### UI Standards
-Follow the 8pt grid system, BEM naming, and separate logic/presentation layers. No inline styles or scripts are allowed.
-
-### Error Handling
-All backend logic must be wrapped in try/except blocks.
+## Módulo: UI/UX
+### Regla: Estilos Basados en Tokens
+Prohibido el uso de styles inline o selectores CSS arbitrarios fuera de Tailwind y el sistema de tokens.
+### Impacto: Frontend

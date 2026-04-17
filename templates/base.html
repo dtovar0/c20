@@ -1,115 +1,50 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="es" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Project C20{% endblock %}</title>
+    <title>{% block title %}Premium App{% endblock %}</title>
     
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Meta SEO -->
+    <meta name="description" content="Una aplicación de arquitectura modular construida con los más altos estándares.">
     
-    <!-- Design System Assets -->
+    <!-- Styles -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tokens.css') }}">
     <link rel="stylesheet" href="/assets/css/global.css">
-    <link rel="stylesheet" href="/assets/css/components.css">
     <link rel="stylesheet" href="/assets/css/main.css">
     
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-    <!-- HTMX -->
-    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
-    
-    {% block extra_head %}{% endblock %}
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: 'var(--color-primary)',
+                        bg: 'var(--color-bg)',
+                        text: 'var(--color-text)',
+                    },
+                    borderRadius: {
+                        'base': 'var(--radius-base)',
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body class="h-full">
-    <div id="app" class="h-full flex overflow-hidden">
-        <!-- Sidebar -->
-        <aside id="sidebar" class="sidebar flex flex-col">
-            <a href="/" class="brand">
-                <div class="brand__icon">
-                    <i class="fa-solid fa-n"></i>
-                </div>
-                <div class="brand__text">
-                    NEXUS<span class="text-accent">.</span>
-                </div>
-            </a>
-            
-            <nav class="nav flex-grow">
-                <a href="/botones" class="nav__item {% if active_page == 'botones' %}nav__item--active{% endif %}">
-                    <i class="fa-solid fa-square nav__icon"></i>
-                    <span>Botones</span>
-                </a>
-                <a href="/modales" class="nav__item {% if active_page == 'modales' %}nav__item--active{% endif %}">
-                    <i class="fa-solid fa-window-maximize nav__icon"></i>
-                    <span>Modales</span>
-                </a>
-                <a href="/notificaciones" class="nav__item {% if active_page == 'notificaciones' %}nav__item--active{% endif %}">
-                    <i class="fa-solid fa-bell nav__icon"></i>
-                    <span>Notificaciones</span>
-                </a>
-                <a href="/cards" class="nav__item {% if active_page == 'cards' %}nav__item--active{% endif %}">
-                    <i class="fa-solid fa-id-card nav__icon"></i>
-                    <span>Cards</span>
-                </a>
-                <a href="/timelines" class="nav__item {% if active_page == 'timelines' %}nav__item--active{% endif %}">
-                    <i class="fa-solid fa-timeline nav__icon"></i>
-                    <span>Timelines</span>
-                </a>
-                <a href="/tablas" class="nav__item {% if active_page == 'tablas' %}nav__item--active{% endif %}">
-                    <i class="fa-solid fa-table nav__icon"></i>
-                    <span>Tablas</span>
-                </a>
-                <a href="/inputs" class="nav__item {% if active_page == 'inputs' %}nav__item--active{% endif %}">
-                    <i class="fa-solid fa-keyboard nav__icon"></i>
-                    <span>Inputs</span>
-                </a>
-            </nav>
-
-            <div class="sidebar__footer">
-                <div class="user-profile">
-                    <div class="user-profile__avatar"></div>
-                    <div class="user-profile__info">
-                        <span class="user-name">David T.</span>
-                        <span class="user-status">Online</span>
-                    </div>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Main Wrapper -->
-        <div class="flex-grow flex flex-col overflow-hidden">
-            <!-- Topbar -->
-            <header class="topbar">
-                <button id="sidebarToggle" class="hamburger">
-                    <i class="fa-solid fa-bars hamburger__icon"></i>
-                </button>
-                
-                <div class="flex-grow"></div>
-
-                <div class="topbar__actions flex items-center gap-1">
-                    <div class="topbar__search">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" class="search-input" placeholder="Search anything...">
-                    </div>
-                    <button class="icon-btn" id="themeToggle">
-                        <i class="fa-solid fa-moon"></i>
-                    </button>
-                </div>
-            </header>
-
-            <!-- Content Area -->
-            <main class="main-content flex-grow overflow-auto">
-                {% block content %}{% endblock %}
-            </main>
-        </div>
+<body class="bg-bg text-text h-full transition-colors duration-300">
+    <div class="min-h-screen flex flex-col">
+        {% include 'components/navbar.html' ignore missing %}
+        
+        <main class="flex-grow container mx-auto px-4 py-8">
+            {% block content %}{% endblock %}
+        </main>
+        
+        {% include 'components/footer.html' ignore missing %}
     </div>
 
     <!-- Scripts -->
     <script src="/assets/js/global.js"></script>
-    <script src="/assets/js/utils.js"></script>
-    <script src="/assets/js/app.js"></script>
-    {% block extra_scripts %}{% endblock %}
+    {% block scripts %}{% endblock %}
 </body>
 </html>
