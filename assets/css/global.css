@@ -58,3 +58,14 @@ html, body {
 .font-medium { font-weight: 500; }
 .mt-2 { margin-top: var(--space-2); }
 .text-xs { font-size: 0.75rem; }
+
+/* Light Theme Overrides */
+body.light-theme {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f4f4f5;
+    --sidebar-bg: #f8f8f8;
+    --topbar-bg: rgba(255, 255, 255, 0.8);
+    --text-main: #18181b;
+    --text-dim: #71717a;
+    --border-subtle: rgba(0, 0, 0, 0.08);
+}
