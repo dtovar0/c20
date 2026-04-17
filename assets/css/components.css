@@ -1,224 +1,118 @@
 /* ============================================================ */
-/* MASTER CSS RECONSTRUCTION - PROJECT C20                      */
-/* Includes: Sidebar, Topbar, Buttons, Cards, Modals, Toasts    */
+/* NEXUS PREMIUM ARCHITECTURE - MASTER REFINED                  */
 /* ============================================================ */
 
-/* === 1. LAYOUT: SIDEBAR === */
+/* === 1. NAVIGATION & STRUCTURE === */
 .sidebar {
     width: var(--sidebar-width);
-    background-color: var(--sidebar-bg);
-    border-right: 1px solid var(--border-subtle);
-    padding: 0 var(--space-3) var(--space-3) var(--space-3);
-    overflow-y: auto;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(10, 10, 12, 0.95);
+    backdrop-filter: blur(20px);
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 0 var(--space-3);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.sidebar--collapsed {
-    width: 84px;
-    padding: 0 var(--space-1) var(--space-3) var(--space-1);
-}
-
-.nav {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.nav__item {
-    display: flex;
-    align-items: center;
-    padding: 10px 16px;
-    border-radius: 12px;
-    color: var(--text-dim);
-    text-decoration: none;
-    transition: all 0.2s ease;
-    font-weight: 500;
-    white-space: nowrap;
-}
-
-.nav__item:hover {
-    background: rgba(255, 255, 255, 0.05);
-    color: var(--text-main);
-}
-
-.nav__item--active {
-    background: rgba(239, 68, 68, 0.1);
-    color: var(--accent-solid);
-    border: 1px solid rgba(239, 68, 68, 0.2);
-}
-
-.nav__icon {
-    font-size: 1.1rem;
-    min-width: 24px;
-    margin-right: 12px;
-    text-align: center;
-}
-
-.sidebar--collapsed .nav__item {
-    justify-content: center;
-    padding: 12px 0;
-    width: 50px;
-    margin: 0 auto;
-}
-
-.sidebar--collapsed .nav__item span, 
-.sidebar--collapsed .sidebar__logo { display: none; }
-.sidebar--collapsed .nav__icon { margin-right: 0; }
-
-/* === 2. TOPBAR === */
 .topbar {
     height: var(--topbar-height);
-    background: var(--topbar-bg);
-    backdrop-filter: blur(24px);
-    border-bottom: 1px solid var(--border-subtle);
+    background: rgba(10, 10, 12, 0.7);
+    backdrop-filter: blur(30px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     padding: 0 var(--space-4);
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+    display: flex; align-items: center; gap: var(--space-3);
+    position: sticky; top: 0; z-index: 1000;
 }
 
-.topbar__search {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 320px;
-    padding: 8px 16px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid var(--border-subtle);
+/* === 2. PREMIUM CARDS (THE HEART) === */
+.card-premium {
+    background: linear-gradient(135deg, rgba(24, 24, 27, 0.8) 0%, rgba(10, 10, 12, 0.9) 100%);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid rgba(255, 255, 255, 0.12); /* Glass reflection */
+    border-radius: 20px;
+    padding: 24px;
+    color: white;
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+}
+
+.card-premium:hover {
+    transform: translateY(-6px) scale(1.01);
+    border-color: rgba(239, 68, 68, 0.4);
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7), 0 0 20px rgba(239, 68, 68, 0.1);
+}
+
+/* === 3. TYPOGRAPHY IMPACT === */
+.text-main { color: #ffffff; }
+.text-dim { color: rgba(255, 255, 255, 0.5); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; }
+
+.text-3xl, .text-4xl {
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    background: linear-gradient(180deg, #fff 0%, rgba(255,255,255,0.6) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+/* === 4. KPI VARIANTS (REFINED) === */
+.kpi--classic { 
+    border-left: 4px solid #ef4444; 
+    background: linear-gradient(90deg, rgba(239, 68, 68, 0.1) 0%, transparent 100%); 
+}
+
+.kpi--modern { display: flex; align-items: center; gap: 20px; }
+.kpi__icon-circle {
+    width: 52px; height: 52px;
+    background: linear-gradient(135deg, #ef4444 0%, #7f1d1d 100%);
     border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 1.4rem;
+    box-shadow: 0 8px 16px rgba(239, 68, 68, 0.4);
 }
 
-.search-input {
-    background: none; border: none; outline: none;
-    color: #fff; font-size: 14px; width: 100%;
+.kpi--accent {
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
-/* === 3. BUTTON SYSTEM (FULL VARIATIONS) === */
+/* === 5. BUTTONS (LUXURY) === */
 .button {
-    padding: 10px 20px;
-    border-radius: 12px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
+    padding: 12px 24px; border-radius: 12px; font-weight: 800;
+    cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none; display: inline-flex; align-items: center; gap: 10px;
 }
-
-.button:active { transform: scale(0.96); }
 
 .button--primary {
-    background: linear-gradient(135deg, #ef4444, #991b1b);
-    color: white;
-    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
+    background: linear-gradient(135deg, #f43f5e 0%, #b91c1c 100%);
+    color: #fff;
+    box-shadow: 0 10px 20px -5px rgba(244, 63, 94, 0.4);
+}
+
+.button--primary:hover {
+    box-shadow: 0 15px 30px -5px rgba(244, 63, 94, 0.6);
+    transform: translateY(-2px);
 }
 
 .button--secondary {
     background: rgba(255, 255, 255, 0.05);
-    color: white;
+    backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
 }
 
-.button--outline {
-    background: transparent;
-    border: 1px solid var(--accent-solid);
-    color: var(--accent-solid);
-}
-
-.button--ghost {
-    background: transparent;
-    color: var(--text-dim);
-}
-
-.button--danger { background: #ef4444; color: white; }
-
-.button--pill { border-radius: 99px; }
-
-.button--loading { position: relative; color: transparent !important; }
-.button--loading::after {
-    content: ''; position: absolute; width: 16px; height: 16px;
-    top: 50%; left: 50%; margin: -8px 0 0 -8px;
-    border: 2px solid rgba(255,255,255,0.3); border-radius: 50%;
-    border-top-color: #fff; animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* === 4. CARDS & KPI (IMPACT V2) === */
-.card-premium {
-    background: #18181b;
-    border: 1px solid #27272a;
-    border-radius: 18px;
-    padding: 24px;
-    color: white;
-    transition: all 0.3s ease;
-}
-
-.card-premium:hover {
-    transform: translateY(-5px);
-    border-color: #ef4444;
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
-}
-
-/* KPI Intents */
-.kpi--classic { border-left: 4px solid #ef4444; background: linear-gradient(90deg, rgba(239, 68, 68, 0.05), transparent); }
-.kpi--modern { display: flex; align-items: center; gap: 16px; }
-.kpi__icon-circle {
-    width: 48px; height: 48px;
-    background: linear-gradient(135deg, #ef4444, #991b1b);
-    border-radius: 14px;
-    display: flex; align-items: center; justify-content: center; color: #fff;
-}
-
-.trend--up { color: #10b981; font-weight: 700; font-size: 12px; }
-.trend--down { color: #f43f5e; font-weight: 700; font-size: 12px; }
-
-/* === 5. MODALS & TOASTS === */
-.modal-overlay {
-    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.85); backdrop-filter: blur(14px);
-    display: none; align-items: center; justify-content: center; z-index: 2000;
-}
-
-.modal-content {
-    background: #121214; border: 1px solid #27272a; border-radius: 24px; padding: 32px;
-}
-
-.toast-container {
-    position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 12px; z-index: 3000;
-}
-
-.toast {
-    background: #1c1c1f; border: 1px solid rgba(255,255,255,0.08); padding: 16px 20px;
-    border-radius: 16px; color: white; display: flex; align-items: center; gap: 12px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-}
-
-/* === 6. BRAND & PROFILE === */
-.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; padding: 24px 0; }
-.brand__icon { 
-    width: 36px; height: 36px; background: linear-gradient(135deg, #ef4444, #991b1b);
-    border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white;
-}
-.brand__text { font-size: 20px; font-weight: 800; color: white; }
-
-.user-profile {
-    display: flex; align-items: center; gap: 12px; padding: 12px;
-    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);
-    border-radius: 14px; margin-top: 24px;
-}
-
-.user-profile__avatar { width: 34px; height: 34px; border-radius: 50%; background: #ef4444; }
+/* === 6. STATE INDICATORS === */
+.trend--up { color: #10b981; font-weight: 900; font-size: 12px; background: rgba(16, 185, 129, 0.15); padding: 4px 10px; border-radius: 20px; text-shadow: 0 0 10px rgba(16, 185, 129, 0.3); }
+.trend--down { color: #f43f5e; font-weight: 900; font-size: 12px; background: rgba(244, 63, 94, 0.15); padding: 4px 10px; border-radius: 20px; text-shadow: 0 0 10px rgba(244, 63, 94, 0.3); }
 
 /* === 7. UTILITIES === */
-.glass-panel {
-    background: rgba(255, 255, 255, 0.02);
-    backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 20px;
-}
+.nav__item { display: flex; align-items: center; padding: 12px 18px; border-radius: 14px; color: rgba(255,255,255,0.4); text-decoration: none; margin-bottom: 4px; transition: all 0.3s; }
+.nav__item:hover { color: #fff; background: rgba(255,255,255,0.08); }
+.nav__item--active { background: rgba(239, 68, 68, 0.15); color: #ef4444; font-weight: 700; box-shadow: inset 0 0 10px rgba(239, 68, 68, 0.1); }
+.nav__icon { margin-right: 14px; font-size: 1.2rem; }
+
+.user-profile { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 14px; border-radius: 16px; display: flex; align-items: center; gap: 14px; }
+.user-profile__avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #ef4444, #7f1d1d); box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
+
+.brand { display: flex; align-items: center; gap: 14px; padding: 32px 12px; }
+.brand__icon { width: 40px; height: 40px; background: #ef4444; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 0 20px rgba(239, 68, 68, 0.5); }
+.brand__text { font-size: 22px; font-weight: 900; color: #fff; letter-spacing: -0.02em; }
