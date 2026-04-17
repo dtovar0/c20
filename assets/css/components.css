@@ -97,14 +97,28 @@
 }
 
 .topbar__search {
-    flex-grow: 1;
-    max-width: 400px;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    width: 320px;
     padding: var(--space-1) var(--space-3);
     background: var(--bg-secondary);
     border: 1px solid var(--border-subtle);
     border-radius: 99px;
     color: var(--text-dim);
     font-size: 0.875rem;
+    cursor: text;
+    transition: all 0.2s ease;
+}
+
+.topbar__search:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.topbar__search i {
+    font-size: 0.875rem;
+    color: var(--text-dim);
 }
 
 .user-profile {
