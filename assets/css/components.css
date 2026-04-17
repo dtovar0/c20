@@ -625,3 +625,37 @@
     font-size: 0.8125rem;
     color: var(--accent-solid);
 }
+
+/* Advanced Toast Variants */
+.toast--solid-success { background: #22c55e; color: white; border: none; }
+.toast--solid-error { background: #ef4444; color: white; border: none; }
+
+.toast--glass {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.toast--gradient {
+    background: linear-gradient(135deg, #ef4444 0%, #ff7b7b 100%);
+    color: white;
+    border: none;
+}
+
+/* Toast animations & progress */
+.toast__progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.5);
+    width: 100%;
+    transform-origin: left;
+    animation: toastProgress 3s linear forwards;
+}
+
+@keyframes toastProgress {
+    from { transform: scaleX(1); }
+    to { transform: scaleX(0); }
+}
