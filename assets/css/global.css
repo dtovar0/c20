@@ -49,6 +49,7 @@ html, body {
 .justify-center { justify-content: center; }
 .flex-grow { flex-grow: 1; }
 
+.gap-1 { gap: var(--space-1); }
 .gap-3 { gap: var(--space-3); }
 .gap-4 { gap: var(--space-4); }
 
