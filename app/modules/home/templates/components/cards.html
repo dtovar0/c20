@@ -5,109 +5,117 @@
 {% block content %}
 <section class="p-6">
     <div class="mb-6">
-        <h1 class="text-3xl font-bold mb-2">Cards</h1>
-        <p class="text-dim">Contenedores premium para agrupación de información y métricas.</p>
+        <h1 class="text-3xl font-bold mb-2">Cards & KPIs</h1>
+        <p class="text-dim">Métricas de rendimiento y contenedores de alta densidad.</p>
     </div>
 
-    <!-- Stats Grid -->
-    <div class="grid grid-cols-4 gap-4 mb-6">
+    <!-- KPI Section: 1x4 Grid -->
+    <h3 class="mb-4">KPI Dashboard</h3>
+    <div class="grid grid-cols-4 gap-4 mb-8">
+        <!-- KPI card -->
         <div class="card-premium card--stat">
-            <span class="text-dim text-xs mb-1">VENTAS TOTALES</span>
-            <div class="text-3xl font-bold mb-2">$42.8k</div>
+            <div class="flex justify-between items-start mb-2">
+                <span class="text-dim text-xs font-bold uppercase tracking-wider">Revenue</span>
+                <i class="fa-solid fa-dollar-sign text-accent opacity-60"></i>
+            </div>
+            <div class="text-3xl font-bold mb-2 text-main">$74,250</div>
             <div class="card__trend trend--up">
-                <i class="fa-solid fa-arrow-up mr-1"></i> 12.5%
+                <i class="fa-solid fa-arrow-up text-xs mr-1"></i> 14.2%
             </div>
         </div>
+
+        <!-- KPI card -->
         <div class="card-premium card--stat">
-            <span class="text-dim text-xs mb-1">USUARIOS</span>
-            <div class="text-3xl font-bold mb-2">1,249</div>
+            <div class="flex justify-between items-start mb-2">
+                <span class="text-dim text-xs font-bold uppercase tracking-wider">Active Users</span>
+                <i class="fa-solid fa-users text-accent opacity-60"></i>
+            </div>
+            <div class="text-3xl font-bold mb-2 text-main">3,842</div>
             <div class="card__trend trend--up">
-                <i class="fa-solid fa-arrow-up mr-1"></i> 3.2%
+                <i class="fa-solid fa-caret-up text-xs mr-1"></i> 8.5%
             </div>
         </div>
+
+        <!-- KPI card -->
         <div class="card-premium card--stat">
-            <span class="text-dim text-xs mb-1">REBOTE</span>
-            <div class="text-3xl font-bold mb-2">24.1%</div>
+            <div class="flex justify-between items-start mb-2">
+                <span class="text-dim text-xs font-bold uppercase tracking-wider">API Errors</span>
+                <i class="fa-solid fa-bug text-danger opacity-60"></i>
+            </div>
+            <div class="text-3xl font-bold mb-2 text-main">0.04%</div>
             <div class="card__trend trend--down">
-                <i class="fa-solid fa-arrow-down mr-1"></i> 1.8%
+                <i class="fa-solid fa-arrow-down text-xs mr-1"></i> 0.2%
             </div>
         </div>
+
+        <!-- KPI card -->
         <div class="card-premium card--stat">
-            <span class="text-dim text-xs mb-1">LATENCIA</span>
-            <div class="text-3xl font-bold mb-2">12ms</div>
-            <div class="card__trend trend--up">
-                <i class="fa-solid fa-circle-check mr-1"></i> Stable
+            <div class="flex justify-between items-start mb-2">
+                <span class="text-dim text-xs font-bold uppercase tracking-wider">System Load</span>
+                <i class="fa-solid fa-server text-accent opacity-60"></i>
+            </div>
+            <div class="text-3xl font-bold mb-2 text-main">42%</div>
+            <div class="card__trend trend--up" style="background: rgba(0, 102, 255, 0.1); color: #0066ff;">
+                <i class="fa-solid fa-check text-xs mr-1"></i> Healthy
             </div>
         </div>
     </div>
 
-    <div class="grid grid-cols-3 gap-6 mb-6">
-        <!-- Feature Card -->
+    <!-- Reference Samples -->
+    <h3 class="mb-4">Estructuras Visuales</h3>
+    <div class="grid grid-cols-3 gap-6 mb-8">
         <div class="card-premium">
             <div class="card__image-header"></div>
             <h3 class="mb-2">Visual Engine</h3>
-            <p class="text-dim text-sm mb-4">Motor de renderizado en tiempo real con soporte para trazado de rayos.</p>
-            <button class="button button--secondary button--sm w-full">Documentación</button>
+            <p class="text-dim text-sm mb-4">Motor de renderizado en tiempo real con soporte nativo para trazado de rayos.</p>
+            <button class="button button--secondary button--sm w-full">Configurar</button>
         </div>
 
-        <!-- Glass Card -->
         <div class="card-premium card--glass">
             <div class="icon-btn mb-4" style="background: var(--accent-solid); color: white;">
-                <i class="fa-solid fa-microchip"></i>
+                <i class="fa-solid fa-shield-halved"></i>
             </div>
-            <h3 class="mb-2">Compute Units</h3>
-            <p class="text-dim text-sm mb-4">Gestión de recursos distribuidos en clústeres de alto rendimiento.</p>
+            <h3 class="mb-2">Nexus Guard</h3>
+            <p class="text-dim text-sm mb-4">Protección DDoS avanzada y encriptación de grado militar en tránsito.</p>
             <div class="flex items-center gap-2">
                 <div class="flex-grow bg-dark-pill" style="height: 6px; background: rgba(0,0,0,0.3); border-radius: 3px;">
-                    <div style="width: 75%; height: 100%; background: var(--accent-solid); border-radius: 3px;"></div>
+                    <div style="width: 90%; height: 100%; background: #22c55e; border-radius: 3px;"></div>
                 </div>
-                <span class="text-xs">75%</span>
+                <span class="text-xs">Secure</span>
             </div>
         </div>
 
-        <!-- Simple Card -->
-        <div class="card-premium h-full flex flex-col justify-between">
+        <div class="card-premium flex flex-col justify-between">
             <div>
-                <h3 class="mb-2">Nexus API</h3>
-                <p class="text-dim text-sm">Endpoints ultra-rápidos protegidos por encriptación cuántica.</p>
+                <h3 class="mb-2">Cloud Synapse</h3>
+                <p class="text-dim text-sm">Sincronización instantánea de datos entre regiones globales.</p>
             </div>
-            <a href="#" class="text-accent text-sm font-bold flex items-center gap-2 mt-4">
-                Obtener API Key <i class="fa-solid fa-chevron-right text-xs"></i>
-            </a>
+            <button class="button button--outline button--sm mt-4">Cloud Status</button>
         </div>
     </div>
 
     <!-- Technical Table -->
     <div class="glass-panel p-6">
-        <h3 class="mb-4">Referencia Técnica (HTML)</h3>
+        <h3 class="mb-4">Referencia Técnica de Implementación</h3>
         <div class="table-container">
             <table class="table-premium">
                 <thead>
                     <tr>
                         <th>Categoría</th>
-                        <th>Vista Previa</th>
-                        <th>Clase Base</th>
                         <th>Snippet Estructural</th>
+                        <th>Clase Base</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td class="font-bold">Premium Base</td>
-                        <td><div class="bg-secondary p-2 rounded-lg text-xs" style="width: 60px; height: 30px; border: 1px solid var(--border-subtle)">Card</div></td>
-                        <td><span class="code-tag">.card-premium</span></td>
-                        <td><code class="text-xs opacity-50">&lt;div class="card-premium"&gt;...&lt;/div&gt;</code></td>
-                    </tr>
-                    <tr>
-                        <td class="font-bold">Estadística</td>
-                        <td><div class="card__trend trend--up" style="scale: 0.8;">+12%</div></td>
+                        <td class="font-bold">KPI Card</td>
+                        <td><code class="text-xs opacity-50">&lt;div class="card-premium card--stat"&gt;...&lt;/div&gt;</code></td>
                         <td><span class="code-tag">.card--stat</span></td>
-                        <td><code class="text-xs opacity-50">&lt;div class="card--stat"&gt;...&lt;/div&gt;</code></td>
                     </tr>
                     <tr>
-                        <td class="font-bold">Cristalizado</td>
-                        <td><div class="bg-white/5 p-2 rounded-lg text-xs" style="width: 60px; border: 1px solid white/10">Glass</div></td>
-                        <td><span class="code-tag">.card--glass</span></td>
-                        <td><code class="text-xs opacity-50">&lt;div class="card--glass"&gt;...&lt;/div&gt;</code></td>
+                        <td class="font-bold">Trend Indicator</td>
+                        <td><code class="text-xs opacity-50">&lt;div class="card__trend trend--up"&gt;...&lt;/div&gt;</code></td>
+                        <td><span class="code-tag">.trend--up</span></td>
                     </tr>
                 </tbody>
             </table>
