@@ -23,90 +23,104 @@
     <div class="glass-panel p-6 mb-6">
         <h3 class="mb-4">Botones con Iconos</h3>
         <div class="flex gap-3 items-center flex-wrap">
-            <button class="button button--primary">
-                <i class="fa-solid fa-plus"></i>
-                <span>Nuevo Usuario</span>
-            </button>
-            <button class="button button--secondary">
-                <i class="fa-solid fa-cloud-arrow-down"></i>
-                <span>Descargar PDF</span>
-            </button>
-            <button class="button button--danger">
-                <i class="fa-solid fa-trash-can"></i>
-                <span>Eliminar</span>
-            </button>
-            <button class="button button--outline">
-                <span>Continuar</span>
-                <i class="fa-solid fa-arrow-right"></i>
-            </button>
-        </div>
-    </div>
-
-    <div class="glass-panel p-6 mb-6">
-        <h3 class="mb-4">Dimensiones y Formas</h3>
-        <div class="flex flex-col gap-4">
-            <div class="flex gap-3 items-center flex-wrap">
-                <button class="button button--primary button--sm">Small</button>
-                <button class="button button--primary">Normal</button>
-                <button class="button button--primary button--lg">Large Action</button>
-            </div>
-            <div class="flex gap-3 items-center flex-wrap">
-                <button class="button button--primary button--pill">
-                    <i class="fa-solid fa-play"></i>
-                    <span>Comenzar</span>
-                </button>
-                <button class="button button--secondary button--wide">Wide Button</button>
-                <button class="button button--outline button--xl">Extra Wide (CTA)</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="glass-panel p-6 mb-6">
-        <h3 class="mb-4">Estados Especiales</h3>
-        <div class="flex gap-3 items-center">
-            <button class="button button--primary button--loading">Loading State</button>
-            <button class="icon-btn" title="Icon Only">
-                <i class="fa-solid fa-gear"></i>
-            </button>
+            <button class="button button--primary"><i class="fa-solid fa-plus"></i><span>Nuevo</span></button>
+            <button class="button button--secondary"><i class="fa-solid fa-cloud-arrow-down"></i><span>Descargar</span></button>
+            <button class="button button--danger"><i class="fa-solid fa-trash-can"></i><span>Eliminar</span></button>
+            <button class="button button--outline"><span>Continuar</span><i class="fa-solid fa-arrow-right"></i></button>
         </div>
     </div>
 
     <!-- Technical Table -->
     <div class="glass-panel p-6">
-        <h3 class="mb-4">Referencia Técnica (Snippets)</h3>
+        <h3 class="mb-4">Referencia Técnica (Snippets Completos)</h3>
         <div class="table-container">
             <table class="table-premium">
                 <thead>
                     <tr>
-                        <th>Categoría</th>
+                        <th>Variante</th>
                         <th>Vista Previa</th>
-                        <th>Clase CSS</th>
+                        <th>Clase / Modificador</th>
                         <th>Snippet HTML</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td class="font-bold">Principal</td>
+                        <td>Primary</td>
                         <td><button class="button button--primary button--sm">Primary</button></td>
                         <td><span class="code-tag">.button--primary</span></td>
                         <td><code class="text-xs opacity-50">&lt;button class="button button--primary"&gt;...&lt;/button&gt;</code></td>
                     </tr>
                     <tr>
-                        <td class="font-bold">Con Icono</td>
-                        <td>
-                            <button class="button button--primary button--sm">
-                                <i class="fa-solid fa-plus"></i>
-                                <span>Add</span>
-                            </button>
-                        </td>
-                        <td><span class="code-tag">.button</span></td>
+                        <td>Secondary</td>
+                        <td><button class="button button--secondary button--sm">Secondary</button></td>
+                        <td><span class="code-tag">.button--secondary</span></td>
+                        <td><code class="text-xs opacity-50">&lt;button class="button button--secondary"&gt;...&lt;/button&gt;</code></td>
+                    </tr>
+                    <tr>
+                        <td>Outline</td>
+                        <td><button class="button button--outline button--sm">Outline</button></td>
+                        <td><span class="code-tag">.button--outline</span></td>
+                        <td><code class="text-xs opacity-50">&lt;button class="button button--outline"&gt;...&lt;/button&gt;</code></td>
+                    </tr>
+                    <tr>
+                        <td>Ghost</td>
+                        <td><button class="button button--ghost button--sm">Ghost</button></td>
+                        <td><span class="code-tag">.button--ghost</span></td>
+                        <td><code class="text-xs opacity-50">&lt;button class="button button--ghost"&gt;...&lt;/button&gt;</code></td>
+                    </tr>
+                    <tr>
+                        <td>Danger</td>
+                        <td><button class="button button--danger button--sm">Danger</button></td>
+                        <td><span class="code-tag">.button--danger</span></td>
+                        <td><code class="text-xs opacity-50">&lt;button class="button button--danger"&gt;...&lt;/button&gt;</code></td>
+                    </tr>
+                    <tr>
+                        <td>Con Icono</td>
+                        <td><button class="button button--primary button--sm"><i class="fa-solid fa-plus"></i><span>Nuevo</span></button></td>
+                        <td><span class="code-tag">Icon + Text</span></td>
                         <td><code class="text-xs opacity-50">&lt;button&gt;&lt;i&gt;&lt;/i&gt;&lt;span&gt;&lt;/span&gt;&lt;/button&gt;</code></td>
                     </tr>
                     <tr>
-                        <td class="font-bold">Pill</td>
-                        <td><button class="button button--primary button--pill button--sm">Pill</button></td>
+                        <td>Pill (Cápsula)</td>
+                        <td><button class="button button--primary button--pill button--sm">Pill Button</button></td>
                         <td><span class="code-tag">.button--pill</span></td>
                         <td><code class="text-xs opacity-50">&lt;button class="... button--pill"&gt;...&lt;/button&gt;</code></td>
+                    </tr>
+                    <tr>
+                        <td>Small (Chico)</td>
+                        <td><button class="button button--primary button--sm">Small</button></td>
+                        <td><span class="code-tag">.button--sm</span></td>
+                        <td><code class="text-xs opacity-50">&lt;button class="... button--sm"&gt;...&lt;/button&gt;</code></td>
+                    </tr>
+                    <tr>
+                        <td>Large (Grande)</td>
+                        <td><button class="button button--primary button--lg">Large</button></td>
+                        <td><span class="code-tag">.button--lg</span></td>
+                        <td><code class="text-xs opacity-50">&lt;button class="... button--lg"&gt;...&lt;/button&gt;</code></td>
+                    </tr>
+                    <tr>
+                        <td>Wide (Ancho)</td>
+                        <td><button class="button button--primary button--wide button--sm">Wide</button></td>
+                        <td><span class="code-tag">.button--wide</span></td>
+                        <td><code class="text-xs opacity-50">&lt;button class="... button--wide"&gt;...&lt;/button&gt;</code></td>
+                    </tr>
+                    <tr>
+                        <td>XL (Extra Ancho)</td>
+                        <td><button class="button button--primary button--xl button--sm">Extra Wide</button></td>
+                        <td><span class="code-tag">.button--xl</span></td>
+                        <td><code class="text-xs opacity-50">&lt;button class="... button--xl"&gt;...&lt;/button&gt;</code></td>
+                    </tr>
+                    <tr>
+                        <td>Loading</td>
+                        <td><button class="button button--primary button--sm button--loading">Wait</button></td>
+                        <td><span class="code-tag">.button--loading</span></td>
+                        <td><code class="text-xs opacity-50">&lt;button class="... button--loading"&gt;...&lt;/button&gt;</code></td>
+                    </tr>
+                    <tr>
+                        <td>Sólo Icono</td>
+                        <td><button class="icon-btn"><i class="fa-solid fa-gear"></i></button></td>
+                        <td><span class="code-tag">.icon-btn</span></td>
+                        <td><code class="text-xs opacity-50">&lt;button class="icon-btn"&gt;&lt;i&gt;&lt;/i&gt;&lt;/button&gt;</code></td>
                     </tr>
                 </tbody>
             </table>
