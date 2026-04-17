@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_compress import Compress
 import os
 
@@ -13,5 +13,10 @@ def create_app():
     # Registro de Blueprints
     from app.modules.core.routes import core_bp
     app.register_blueprint(core_bp)
+
+    # Servir archivos de /assets (Estructura Obligatoria)
+    @app.route('/assets/<path:filename>')
+    def serve_assets(filename):
+        return send_from_directory(os.path.join(app.root_path, '../assets'), filename)
 
     return app
