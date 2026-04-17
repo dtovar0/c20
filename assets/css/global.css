@@ -53,6 +53,15 @@ html, body {
 .gap-3 { gap: var(--space-3); }
 .gap-4 { gap: var(--space-4); }
 
+.mb-4 { margin-bottom: var(--space-4); }
+.mb-6 { margin-bottom: var(--space-6); }
+.p-4 { padding: var(--space-4); }
+.max-w-800 { max-width: 800px; }
+.opacity-50 { opacity: 0.5; }
+.opacity-80 { opacity: 0.8; }
+
+.divider { border: none; border-top: 1px solid var(--border-subtle); margin: var(--space-2) 0; }
+
 .text-accent { color: var(--accent-solid); }
 .text-sm { font-size: 0.875rem; }
 .font-medium { font-weight: 500; }
