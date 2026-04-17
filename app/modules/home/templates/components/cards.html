@@ -9,55 +9,49 @@
         <p class="text-dim">Métricas de rendimiento y contenedores de alta densidad.</p>
     </div>
 
-    <!-- KPI Section: 1x4 Grid -->
-    <h3 class="mb-4">KPI Dashboard</h3>
+    <!-- KPI Section: 4 Distinct Styles -->
+    <h3 class="mb-4">KPI Dashboard (Variantes de Diseño)</h3>
     <div class="grid grid-cols-4 gap-4 mb-8">
-        <!-- KPI card -->
-        <div class="card-premium card--stat">
+        <!-- Variant 1: Classic Border -->
+        <div class="card-premium kpi--classic">
             <div class="flex justify-between items-start mb-2">
                 <span class="text-dim text-xs font-bold uppercase tracking-wider">Revenue</span>
-                <i class="fa-solid fa-dollar-sign text-accent opacity-60"></i>
+                <i class="fa-solid fa-dollar-sign text-accent"></i>
             </div>
-            <div class="text-3xl font-bold mb-2 text-main">$74,250</div>
-            <div class="card__trend trend--up">
-                <i class="fa-solid fa-arrow-up text-xs mr-1"></i> 14.2%
+            <div class="text-3xl font-bold mb-1 text-main">$74,250</div>
+            <div class="text-xs text-success font-bold"><i class="fa-solid fa-arrow-up mr-1"></i> 14.2%</div>
+        </div>
+
+        <!-- Variant 2: Circle Icon Focus -->
+        <div class="card-premium kpi--modern">
+            <div class="kpi__icon-circle">
+                <i class="fa-solid fa-users"></i>
+            </div>
+            <div>
+                <span class="text-dim text-xs font-bold uppercase">Users</span>
+                <div class="text-2xl font-bold">3,842</div>
+                <div class="text-xs text-success">+8.5%</div>
             </div>
         </div>
 
-        <!-- KPI card -->
-        <div class="card-premium card--stat">
-            <div class="flex justify-between items-start mb-2">
-                <span class="text-dim text-xs font-bold uppercase tracking-wider">Active Users</span>
-                <i class="fa-solid fa-users text-accent opacity-60"></i>
+        <!-- Variant 3: Accent Background -->
+        <div class="card-premium kpi--accent">
+            <div class="flex items-center gap-2 mb-3">
+                <i class="fa-solid fa-bug text-danger"></i>
+                <span class="text-dim text-xs font-bold uppercase">API Errors</span>
             </div>
-            <div class="text-3xl font-bold mb-2 text-main">3,842</div>
-            <div class="card__trend trend--up">
-                <i class="fa-solid fa-caret-up text-xs mr-1"></i> 8.5%
-            </div>
+            <div class="text-3xl font-bold mb-2">0.04%</div>
+            <div class="trend--down px-2 py-0.5 rounded-full text-[10px] w-fit font-bold">-0.2%</div>
         </div>
 
-        <!-- KPI card -->
-        <div class="card-premium card--stat">
-            <div class="flex justify-between items-start mb-2">
-                <span class="text-dim text-xs font-bold uppercase tracking-wider">API Errors</span>
-                <i class="fa-solid fa-bug text-danger opacity-60"></i>
+        <!-- Variant 4: Dark Premium -->
+        <div class="card-premium kpi--dark">
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-xs font-bold text-gray-400">LOAD</span>
+                <div class="w-2 h-2 rounded-full bg-success"></div>
             </div>
-            <div class="text-3xl font-bold mb-2 text-main">0.04%</div>
-            <div class="card__trend trend--down">
-                <i class="fa-solid fa-arrow-down text-xs mr-1"></i> 0.2%
-            </div>
-        </div>
-
-        <!-- KPI card -->
-        <div class="card-premium card--stat">
-            <div class="flex justify-between items-start mb-2">
-                <span class="text-dim text-xs font-bold uppercase tracking-wider">System Load</span>
-                <i class="fa-solid fa-server text-accent opacity-60"></i>
-            </div>
-            <div class="text-3xl font-bold mb-2 text-main">42%</div>
-            <div class="card__trend trend--up" style="background: rgba(0, 102, 255, 0.1); color: #0066ff;">
-                <i class="fa-solid fa-check text-xs mr-1"></i> Healthy
-            </div>
+            <div class="text-4xl font-bold mb-2 text-white">42%</div>
+            <p class="text-[10px] text-gray-500 font-medium italic">All clusters are stable</p>
         </div>
     </div>
 
@@ -91,34 +85,6 @@
                 <p class="text-dim text-sm">Sincronización instantánea de datos entre regiones globales.</p>
             </div>
             <button class="button button--outline button--sm mt-4">Cloud Status</button>
-        </div>
-    </div>
-
-    <!-- Technical Table -->
-    <div class="glass-panel p-6">
-        <h3 class="mb-4">Referencia Técnica de Implementación</h3>
-        <div class="table-container">
-            <table class="table-premium">
-                <thead>
-                    <tr>
-                        <th>Categoría</th>
-                        <th>Snippet Estructural</th>
-                        <th>Clase Base</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="font-bold">KPI Card</td>
-                        <td><code class="text-xs opacity-50">&lt;div class="card-premium card--stat"&gt;...&lt;/div&gt;</code></td>
-                        <td><span class="code-tag">.card--stat</span></td>
-                    </tr>
-                    <tr>
-                        <td class="font-bold">Trend Indicator</td>
-                        <td><code class="text-xs opacity-50">&lt;div class="card__trend trend--up"&gt;...&lt;/div&gt;</code></td>
-                        <td><span class="code-tag">.trend--up</span></td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
     </div>
 </section>
