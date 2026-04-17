@@ -9,35 +9,108 @@
         <p class="text-dim">Contenedores premium para agrupación de información y métricas.</p>
     </div>
 
-    <div class="grid grid-cols-3 gap-4">
-        <!-- Metric Card -->
-        <div class="card-premium">
-            <div class="flex justify-between items-start mb-4">
-                <div class="icon-btn" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
-                    <i class="fa-solid fa-rocket"></i>
-                </div>
-                <span class="text-xs text-accent">Active</span>
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-4 gap-4 mb-6">
+        <div class="card-premium card--stat">
+            <span class="text-dim text-xs mb-1">VENTAS TOTALES</span>
+            <div class="text-3xl font-bold mb-2">$42.8k</div>
+            <div class="card__trend trend--up">
+                <i class="fa-solid fa-arrow-up mr-1"></i> 12.5%
             </div>
-            <h4 class="text-dim mb-1">Total Proyectos</h4>
-            <div class="text-3xl font-bold">128</div>
         </div>
-
-        <!-- Metric Card -->
-        <div class="card-premium">
-            <div class="flex justify-between items-start mb-4">
-                <div class="icon-btn" style="background: rgba(34, 197, 94, 0.1); color: #22c55e;">
-                    <i class="fa-solid fa-users"></i>
-                </div>
+        <div class="card-premium card--stat">
+            <span class="text-dim text-xs mb-1">USUARIOS</span>
+            <div class="text-3xl font-bold mb-2">1,249</div>
+            <div class="card__trend trend--up">
+                <i class="fa-solid fa-arrow-up mr-1"></i> 3.2%
             </div>
-            <h4 class="text-dim mb-1">Usuarios Activos</h4>
-            <div class="text-3xl font-bold">1,429</div>
         </div>
+        <div class="card-premium card--stat">
+            <span class="text-dim text-xs mb-1">REBOTE</span>
+            <div class="text-3xl font-bold mb-2">24.1%</div>
+            <div class="card__trend trend--down">
+                <i class="fa-solid fa-arrow-down mr-1"></i> 1.8%
+            </div>
+        </div>
+        <div class="card-premium card--stat">
+            <span class="text-dim text-xs mb-1">LATENCIA</span>
+            <div class="text-3xl font-bold mb-2">12ms</div>
+            <div class="card__trend trend--up">
+                <i class="fa-solid fa-circle-check mr-1"></i> Stable
+            </div>
+        </div>
+    </div>
 
+    <div class="grid grid-cols-3 gap-6 mb-6">
         <!-- Feature Card -->
         <div class="card-premium">
-            <h3 class="mb-2">Nexus Node</h3>
-            <p class="text-dim mb-4 text-sm">Gestiona tus nodos de red con latencia ultra-baja y redundancia total.</p>
-            <button class="button button--secondary button--sm w-full">Configurar</button>
+            <div class="card__image-header"></div>
+            <h3 class="mb-2">Visual Engine</h3>
+            <p class="text-dim text-sm mb-4">Motor de renderizado en tiempo real con soporte para trazado de rayos.</p>
+            <button class="button button--secondary button--sm w-full">Documentación</button>
+        </div>
+
+        <!-- Glass Card -->
+        <div class="card-premium card--glass">
+            <div class="icon-btn mb-4" style="background: var(--accent-solid); color: white;">
+                <i class="fa-solid fa-microchip"></i>
+            </div>
+            <h3 class="mb-2">Compute Units</h3>
+            <p class="text-dim text-sm mb-4">Gestión de recursos distribuidos en clústeres de alto rendimiento.</p>
+            <div class="flex items-center gap-2">
+                <div class="flex-grow bg-dark-pill" style="height: 6px; background: rgba(0,0,0,0.3); border-radius: 3px;">
+                    <div style="width: 75%; height: 100%; background: var(--accent-solid); border-radius: 3px;"></div>
+                </div>
+                <span class="text-xs">75%</span>
+            </div>
+        </div>
+
+        <!-- Simple Card -->
+        <div class="card-premium h-full flex flex-col justify-between">
+            <div>
+                <h3 class="mb-2">Nexus API</h3>
+                <p class="text-dim text-sm">Endpoints ultra-rápidos protegidos por encriptación cuántica.</p>
+            </div>
+            <a href="#" class="text-accent text-sm font-bold flex items-center gap-2 mt-4">
+                Obtener API Key <i class="fa-solid fa-chevron-right text-xs"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Technical Table -->
+    <div class="glass-panel p-6">
+        <h3 class="mb-4">Referencia Técnica (HTML)</h3>
+        <div class="table-container">
+            <table class="table-premium">
+                <thead>
+                    <tr>
+                        <th>Categoría</th>
+                        <th>Vista Previa</th>
+                        <th>Clase Base</th>
+                        <th>Snippet Estructural</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="font-bold">Premium Base</td>
+                        <td><div class="bg-secondary p-2 rounded-lg text-xs" style="width: 60px; height: 30px; border: 1px solid var(--border-subtle)">Card</div></td>
+                        <td><span class="code-tag">.card-premium</span></td>
+                        <td><code class="text-xs opacity-50">&lt;div class="card-premium"&gt;...&lt;/div&gt;</code></td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold">Estadística</td>
+                        <td><div class="card__trend trend--up" style="scale: 0.8;">+12%</div></td>
+                        <td><span class="code-tag">.card--stat</span></td>
+                        <td><code class="text-xs opacity-50">&lt;div class="card--stat"&gt;...&lt;/div&gt;</code></td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold">Cristalizado</td>
+                        <td><div class="bg-white/5 p-2 rounded-lg text-xs" style="width: 60px; border: 1px solid white/10">Glass</div></td>
+                        <td><span class="code-tag">.card--glass</span></td>
+                        <td><code class="text-xs opacity-50">&lt;div class="card--glass"&gt;...&lt;/div&gt;</code></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </section>
