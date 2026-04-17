@@ -34,3 +34,19 @@
     pointer-events: none;
     opacity: 0.4;
 }
+
+.main-content {
+    background-color: var(--bg-primary);
+    position: relative;
+    padding: var(--space-4);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.hero__container {
+    animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}

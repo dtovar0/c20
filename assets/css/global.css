@@ -9,11 +9,18 @@
 
     /* Colors - Premium Palette */
     --bg-primary: #0a0a0c;
-    --bg-secondary: #141417;
+    --bg-secondary: #121214;
+    --sidebar-bg: #0f0f12;
+    --topbar-bg: rgba(10, 10, 12, 0.8);
     --accent-glow: rgba(0, 102, 255, 0.5);
+    --accent-solid: #0066ff;
     --text-main: #ffffff;
     --text-dim: #a1a1aa;
-    --border-subtle: rgba(255, 255, 255, 0.1);
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    
+    /* Dimensions */
+    --sidebar-width: 280px;
+    --topbar-height: 72px;
     
     /* Typography */
     --font-main: 'Inter', sans-serif;
@@ -40,5 +47,11 @@ html, body {
 .flex-col { flex-direction: column; }
 .items-center { align-items: center; }
 .justify-center { justify-content: center; }
+.flex-grow { flex-grow: 1; }
 
-h1, h2, h3 { font-weight: 700; }
+.gap-3 { gap: var(--space-3); }
+.gap-4 { gap: var(--space-4); }
+
+.text-accent { color: var(--accent-solid); }
+.text-sm { font-size: 0.875rem; }
+.font-medium { font-weight: 500; }

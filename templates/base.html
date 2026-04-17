@@ -3,37 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Project C20 - Premium Experience{% endblock %}</title>
-    <meta name="description" content="{% block description %}A high-performance Flask application built with architectural excellence.{% endblock %}">
+    <title>{% block title %}Project C20{% endblock %}</title>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Design System Assets -->
     <link rel="stylesheet" href="/assets/css/global.css">
     <link rel="stylesheet" href="/assets/css/components.css">
     <link rel="stylesheet" href="/assets/css/main.css">
     
-    <!-- HTMX for dynamic interactions -->
+    <!-- HTMX -->
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     
     {% block extra_head %}{% endblock %}
 </head>
 <body class="h-full">
-    <div id="app" class="h-full flex flex-col">
-        <header class="header">
-            {% block header %}{% endblock %}
-        </header>
+    <div id="app" class="h-full flex overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="sidebar flex flex-col">
+            <div class="sidebar__logo">
+                NEXUS<span class="text-accent">.</span>
+            </div>
+            
+            <nav class="nav flex-grow">
+                <a href="/" class="nav__item nav__item--active">Dashboard</a>
+                <a href="#" class="nav__item">Projects</a>
+                <a href="#" class="nav__item">Analytics</a>
+                <a href="#" class="nav__item">Team</a>
+                <a href="#" class="nav__item">Settings</a>
+            </nav>
 
-        <main class="main-content flex-grow">
-            {% block content %}{% endblock %}
-        </main>
+            <div class="sidebar__footer">
+                <div class="nav__item">Help Center</div>
+            </div>
+        </aside>
 
-        <footer class="footer">
-            {% block footer %}{% endblock %}
-        </footer>
+        <!-- Main Wrapper -->
+        <div class="flex-grow flex flex-col overflow-hidden">
+            <!-- Topbar -->
+            <header class="topbar">
+                <div class="topbar__search">Search anything...</div>
+                
+                <div class="topbar__actions flex items-center gap-4">
+                    <div class="user-profile">
+                        <div class="user-profile__avatar"></div>
+                        <span class="text-sm font-medium">David T.</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <main class="main-content flex-grow overflow-auto">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
     </div>
 
     <!-- Scripts -->
