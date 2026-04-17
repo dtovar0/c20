@@ -40,9 +40,9 @@
 }
 
 .nav__item--active {
-    background: rgba(0, 102, 255, 0.1);
+    background: rgba(239, 68, 68, 0.1);
     color: var(--accent-solid);
-    border: 1px solid rgba(0, 102, 255, 0.2);
+    border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
 /* Topbar */
@@ -117,7 +117,7 @@
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #0066ff 0%, #00d2ff 100%);
+    background: linear-gradient(135deg, #ef4444 0%, #ff7b7b 100%);
 }
 
 /* Buttons Recalled */
@@ -139,7 +139,7 @@
 .button:active { transform: scale(0.97); }
 
 .button--primary {
-    background: linear-gradient(135deg, #0066ff 0%, #00d2ff 100%);
+    background: linear-gradient(135deg, #ef4444 0%, #ff7b7b 100%);
     color: white;
     box-shadow: 0 4px 15px var(--accent-glow);
 }
@@ -241,7 +241,7 @@
 .brand__icon {
     width: 32px;
     height: 32px;
-    background: linear-gradient(135deg, #0066ff 0%, #00d2ff 100%);
+    background: linear-gradient(135deg, #ef4444 0%, #ff7b7b 100%);
     border-radius: 8px;
     display: flex;
     align-items: center;
