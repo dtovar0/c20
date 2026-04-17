@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Botones | Project C20{% endblock %}
+
+{% block content %}
+<section class="p-6">
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold mb-2">Botones</h1>
+        <p class="text-dim">Catálogo de estilos de botones premium con animaciones y estados.</p>
+    </div>
+
+    <div class="glass-panel p-6 mb-6">
+        <h3 class="mb-4">Principales</h3>
+        <div class="flex gap-3 items-center">
+            <button class="button button--primary">Primary Button</button>
+            <button class="button button--secondary">Secondary Glass</button>
+            <button class="button button--outline">Outline Accent</button>
+            <button class="button button--ghost">Ghost Mode</button>
+        </div>
+    </div>
+
+    <div class="glass-panel p-6">
+        <h3 class="mb-4">Estados Especiales</h3>
+        <div class="flex gap-3 items-center">
+            <button class="button button--primary button--loading">Loading State</button>
+            <button class="button button--primary button--sm">Small Button</button>
+            <button class="icon-btn" title="Icon Only">
+                <i class="fa-solid fa-plus"></i>
+            </button>
+        </div>
+    </div>
+</section>
+{% endblock %}

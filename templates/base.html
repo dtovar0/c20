@@ -37,25 +37,25 @@
             </a>
             
             <nav class="nav flex-grow">
-                <a href="/" class="nav__item nav__item--active">
-                    <i class="fa-solid fa-house nav__icon"></i>
-                    <span>Dashboard</span>
+                <a href="/botones" class="nav__item {% if active_page == 'botones' %}nav__item--active{% endif %}">
+                    <i class="fa-solid fa-square nav__icon"></i>
+                    <span>Botones</span>
                 </a>
-                <a href="#" class="nav__item">
-                    <i class="fa-solid fa-briefcase nav__icon"></i>
-                    <span>Projects</span>
+                <a href="/modales" class="nav__item {% if active_page == 'modales' %}nav__item--active{% endif %}">
+                    <i class="fa-solid fa-window-maximize nav__icon"></i>
+                    <span>Modales</span>
                 </a>
-                <a href="#" class="nav__item">
-                    <i class="fa-solid fa-chart-line nav__icon"></i>
-                    <span>Analytics</span>
+                <a href="/notificaciones" class="nav__item {% if active_page == 'notificaciones' %}nav__item--active{% endif %}">
+                    <i class="fa-solid fa-bell nav__icon"></i>
+                    <span>Notificaciones</span>
                 </a>
-                <a href="#" class="nav__item">
-                    <i class="fa-solid fa-users nav__icon"></i>
-                    <span>Team</span>
+                <a href="/cards" class="nav__item {% if active_page == 'cards' %}nav__item--active{% endif %}">
+                    <i class="fa-solid fa-id-card nav__icon"></i>
+                    <span>Cards</span>
                 </a>
-                <a href="#" class="nav__item">
-                    <i class="fa-solid fa-gear nav__icon"></i>
-                    <span>Settings</span>
+                <a href="/timelines" class="nav__item {% if active_page == 'timelines' %}nav__item--active{% endif %}">
+                    <i class="fa-solid fa-timeline nav__icon"></i>
+                    <span>Timelines</span>
                 </a>
             </nav>
 

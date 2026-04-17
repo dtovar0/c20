@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Notificaciones | Project C20{% endblock %}
+
+{% block content %}
+<section class="p-6">
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold mb-2">Notificaciones</h1>
+        <p class="text-dim">Mensajes de sistema y retroalimentación activa del usuario.</p>
+    </div>
+
+    <div class="glass-panel p-6">
+        <h3 class="mb-4">Disparadores de Toasts</h3>
+        <div class="flex gap-3">
+            <button class="button button--primary" onclick="showToast('Operación exitosa', 'success')">Éxito</button>
+            <button class="button button--danger" onclick="showToast('Error en el sistema', 'error')">Error</button>
+            <button class="button button--secondary" onclick="showToast('Nueva actualización', 'info')">Información</button>
+        </div>
+    </div>
+
+    <div id="toastContainer" class="toast-container"></div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function showToast(message, type) {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast toast--${type}`;
+    
+    let icon = 'circle-info';
+    if(type === 'success') icon = 'circle-check';
+    if(type === 'error') icon = 'triangle-exclamation';
+
+    toast.innerHTML = `
+        <i class="fa-solid fa-${icon} text-lg"></i>
+        <span>${message}</span>
+    `;
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(20px)';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+</script>
+{% endblock %}

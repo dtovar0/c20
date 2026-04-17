@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Cards | Project C20{% endblock %}
+
+{% block content %}
+<section class="p-6">
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold mb-2">Cards</h1>
+        <p class="text-dim">Contenedores premium para agrupación de información y métricas.</p>
+    </div>
+
+    <div class="grid grid-cols-3 gap-4">
+        <!-- Metric Card -->
+        <div class="card-premium">
+            <div class="flex justify-between items-start mb-4">
+                <div class="icon-btn" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
+                    <i class="fa-solid fa-rocket"></i>
+                </div>
+                <span class="text-xs text-accent">Active</span>
+            </div>
+            <h4 class="text-dim mb-1">Total Proyectos</h4>
+            <div class="text-3xl font-bold">128</div>
+        </div>
+
+        <!-- Metric Card -->
+        <div class="card-premium">
+            <div class="flex justify-between items-start mb-4">
+                <div class="icon-btn" style="background: rgba(34, 197, 94, 0.1); color: #22c55e;">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+            </div>
+            <h4 class="text-dim mb-1">Usuarios Activos</h4>
+            <div class="text-3xl font-bold">1,429</div>
+        </div>
+
+        <!-- Feature Card -->
+        <div class="card-premium">
+            <h3 class="mb-2">Nexus Node</h3>
+            <p class="text-dim mb-4 text-sm">Gestiona tus nodos de red con latencia ultra-baja y redundancia total.</p>
+            <button class="button button--secondary button--sm w-full">Configurar</button>
+        </div>
+    </div>
+</section>
+{% endblock %}
