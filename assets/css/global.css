@@ -55,3 +55,5 @@ html, body {
 .text-accent { color: var(--accent-solid); }
 .text-sm { font-size: 0.875rem; }
 .font-medium { font-weight: 500; }
+.mt-2 { margin-top: var(--space-2); }
+.text-xs { font-size: 0.75rem; }
