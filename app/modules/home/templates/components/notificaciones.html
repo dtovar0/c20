@@ -16,7 +16,15 @@
             <div class="flex gap-2 flex-wrap">
                 <button class="button button--secondary button--sm" onclick="showIconToast('Seguridad activa', 'shield-halved', '#0066ff')">Seguridad</button>
                 <button class="button button--secondary button--sm" onclick="showIconToast('Modo Turbo ON', 'bolt', '#eab308')">Rendimiento</button>
-                <button class="button button--secondary button--sm" onclick="showIconToast('Mensaje recibido', 'envelope', '#ef4444')">Mensajes</button>
+            </div>
+        </div>
+
+        <!-- Size Variants -->
+        <div class="glass-panel p-6">
+            <h3 class="mb-4">Formatos y Dimensiones</h3>
+            <div class="flex gap-2 flex-wrap">
+                <button class="button button--primary button--sm" onclick="showMiniToast('Link copiado', 'success')">Mini Toast</button>
+                <button class="button button--primary button--sm" onclick="showBannerToast('Actualización de Sistema Disponible', 'Nueva versión 2.5.0 lista para instalar. Revisa los cambios ahora.')">Banner Wide</button>
             </div>
         </div>
 
@@ -34,14 +42,6 @@
             <div class="flex gap-2 flex-wrap">
                 <button class="button button--primary button--sm" onclick="showToast('Guardado correctamente', 'success')">Success</button>
                 <button class="button button--danger button--sm" onclick="showToast('Ocurrió un error', 'error')">Error</button>
-            </div>
-        </div>
-
-        <!-- Gradient Style -->
-        <div class="glass-panel p-6">
-            <h3 class="mb-4">Estilo Gradiente</h3>
-            <div class="flex gap-2">
-                <button class="button button--primary button--sm" onclick="showToast('Marca Nexus Activa', 'gradient')">Lanzar Gradient</button>
             </div>
         </div>
     </div>
@@ -100,6 +100,31 @@ function showIconToast(message, icon, color) {
         toast.style.transform = 'translateX(20px)';
         setTimeout(() => toast.remove(), 300);
     }, 3000);
+}
+
+function showMiniToast(message, type) {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast toast--mini toast--${type}`;
+    toast.innerHTML = `<i class="fa-solid fa-check"></i> <span>${message}</span>`;
+    container.appendChild(toast);
+    setTimeout(() => toast.remove(), 2000);
+}
+
+function showBannerToast(title, message) {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast toast--banner toast--gradient`;
+    toast.innerHTML = `
+        <div class="flex flex-col gap-1">
+            <span class="text-lg font-bold"><i class="fa-solid fa-circle-info mr-2"></i> ${title}</span>
+            <span class="text-sm opacity-90">${message}</span>
+            <div class="flex justify-end mt-2">
+                <button class="button button--secondary button--sm" onclick="this.parentElement.parentElement.parentElement.remove()">Entendido</button>
+            </div>
+        </div>
+    `;
+    container.appendChild(toast);
 }
 </script>
 {% endblock %}
