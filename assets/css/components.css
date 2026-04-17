@@ -175,10 +175,12 @@
 .card-premium {
     background: var(--bg-secondary);
     border: 1px solid var(--border-subtle);
-    border-radius: 24px;
-    padding: var(--space-5);
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    padding: var(--space-3);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .card-premium:hover {
@@ -251,4 +253,51 @@
     backdrop-filter: blur(16px);
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 24px;
+}
+
+/* === EXPERT TYPOGRAPHY OVERHAUL === */
+
+/* High Impact Numbers */
+.text-3xl, .text-4xl {
+    font-weight: 800;
+    letter-spacing: -0.05em;
+    background: linear-gradient(180deg, #fff 0%, rgba(255,255,255,0.7) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 10px rgba(255,255,255,0.1));
+}
+
+/* Specific KPI Colors (Electric Variants) */
+.text-success {
+    color: #10b981;
+    text-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+}
+
+.text-danger {
+    color: #f43f5e;
+    text-shadow: 0 0 15px rgba(244, 63, 94, 0.3);
+}
+
+/* Labels with High Precision */
+.text-dim {
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-size: 0.7rem;
+    font-weight: 700;
+    opacity: 0.6;
+    background: linear-gradient(90deg, var(--text-dim), #fff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Hover Effect for text elevation */
+.card-premium:hover .text-3xl {
+    filter: drop-shadow(0 0 20px rgba(255,255,255,0.4));
+    transform: scale(1.05);
+    transition: all 0.4s ease;
+}
+
+/* Smooth Animation for numbers */
+.text-3xl, .text-4xl {
+    transition: all 0.3s ease;
 }
