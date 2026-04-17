@@ -563,3 +563,22 @@
 .button--danger:hover {
     background: #dc2626;
 }
+
+/* Button Sizes & Shapes */
+.button--lg {
+    padding: var(--space-3) var(--space-5);
+    font-size: 1.1rem;
+}
+
+.button--wide {
+    min-width: 200px;
+}
+
+.button--xl {
+    min-width: 300px;
+    padding: var(--space-3) var(--space-6);
+}
+
+.button--pill {
+    border-radius: 99px;
+}
