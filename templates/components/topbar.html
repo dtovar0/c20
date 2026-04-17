@@ -1,10 +1,12 @@
 <header class="h-16 border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-30 flex items-center justify-between px-6 transition-colors">
     <div class="flex items-center gap-4">
-        <!-- Logo / Mobile Toggle -->
-        <button id="sidebarToggle" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-base lg:hidden">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        <!-- Hamburger Button -->
+        <button id="sidebarToggle" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-base transition-colors group">
+            <svg class="w-6 h-6 text-secondary group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
         </button>
-        <h2 class="text-lg font-semibold tracking-tight text-primary">Nexus Dashboard</h2>
+        <h2 class="text-lg font-semibold tracking-tight text-primary brand-text transition-all duration-300">Nexus Dashboard</h2>
     </div>
 
     <div class="flex items-center gap-4">

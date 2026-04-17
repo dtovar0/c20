@@ -45,12 +45,12 @@
     </script>
 </head>
 <body class="bg-bg text-text h-full overflow-hidden transition-colors duration-300">
-    <div class="flex h-full">
+    <div class="flex h-full overflow-hidden">
         <!-- Sidebar -->
         {% include 'components/sidebar.html' %}
 
         <!-- Main Wrapper -->
-        <div class="flex-grow flex flex-col h-full min-w-0 overflow-hidden bg-gray-50/50 dark:bg-slate-950/50">
+        <div id="mainContent" class="flex-grow flex flex-col h-full min-w-0 transition-all duration-300 bg-gray-50/50 dark:bg-slate-950/50">
             <!-- Topbar -->
             {% include 'components/topbar.html' %}
             
@@ -65,14 +65,33 @@
 
     <!-- Scripts Globales -->
     <script>
-        // Sidebar Toggle Logic
         const sidebar = document.getElementById('sidebar');
-        const toggle = document.getElementById('sidebarToggle');
+        const mainContent = document.getElementById('mainContent');
+        const sidebarToggle = document.getElementById('sidebarToggle');
         
-        if (toggle) {
-            toggle.addEventListener('click', () => {
+        // Función para cambiar estado del Sidebar
+        function toggleSidebar() {
+            const isMobile = window.innerWidth < 1024;
+            
+            if (isMobile) {
                 sidebar.classList.toggle('-translate-x-full');
-            });
+            } else {
+                sidebar.classList.toggle('w-64');
+                sidebar.classList.toggle('w-20');
+                
+                // Toggle classes for content that should hide when collapsed
+                document.querySelectorAll('.sidebar-text').forEach(el => {
+                    el.classList.toggle('hidden');
+                });
+                
+                // Adjust logo visibility if needed
+                const brandText = document.querySelector('.brand-text');
+                if (brandText) brandText.classList.toggle('hidden');
+            }
+        }
+
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', toggleSidebar);
         }
 
         // Auto Dark Mode Check (Opcional)
