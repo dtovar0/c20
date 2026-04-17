@@ -789,3 +789,39 @@
     background: #18181b;
     color: white;
 }
+
+/* Advanced UI/UX KPI Set */
+.kpi--progress {
+    position: relative;
+    overflow: hidden;
+}
+
+.kpi--sparkline {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.kpi--priority {
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.1);
+}
+
+.kpi--dual {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2);
+}
+
+.kpi__sub-metric {
+    border-left: 1px solid var(--border-subtle);
+    padding-left: var(--space-2);
+}
+
+.sparkline-placeholder {
+    width: 60px;
+    height: 30px;
+    background: linear-gradient(90deg, transparent, var(--accent-solid), transparent);
+    opacity: 0.2;
+    clip-path: polygon(0 100%, 20% 70%, 40% 85%, 60% 40%, 80% 60%, 100% 0, 100% 100%);
+}

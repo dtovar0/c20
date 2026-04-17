@@ -6,27 +6,23 @@
 <section class="p-6">
     <div class="mb-6">
         <h1 class="text-3xl font-bold mb-2">Cards & KPIs</h1>
-        <p class="text-dim">Métricas de rendimiento y contenedores de alta densidad.</p>
+        <p class="text-dim">Ecosistema de datos de alta densidad y componentes estructurales.</p>
     </div>
 
-    <!-- KPI Section: 4 Distinct Styles -->
-    <h3 class="mb-4">KPI Dashboard (Variantes de Diseño)</h3>
+    <!-- Row 1: Basic Diverse Styles -->
+    <h3 class="mb-4">KPI Tier 1: Identidad Visual</h3>
     <div class="grid grid-cols-4 gap-4 mb-8">
-        <!-- Variant 1: Classic Border -->
         <div class="card-premium kpi--classic">
             <div class="flex justify-between items-start mb-2">
                 <span class="text-dim text-xs font-bold uppercase tracking-wider">Revenue</span>
                 <i class="fa-solid fa-dollar-sign text-accent"></i>
             </div>
-            <div class="text-3xl font-bold mb-1 text-main">$74,250</div>
+            <div class="text-3xl font-bold mb-1">$74,250</div>
             <div class="text-xs text-success font-bold"><i class="fa-solid fa-arrow-up mr-1"></i> 14.2%</div>
         </div>
 
-        <!-- Variant 2: Circle Icon Focus -->
         <div class="card-premium kpi--modern">
-            <div class="kpi__icon-circle">
-                <i class="fa-solid fa-users"></i>
-            </div>
+            <div class="kpi__icon-circle"><i class="fa-solid fa-users"></i></div>
             <div>
                 <span class="text-dim text-xs font-bold uppercase">Users</span>
                 <div class="text-2xl font-bold">3,842</div>
@@ -34,29 +30,75 @@
             </div>
         </div>
 
-        <!-- Variant 3: Accent Background -->
         <div class="card-premium kpi--accent">
             <div class="flex items-center gap-2 mb-3">
                 <i class="fa-solid fa-bug text-danger"></i>
-                <span class="text-dim text-xs font-bold uppercase">API Errors</span>
+                <span class="text-dim text-xs font-bold uppercase">Errors</span>
             </div>
             <div class="text-3xl font-bold mb-2">0.04%</div>
             <div class="trend--down px-2 py-0.5 rounded-full text-[10px] w-fit font-bold">-0.2%</div>
         </div>
 
-        <!-- Variant 4: Dark Premium -->
         <div class="card-premium kpi--dark">
             <div class="flex justify-between items-center mb-4">
                 <span class="text-xs font-bold text-gray-400">LOAD</span>
-                <div class="w-2 h-2 rounded-full bg-success"></div>
+                <div class="w-2 h-2 rounded-full bg-success shadow-[0_0_8px_#22c55e]"></div>
             </div>
             <div class="text-4xl font-bold mb-2 text-white">42%</div>
-            <p class="text-[10px] text-gray-500 font-medium italic">All clusters are stable</p>
+            <p class="text-[10px] text-gray-500 font-medium">Stable Performance</p>
+        </div>
+    </div>
+
+    <!-- Row 2: Advanced UX Patterns -->
+    <h3 class="mb-4">KPI Tier 2: Estado y Rendimiento (Expert UX)</h3>
+    <div class="grid grid-cols-4 gap-4 mb-8">
+        <!-- Variant: Progress KPI -->
+        <div class="card-premium kpi--progress">
+            <span class="text-dim text-xs font-bold uppercase block mb-1">Storage Capacity</span>
+            <div class="text-3xl font-bold mb-2">82%</div>
+            <div class="w-full bg-white/5 h-2 rounded-full overflow-hidden">
+                <div class="h-full bg-accent-solid" style="width: 82%"></div>
+            </div>
+            <span class="text-[10px] text-dim mt-2 block italic">1.2TB of 1.5TB used</span>
+        </div>
+
+        <!-- Variant: Sparkline KPI -->
+        <div class="card-premium kpi--sparkline">
+            <div>
+                <span class="text-dim text-xs font-bold uppercase block mb-1">Live Traffic</span>
+                <div class="text-3xl font-bold">14.2k</div>
+            </div>
+            <div class="sparkline-placeholder"></div>
+        </div>
+
+        <!-- Variant: Priority Glow -->
+        <div class="card-premium kpi--priority">
+            <div class="flex justify-between items-start mb-2">
+                <span class="text-danger text-xs font-bold uppercase">Critical Alerts</span>
+                <i class="fa-solid fa-triangle-exclamation text-danger fa-fade"></i>
+            </div>
+            <div class="text-3xl font-bold mb-2">03</div>
+            <button class="button button--danger button--sm w-full py-1">View Incidents</button>
+        </div>
+
+        <!-- Variant: Dual Metric -->
+        <div class="card-premium kpi--dual">
+            <div>
+                <span class="text-dim text-[10px] font-bold uppercase block">Avg Latency</span>
+                <div class="text-xl font-bold">24ms</div>
+            </div>
+            <div class="kpi__sub-metric">
+                <span class="text-dim text-[10px] font-bold uppercase block">Max Peak</span>
+                <div class="text-xl font-bold text-accent">82ms</div>
+            </div>
+            <div class="col-span-2 mt-2 pt-2 border-t border-white/5 text-[10px] text-dim text-center">
+                Syncing across 12 regions
+            </div>
         </div>
     </div>
 
     <!-- Reference Samples -->
-    <h3 class="mb-4">Estructuras Visuales</h3>
+    <h3 class="mb-4">Estructuras Visuales de Referencia</h3>
     <div class="grid grid-cols-3 gap-6 mb-8">
         <div class="card-premium">
             <div class="card__image-header"></div>
