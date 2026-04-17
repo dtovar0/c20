@@ -44,3 +44,17 @@ def timelines():
         return render_template("components/timelines.html", active_page='timelines')
     except Exception as e:
         return f"Error: {str(e)}", 500
+
+@home_bp.route("/tablas")
+def tablas():
+    try:
+        return render_template("components/tablas.html", active_page='tablas')
+    except Exception as e:
+        return f"Error: {str(e)}", 500
+
+@home_bp.route("/inputs")
+def inputs():
+    try:
+        return render_template("components/inputs.html", active_page='inputs')
+    except Exception as e:
+        return f"Error: {str(e)}", 500
