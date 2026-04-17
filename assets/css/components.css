@@ -80,7 +80,7 @@
 
 .sidebar--collapsed {
     width: 80px;
-    padding: var(--space-3) var(--space-1);
+    padding: 0 var(--space-1) var(--space-3) var(--space-1);
 }
 
 .sidebar--collapsed .sidebar__logo,
@@ -272,5 +272,5 @@
 
 .sidebar--collapsed .brand {
     justify-content: center;
-    padding: var(--space-2) 0;
+    padding: 0;
 }
