@@ -189,6 +189,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: var(--space-1);
 }
 
 .button:active { transform: scale(0.97); }
