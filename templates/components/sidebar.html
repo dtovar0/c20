@@ -14,19 +14,22 @@
         <nav class="flex-grow space-y-1 overflow-x-hidden">
             <p class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest px-3 mb-2 sidebar-text">Principal</p>
             
-            <a href="#" title="Dashboard" class="nav-item nav-item-active gap-4 px-3 py-3 rounded-base transition-all group">
+            <a href="{{ url_for('core.index') }}" title="Dashboard" 
+               class="nav-item {% if request.endpoint == 'core.index' %}nav-item-active{% endif %} gap-4 px-3 py-3 rounded-base transition-all group">
                 <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                 <span class="sidebar-text text-base whitespace-nowrap">Dashboard</span>
             </a>
 
-            <a href="#" title="Analíticas" class="nav-item gap-4 px-3 py-3 text-secondary hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-base transition-all group">
+            <a href="#" title="Analíticas" 
+               class="nav-item {% if request.endpoint == 'analytics.index' %}nav-item-active{% endif %} gap-4 px-3 py-3 text-secondary hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-base transition-all group">
                 <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2M8 7h8m0 0V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M18 16a2 2 0 01-2 2H6a2 2 0 01-2-2V9a2 2 0 012-2h12a2 2 0 012 2v7z"></path></svg>
                 <span class="sidebar-text text-base whitespace-nowrap">Analíticas</span>
             </a>
 
             <p class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest px-3 mb-2 mt-6 sidebar-text">Configuración</p>
             
-            <a href="#" title="Ajustes" class="nav-item gap-4 px-3 py-3 text-secondary hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-base transition-all group">
+            <a href="#" title="Ajustes" 
+               class="nav-item {% if request.endpoint == 'settings.index' %}nav-item-active{% endif %} gap-4 px-3 py-3 text-secondary hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-base transition-all group">
                 <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
                 <span class="sidebar-text text-base whitespace-nowrap">Ajustes</span>
             </a>
