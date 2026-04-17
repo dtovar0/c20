@@ -346,3 +346,36 @@
     background: rgba(255, 255, 255, 0.08);
     box-shadow: 0 0 10px rgba(239, 68, 68, 0.1);
 }
+
+/* Icon Buttons (Notifications, Theme, etc) */
+.icon-btn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    border-radius: 10px;
+    color: var(--text-dim);
+    font-size: 1.1rem;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.icon-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-main);
+}
+
+.icon-btn__badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    background-color: var(--accent-solid);
+    border-radius: 50%;
+    border: 2px solid var(--bg-primary);
+}
