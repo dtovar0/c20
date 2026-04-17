@@ -50,3 +50,10 @@
 .hero__container {
     animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
+
+/* Light Theme Title Adjustments */
+body.light-theme .hero__title {
+    background: linear-gradient(to right, #18181b, #71717a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
