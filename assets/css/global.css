@@ -1,0 +1,44 @@
+:root {
+    /* 8pt Grid & Spacing */
+    --space-1: 8px;
+    --space-2: 16px;
+    --space-3: 24px;
+    --space-4: 32px;
+    --space-5: 40px;
+    --space-6: 48px;
+
+    /* Colors - Premium Palette */
+    --bg-primary: #0a0a0c;
+    --bg-secondary: #141417;
+    --accent-glow: rgba(0, 102, 255, 0.5);
+    --text-main: #ffffff;
+    --text-dim: #a1a1aa;
+    --border-subtle: rgba(255, 255, 255, 0.1);
+    
+    /* Typography */
+    --font-main: 'Inter', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    background-color: var(--bg-primary);
+    color: var(--text-main);
+    font-family: var(--font-main);
+    -webkit-font-smoothing: antialiased;
+}
+
+.h-full { height: 100%; }
+.w-full { width: 100%; }
+
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+
+h1, h2, h3 { font-weight: 700; }

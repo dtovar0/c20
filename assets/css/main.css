@@ -1,0 +1,36 @@
+.hero {
+    position: relative;
+    overflow: hidden;
+    padding: var(--space-6);
+}
+
+.hero__title {
+    font-size: 4rem;
+    background: linear-gradient(to right, #ffffff, #a1a1aa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: var(--space-2);
+    letter-spacing: -0.02em;
+}
+
+.hero__subtitle {
+    font-size: 1.5rem;
+    color: var(--text-dim);
+    margin-bottom: var(--space-4);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.glass-bg {
+    position: fixed;
+    top: -10%;
+    right: -10%;
+    width: 60%;
+    height: 60%;
+    background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+    filter: blur(80px);
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.4;
+}

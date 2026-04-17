@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Project C20 - Premium Experience{% endblock %}</title>
+    <meta name="description" content="{% block description %}A high-performance Flask application built with architectural excellence.{% endblock %}">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Design System Assets -->
+    <link rel="stylesheet" href="/assets/css/global.css">
+    <link rel="stylesheet" href="/assets/css/components.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
+    
+    <!-- HTMX for dynamic interactions -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="h-full">
+    <div id="app" class="h-full flex flex-col">
+        <header class="header">
+            {% block header %}{% endblock %}
+        </header>
+
+        <main class="main-content flex-grow">
+            {% block content %}{% endblock %}
+        </main>
+
+        <footer class="footer">
+            {% block footer %}{% endblock %}
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/assets/js/global.js"></script>
+    <script src="/assets/js/utils.js"></script>
+    <script src="/assets/js/app.js"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>
