@@ -46,6 +46,55 @@
         </div>
     </div>
 
+    <!-- Technical Table -->
+    <div class="glass-panel p-6 mt-6">
+        <h3 class="mb-4">Referencia de Implementación (JS)</h3>
+        <div class="table-container">
+            <table class="table-premium">
+                <thead>
+                    <tr>
+                        <th>Diseño</th>
+                        <th>Formato</th>
+                        <th>Función / Disparador</th>
+                        <th>Clase Interna</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="font-bold">Minimalista</td>
+                        <td>Standard</td>
+                        <td><code class="text-xs opacity-50">showToast(msg, 'success')</code></td>
+                        <td><span class="code-tag">.toast--success</span></td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold">Estilo Iconos</td>
+                        <td>Standard</td>
+                        <td><code class="text-xs opacity-50">showIconToast(msg, 'bolt', color)</code></td>
+                        <td><span class="code-tag">.toast--icon-focus</span></td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold">Glassmorphism</td>
+                        <td>Standard</td>
+                        <td><code class="text-xs opacity-50">showToast(msg, 'glass')</code></td>
+                        <td><span class="code-tag">.toast--glass</span></td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold">Mini Pill</td>
+                        <td>Compact</td>
+                        <td><code class="text-xs opacity-50">showMiniToast(msg, 'success')</code></td>
+                        <td><span class="code-tag">.toast--mini</span></td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold">Banner Wide</td>
+                        <td>Extra Wide</td>
+                        <td><code class="text-xs opacity-50">showBannerToast(title, msg)</code></td>
+                        <td><span class="code-tag">.toast--banner</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <div id="toastContainer" class="toast-container"></div>
 </section>
 {% endblock %}
