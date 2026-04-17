@@ -10,22 +10,13 @@
     </div>
 
     <div class="grid grid-cols-2 gap-4">
-        <!-- Default Style -->
+        <!-- Icon Focus Style -->
         <div class="glass-panel p-6">
-            <h3 class="mb-4">Estilo Minimalista (Borde)</h3>
+            <h3 class="mb-4">Estructura Enfocada en Iconos</h3>
             <div class="flex gap-2 flex-wrap">
-                <button class="button button--primary button--sm" onclick="showToast('Guardado correctamente', 'success')">Success</button>
-                <button class="button button--danger button--sm" onclick="showToast('Ocurrió un error', 'error')">Error</button>
-                <button class="button button--secondary button--sm" onclick="showToast('Sistema actualizado', 'info')">Info</button>
-            </div>
-        </div>
-
-        <!-- Solid Style -->
-        <div class="glass-panel p-6">
-            <h3 class="mb-4">Estilo Sólido (High Impact)</h3>
-            <div class="flex gap-2 flex-wrap">
-                <button class="button button--primary button--sm" onclick="showToast('Conexión establecida', 'solid-success')">Solid Success</button>
-                <button class="button button--danger button--sm" onclick="showToast('Error crítico', 'solid-error')">Solid Error</button>
+                <button class="button button--secondary button--sm" onclick="showIconToast('Seguridad activa', 'shield-halved', '#0066ff')">Seguridad</button>
+                <button class="button button--secondary button--sm" onclick="showIconToast('Modo Turbo ON', 'bolt', '#eab308')">Rendimiento</button>
+                <button class="button button--secondary button--sm" onclick="showIconToast('Mensaje recibido', 'envelope', '#ef4444')">Mensajes</button>
             </div>
         </div>
 
@@ -34,6 +25,15 @@
             <h3 class="mb-4">Estilo Glassmorphism</h3>
             <div class="flex gap-2">
                 <button class="button button--secondary button--sm" onclick="showToast('Mensaje en cristal', 'glass')">Lanzar Glass Toast</button>
+            </div>
+        </div>
+
+        <!-- Default Style -->
+        <div class="glass-panel p-6">
+            <h3 class="mb-4">Estilo Minimalista (Borde)</h3>
+            <div class="flex gap-2 flex-wrap">
+                <button class="button button--primary button--sm" onclick="showToast('Guardado correctamente', 'success')">Success</button>
+                <button class="button button--danger button--sm" onclick="showToast('Ocurrió un error', 'error')">Error</button>
             </div>
         </div>
 
@@ -60,7 +60,6 @@ function showToast(message, type) {
     let icon = 'circle-info';
     if(type.includes('success')) icon = 'circle-check';
     if(type.includes('error')) icon = 'triangle-exclamation';
-    if(type === 'gradient') icon = 'bolt';
 
     toast.innerHTML = `
         <i class="fa-solid fa-${icon} text-lg"></i>
@@ -72,7 +71,30 @@ function showToast(message, type) {
     `;
 
     container.appendChild(toast);
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(20px)';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
 
+function showIconToast(message, icon, color) {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast toast--icon-focus`;
+    toast.style.borderLeft = `4px solid ${color}`;
+
+    toast.innerHTML = `
+        <div class="toast__icon-box" style="color: ${color}; background: ${color}22">
+            <i class="fa-solid fa-${icon} fa-beat-fade"></i>
+        </div>
+        <div class="toast__content flex flex-col ml-3">
+            <span class="font-bold text-sm" style="color: ${color}">${icon.toUpperCase()}</span>
+            <span class="text-sm opacity-90">${message}</span>
+        </div>
+    `;
+
+    container.appendChild(toast);
     setTimeout(() => {
         toast.style.opacity = '0';
         toast.style.transform = 'translateX(20px)';
