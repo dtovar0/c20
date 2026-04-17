@@ -20,69 +20,14 @@
     </div>
 
     <div class="glass-panel p-6 mb-6">
-        <h3 class="mb-4">Botones con Iconos</h3>
-        <div class="flex gap-3 items-center flex-wrap">
-            <button class="button button--primary">
-                <i class="fa-solid fa-plus"></i>
-                <span>Nuevo Usuario</span>
-            </button>
-            <button class="button button--secondary">
-                <i class="fa-solid fa-cloud-arrow-down"></i>
-                <span>Descargar PDF</span>
-            </button>
-            <button class="button button--danger">
-                <i class="fa-solid fa-trash-can"></i>
-                <span>Eliminar</span>
-            </button>
-            <button class="button button--outline">
-                <span>Continuar</span>
-                <i class="fa-solid fa-arrow-right"></i>
-            </button>
-        </div>
-    </div>
-
-    <div class="glass-panel p-6 mb-6">
-        <h3 class="mb-4">Dimensiones y Formas</h3>
-        <div class="flex flex-col gap-4">
-            <!-- Sizes -->
-            <div class="flex gap-3 items-center flex-wrap">
-                <button class="button button--primary button--sm">Small</button>
-                <button class="button button--primary">Normal</button>
-                <button class="button button--primary button--lg">Large Action</button>
-            </div>
-            
-            <!-- Shapes & Widths -->
-            <div class="flex gap-3 items-center flex-wrap">
-                <button class="button button--primary button--pill">
-                    <i class="fa-solid fa-play"></i>
-                    <span>Comenzar</span>
-                </button>
-                <button class="button button--secondary button--pill">
-                    <i class="fa-solid fa-share-nodes"></i>
-                    <span>Compartir</span>
-                </button>
-                <button class="button button--outline button--pill">
-                    <i class="fa-solid fa-gear"></i>
-                    <span>Ajustes</span>
-                </button>
-            </div>
-            
-            <div class="flex gap-3 items-center flex-wrap">
-                <button class="button button--secondary button--wide">Wide Button</button>
-                <button class="button button--outline button--xl">Extra Wide (CTA)</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="glass-panel p-6">
-        <h3 class="mb-4">Referencia Técnica</h3>
+        <h3 class="mb-4">Referencia Técnica Completa</h3>
         <div class="table-container">
             <table class="table-premium">
                 <thead>
                     <tr>
-                        <th>Tipo</th>
-                        <th>Boton</th>
-                        <th>Clase CSS</th>
+                        <th>Categoría</th>
+                        <th>Vista Previa</th>
+                        <th>Clase / Modificador</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -92,7 +37,7 @@
                         <td><span class="code-tag">.button--primary</span></td>
                     </tr>
                     <tr>
-                        <td class="font-bold">Cristal</td>
+                        <td class="font-bold">Secundario (Glass)</td>
                         <td><button class="button button--secondary button--sm">Secondary</button></td>
                         <td><span class="code-tag">.button--secondary</span></td>
                     </tr>
@@ -102,19 +47,63 @@
                         <td><span class="code-tag">.button--outline</span></td>
                     </tr>
                     <tr>
+                        <td class="font-bold">Ghost (Invisible)</td>
+                        <td><button class="button button--ghost button--sm">Ghost</button></td>
+                        <td><span class="code-tag">.button--ghost</span></td>
+                    </tr>
+                    <tr>
                         <td class="font-bold">Peligro</td>
                         <td><button class="button button--danger button--sm">Danger</button></td>
                         <td><span class="code-tag">.button--danger</span></td>
                     </tr>
                     <tr>
-                        <td class="font-bold">Cápsula</td>
-                        <td><button class="button button--primary button--pill button--sm">Pill</button></td>
+                        <td class="font-bold">Pequeño</td>
+                        <td><button class="button button--primary button--sm">Small</button></td>
+                        <td><span class="code-tag">.button--sm</span></td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold">Grande</td>
+                        <td><button class="button button--primary button--lg">Large</button></td>
+                        <td><span class="code-tag">.button--lg</span></td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold">Ancho (Wide)</td>
+                        <td><button class="button button--primary button--wide button--sm">Wide Action</button></td>
+                        <td><span class="code-tag">.button--wide</span></td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold">Extra Ancho</td>
+                        <td><button class="button button--primary button--xl button--sm">XL Action</button></td>
+                        <td><span class="code-tag">.button--xl</span></td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold">Cápsula (Pill)</td>
+                        <td><button class="button button--primary button--pill button--sm">Pill Style</button></td>
                         <td><span class="code-tag">.button--pill</span></td>
                     </tr>
                     <tr>
+                        <td class="font-bold">Con Icono</td>
+                        <td>
+                            <button class="button button--primary button--sm">
+                                <i class="fa-solid fa-plus"></i>
+                                <span>Add</span>
+                            </button>
+                        </td>
+                        <td><span class="code-tag"><i> + <span></span></td>
+                    </tr>
+                    <tr>
                         <td class="font-bold">Cargando</td>
-                        <td><button class="button button--primary button--sm button--loading">Ok</button></td>
+                        <td><button class="button button--primary button--sm button--loading">Wait</button></td>
                         <td><span class="code-tag">.button--loading</span></td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold">Sólo Icono</td>
+                        <td>
+                            <button class="icon-btn">
+                                <i class="fa-solid fa-gear"></i>
+                            </button>
+                        </td>
+                        <td><span class="code-tag">.icon-btn</span></td>
                     </tr>
                 </tbody>
             </table>
