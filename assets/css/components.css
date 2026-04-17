@@ -393,3 +393,50 @@
 .sidebar--collapsed .icon-btn#themeToggle {
     display: none;
 }
+
+/* Additional Button Variants */
+.button--outline {
+    background: transparent;
+    border: 1px solid var(--accent-solid);
+    color: var(--accent-solid);
+}
+
+.button--outline:hover {
+    background: var(--accent-solid);
+    color: white;
+}
+
+.button--ghost {
+    background: transparent;
+    color: var(--text-dim);
+}
+
+.button--ghost:hover {
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Loading State (Micro-animation) */
+.button--loading {
+    position: relative;
+    color: transparent !important;
+}
+
+.button--loading::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 50%;
+    left: 50%;
+    margin-top: -8px;
+    margin-left: -8px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
