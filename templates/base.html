@@ -16,33 +16,10 @@
     <!-- Styles -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/tokens.css') }}">
+    <link rel="stylesheet" href="{{ url_for('serve_assets', filename='css/global.css') }}?v=1.1">
+    <link rel="stylesheet" href="{{ url_for('serve_assets', filename='css/main.css') }}?v=1.1">
     
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--color-primary); border-radius: 10px; opacity: 0.1; }
-    </style>
-
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: 'var(--color-primary)',
-                        bg: 'var(--color-bg)',
-                        text: 'var(--color-text)',
-                        accent: 'var(--color-accent)',
-                        secondary: 'var(--color-secondary)',
-                    },
-                    borderRadius: {
-                        'base': 'var(--radius-base)',
-                    }
-                }
-            }
-        }
-    </script>
+    <script src="{{ url_for('serve_assets', filename='js/global.js') }}"></script>
 </head>
 <body class="bg-bg text-text h-full overflow-hidden transition-colors duration-300">
     <div class="flex h-full overflow-hidden">
@@ -56,7 +33,7 @@
             
             <!-- Main Content -->
             <main class="flex-grow overflow-y-auto custom-scrollbar p-6">
-                <div class="max-w-7xl mx-auto">
+                <div class="w-full h-full flex flex-col">
                     {% block content %}{% endblock %}
                 </div>
             </main>
@@ -64,41 +41,6 @@
     </div>
 
     <!-- Scripts Globales -->
-    <script>
-        const sidebar = document.getElementById('sidebar');
-        const mainContent = document.getElementById('mainContent');
-        const sidebarToggle = document.getElementById('sidebarToggle');
-        
-        // Función para cambiar estado del Sidebar
-        function toggleSidebar() {
-            const isMobile = window.innerWidth < 1024;
-            
-            if (isMobile) {
-                sidebar.classList.toggle('-translate-x-full');
-            } else {
-                sidebar.classList.toggle('w-64');
-                sidebar.classList.toggle('w-20');
-                
-                // Toggle classes for content that should hide when collapsed
-                document.querySelectorAll('.sidebar-text').forEach(el => {
-                    el.classList.toggle('hidden');
-                });
-                
-                // Adjust logo visibility if needed
-                const brandText = document.querySelector('.brand-text');
-                if (brandText) brandText.classList.toggle('hidden');
-            }
-        }
-
-        if (sidebarToggle) {
-            sidebarToggle.addEventListener('click', toggleSidebar);
-        }
-
-        // Auto Dark Mode Check (Opcional)
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.documentElement.classList.add('dark');
-        }
-    </script>
     {% block scripts %}{% endblock %}
 </body>
 </html>

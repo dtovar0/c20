@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 
-{% block content %}
-<div class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-    <!-- Header Page -->
-    <div>
-        <h1 class="text-3xl font-bold tracking-tight">Bienvenido, Admin</h1>
-        <p class="text-secondary mt-2">Aquí tienes el resumen de tu proyecto modular.</p>
-    </div>
+{% block breadcrumbs %}
+<span class="text-secondary">Nexus</span>
+<svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+<span class="text-primary">Dashboard</span>
+{% endblock %}
 
+{% block content %}
+<div id="dashboardWrapper" class="h-full flex flex-col space-y-8 animate-fade-in">
     <!-- Quick Stats -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div class="bg-white dark:bg-slate-900 p-6 rounded-base border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all">
@@ -41,14 +41,42 @@
     </div>
 
     <!-- Large Section Example -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="lg:col-span-2 bg-white dark:bg-slate-900 p-8 rounded-base border border-gray-200 dark:border-gray-800">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow ">
+        <!-- Columna 1: Dos Paneles Horizontales (Stacked) -->
+        <div class="flex flex-col gap-6 lg:col-span-1">
+            <!-- Panel A: Status de Red -->
+            <div class="flex-grow bg-white dark:bg-slate-900 p-8 rounded-base border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all flex flex-col">
+                <h4 class="text-sm font-bold uppercase tracking-wider text-secondary mb-4">Status de Red</h4>
+                <div class="flex-grow flex items-center justify-center border-2 border-dashed border-gray-100 dark:border-gray-800 rounded-lg group hover:border-primary/30 transition-colors px-4 text-center">
+                    <p class="text-xs text-secondary group-hover:text-primary transition-colors italic">Escaneo activo: 12ms latencia</p>
+                </div>
+            </div>
+
+            <!-- Panel B: Seguridad -->
+            <div class="flex-grow bg-white dark:bg-slate-900 p-8 rounded-base border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all flex flex-col">
+                <h4 class="text-sm font-bold uppercase tracking-wider text-secondary mb-4">Seguridad Nucleo</h4>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-secondary uppercase">Cifrado AES</span>
+                        <span class="text-accent font-bold">ACTIVO</span>
+                    </div>
+                    <div class="h-1 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+                        <div class="h-full bg-accent w-full rounded-full"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna 2: Actividad Reciente -->
+        <div class="bg-white dark:bg-slate-900 p-8 rounded-base border border-gray-200 dark:border-gray-800 flex flex-col shadow-sm hover:shadow-md transition-all">
             <h4 class="text-lg font-bold mb-6">Actividad Reciente</h4>
-            <div class="h-64 flex items-center justify-center border-2 border-dashed border-gray-100 dark:border-gray-800 rounded-lg">
+            <div class="flex-grow flex items-center justify-center border-2 border-dashed border-gray-100 dark:border-gray-800 rounded-lg">
                 <p class="text-secondary text-sm">Cargando gráfico de actividad...</p>
             </div>
         </div>
-        <div class="bg-gradient-to-br from-primary to-accent p-8 rounded-base text-white shadow-xl shadow-primary/20 relative overflow-hidden">
+
+        <!-- Columna 3: Nexus Core AI Card Original -->
+        <div class="bg-gradient-to-br from-primary to-accent p-8 rounded-base text-white shadow-xl shadow-primary/20 relative overflow-hidden flex flex-col justify-center">
             <div class="relative z-10">
                 <h4 class="text-xl font-bold mb-4">Nexus Core AI</h4>
                 <p class="text-sm text-white/80 mb-8 leading-relaxed">

@@ -22,8 +22,10 @@
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --shadow-glow: 0 0 15px color-mix(in srgb, var(--color-primary), transparent 80%);
 }
 
+/* Dark Mode Tokens Sync */
 @media (prefers-color-scheme: dark) {
   :root {
     --color-bg: #0f172a;
@@ -36,4 +38,6 @@
 html.dark {
   --color-bg: #0f172a;
   --color-text: #e5e7eb;
+  --color-primary: #3b82f6;
+  --color-secondary: #9ca3af;
 }

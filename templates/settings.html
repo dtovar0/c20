@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block title %}Ajustes | Nexus Premium{% endblock %}
+
+{% block breadcrumbs %}
+<span class="text-secondary">Nexus</span>
+<svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+<span class="text-primary">Ajustes</span>
+{% endblock %}
+
+{% block content %}
+<div id="settingsWrapper" class="w-full h-full flex flex-col animate-fade-in relative">
+    <!-- Luxury Tabs Navigation -->
+    <div class="relative border-b border-gray-100 dark:border-white/5 bg-primary/20 backdrop-blur-lg rounded-t-2xl transition-all duration-300">
+        <div class="flex items-center gap-1">
+            <button onclick="switchTab('general')" id="tab-btn-general" class="tab-btn relative py-4 w-48 justify-center text-sm font-bold transition-all bg-black text-white rounded-lg flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
+                General
+                <div id="indicator-general" class="absolute bottom-0 left-0 w-full h-0.5 bg-primary shadow-[0_0_8px_var(--color-primary)]"></div>
+            </button>
+            <button onclick="switchTab('database')" id="tab-btn-database" class="tab-btn relative py-4 w-48 justify-center text-sm font-bold transition-all text-secondary hover:text-primary bg-black text-white rounded-lg flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
+                Base de Datos
+                <div id="indicator-database" class="absolute bottom-0 left-0 w-full h-0.5 bg-primary shadow-[0_0_8px_var(--color-primary)] opacity-0"></div>
+            </button>
+        </div>
+    </div>
+
+    <!-- Tab Content: General -->
+    <div id="tab-content-general" class="tab-content flex-grow flex flex-col space-y-8 bg-yellow-400/20 p-8 rounded-2xl">
+        <!-- Content cleared by user request -->
+    </div>
+
+    <!-- Tab Content: Database -->
+    <div id="tab-content-database" class="tab-content hidden flex-grow flex flex-col space-y-8 animate-in fade-in bg-yellow-400/20 p-8 rounded-2xl">
+        <div class="bg-white/50 dark:bg-slate-900/50 backdrop-blur-md border border-gray-200/50 dark:border-white/5 rounded-3xl p-10 shadow-glow relative overflow-hidden">
+            <!-- Decorative accent line -->
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-accent"></div>
+
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+                <div>
+                    <h3 class="text-2xl font-extrabold tracking-tight">Arquitectura de Datos</h3>
+                    <div class="flex items-center gap-2 mt-2">
+                        <span class="relative flex h-3 w-3">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                        </span>
+                        <span class="text-xs font-black text-green-500 tracking-wider">SECURE CONNECTION (PGSQL)</span>
+                    </div>
+                </div>
+                <button class="px-6 py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-xl text-xs font-black uppercase tracking-widest shadow-xl transition-all hover:-translate-y-1">
+                    Reset Cloud Link
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                <div class="group">
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Endpoint Source</p>
+                    <p class="text-lg font-mono font-bold group-hover:text-primary transition-colors">prod-db-01.nexus.internal</p>
+                </div>
+                <div>
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Cluster Volume</p>
+                    <p class="text-lg font-bold">128.4 GB / <span class="text-secondary">500 GB</span></p>
+                </div>
+                <div>
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Health Protocol</p>
+                    <p class="text-lg font-bold text-accent">99.9% Optimize</p>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap gap-4 mt-4">
+                <button class="bg-primary hover:shadow-primary/40 text-white px-8 py-4 rounded-xl text-xs font-black uppercase tracking-widest shadow-lg transition-all active:scale-95">
+                    Execute Deep Backup
+                </button>
+                <button class="bg-gray-100/50 dark:bg-white/5 border border-gray-100 dark:border-white/5 text-secondary px-8 py-4 rounded-xl text-xs font-black uppercase tracking-widest hover:border-primary transition-all">
+                    Access Telemetry Logs
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function switchTab(tabId) {
+        // Hide all contents with a fade
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.add('hidden');
+        });
+        
+        // Handle Indicators and Text
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('text-primary');
+            btn.classList.add('text-secondary');
+            const indicatorId = btn.id.replace('tab-btn-', 'indicator-');
+            const indicator = document.getElementById(indicatorId);
+            if (indicator) indicator.classList.add('opacity-0');
+        });
+        
+        // Show current content
+        const targetContent = document.getElementById('tab-content-' + tabId);
+        if (targetContent) targetContent.classList.remove('hidden');
+        
+        // Set active style to current button
+        const activeBtn = document.getElementById('tab-btn-' + tabId);
+        if (activeBtn) {
+            activeBtn.classList.remove('text-secondary');
+            activeBtn.classList.add('text-primary');
+            const activeIndicatorId = activeBtn.id.replace('tab-btn-', 'indicator-');
+            const activeIndicator = document.getElementById(activeIndicatorId);
+            if (activeIndicator) activeIndicator.classList.remove('opacity-0');
+        }
+    }
+</script>
+{% endblock %}

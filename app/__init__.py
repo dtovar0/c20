@@ -12,7 +12,10 @@ def create_app():
 
     # Registro de Blueprints
     from app.modules.core.routes import core_bp
+    from app.modules.settings.routes import settings_bp
+    
     app.register_blueprint(core_bp)
+    app.register_blueprint(settings_bp)
 
     # Servir archivos de /assets (Estructura Obligatoria)
     @app.route('/assets/<path:filename>')
