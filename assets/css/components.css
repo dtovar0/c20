@@ -222,3 +222,49 @@
     font-size: 0.75rem;
     margin: 0;
 }
+
+/* Brand Logo Component */
+.brand {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-1);
+    margin-bottom: var(--space-4);
+    text-decoration: none;
+    transition: transform 0.3s ease;
+}
+
+.brand:hover {
+    transform: translateX(4px);
+}
+
+.brand__icon {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #0066ff 0%, #00d2ff 100%);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1rem;
+    box-shadow: 0 4px 12px var(--accent-glow);
+}
+
+.brand__text {
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.05em;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+}
+
+.sidebar--collapsed .brand__text {
+    display: none;
+}
+
+.sidebar--collapsed .brand {
+    justify-content: center;
+    padding: var(--space-2) 0;
+}
