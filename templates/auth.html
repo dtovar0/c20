@@ -4,7 +4,7 @@
 
 {% block breadcrumbs %}
 <span class="text-secondary">Nexus</span>
-<svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+<svg class="w-4 h-4 text-label/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
 <span class="text-primary">Autenticación</span>
 {% endblock %}
 
@@ -33,7 +33,7 @@
     <div class="flex-grow flex flex-col overflow-hidden">
         
         <!-- Tab Panel: Usuarios -->
-        <div id="tab-panel-users" class="tab-panel flex-grow flex flex-col animate-in fade-in slide-in-from-bottom-2 duration-500">
+        <div id="tab-panel-users" class="tab-panel tab-panel-content flex-grow flex flex-col animate-in fade-in slide-in-from-bottom-2 duration-500 rounded-2xl overflow-hidden border border-panel-border shadow-2xl shadow-primary/5 mb-2">
             <!-- PANEL HEADER -->
             <header class="bg-header border-b border-panel-border px-6 py-4 flex items-center justify-between">
                 <div class="flex items-center gap-4">
@@ -55,7 +55,7 @@
             </header>
 
             <!-- PANEL BODY -->
-            <main class="flex-grow tab-panel-content p-6 overflow-y-auto custom-scrollbar">
+            <main class="flex-grow p-6 overflow-y-auto custom-scrollbar">
                 <div class="grid grid-cols-2 gap-6 h-full">
                     <!-- Vertical Panel A (Auth Configuration) -->
                     <div class="tab-panel-inner">
@@ -169,7 +169,7 @@
         </div>
 
         <!-- Tab Panel: Roles -->
-        <div id="tab-panel-roles" class="tab-panel hidden flex-grow flex flex-col animate-in fade-in duration-500">
+        <div id="tab-panel-roles" class="tab-panel tab-panel-content hidden flex-grow flex flex-col animate-in fade-in duration-500 rounded-2xl overflow-hidden border border-panel-border shadow-2xl shadow-primary/5 mb-2">
             <!-- PANEL HEADER -->
             <header class="bg-header border-b border-panel-border px-6 py-4 flex items-center justify-between">
                 <div class="flex items-center gap-4">

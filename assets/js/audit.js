@@ -93,20 +93,19 @@ function renderTable() {
         });
     }
 
-    // Render Ghost Fill Rows (to maintain 8 records visualization)
     const ghostRowsCount = recordsPerPage - rowsRendered;
     for (let i = 0; i < ghostRowsCount; i++) {
         tbody.innerHTML += `
-            <tr class="opacity-20 pointer-events-none select-none border border-transparent">
+            <tr class="bg-surface-container border border-surface-container-border rounded-xl pointer-events-none select-none">
                 <td class="px-4 py-3 text-[11px] font-bold text-transparent">-</td>
                 <td class="px-4 py-3 text-[11px] font-black text-transparent">-</td>
                 <td class="px-4 py-3 text-[11px] font-bold text-transparent">-</td>
                 <td class="px-4 py-3 text-[10px] font-mono text-transparent">-</td>
                 <td class="px-4 py-3">
-                    <div class="h-4 w-16 bg-label/10 rounded-full mx-auto"></div>
+                    <div class="h-4 w-16 bg-label/10 rounded-full mx-auto opacity-30"></div>
                 </td>
                 <td class="px-4 py-3 text-right pr-4">
-                    <div class="w-7 h-7 rounded-lg bg-label/5 ml-auto"></div>
+                    <div class="w-7 h-7 rounded-lg bg-label/5 ml-auto opacity-30"></div>
                 </td>
             </tr>
         `;

@@ -8,6 +8,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (sidebarToggle && sidebar) {
+        // Initialize from memory
+        const isMobileInit = window.innerWidth < 1024;
+        if (!isMobileInit && localStorage.getItem('sidebarCollapsed') === 'true') {
+            sidebar.classList.remove('w-64', 'min-w-64');
+            sidebar.classList.add('w-16', 'min-w-16', 'is-collapsed');
+            document.querySelectorAll('.sidebar-text').forEach(el => el.classList.add('hidden'));
+        }
+
         sidebarToggle.addEventListener('click', () => {
             const isMobile = window.innerWidth < 1024;
             
@@ -16,15 +24,18 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 // Toggle collapsed state
                 sidebar.classList.toggle('w-64');
-                sidebar.classList.toggle('w-20');
-                sidebar.classList.toggle('is-collapsed'); // New helper class
+                sidebar.classList.toggle('min-w-64');
+                sidebar.classList.toggle('w-16');
+                sidebar.classList.toggle('min-w-16');
+                sidebar.classList.toggle('is-collapsed');
                 
                 document.querySelectorAll('.sidebar-text').forEach(el => {
                     el.classList.toggle('hidden');
                 });
-                
-                const brandText = document.querySelector('.brand-text');
-                if (brandText) brandText.classList.toggle('hidden');
+
+                // Persist memory
+                const isCollapsed = sidebar.classList.contains('is-collapsed');
+                localStorage.setItem('sidebarCollapsed', isCollapsed);
             }
         });
     }
@@ -191,6 +202,93 @@ document.addEventListener('keydown', (e) => {
         const openModal = document.querySelector('.modal-backdrop.show');
         if (openModal) {
             closePremiumModal(openModal.id);
+        }
+    }
+});
+
+/**
+ * PREMIUM LIVE VALIDATION
+ * Actively monitors .premium-validate fields to provide real-time kinetic feedback.
+ */
+document.addEventListener('input', (e) => {
+    if (e.target.classList.contains('premium-validate')) {
+        const input = e.target;
+        const type = input.dataset.validationType;
+        const val = input.value.trim();
+        
+        let isValid = val.length > 0; // Baseline check
+        
+        // Context-aware deep validation
+        if (type === 'email' && val.length > 0) {
+            isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+        } else if (type === 'server' && val.length > 0) {
+            isValid = /^([a-zA-Z0-9.-]+)\.([a-zA-Z]{2,})$/.test(val) || /^localhost$/.test(val);
+        } else if (type === 'port' && val.length > 0) {
+            const portNum = parseInt(val, 10);
+            isValid = /^\d+$/.test(val) && portNum > 0 && portNum <= 65535;
+        }
+
+        // Apply visual premium token feedback
+        if (isValid) {
+            input.classList.remove('border-error', 'border-panel-border', 'focus:ring-primary/10');
+            input.style.borderColor = '#10b981'; // Emerald 500
+            input.style.boxShadow = '0 0 0 4px rgba(16, 185, 129, 0.1)';
+        } else {
+            input.classList.add('border-error');
+            input.style.borderColor = ''; // Revert to let border-error take CSS control
+            input.style.boxShadow = '';
+        }
+    }
+});
+
+/**
+ * TAB NAVIGATION LOGIC (Global)
+ */
+function switchTab(tabId) {
+    const activeClasses = ['text-tab-active-text', 'bg-tab-active', 'shadow-xl', 'shadow-tab-active/20'];
+    const standbyClasses = ['text-tab-inactive-text', 'bg-tab-inactive', 'border', 'border-panel-border'];
+
+    document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.add('hidden'));
+    document.querySelectorAll('.tab-trigger').forEach(trigger => {
+        trigger.classList.remove(...activeClasses);
+        trigger.classList.add(...standbyClasses);
+    });
+    
+    const targetPanel = document.getElementById('tab-panel-' + tabId);
+    if (targetPanel) targetPanel.classList.remove('hidden');
+    
+    const activeTrigger = document.getElementById('tab-trigger-' + tabId);
+    if (activeTrigger) {
+        activeTrigger.classList.remove(...standbyClasses);
+        activeTrigger.classList.add(...activeClasses);
+    }
+}
+
+/**
+ * AUTH CONTROLLER
+ * Toggles disabled state of password inputs based on their authentication toggle.
+ */
+document.addEventListener('change', (e) => {
+    if (e.target.id === 'smtpAuthToggle') {
+        const isAuth = e.target.checked;
+        const smtpPass = document.getElementById('smtpPass');
+        const authStatusText = document.getElementById('authStatusText');
+        
+        if (authStatusText) {
+            authStatusText.textContent = isAuth ? 'Activo' : 'Inactivo';
+        }
+        
+        if (smtpPass) {
+            smtpPass.disabled = !isAuth;
+            if (!isAuth) {
+                // Clear validation tokens when disabling
+                smtpPass.classList.remove('border-error');
+                smtpPass.style.borderColor = '';
+                smtpPass.style.boxShadow = '';
+            } else {
+                // Re-evaluate validity instantly when enabling
+                smtpPass.dispatchEvent(new Event('input', { bubbles: true }));
+            }
         }
     }
 });

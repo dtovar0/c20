@@ -72,9 +72,48 @@
         {% include 'components/sidebar.html' %}
 
         <!-- Main Wrapper -->
-        <div id="mainContent" class="flex-grow flex flex-col h-full min-w-0 transition-all duration-300 bg-gray-50/50 dark:bg-slate-950/50">
+        <div id="mainContent" class="flex-grow flex flex-col h-full min-w-0 transition-all duration-300 bg-transparent">
             <!-- Topbar -->
-            {% include 'components/topbar.html' %}
+            <header class="h-16 border-b border-panel-border bg-panel-fill/80 backdrop-blur-md sticky top-0 z-30 flex items-center justify-between px-6 transition-colors">
+                <div class="flex items-center gap-4">
+                    <!-- Hamburger Button -->
+                    <button id="sidebarToggle" class="p-2 hover:bg-surface-container rounded-base transition-colors group">
+                        <svg class="w-6 h-6 text-secondary group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                    <!-- Location / Breadcrumbs -->
+                    <nav class="flex items-center gap-2 ml-4 brand-text transition-all duration-300 text-sm font-medium">
+                        {% block breadcrumbs %}
+                        <span class="text-secondary">Nexus</span>
+                        <svg class="w-4 h-4 text-label/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        <span class="text-primary">Dashboard</span>
+                        {% endblock %}
+                    </nav>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <!-- Search -->
+                    <div class="hidden sm:flex items-center bg-input px-3 py-1.5 rounded-base gap-2 border border-input-border focus-within:border-input-focus transition-all">
+                        <svg class="w-4 h-4 text-secondary group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        <input type="text" placeholder="Buscar..." class="bg-transparent border-none focus:ring-0 text-input text-sm w-48 outline-none">
+                    </div>
+
+                    <!-- Notifications -->
+                    <button class="relative p-2 hover:bg-surface-container rounded-base transition-all group active:scale-95">
+                        <svg class="w-5 h-5 text-secondary group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                        </svg>
+                        <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white dark:border-slate-900 group-hover:scale-110 transition-transform"></span>
+                    </button>
+
+                    <!-- Theme Toggle -->
+                    <button id="themeToggle" class="p-2 hover:bg-surface-container rounded-base transition-all group flex items-center justify-center relative overflow-hidden active:scale-95">
+                        <svg class="w-5 h-5 text-secondary dark:hidden group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.364l-.707-.707M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        <svg class="w-5 h-5 text-label/60 hidden dark:block group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    </button>
+                </div>
+            </header>
             
             <!-- Main Content -->
             <main class="flex-grow overflow-y-auto custom-scrollbar p-6">

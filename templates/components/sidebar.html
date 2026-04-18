@@ -1,18 +1,18 @@
-<aside id="sidebar" class="flex-shrink-0 w-64 min-w-64 bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-gray-800 transition-all duration-300 fixed inset-y-0 left-0 z-40 -translate-x-full lg:translate-x-0 lg:static lg:inset-0 shadow-sm">
+<aside id="sidebar" class="flex-shrink-0 w-64 min-w-64 bg-panel-fill border-r border-panel-border transition-all duration-300 fixed inset-y-0 left-0 z-40 -translate-x-full lg:translate-x-0 lg:static lg:inset-0 shadow-sm">
     <div class="h-full flex flex-col">
         <!-- Brand / Logo -->
-        <div class="h-16 px-6 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between mb-6 flex-shrink-0">
+        <div class="h-16 px-6 border-b border-panel-border flex items-center justify-between mb-6 flex-shrink-0">
             <div class="flex items-center gap-3 brand-text overflow-hidden transition-all duration-300">
                 <div class="w-8 h-8 flex-shrink-0 bg-primary rounded-lg flex items-center justify-center shadow-lg shadow-primary/20">
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                 </div>
-                <span class="text-xl font-bold tracking-tighter whitespace-nowrap">NEXUS</span>
+                <span class="sidebar-text text-xl font-bold tracking-tighter whitespace-nowrap">NEXUS</span>
             </div>
         </div>
 
         <!-- Navigation -->
         <nav class="flex-grow space-y-1 overflow-x-hidden px-4">
-            <p class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest px-3 mb-2 sidebar-text">Principal</p>
+            <p class="text-[10px] font-bold text-label/60 uppercase tracking-widest px-3 mb-2 sidebar-text">Principal</p>
             
             <a href="{{ url_for('core.index') }}" title="Dashboard" 
                class="nav-item {% if request.endpoint == 'core.index' %}nav-item-active{% endif %} gap-4 px-3 py-3 rounded-base transition-all group">
@@ -20,45 +20,45 @@
                 <span class="sidebar-text text-base whitespace-nowrap">Dashboard</span>
             </a>
 
-            <p class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest px-3 mb-2 mt-6 sidebar-text">Configuración</p>
+            <p class="text-[10px] font-bold text-label/60 uppercase tracking-widest px-3 mb-2 mt-6 sidebar-text">Configuración</p>
             
             <a href="{{ url_for('settings.index') }}" title="Ajustes" 
-               class="nav-item {% if request.endpoint == 'settings.index' %}nav-item-active{% endif %} gap-4 px-3 py-3 text-secondary hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-base transition-all group">
+               class="nav-item {% if request.endpoint == 'settings.index' %}nav-item-active{% endif %} gap-4 px-3 py-3 text-secondary hover:text-primary hover:bg-surface-container rounded-base transition-all group">
                 <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
                 <span class="sidebar-text text-base whitespace-nowrap">Ajustes</span>
             </a>
 
 
             <a href="{{ url_for('auth.index') }}" title="Autenticación" 
-               class="nav-item {% if request.endpoint == 'auth.index' %}nav-item-active{% endif %} gap-4 px-3 py-3 text-secondary hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-base transition-all group">
+               class="nav-item {% if request.endpoint == 'auth.index' %}nav-item-active{% endif %} gap-4 px-3 py-3 text-secondary hover:text-primary hover:bg-surface-container rounded-base transition-all group">
                 <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                 <span class="sidebar-text text-base whitespace-nowrap">Autenticación</span>
             </a>
 
             <a href="{{ url_for('notifications.index') }}" title="Notificiación" 
-               class="nav-item {% if request.endpoint == 'notifications.index' %}nav-item-active{% endif %} gap-4 px-3 py-3 text-secondary hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-base transition-all group">
+               class="nav-item {% if request.endpoint == 'notifications.index' %}nav-item-active{% endif %} gap-4 px-3 py-3 text-secondary hover:text-primary hover:bg-surface-container rounded-base transition-all group">
                 <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                 <span class="sidebar-text text-base whitespace-nowrap">Notificación</span>
             </a>
 
             <a href="{{ url_for('audit.index') }}" title="Auditoría" 
-               class="nav-item {% if request.endpoint == 'audit.index' %}nav-item-active{% endif %} gap-4 px-3 py-3 text-secondary hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-base transition-all group">
+               class="nav-item {% if request.endpoint == 'audit.index' %}nav-item-active{% endif %} gap-4 px-3 py-3 text-secondary hover:text-primary hover:bg-surface-container rounded-base transition-all group">
                 <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                 <span class="sidebar-text text-base whitespace-nowrap">Auditoría</span>
             </a>
 
-            <p class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest px-3 mb-2 mt-6 sidebar-text">Personalización</p>
+            <p class="text-[10px] font-bold text-label/60 uppercase tracking-widest px-3 mb-2 mt-6 sidebar-text">Personalización</p>
             
             <a href="{{ url_for('design.index') }}" title="Diseño" 
-               class="nav-item {% if request.endpoint == 'design.index' %}nav-item-active{% endif %} gap-4 px-3 py-3 text-secondary hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-base transition-all group">
+               class="nav-item {% if request.endpoint == 'design.index' %}nav-item-active{% endif %} gap-4 px-3 py-3 text-secondary hover:text-primary hover:bg-surface-container rounded-base transition-all group">
                 <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17l.354-.354"></path></svg>
                 <span class="sidebar-text text-base whitespace-nowrap">Diseño</span>
             </a>
         </nav>
 
         <!-- Sidebar Footer: User Profile -->
-        <div class="mt-auto pt-6 border-t border-gray-100 dark:border-gray-800">
-            <div class="flex items-center gap-3 px-2 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-base transition-all cursor-pointer group">
+        <div class="mt-auto pt-6 border-t border-panel-border">
+            <div class="flex items-center gap-3 px-2 py-3 hover:bg-surface-container rounded-base transition-all cursor-pointer group">
                 <!-- Avatar -->
                 <div class="w-10 h-10 flex-shrink-0 rounded-full bg-primary/10 flex items-center justify-center border-2 border-primary/20 group-hover:border-primary/40 transition-all">
                     <span class="text-primary font-bold text-sm">AD</span>
@@ -70,7 +70,7 @@
                 </div>
                 <!-- Action Icon -->
                 <div class="sidebar-text ml-auto">
-                    <svg class="w-4 h-4 text-gray-400 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <svg class="w-4 h-4 text-label/60 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                 </div>
             </div>
         </div>

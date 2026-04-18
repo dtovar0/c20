@@ -2,8 +2,8 @@
 
 {% block breadcrumbs %}
 <span class="text-secondary">Nexus</span>
-<svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-<span class="text-accent-a">Dashboard Monocromático</span>
+<svg class="w-4 h-4 text-label/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+<span class="text-primary">Dashboard</span>
 {% endblock %}
 
 {% block content %}
@@ -11,35 +11,35 @@
     <!-- Quick Stats -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <!-- Card 1 -->
-        <div class="bg-accent-a/40 dark:bg-accent-a/40 p-6 rounded-base border border-accent-a/50 shadow-xl shadow-accent-a/10 transition-all flex flex-col">
-            <span class="text-[10px] font-black text-accent-a uppercase tracking-widest pl-1">Usuarios Activos</span>
+        <div class="bg-panel-fill p-6 rounded-2xl border border-panel-border shadow-xl transition-all flex flex-col">
+            <span class="text-[10px] font-black text-label/80 uppercase tracking-widest pl-1">Usuarios Activos</span>
             <div class="flex items-end justify-between mt-4">
-                <h3 class="text-2xl font-black text-white">1,284</h3>
-                <span class="text-accent-a text-[10px] font-bold bg-accent-a/20 px-2 py-1 rounded-full uppercase tracking-tighter shadow-sm">+12%</span>
+                <h3 class="text-2xl font-black text-primary">1,284</h3>
+                <span class="text-label/80 text-[10px] font-bold bg-primary/10 px-2 py-1 rounded-full uppercase tracking-tighter shadow-sm">+12%</span>
             </div>
         </div>
         <!-- Card 2 -->
-        <div class="bg-accent-a/40 dark:bg-accent-a/40 p-6 rounded-base border border-accent-a/50 shadow-xl shadow-accent-a/10 transition-all flex flex-col">
-            <span class="text-[10px] font-black text-accent-a uppercase tracking-widest pl-1">Módulos Cargados</span>
+        <div class="bg-panel-fill p-6 rounded-2xl border border-panel-border shadow-xl transition-all flex flex-col">
+            <span class="text-[10px] font-black text-label/80 uppercase tracking-widest pl-1">Módulos Cargados</span>
             <div class="flex items-end justify-between mt-4">
-                <h3 class="text-2xl font-black text-white">12</h3>
-                <span class="text-accent-a text-[10px] font-bold bg-accent-a/20 px-2 py-1 rounded-full uppercase tracking-tighter shadow-sm">Estable</span>
+                <h3 class="text-2xl font-black text-primary">12</h3>
+                <span class="text-label/80 text-[10px] font-bold bg-primary/10 px-2 py-1 rounded-full uppercase tracking-tighter shadow-sm">Estable</span>
             </div>
         </div>
         <!-- Card 3 -->
-        <div class="bg-accent-a/40 dark:bg-accent-a/40 p-6 rounded-base border border-accent-a/50 shadow-xl shadow-accent-a/10 transition-all flex flex-col">
-            <span class="text-[10px] font-black text-accent-a uppercase tracking-widest pl-1">Tiempo de Carga</span>
+        <div class="bg-panel-fill p-6 rounded-2xl border border-panel-border shadow-xl transition-all flex flex-col">
+            <span class="text-[10px] font-black text-label/80 uppercase tracking-widest pl-1">Tiempo de Carga</span>
             <div class="flex items-end justify-between mt-4">
-                <h3 class="text-2xl font-black text-white">420ms</h3>
-                <span class="text-accent-a text-[10px] font-bold bg-accent-a/20 px-2 py-1 rounded-full uppercase tracking-tighter shadow-sm">-50ms</span>
+                <h3 class="text-2xl font-black text-primary">420ms</h3>
+                <span class="text-label/80 text-[10px] font-bold bg-primary/10 px-2 py-1 rounded-full uppercase tracking-tighter shadow-sm">-50ms</span>
             </div>
         </div>
         <!-- Card 4 -->
-        <div class="bg-accent-a/40 dark:bg-accent-a/40 p-6 rounded-base border border-accent-a/50 shadow-xl shadow-accent-a/10 transition-all flex flex-col">
-            <span class="text-[10px] font-black text-accent-a uppercase tracking-widest pl-1">Versión System</span>
+        <div class="bg-panel-fill p-6 rounded-2xl border border-panel-border shadow-xl transition-all flex flex-col">
+            <span class="text-[10px] font-black text-label/80 uppercase tracking-widest pl-1">Versión System</span>
             <div class="flex items-end justify-between mt-4">
-                <h3 class="text-2xl font-black text-accent-a">v8.2</h3>
-                <span class="text-accent-a text-[10px] font-bold bg-accent-a/20 px-2 py-1 rounded-full uppercase tracking-tighter shadow-sm">PRO</span>
+                <h3 class="text-2xl font-black text-label/80">v8.2</h3>
+                <span class="text-label/80 text-[10px] font-bold bg-primary/10 px-2 py-1 rounded-full uppercase tracking-tighter shadow-sm">PRO</span>
             </div>
         </div>
     </div>
@@ -48,27 +48,27 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 flex-grow">
         <!-- Center Column (Main Logic) -->
         <div class="lg:col-span-2 space-y-8">
-            <div class="bg-accent-a/40 dark:bg-accent-a/40 border border-accent-a/50 rounded-base shadow-2xl p-8 h-full">
-                <h2 class="text-xs font-black text-accent-a uppercase tracking-[0.3em] mb-6">Estado del Núcleo</h2>
-                <div class="w-full bg-accent-a/20 rounded-full h-1.5 mb-8">
-                    <div class="bg-accent-a h-full rounded-full animate-pulse shadow-lg shadow-accent-a/50" style="width: 85%"></div>
+            <div class="bg-panel-fill border border-panel-border rounded-2xl shadow-sm p-8 h-full">
+                <h2 class="text-xs font-black text-label/80 uppercase tracking-[0.3em] mb-6">Estado del Núcleo</h2>
+                <div class="w-full bg-primary/10 rounded-full h-1.5 mb-8">
+                    <div class="bg-primary h-full rounded-full animate-pulse shadow-lg shadow-primary/50" style="width: 85%"></div>
                 </div>
                 <div class="grid grid-cols-2 gap-8">
                     <div class="space-y-4">
-                        <p class="text-[9px] font-bold text-accent-a/60 uppercase tracking-widest">Sincronización</p>
-                        <p class="text-lg font-black text-white tracking-tighter italic">ACTIVA / 98.4%</p>
+                        <p class="text-[9px] font-bold text-label/60 uppercase tracking-widest">Sincronización</p>
+                        <p class="text-lg font-black text-primary tracking-tighter italic">ACTIVA / 98.4%</p>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- AI Panel (Accent Accent) -->
-        <div class="bg-accent-a/40 dark:bg-accent-a/40 border-2 border-accent-a shadow-2xl shadow-accent-a/20 rounded-base p-8 relative overflow-hidden group">
-            <div class="absolute -right-12 -top-12 w-48 h-48 bg-accent-a/10 blur-3xl rounded-full group-hover:bg-accent-a/20 transition-all"></div>
-            <h2 class="text-xs font-black text-accent-a uppercase tracking-[0.3em] mb-8 relative z-10">Inteligencia Nexus</h2>
+        <div class="bg-panel-fill border-2 border-panel-border shadow-2xl shadow-primary/5 rounded-2xl p-8 relative overflow-hidden group">
+            <div class="absolute -right-12 -top-12 w-48 h-48 bg-primary/5 blur-3xl rounded-full group-hover:bg-primary/10 transition-all"></div>
+            <h2 class="text-xs font-black text-label/80 uppercase tracking-[0.3em] mb-8 relative z-10">Inteligencia Nexus</h2>
             <div class="space-y-6 relative z-10">
-                <div class="p-4 bg-accent-a/10 rounded-xl border border-accent-a/20">
-                    <p class="text-[11px] text-white/90 leading-relaxed font-bold italic">
+                <div class="p-4 bg-surface-container rounded-xl border border-panel-border">
+                    <p class="text-[11px] text-primary/90 leading-relaxed font-bold italic">
                         "Optimizando flujo de datos en el sector 7. Sistema estable."
                     </p>
                 </div>

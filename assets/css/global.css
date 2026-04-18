@@ -208,7 +208,7 @@ body {
 
 /* === TOKEN-BASED TAB CONTENT === */
 .tab-panel-content {
-    background-color: var(--color-body-bg);
+    background-color: rgb(var(--color-panel-fill));
     color: var(--color-body-text);
     border-color: rgb(var(--color-panel-border));
     transition: all 0.3s ease;
@@ -221,4 +221,48 @@ body {
     padding: 2rem;
     display: flex;
     flex-direction: column;
+}
+
+/* === SIDEBAR COLLAPSED PRECISION === */
+#sidebar.is-collapsed .h-16 {
+    /* Brand Box */
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    justify-content: center !important;
+}
+#sidebar.is-collapsed nav {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+}
+#sidebar.is-collapsed .nav-item {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    justify-content: center !important;
+}
+#sidebar.is-collapsed .mt-auto {
+    /* Footer Box */
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+}
+#sidebar.is-collapsed .mt-auto > div {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    justify-content: center !important;
+}
+
+
+
+/* Dynamic Icon Scaling (Only Collapsed) */
+#sidebar .nav-item svg {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#sidebar.is-collapsed .nav-item svg {
+    min-width: 20px !important;
+    min-height: 20px !important;
+    width: 20px !important;
+    height: 20px !important;
+    max-width: 20px !important;
+    max-height: 20px !important;
+    stroke-width: 1.75 !important;
 }
