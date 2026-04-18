@@ -1,12 +1,12 @@
 :root {
   /* Core Palette (Indigo Theme) */
-  --color-primary: 51 209 122;    /* #6366f1 - Indigo */
-  --color-secondary: 192 191 188; /* #64748b - Slate */
+  --color-primary: 59 130 246;    /* #6366f1 - Indigo */
+  --color-secondary: 100 116 139; /* #64748b - Slate */
   --color-accent: 139 92 246;     /* #8b5cf6 - Violet */
   --color-success: 16 185 129;    /* #10b981 - Emerald */
 
   /* Structural Tokens */
-  --color-body-bg: #deddda;
+  --color-body-bg: #f8fafc;
   --color-body-text: #1e293b;
   --color-header-bg: #4f46e5;    /* indigo-600 */
   --color-header-text: #ffffff;
@@ -24,7 +24,7 @@
   --color-tab-inactive-text: 100 116 139;
 
   /* Panel & Surface System */
-  --color-panel-fill: #f8fafc;
+  --color-panel-fill: 255 255 255;
   --color-panel-border: 226 232 240;
   --color-panel-shadow: 15 23 42 / 0.05;
   --color-surface-container-bg: 248 250 252;
@@ -72,7 +72,7 @@
 
 /* Force Dark Class Support */
 html.dark {
-    --color-body-bg: #0f172a;
+    --color-body-bg: #a51d2d;
     --color-body-text: #f1f5f9;
     --color-header-bg: #4338ca;
     --color-panel-fill: 30 41 59;

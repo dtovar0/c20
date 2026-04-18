@@ -171,7 +171,9 @@ body {
 
 /* === STANDARDIZED NEXUS BUTTONS === */
 .nexus-btn-save {
-    padding: 0.625rem 1.5rem;
+    height: 2.75rem;
+    min-width: 140px;
+    padding: 0 1.5rem;
     background-color: rgb(var(--color-primary));
     color: white;
     border-radius: 0.75rem;
@@ -181,6 +183,7 @@ body {
     letter-spacing: 0.25em;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 0.75rem;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 10px 15px -3px rgba(var(--color-primary), 0.2);
@@ -201,4 +204,21 @@ body {
     width: 0.875rem;
     height: 0.875rem;
     stroke-width: 3;
+}
+
+/* === TOKEN-BASED TAB CONTENT === */
+.tab-panel-content {
+    background-color: var(--color-body-bg);
+    color: var(--color-body-text);
+    border-color: rgb(var(--color-panel-border));
+    transition: all 0.3s ease;
+}
+
+.tab-panel-inner {
+    background-color: rgb(var(--color-panel-fill));
+    border: 2px dashed rgb(var(--color-panel-border));
+    border-radius: 1.5rem;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
 }

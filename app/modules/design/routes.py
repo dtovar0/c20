@@ -30,16 +30,23 @@ def update_tokens():
             'light_bg': r'--color-body-bg:\s*[^;]+;',
             'light_panel': r'--color-panel-fill:\s*[^;]+;',
             'radius_base': r'--radius-base:\s*[^;]+;',
-            'space_scale': r'--space-1:\s*[^;]+;' # Map scale to base space if needed
+            'space_scale': r'--space-1:\s*[^;]+;' 
         }
+
+        rgb_tokens = ['primary', 'secondary', 'panel']
 
         for key, pattern in mappings.items():
             if key in data:
                 val = data[key]
-                if 'color' in key or 'primary' in key or 'secondary' in key:
-                    if '#' in val: val = hex_to_rgb_str(val)
-                elif key == 'radius_base': val = f"{val}px"
-                elif key == 'space_scale': val = f"{int(float(val)*4)}px" # Scale base 4px
+                # Determine if we need RGB or Hex
+                is_rgb = any(token in key for token in rgb_tokens)
+                
+                if is_rgb and '#' in val:
+                    val = hex_to_rgb_str(val)
+                elif key == 'radius_base': 
+                    val = f"{val}px"
+                elif key == 'space_scale': 
+                    val = f"{int(float(val)*4)}px"
                 
                 # Replace only first occurrence (root)
                 content = re.sub(pattern, f'{pattern.split(":")[0]}: {val};', content, count=1)
