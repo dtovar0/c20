@@ -16,12 +16,14 @@ def create_app():
     from app.modules.audit.routes import audit_bp
     from app.modules.notifications.routes import notifications_bp
     from app.modules.auth.routes import auth_bp
+    from app.modules.design.routes import design_bp
     
     app.register_blueprint(core_bp)
     app.register_blueprint(settings_bp)
     app.register_blueprint(audit_bp)
     app.register_blueprint(notifications_bp)
     app.register_blueprint(auth_bp)
+    app.register_blueprint(design_bp)
 
     # Servir archivos de /assets (Estructura Obligatoria)
     @app.route('/assets/<path:filename>')

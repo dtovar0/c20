@@ -168,3 +168,37 @@ body {
 .modal-backdrop.show .modal-panel {
     transform: scale(1) translateY(0);
 }
+
+/* === STANDARDIZED NEXUS BUTTONS === */
+.nexus-btn-save {
+    padding: 0.625rem 1.5rem;
+    background-color: rgb(var(--color-primary));
+    color: white;
+    border-radius: 0.75rem;
+    font-size: 10px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 15px -3px rgba(var(--color-primary), 0.2);
+    border: none;
+    cursor: pointer;
+}
+
+.nexus-btn-save:hover {
+    box-shadow: 0 20px 25px -5px rgba(var(--color-primary), 0.3);
+    transform: translateY(-1px);
+}
+
+.nexus-btn-save:active {
+    transform: scale(0.95) translateY(0);
+}
+
+.nexus-btn-save svg {
+    width: 0.875rem;
+    height: 0.875rem;
+    stroke-width: 3;
+}

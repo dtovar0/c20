@@ -47,8 +47,8 @@
                 </div>
 
                 <div class="flex items-center gap-3">
-                    <button onclick="if(validateNexusForm('tab-panel-config')) showToast('Configuración Guardada', 'success')" class="px-6 py-2 bg-button-bg text-button-text rounded-xl text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-button-bg/10 transition-all active:scale-95 flex items-center gap-2">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                    <button onclick="if(validateNexusForm('tab-panel-config')) showToast('Configuración Guardada', 'success')" class="nexus-btn-save">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
                         Guardar
                     </button>
                 </div>
@@ -71,17 +71,17 @@
                                 </div>
                             </div>
 
-                            <!-- Port Group -->
-                            <div class="group">
-                                <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-2 px-1">Puerto</label>
-                                <div class="relative group">
-                                    <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/40 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path></svg>
-                                    <input type="text" value="587" placeholder="587" class="w-full bg-input border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3 text-sm font-bold text-input-text outline-none transition-all focus:border-input-focus focus:ring-4 focus:ring-primary/10">
+                            <!-- Puerto & Cifrado Row -->
+                            <div class="grid grid-cols-2 gap-4">
+                                <!-- Port Group -->
+                                <div class="group">
+                                    <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-2 px-1">Puerto</label>
+                                    <div class="relative group">
+                                        <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/40 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path></svg>
+                                        <input type="text" value="587" placeholder="587" class="w-full bg-input border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3 text-sm font-bold text-input-text outline-none transition-all focus:border-input-focus focus:ring-4 focus:ring-primary/10">
+                                    </div>
                                 </div>
-                            </div>
 
-                            <!-- Security Switches -->
-                            <div class="space-y-4 pt-2">
                                 <!-- SSL Select -->
                                 <div class="group">
                                     <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-2 px-1">Cifrado SSL</label>
@@ -94,6 +94,7 @@
                                         </select>
                                     </div>
                                 </div>
+                            </div>
                                 <!-- Auth Toggle -->
                                 <div class="group">
                                     <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-2 px-1">Autenticación</label>
@@ -107,7 +108,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+
                     <!-- Vertical Panel B (User Credentials) -->
                     <div class="bg-panel-fill border-2 border-dashed border-panel-border rounded-3xl flex flex-col p-8">
                         <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-6 px-1 text-center">Credenciales de Usuario</label>
@@ -170,8 +171,8 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
-                    <button onclick="if(validateNexusForm('tab-panel-template')) showToast('Plantilla Actualizada', 'success')" class="px-6 py-2 bg-button-bg text-button-text rounded-xl text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-button-bg/10 transition-all active:scale-95 flex items-center gap-2">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                    <button onclick="if(validateNexusForm('tab-panel-template')) showToast('Plantilla Actualizada', 'success')" class="nexus-btn-save">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
                         Guardar
                     </button>
                 </div>

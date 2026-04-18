@@ -1,0 +1,255 @@
+{% extends 'base.html' %}
+
+{% block title %}Diseño | Nexus Premium{% endblock %}
+
+{% block breadcrumbs %}
+<span class="text-secondary">Nexus</span>
+<svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+<span class="text-primary">Diseño</span>
+{% endblock %}
+
+{% block content %}
+<div id="designWrapper" class="w-full h-full flex flex-col animate-fade-in relative">
+    <!-- Luxury Tabs Navigation -->
+    <div class="relative border-b border-panel-border backdrop-blur-lg transition-all duration-300">
+        <div class="flex items-center p-1.5 gap-2">
+            <!-- Tokens Tab (Active) -->
+            <button onclick="switchTab('tokens')" id="tab-trigger-tokens" 
+                class="tab-trigger w-60 relative py-3.5 flex items-center justify-center gap-3 rounded-xl text-[10px] font-black uppercase tracking-[0.25em] transition-all duration-300 z-10 text-tab-active-text bg-tab-active shadow-xl shadow-tab-active/20 active:scale-95">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17l.354-.354"></path></svg>
+                <span>Tokens de Diseño</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- PANEL AREA -->
+    <div class="flex-grow flex flex-col overflow-hidden">
+        
+        <!-- Tab Panel: Tokens -->
+        <div id="tab-panel-tokens" class="tab-panel flex-grow flex flex-col animate-in fade-in slide-in-from-bottom-2 duration-500">
+            <!-- PANEL HEADER -->
+            <header class="bg-header border-b border-panel-border px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17l.354-.354"></path></svg>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-black tracking-tighter text-primary uppercase italic leading-none">Diseño Editorial</h2>
+                        <p class="text-[9px] text-primary/60 font-bold tracking-widest uppercase mt-0.5">Status: Branding / Typography / Colors</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-3">
+                    <button onclick="saveDesign()" class="nexus-btn-save">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                        Publicar Diseño
+                    </button>
+                </div>
+            </header>
+
+            <main class="flex-grow bg-panel-fill p-6 overflow-y-auto custom-scrollbar">
+                <div class="grid grid-cols-2 gap-6 h-full">
+                    <!-- Config Panel -->
+                    <div class="bg-panel-fill border-2 border-dashed border-panel-border rounded-3xl p-8 flex flex-col">
+                        <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-8 px-1 text-center">Configuración de Tokens</label>
+                        
+                        <div class="space-y-8">
+                            <!-- Identidad de Marca -->
+                            <div class="group">
+                                <label class="block text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-6 px-1 border-l-4 border-primary pl-4">Identidad de Marca</label>
+                                
+                                <div class="space-y-6">
+                                    <!-- Light Branding -->
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="bg-input p-3 rounded-2xl border border-panel-border flex flex-col items-center">
+                                            <span class="text-[8px] font-black text-primary/60 uppercase mb-2">Primary (Light)</span>
+                                            <input type="color" id="light_primary" value="#3b82f6" class="w-full h-8 rounded-lg cursor-pointer bg-transparent border-none">
+                                        </div>
+                                        <div class="bg-input p-3 rounded-2xl border border-panel-border flex flex-col items-center">
+                                            <span class="text-[8px] font-black text-primary/60 uppercase mb-2">Secondary (Light)</span>
+                                            <input type="color" id="light_secondary" value="#64748b" class="w-full h-8 rounded-lg cursor-pointer bg-transparent border-none">
+                                        </div>
+                                    </div>
+                                    <!-- Dark Branding -->
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="bg-slate-800/50 p-3 rounded-2xl border border-panel-border flex flex-col items-center">
+                                            <span class="text-[8px] font-black text-primary/60 uppercase mb-2">Primary (Dark)</span>
+                                            <input type="color" id="dark_primary" value="#60a5fa" class="w-full h-8 rounded-lg cursor-pointer bg-transparent border-none">
+                                        </div>
+                                        <div class="bg-slate-800/50 p-3 rounded-2xl border border-panel-border flex flex-col items-center">
+                                            <span class="text-[8px] font-black text-primary/60 uppercase mb-2">Secondary (Dark)</span>
+                                            <input type="color" id="dark_secondary" value="#94a3b8" class="w-full h-8 rounded-lg cursor-pointer bg-transparent border-none">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sistema de Superficies -->
+                            <div class="group">
+                                <label class="block text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-6 px-1 border-l-4 border-primary pl-4">Sistema de Superficies</label>
+                                
+                                <div class="grid grid-cols-2 gap-x-6 gap-y-4">
+                                    <!-- Backgrounds -->
+                                    <div class="space-y-4">
+                                        <span class="block text-[9px] font-black text-label/40 uppercase tracking-widest px-1">Escenario Light</span>
+                                        <div class="flex items-center gap-3 bg-input p-3 rounded-2xl border border-panel-border">
+                                            <input type="color" id="light_bg" value="#f8fafc" class="w-10 h-10 rounded-lg cursor-pointer bg-transparent border-none">
+                                            <div class="flex flex-col">
+                                                <span class="text-[8px] font-black text-label uppercase">Fondo Base</span>
+                                                <span class="text-[7px] text-label/40 font-bold uppercase">--color-body-bg</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-3 bg-input p-3 rounded-2xl border border-panel-border">
+                                            <input type="color" id="light_panel" value="#ffffff" class="w-10 h-10 rounded-lg cursor-pointer bg-transparent border-none">
+                                            <div class="flex flex-col">
+                                                <span class="text-[8px] font-black text-label uppercase">Paneles / Cards</span>
+                                                <span class="text-[7px] text-label/40 font-bold uppercase">--color-panel-fill</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Dark Backgrounds -->
+                                    <div class="space-y-4">
+                                        <span class="block text-[9px] font-black text-label/40 uppercase tracking-widest px-1">Escenario Dark</span>
+                                        <div class="flex items-center gap-3 bg-slate-800/50 p-3 rounded-2xl border border-panel-border">
+                                            <input type="color" id="dark_bg" value="#0f172a" class="w-10 h-10 rounded-lg cursor-pointer bg-transparent border-none">
+                                            <div class="flex flex-col">
+                                                <span class="text-[8px] font-black text-label uppercase">Fondo Base</span>
+                                                <span class="text-[7px] text-label/40 font-bold uppercase">--color-body-bg</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-3 bg-slate-800/50 p-3 rounded-2xl border border-panel-border">
+                                            <input type="color" id="dark_panel" value="#1e293b" class="w-10 h-10 rounded-lg cursor-pointer bg-transparent border-none">
+                                            <div class="flex flex-col">
+                                                <span class="text-[8px] font-black text-label uppercase">Paneles / Cards</span>
+                                                <span class="text-[7px] text-label/40 font-bold uppercase">--color-panel-fill</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <!-- Typography -->
+                            <div class="group">
+                                <label class="block text-[10px] font-black text-label/40 uppercase tracking-[0.2em] mb-4 px-1">Tipografía de Marca</label>
+                                <div class="relative group">
+                                    <select class="w-full bg-input border-2 border-panel-border rounded-2xl pl-6 pr-5 py-4 text-sm font-bold text-input-text outline-none transition-all focus:border-input-focus appearance-none cursor-pointer">
+                                        <option value="outfit" selected>Outfit (Premium)</option>
+                                        <option value="inter">Inter (Default)</option>
+                                        <option value="plus-jakarta">Plus Jakarta Sans</option>
+                                    </select>
+                                    <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-label/40">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Inspector Panel -->
+                    <div class="bg-panel-fill border-2 border-dashed border-panel-border rounded-3xl p-8 flex flex-col relative overflow-hidden">
+                        <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-8 px-1 text-center">Laboratorio Visual</label>
+                        
+                        <div class="flex-grow flex flex-col gap-8">
+                            <!-- Preview 1 -->
+                            <div class="bg-surface-container rounded-2xl p-8 border border-surface-container-border flex flex-col">
+                                <span class="text-[8px] font-black text-label/30 uppercase mb-6 tracking-widest text-center italic leading-none">Nexus UI Component</span>
+                                <div class="flex gap-4">
+                                    <div class="flex-grow h-20 bg-primary/10 rounded-2xl border border-primary/20 flex flex-col justify-center px-6">
+                                        <div class="w-8 h-1 bg-primary rounded-full mb-3"></div>
+                                        <div class="w-20 h-1 bg-primary/40 rounded-full"></div>
+                                    </div>
+                                    <button class="w-20 h-20 bg-button-bg text-button-text rounded-2xl shadow-xl shadow-button-bg/20 flex items-center justify-center active:scale-95 transition-all">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Preview 2 -->
+                            <div class="bg-surface-container rounded-2xl p-8 border border-surface-container-border flex-grow">
+                                <span class="text-[8px] font-black text-label/30 uppercase mb-6 tracking-widest text-center italic leading-none">Layout Density</span>
+                                <div class="space-y-4">
+                                    <div class="flex items-center gap-4 p-4 bg-panel-fill rounded-xl border border-panel-border">
+                                        <div class="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center text-green-500 italic font-black text-[10px]">OK</div>
+                                        <div class="flex-grow">
+                                            <div class="h-2 w-32 bg-label/10 rounded-full mb-2"></div>
+                                            <div class="h-1.5 w-20 bg-label/5 rounded-full"></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-4 p-4 bg-panel-fill rounded-xl border border-panel-border opacity-50">
+                                        <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary italic font-black text-[10px]">NX</div>
+                                        <div class="flex-grow">
+                                            <div class="h-2 w-24 bg-label/10 rounded-full mb-2"></div>
+                                            <div class="h-1.5 w-16 bg-label/5 rounded-full"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Decoration -->
+                        <div class="absolute -top-20 -right-20 w-60 h-60 bg-primary/5 rounded-full blur-[100px] pointer-events-none"></div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</div>
+
+<script>
+    const activeClasses = ['text-tab-active-text', 'bg-tab-active', 'shadow-xl', 'shadow-tab-active/20'];
+    const standbyClasses = ['text-tab-inactive-text', 'bg-tab-inactive', 'border', 'border-panel-border'];
+
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.add('hidden'));
+        document.querySelectorAll('.tab-trigger').forEach(trigger => {
+            trigger.classList.remove(...activeClasses);
+            trigger.classList.add(...standbyClasses);
+        });
+        
+        const targetPanel = document.getElementById('tab-panel-' + tabId);
+        if (targetPanel) targetPanel.classList.remove('hidden');
+        
+        const activeTrigger = document.getElementById('tab-trigger-' + tabId);
+        if (activeTrigger) {
+            activeTrigger.classList.remove(...standbyClasses);
+            activeTrigger.classList.add(...activeClasses);
+        }
+    }
+
+    async function saveDesign() {
+        const data = {
+            light_primary: document.getElementById('light_primary').value,
+            light_secondary: document.getElementById('light_secondary').value,
+            light_bg: document.getElementById('light_bg').value,
+            light_panel: document.getElementById('light_panel').value,
+            
+            dark_primary: document.getElementById('dark_primary').value,
+            dark_secondary: document.getElementById('dark_secondary').value,
+            dark_bg: document.getElementById('dark_bg').value,
+            dark_panel: document.getElementById('dark_panel').value
+        };
+
+        try {
+            const response = await fetch('/design/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            if (result.status === 'success') {
+                showToast(result.message, 'success');
+                // Optional: reload styles after a short delay
+                setTimeout(() => window.location.reload(), 1000);
+            } else {
+                showToast(result.message, 'error');
+            }
+        } catch (error) {
+            showToast('Error al conectar con el servidor', 'error');
+        }
+    }
+</script>
+{% endblock %}
