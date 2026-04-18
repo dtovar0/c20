@@ -1,0 +1,29 @@
+/* Audit Table Custom Styles */
+#auditTableBody {
+    height: auto;
+}
+
+#auditTableBody tr {
+    height: 1px; /* Hack para que las filas se expandan equitativamente ocupando el 100% */
+}
+
+thead tr {
+    height: 60px; /* Altura ajustada a 60px por solicitud del usuario */
+}
+
+#auditTableBody tr td:first-child {
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+    border-left: 1px solid rgb(var(--color-surface-container-border) / 0.3);
+}
+
+#auditTableBody tr td:last-child {
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-right: 1px solid rgb(var(--color-surface-container-border) / 0.3);
+}
+
+#auditTableBody tr td {
+    border-top: 1px solid rgb(var(--color-surface-container-border) / 0.3);
+    border-bottom: 1px solid rgb(var(--color-surface-container-border) / 0.3);
+}

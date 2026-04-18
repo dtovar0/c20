@@ -3,91 +3,82 @@
 {% block breadcrumbs %}
 <span class="text-secondary">Nexus</span>
 <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-<span class="text-primary">Dashboard</span>
+<span class="text-accent-a">Dashboard Monocromático</span>
 {% endblock %}
 
 {% block content %}
 <div id="dashboardWrapper" class="h-full flex flex-col space-y-8 animate-fade-in">
     <!-- Quick Stats -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div class="bg-white dark:bg-slate-900 p-6 rounded-base border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all">
-            <p class="text-xs font-bold text-secondary uppercase tracking-wider">Usuarios Activos</p>
+        <!-- Card 1 -->
+        <div class="bg-accent-a/40 dark:bg-accent-a/40 p-6 rounded-base border border-accent-a/50 shadow-xl shadow-accent-a/10 transition-all flex flex-col">
+            <span class="text-[10px] font-black text-accent-a uppercase tracking-widest pl-1">Usuarios Activos</span>
             <div class="flex items-end justify-between mt-4">
-                <h3 class="text-2xl font-bold">1,284</h3>
-                <span class="text-green-500 text-xs font-bold bg-green-500/10 px-2 py-1 rounded-full">+12%</span>
+                <h3 class="text-2xl font-black text-white">1,284</h3>
+                <span class="text-accent-a text-[10px] font-bold bg-accent-a/20 px-2 py-1 rounded-full uppercase tracking-tighter shadow-sm">+12%</span>
             </div>
         </div>
-        <div class="bg-white dark:bg-slate-900 p-6 rounded-base border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all">
-            <p class="text-xs font-bold text-secondary uppercase tracking-wider">Módulos Cargados</p>
+        <!-- Card 2 -->
+        <div class="bg-accent-a/40 dark:bg-accent-a/40 p-6 rounded-base border border-accent-a/50 shadow-xl shadow-accent-a/10 transition-all flex flex-col">
+            <span class="text-[10px] font-black text-accent-a uppercase tracking-widest pl-1">Módulos Cargados</span>
             <div class="flex items-end justify-between mt-4">
-                <h3 class="text-2xl font-bold">12</h3>
-                <span class="text-blue-500 text-xs font-bold bg-blue-500/10 px-2 py-1 rounded-full">Estable</span>
+                <h3 class="text-2xl font-black text-white">12</h3>
+                <span class="text-accent-a text-[10px] font-bold bg-accent-a/20 px-2 py-1 rounded-full uppercase tracking-tighter shadow-sm">Estable</span>
             </div>
         </div>
-        <div class="bg-white dark:bg-slate-900 p-6 rounded-base border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all">
-            <p class="text-xs font-bold text-secondary uppercase tracking-wider">Tiempo de Carga</p>
+        <!-- Card 3 -->
+        <div class="bg-accent-a/40 dark:bg-accent-a/40 p-6 rounded-base border border-accent-a/50 shadow-xl shadow-accent-a/10 transition-all flex flex-col">
+            <span class="text-[10px] font-black text-accent-a uppercase tracking-widest pl-1">Tiempo de Carga</span>
             <div class="flex items-end justify-between mt-4">
-                <h3 class="text-2xl font-bold">420ms</h3>
-                <span class="text-green-500 text-xs font-bold bg-green-500/10 px-2 py-1 rounded-full">-50ms</span>
+                <h3 class="text-2xl font-black text-white">420ms</h3>
+                <span class="text-accent-a text-[10px] font-bold bg-accent-a/20 px-2 py-1 rounded-full uppercase tracking-tighter shadow-sm">-50ms</span>
             </div>
         </div>
-        <div class="bg-white dark:bg-slate-900 p-6 rounded-base border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all">
-            <p class="text-xs font-bold text-secondary uppercase tracking-wider">Versión System</p>
+        <!-- Card 4 -->
+        <div class="bg-accent-a/40 dark:bg-accent-a/40 p-6 rounded-base border border-accent-a/50 shadow-xl shadow-accent-a/10 transition-all flex flex-col">
+            <span class="text-[10px] font-black text-accent-a uppercase tracking-widest pl-1">Versión System</span>
             <div class="flex items-end justify-between mt-4">
-                <h3 class="text-2xl font-bold text-primary">v8.2</h3>
-                <span class="text-accent text-xs font-bold bg-accent/10 px-2 py-1 rounded-full">PRO</span>
+                <h3 class="text-2xl font-black text-accent-a">v8.2</h3>
+                <span class="text-accent-a text-[10px] font-bold bg-accent-a/20 px-2 py-1 rounded-full uppercase tracking-tighter shadow-sm">PRO</span>
             </div>
         </div>
     </div>
 
-    <!-- Large Section Example -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow ">
-        <!-- Columna 1: Dos Paneles Horizontales (Stacked) -->
-        <div class="flex flex-col gap-6 lg:col-span-1">
-            <!-- Panel A: Status de Red -->
-            <div class="flex-grow bg-white dark:bg-slate-900 p-8 rounded-base border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all flex flex-col">
-                <h4 class="text-sm font-bold uppercase tracking-wider text-secondary mb-4">Status de Red</h4>
-                <div class="flex-grow flex items-center justify-center border-2 border-dashed border-gray-100 dark:border-gray-800 rounded-lg group hover:border-primary/30 transition-colors px-4 text-center">
-                    <p class="text-xs text-secondary group-hover:text-primary transition-colors italic">Escaneo activo: 12ms latencia</p>
+    <!-- Main Grid Content -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 flex-grow">
+        <!-- Center Column (Main Logic) -->
+        <div class="lg:col-span-2 space-y-8">
+            <div class="bg-accent-a/40 dark:bg-accent-a/40 border border-accent-a/50 rounded-base shadow-2xl p-8 h-full">
+                <h2 class="text-xs font-black text-accent-a uppercase tracking-[0.3em] mb-6">Estado del Núcleo</h2>
+                <div class="w-full bg-accent-a/20 rounded-full h-1.5 mb-8">
+                    <div class="bg-accent-a h-full rounded-full animate-pulse shadow-lg shadow-accent-a/50" style="width: 85%"></div>
                 </div>
-            </div>
-
-            <!-- Panel B: Seguridad -->
-            <div class="flex-grow bg-white dark:bg-slate-900 p-8 rounded-base border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all flex flex-col">
-                <h4 class="text-sm font-bold uppercase tracking-wider text-secondary mb-4">Seguridad Nucleo</h4>
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between text-xs">
-                        <span class="text-secondary uppercase">Cifrado AES</span>
-                        <span class="text-accent font-bold">ACTIVO</span>
-                    </div>
-                    <div class="h-1 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
-                        <div class="h-full bg-accent w-full rounded-full"></div>
+                <div class="grid grid-cols-2 gap-8">
+                    <div class="space-y-4">
+                        <p class="text-[9px] font-bold text-accent-a/60 uppercase tracking-widest">Sincronización</p>
+                        <p class="text-lg font-black text-white tracking-tighter italic">ACTIVA / 98.4%</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Columna 2: Actividad Reciente -->
-        <div class="bg-white dark:bg-slate-900 p-8 rounded-base border border-gray-200 dark:border-gray-800 flex flex-col shadow-sm hover:shadow-md transition-all">
-            <h4 class="text-lg font-bold mb-6">Actividad Reciente</h4>
-            <div class="flex-grow flex items-center justify-center border-2 border-dashed border-gray-100 dark:border-gray-800 rounded-lg">
-                <p class="text-secondary text-sm">Cargando gráfico de actividad...</p>
-            </div>
-        </div>
-
-        <!-- Columna 3: Nexus Core AI Card Original -->
-        <div class="bg-gradient-to-br from-primary to-accent p-8 rounded-base text-white shadow-xl shadow-primary/20 relative overflow-hidden flex flex-col justify-center">
-            <div class="relative z-10">
-                <h4 class="text-xl font-bold mb-4">Nexus Core AI</h4>
-                <p class="text-sm text-white/80 mb-8 leading-relaxed">
+        <!-- AI Panel (Accent Accent) -->
+        <div class="bg-accent-a/40 dark:bg-accent-a/40 border-2 border-accent-a shadow-2xl shadow-accent-a/20 rounded-base p-8 relative overflow-hidden group">
+            <div class="absolute -right-12 -top-12 w-48 h-48 bg-accent-a/10 blur-3xl rounded-full group-hover:bg-accent-a/20 transition-all"></div>
+            <h2 class="text-xs font-black text-accent-a uppercase tracking-[0.3em] mb-8 relative z-10">Inteligencia Nexus</h2>
+            <div class="space-y-6 relative z-10">
+                <div class="p-4 bg-accent-a/10 rounded-xl border border-accent-a/20">
+                    <p class="text-[11px] text-white/90 leading-relaxed font-bold italic">
+                        "Optimizando flujo de datos en el sector 7. Sistema estable."
+                    </p>
+                </div>
+                <p class="text-sm text-slate-900/90 mb-8 leading-relaxed font-bold">
                     El sistema de auto-generación está activo. Pronto podrás crear módulos completos con un solo comando.
                 </p>
-                <button class="bg-white text-primary px-4 py-2 rounded-base text-sm font-bold shadow-lg active:scale-95 transition-all">
+                <button class="bg-button-bg text-button-text px-8 py-3 rounded-full text-xs font-black uppercase tracking-widest shadow-2xl active:scale-95 transition-all">
                     Ver Roadmap
                 </button>
             </div>
-            <!-- Decorative Circle -->
-            <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
         </div>
     </div>
 </div>
