@@ -1,5 +1,27 @@
+html {
+    background-color: var(--color-body-bg);
+    overflow-y: scroll; /* Constante para evitar saltos horizontales */
+}
+
 body {
     font-family: 'Inter', sans-serif;
+    background-color: var(--color-body-bg);
+}
+
+/* === VIEW TRANSITIONS (Eliminate flickering) === */
+@view-transition {
+    navigation: auto;
+}
+
+/* Smooth fade for the whole page */
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation-duration: 0.25s;
+}
+
+/* Evitar que el scrollbar desaparezca durante la transición */
+html {
+    overflow-y: scroll;
 }
 
 .custom-scrollbar::-webkit-scrollbar {

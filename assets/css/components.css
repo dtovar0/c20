@@ -7,6 +7,28 @@
     height: 1px; /* Hack para que las filas se expandan equitativamente ocupando el 100% */
 }
 
+/* Locked Grid Architecture Dashboard 2 (3x2) */
+.dashboard-grid-locked {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    flex-grow: 1;
+    min-height: 0;
+}
+
+@media (min-width: 768px) {
+    .dashboard-grid-locked {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .dashboard-grid-locked {
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(2, 1fr); /* 2 FILAS BLOQUEADAS AL MISMO TAMAÑO */
+    }
+}
+
 thead tr {
     height: 60px; /* Altura ajustada a 60px por solicitud del usuario */
 }
@@ -26,4 +48,413 @@ thead tr {
 #auditTableBody tr td {
     border-top: 1px solid rgb(var(--color-surface-container-border) / 0.3);
     border-bottom: 1px solid rgb(var(--color-surface-container-border) / 0.3);
+}
+/* Premium KPI Cards */
+.kpi-card-premium {
+    position: relative;
+    background: rgb(var(--color-panel-fill));
+    border: 1px solid rgb(var(--color-panel-border));
+    border-radius: 24px;
+    padding: 24px;
+    padding-top: 28px;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.kpi-card-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+}
+
+.kpi-icon-wrapper {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+.kpi-card-premium:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.1);
+}
+
+.kpi-card-premium:hover .kpi-icon-wrapper {
+    transform: scale(1.1);
+}
+
+/* KPI Minimalist (Icon + Data) */
+.kpi-minimalist {
+    background-color: rgb(var(--color-panel-fill));
+    padding: 1.5rem;
+    border: 1px solid rgb(var(--color-panel-border));
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    transition: all 0.3s ease;
+    cursor: default;
+}
+
+.kpi-minimalist-rounded {
+    border-radius: 28px;
+}
+
+.kpi-minimalist-squared {
+    border-radius: 0 !important;
+}
+
+.kpi-minimalist:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.kpi-minimalist-icon-bg {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 9999px;
+    background-color: rgb(var(--color-surface-container-bg));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.kpi-minimalist-title {
+    font-size: 1.875rem;
+    font-weight: 900;
+    color: var(--color-body-text);
+    line-height: 1.25;
+    letter-spacing: -0.05em;
+}
+
+.kpi-minimalist-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgb(var(--color-label-text));
+    letter-spacing: -0.025em;
+}
+
+/* KPI Conversion (Two-Tone Block) */
+.kpi-conversion {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    cursor: default;
+}
+
+.kpi-conversion-rounded {
+    border-radius: 24px;
+}
+
+.kpi-conversion-squared {
+    border-radius: 0 !important;
+}
+
+.kpi-conversion:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.kpi-conversion-top {
+    background-color: rgb(var(--color-bi-card-logistics));
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.kpi-conversion-bottom {
+    background-color: rgb(var(--color-secondary));
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.kpi-conversion-value {
+    font-size: 2.25rem;
+    font-weight: 900;
+    color: white;
+    line-height: 1;
+}
+
+.kpi-conversion-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 0.75rem;
+}
+
+/* KPI Road Specialized (Base Structure) */
+.kpi-road {
+    background-color: rgb(var(--color-panel-fill));
+    padding: 1rem;
+    border: 1px solid rgb(var(--color-panel-border));
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 120px;
+    cursor: default;
+}
+
+.kpi-road-rounded {
+    border-radius: 18px;
+}
+
+.kpi-road-squared {
+    border-radius: 0 !important;
+}
+
+.kpi-road:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.kpi-road-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-body-text);
+}
+
+.kpi-road-value {
+    font-size: 1.875rem;
+    font-weight: 900;
+    color: #ef4444; /* Mantengo rojo para métrica crítica */
+    letter-spacing: -0.05em;
+}
+
+.kpi-road-goal {
+    background-color: #eef2ff;
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid #e0e7ff;
+    font-size: 11px;
+    font-weight: 700;
+    color: #475569;
+}
+
+.kpi-road-progress-bg {
+    margin-top: 0.75rem;
+    position: relative;
+    height: 0.75rem;
+    width: 100%;
+    background-color: rgb(var(--color-surface-container-bg));
+    border-radius: 9999px;
+    overflow: hidden;
+    border: 1px solid rgb(var(--color-surface-container-border));
+}
+
+.kpi-road-progress-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(to right, #0284c7, #0ea5e9, #22d3ee);
+    border-radius: 9999px;
+}
+
+/* KPI Gauge Specialized (Base Structure) */
+.kpi-gauge {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background-color: rgb(var(--color-panel-fill));
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    border: 1px solid rgb(var(--color-panel-border));
+    transition: all 0.3s ease;
+    cursor: default;
+}
+
+.kpi-gauge-rounded {
+    border-radius: 20px;
+}
+
+.kpi-gauge-squared {
+    border-radius: 0 !important;
+}
+
+.kpi-gauge:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.kpi-gauge-header {
+    background-color: #393d74;
+    padding: 0.5rem 0;
+    text-align: center;
+}
+
+.kpi-gauge-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+}
+
+.kpi-gauge-body {
+    padding: 0.75rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.kpi-gauge-percentage {
+    font-size: 1.25rem;
+    font-weight: 900;
+    color: var(--color-body-text);
+    letter-spacing: -0.05em;
+}
+
+.kpi-gauge-label {
+    font-size: 9px;
+    font-weight: 700;
+    color: rgb(var(--color-label-text));
+    text-transform: uppercase;
+}
+
+/* --- MONITOREO ESPECIALIZADO DASHBOARD 2 --- */
+
+/* 1. Status High-Impact */
+.monitor-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    position: relative;
+}
+
+.monitor-status-dot::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    background: inherit;
+    opacity: 0.4;
+    animation: ping 2s infinite;
+}
+
+/* 2. Visual Analytics (Bars) */
+.monitor-bar-item {
+    background-color: rgb(var(--color-primary) / 0.2);
+    border-radius: 2px;
+    transition: height 0.3s ease;
+}
+
+.monitor-bar-item:hover {
+    background-color: rgb(var(--color-primary) / 0.6);
+}
+
+/* 3. Service Matrix */
+.monitor-matrix-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.monitor-matrix-dot {
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+    background-color: rgb(var(--color-surface-container-bg));
+    border: 1px solid rgb(var(--color-surface-container-border));
+}
+
+/* Stacked Horizontal Bar Chart (Mirror Analytics) */
+.stacked-bar-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: 100%;
+}
+
+.stacked-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-grow: 1;
+}
+
+.stacked-bar-label {
+    width: 45px;
+    font-[9px];
+    font-weight: 900;
+    color: rgb(var(--color-label) / 0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+}
+
+.stacked-bar-track {
+    flex-grow: 1;
+    height: 10px;
+    background-color: rgb(var(--color-surface-container-bg));
+    border-radius: 4px;
+    display: flex;
+    overflow: hidden;
+    border: 1px solid rgb(var(--color-surface-container-border) / 0.3);
+}
+
+.stacked-segment {
+    height: 100%;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.stacked-segment-primary { background-color: rgb(var(--color-primary)); }
+.stacked-segment-purple { background-color: #8b5cf6; }
+.stacked-segment-secondary { background-color: rgb(var(--color-secondary)); }
+
+.monitor-legend-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 2px;
+}
+
+
+.monitor-matrix-dot.active { background-color: rgb(var(--color-success)); border-color: rgb(var(--color-success) / 0.5); }
+.monitor-matrix-dot.warning { background-color: #f59e0b; border-color: #fbbf24; }
+.monitor-matrix-dot.error { background-color: #ef4444; border-color: #fca5a5; }
+
+/* 4. Tactical Timeline */
+.monitor-timeline {
+    position: relative;
+    padding-left: 20px;
+    border-left: 1px dashed rgb(var(--color-panel-border));
+}
+
+.monitor-timeline-item {
+    position: relative;
+    padding-bottom: 20px;
+}
+
+.monitor-timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -24px;
+    top: 4px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: rgb(var(--color-panel-border));
+    border: 2px solid rgb(var(--color-panel-fill));
+}
+
+/* 5. Resource Gauges */
+.monitor-progress-ring {
+    transform: rotate(-90deg);
+}
+
+.monitor-progress-ring-circle {
+    transition: stroke-dashoffset 0.5s ease-in-out;
 }

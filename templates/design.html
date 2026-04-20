@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block content %}
-<div id="designWrapper" class="w-full h-full flex flex-col animate-fade-in relative">
+<div id="designWrapper" class="w-full h-full flex flex-col relative">
     <!-- Luxury Tabs Navigation -->
     <div class="relative border-b border-panel-border backdrop-blur-lg transition-all duration-300">
         <div class="flex items-center p-1.5 gap-2">
@@ -198,58 +198,5 @@
     </div>
 </div>
 
-<script>
-    const activeClasses = ['text-tab-active-text', 'bg-tab-active', 'shadow-xl', 'shadow-tab-active/20'];
-    const standbyClasses = ['text-tab-inactive-text', 'bg-tab-inactive', 'border', 'border-panel-border'];
-
-    function switchTab(tabId) {
-        document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.add('hidden'));
-        document.querySelectorAll('.tab-trigger').forEach(trigger => {
-            trigger.classList.remove(...activeClasses);
-            trigger.classList.add(...standbyClasses);
-        });
-        
-        const targetPanel = document.getElementById('tab-panel-' + tabId);
-        if (targetPanel) targetPanel.classList.remove('hidden');
-        
-        const activeTrigger = document.getElementById('tab-trigger-' + tabId);
-        if (activeTrigger) {
-            activeTrigger.classList.remove(...standbyClasses);
-            activeTrigger.classList.add(...activeClasses);
-        }
-    }
-
-    async function saveDesign() {
-        const data = {
-            light_primary: document.getElementById('light_primary').value,
-            light_secondary: document.getElementById('light_secondary').value,
-            light_bg: document.getElementById('light_bg').value,
-            light_panel: document.getElementById('light_panel').value,
-            
-            dark_primary: document.getElementById('dark_primary').value,
-            dark_secondary: document.getElementById('dark_secondary').value,
-            dark_bg: document.getElementById('dark_bg').value,
-            dark_panel: document.getElementById('dark_panel').value
-        };
-
-        try {
-            const response = await fetch('/design/update', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-
-            const result = await response.json();
-            if (result.status === 'success') {
-                showToast(result.message, 'success');
-                // Optional: reload styles after a short delay
-                setTimeout(() => window.location.reload(), 1000);
-            } else {
-                showToast(result.message, 'error');
-            }
-        } catch (error) {
-            showToast('Error al conectar con el servidor', 'error');
-        }
-    }
-</script>
+<script src="{{ url_for('serve_assets', filename='js/design.js') }}"></script>
 {% endblock %}

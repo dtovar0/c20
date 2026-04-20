@@ -9,20 +9,20 @@
 {% endblock %}
 
 {% block content %}
-<div id="settingsWrapper" class="w-full h-full flex flex-col animate-fade-in relative">
+<div id="settingsWrapper" class="w-full h-full flex flex-col relative">
     <!-- Luxury Tabs Navigation -->
     <div class="relative border-b border-panel-border backdrop-blur-lg transition-all duration-300">
         <div class="flex items-center p-1.5 gap-2">
             <!-- General Tab (Active) -->
             <button onclick="switchTab('general')" id="tab-trigger-general" 
-                class="tab-trigger relative px-10 py-3.5 flex items-center gap-3 rounded-xl text-[10px] font-black uppercase tracking-[0.25em] transition-all duration-300 z-10 text-tab-active-text bg-tab-active shadow-xl shadow-tab-active/20 active:scale-95">
+                class="tab-trigger w-60 relative py-3.5 flex items-center justify-center gap-3 rounded-xl text-[10px] font-black uppercase tracking-[0.25em] transition-all duration-300 z-10 text-tab-active-text bg-tab-active shadow-xl shadow-tab-active/20 active:scale-95">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
                 <span>General</span>
             </button>
 
             <!-- Database Tab (Standby) -->
             <button onclick="switchTab('database')" id="tab-trigger-database" 
-                class="tab-trigger relative px-10 py-3.5 flex items-center gap-3 rounded-xl text-[10px] font-black uppercase tracking-[0.25em] transition-all duration-300 z-10 text-tab-inactive-text bg-tab-inactive border border-panel-border active:scale-95">
+                class="tab-trigger w-60 relative py-3.5 flex items-center justify-center gap-3 rounded-xl text-[10px] font-black uppercase tracking-[0.25em] transition-all duration-300 z-10 text-tab-inactive-text bg-tab-inactive border border-panel-border active:scale-95">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
                 <span>Database</span>
             </button>
@@ -56,11 +56,11 @@
             </header>
 
             <!-- PANEL BODY -->
-            <main class="flex-grow p-6 overflow-y-auto custom-scrollbar">
-                <div class="grid grid-cols-2 gap-6 h-full">
+            <main class="flex-grow p-6 overflow-hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full min-h-0">
                     <!-- Vertical Panel A (Tokenized) -->
-                    <div class="tab-panel-inner">
-
+                    <div class="tab-panel-inner flex flex-col h-full overflow-y-auto custom-scrollbar">
+                        <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-6 px-1 text-center">Configuración de Portal</label>
                         <!-- Form Group: Nombre del Portal -->
                         <div class="group mb-8">
                             <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-3 px-1">Nombre del Portal</label>
@@ -101,8 +101,8 @@
                     </div>
 
                     <!-- Vertical Panel B (Preview Area) -->
-                    <div class="tab-panel-inner">
-                        <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-2 px-1">Vista Previa</label>
+                    <div class="tab-panel-inner flex flex-col h-full overflow-y-auto custom-scrollbar">
+                        <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-6 px-1 text-center">Identidad Visual</label>
                         
                         <!-- Preview Board -->
                         <div class="flex-grow min-h-0 bg-surface-container rounded-[24px] border border-surface-container-border flex flex-col items-center justify-center p-4 shadow-xl shadow-primary/5 relative overflow-hidden">
@@ -269,25 +269,5 @@
     </div>
 </div>
 
-<script>
-    const activeClasses = ['text-tab-active-text', 'bg-tab-active', 'shadow-xl', 'shadow-tab-active/20'];
-    const standbyClasses = ['text-tab-inactive-text', 'bg-tab-inactive', 'border', 'border-panel-border'];
-
-    function switchTab(tabId) {
-        document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.add('hidden'));
-        document.querySelectorAll('.tab-trigger').forEach(trigger => {
-            trigger.classList.remove(...activeClasses);
-            trigger.classList.add(...standbyClasses);
-        });
-        
-        const targetPanel = document.getElementById('tab-panel-' + tabId);
-        if (targetPanel) targetPanel.classList.remove('hidden');
-        
-        const activeTrigger = document.getElementById('tab-trigger-' + tabId);
-        if (activeTrigger) {
-            activeTrigger.classList.remove(...standbyClasses);
-            activeTrigger.classList.add(...activeClasses);
-        }
-    }
-</script>
+<script src="{{ url_for('serve_assets', filename='js/settings.js') }}"></script>
 {% endblock %}

@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard 2 | Nexus High Fidelity{% endblock %}
+
+{% block breadcrumbs %}
+<span class="text-secondary">Nexus</span>
+<svg class="w-4 h-4 text-label/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+<span class="text-primary font-bold">Command Center v2.0</span>
+{% endblock %}
+
+{% block content %}
+<div id="dashboardWrapper2" class="w-full h-full flex flex-col space-y-8 p-1">
+    
+    <!-- Top KPI Row (Semantic Components) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="kpi-minimalist -rounded">
+            <p class="kpi-label">Uptime Global</p>
+            <h3 class="kpi-value text-success">99.99%</h3>
+            <span class="kpi-trend trend-up">Estable</span>
+        </div>
+        <div class="kpi-minimalist -rounded border-l-4 border-l-primary/30">
+            <p class="kpi-label">Mirror Sync</p>
+            <h3 class="kpi-value">1:1</h3>
+            <span class="kpi-trend trend-neutral">Real-time</span>
+        </div>
+        <div class="kpi-minimalist -rounded">
+            <p class="kpi-label">Latencia Mirror</p>
+            <h3 class="kpi-value text-primary">1.2ms</h3>
+            <span class="kpi-trend trend-down">Optimizada</span>
+        </div>
+        <div class="kpi-minimalist -rounded bg-primary/5">
+            <p class="kpi-label">AI Engine Status</p>
+            <div class="flex items-center gap-2 mt-2">
+                <div class="w-2 h-2 rounded-full bg-success animate-pulse"></div>
+                <h3 class="text-lg font-black text-primary uppercase italic">Active</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Grid Content (3x2 High Density - Chart.js Architecture) -->
+    <div class="dashboard-grid-locked pb-4">
+        <!-- Panel 1: Core Mirror Status -->
+        <div class="bg-panel-fill border border-panel-border rounded-2xl shadow-sm p-6 flex flex-col h-full">
+            <div class="flex items-center justify-between mb-2">
+                <h2 class="text-[10px] font-black text-label/80 uppercase tracking-[0.2em]">Mirror Status</h2>
+                <div class="monitor-status-dot bg-success"></div>
+            </div>
+            <div class="flex-grow flex flex-col justify-center min-h-0">
+                <div id="mirrorChartApex"></div>
+            </div>
+        </div>
+
+        <!-- Panel 2: Predictive Demand -->
+        <div class="bg-panel-fill border border-panel-border rounded-2xl shadow-sm p-6 flex flex-col h-full">
+            <div class="flex items-center justify-between mb-2">
+                <h2 class="text-[10px] font-black text-label/80 uppercase tracking-[0.2em]">Predicción de Demanda</h2>
+                <span id="demandGrowth" class="text-[10px] font-black text-success">+12.5%</span>
+            </div>
+            <div class="flex-grow flex flex-col justify-center min-h-0">
+                <div id="demandChartApex"></div>
+            </div>
+        </div>
+
+        <!-- Panel 3: Global Service Matrix -->
+        <div class="bg-panel-fill border border-panel-border rounded-2xl shadow-sm p-6 flex flex-col h-full">
+            <h2 class="text-[10px] font-black text-label/80 uppercase tracking-[0.2em] mb-4">Global Nodes Health</h2>
+            <div class="flex-grow flex flex-col justify-between">
+                <div class="monitor-matrix-grid flex-grow content-center">
+                    <div class="monitor-matrix-dot active"></div>
+                    <div class="monitor-matrix-dot active"></div>
+                    <div class="monitor-matrix-dot warning"></div>
+                    <div class="monitor-matrix-dot active"></div>
+                    <div class="monitor-matrix-dot active"></div>
+                    <div class="monitor-matrix-dot active"></div>
+                    <div class="monitor-matrix-dot active"></div>
+                    <div class="monitor-matrix-dot active"></div>
+                </div>
+                <div class="mt-4 flex gap-4 pt-4 border-t border-panel-border/30">
+                    <div class="flex items-center gap-1"><span class="text-[8px] font-bold text-label/60">7 OK</span></div>
+                    <div class="flex items-center gap-1"><span class="text-[8px] font-bold text-label/60">1 WRN</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel 4: AI Activity Pulse -->
+        <div class="bg-panel-fill border border-panel-border rounded-2xl shadow-sm p-6 flex flex-col h-full">
+            <div class="flex items-center justify-between mb-2">
+                <h2 class="text-[10px] font-black text-label/80 uppercase tracking-[0.2em]">AI Activity Pulse</h2>
+                <span class="text-[10px] font-bold text-success font-mono uppercase">Live Pulse</span>
+            </div>
+            <div class="flex-grow min-h-0">
+                <div id="aiPulseChartApex"></div>
+            </div>
+        </div>
+
+        <!-- Panel 5: CPU Engine Distribution -->
+        <div class="bg-panel-fill border border-panel-border rounded-2xl shadow-sm p-6 flex flex-col h-full">
+            <h2 class="text-[10px] font-black text-label/80 uppercase tracking-[0.2em] mb-2">CPU Engine Load</h2>
+            <div class="flex-grow flex items-center justify-center min-h-0 relative">
+                <div id="cpuEngineChartApex" class="w-full"></div>
+                <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mb-4">
+                    <span class="text-xl font-black text-label leading-none">2.11M</span>
+                    <span class="text-[7px] font-black text-primary uppercase mt-1">Ops / s</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel 6: Network Throughput -->
+        <div class="bg-panel-fill border-2 border-primary/20 rounded-2xl shadow-xl shadow-primary/5 p-6 flex flex-col h-full relative overflow-hidden">
+            <div class="flex items-center justify-between mb-2">
+                <h2 class="text-[10px] font-black text-label/80 uppercase tracking-[0.2em]">Throughput Pulse</h2>
+                <div class="monitor-status-dot bg-primary"></div>
+            </div>
+            <div class="flex-grow min-h-0">
+                <div id="networkPulseChartApex"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dashboard Logic Assets -->
+<script src="{{ url_for('serve_assets', filename='js/dashboard_2.js') }}"></script>
+{% endblock %}

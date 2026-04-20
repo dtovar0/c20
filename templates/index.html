@@ -10,76 +10,246 @@
 <div id="dashboardWrapper" class="h-full flex flex-col space-y-8 animate-fade-in">
     <!-- Quick Stats -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <!-- Card 1 -->
-        <div class="bg-panel-fill p-6 rounded-2xl border border-panel-border shadow-xl transition-all flex flex-col">
-            <span class="text-[10px] font-black text-label/80 uppercase tracking-widest pl-1">Usuarios Activos</span>
-            <div class="flex items-end justify-between mt-4">
-                <h3 class="text-2xl font-black text-primary">1,284</h3>
-                <span class="text-label/80 text-[10px] font-bold bg-primary/10 px-2 py-1 rounded-full uppercase tracking-tighter shadow-sm">+12%</span>
+        <!-- Card 1: Headcount (Peach) -->
+        <div class="kpi-card-premium">
+            <div class="kpi-card-bar bg-peach"></div>
+            <div class="flex items-center gap-10">
+                <!-- Icon Section -->
+                <div class="flex-shrink-0">
+                    <div class="kpi-icon-wrapper bg-peach/10 text-peach">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    </div>
+                </div>
+                <!-- Text Section -->
+                <div class="flex flex-col">
+                    <span class="text-sm font-bold text-label/60 tracking-tight uppercase">Headcount</span>
+                    <h3 class="text-3xl font-black text-body-text tracking-tighter mt-1">23,152</h3>
+                </div>
             </div>
         </div>
-        <!-- Card 2 -->
-        <div class="bg-panel-fill p-6 rounded-2xl border border-panel-border shadow-xl transition-all flex flex-col">
-            <span class="text-[10px] font-black text-label/80 uppercase tracking-widest pl-1">Módulos Cargados</span>
-            <div class="flex items-end justify-between mt-4">
-                <h3 class="text-2xl font-black text-primary">12</h3>
-                <span class="text-label/80 text-[10px] font-bold bg-primary/10 px-2 py-1 rounded-full uppercase tracking-tighter shadow-sm">Estable</span>
+
+        <!-- Card 2: Modules (Emerald) -->
+        <div class="kpi-card-premium">
+            <div class="kpi-card-bar bg-emerald-500"></div>
+            <div class="flex items-center gap-10">
+                <!-- Icon Section -->
+                <div class="flex-shrink-0">
+                    <div class="kpi-icon-wrapper bg-emerald-500/10 text-emerald-500">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    </div>
+                </div>
+                <!-- Text Section -->
+                <div class="flex flex-col">
+                    <span class="text-sm font-bold text-label/60 tracking-tight uppercase">Módulos</span>
+                    <h3 class="text-3xl font-black text-body-text tracking-tighter mt-1">12 Active</h3>
+                </div>
             </div>
         </div>
-        <!-- Card 3 -->
-        <div class="bg-panel-fill p-6 rounded-2xl border border-panel-border shadow-xl transition-all flex flex-col">
-            <span class="text-[10px] font-black text-label/80 uppercase tracking-widest pl-1">Tiempo de Carga</span>
-            <div class="flex items-end justify-between mt-4">
-                <h3 class="text-2xl font-black text-primary">420ms</h3>
-                <span class="text-label/80 text-[10px] font-bold bg-primary/10 px-2 py-1 rounded-full uppercase tracking-tighter shadow-sm">-50ms</span>
+
+        <!-- Card 3: Performance (Violet) -->
+        <div class="kpi-card-premium">
+            <div class="kpi-card-bar bg-violet"></div>
+            <div class="flex items-center gap-10">
+                <!-- Icon Section -->
+                <div class="flex-shrink-0">
+                    <div class="kpi-icon-wrapper bg-violet/10 text-violet">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                </div>
+                <!-- Text Section -->
+                <div class="flex flex-col">
+                    <span class="text-sm font-bold text-label/60 tracking-tight uppercase">Latency</span>
+                    <h3 class="text-3xl font-black text-body-text tracking-tighter mt-1">420ms</h3>
+                </div>
             </div>
         </div>
-        <!-- Card 4 -->
-        <div class="bg-panel-fill p-6 rounded-2xl border border-panel-border shadow-xl transition-all flex flex-col">
-            <span class="text-[10px] font-black text-label/80 uppercase tracking-widest pl-1">Versión System</span>
-            <div class="flex items-end justify-between mt-4">
-                <h3 class="text-2xl font-black text-label/80">v8.2</h3>
-                <span class="text-label/80 text-[10px] font-bold bg-primary/10 px-2 py-1 rounded-full uppercase tracking-tighter shadow-sm">PRO</span>
+
+        <!-- Card 4: Version (Sky) -->
+        <div class="kpi-card-premium">
+            <div class="kpi-card-bar bg-sky"></div>
+            <div class="flex items-center gap-10">
+                <!-- Icon Section -->
+                <div class="flex-shrink-0">
+                    <div class="kpi-icon-wrapper bg-sky/10 text-sky">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    </div>
+                </div>
+                <!-- Text Section -->
+                <div class="flex flex-col">
+                    <span class="text-sm font-bold text-label/60 tracking-tight uppercase">System</span>
+                    <h3 class="text-3xl font-black text-body-text tracking-tighter mt-1">v8.2 PRO</h3>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Main Grid Content -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 flex-grow">
-        <!-- Center Column (Main Logic) -->
-        <div class="lg:col-span-2 space-y-8">
-            <div class="bg-panel-fill border border-panel-border rounded-2xl shadow-sm p-8 h-full">
-                <h2 class="text-xs font-black text-label/80 uppercase tracking-[0.3em] mb-6">Estado del Núcleo</h2>
-                <div class="w-full bg-primary/10 rounded-full h-1.5 mb-8">
-                    <div class="bg-primary h-full rounded-full animate-pulse shadow-lg shadow-primary/50" style="width: 85%"></div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 flex-grow items-stretch">
+        <!-- Dashboard Quad-Core (Left Section) -->
+        <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Card 1: Logistics / Booking Count (Conversion Design) -->
+            <div class="kpi-conversion kpi-conversion-rounded bg-bi-logistics border border-panel-border shadow-2xl group transition-all">
+                <div class="grid grid-cols-[1fr_auto] h-full items-center relative z-10 gap-4 p-6">
+                    <!-- Column 1: Info -->
+                    <div class="grid grid-rows-[auto_1fr] h-full">
+                        <div class="flex items-start">
+                            <svg class="w-10 h-10 text-white opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1-1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/></svg>
+                        </div>
+                        <div class="flex flex-col justify-end">
+                            <h3 class="text-4xl font-black text-white tracking-tighter">3.582</h3>
+                            <p class="text-[11px] font-bold text-white/70 uppercase tracking-widest mt-1">Booking Count</p>
+                        </div>
+                    </div>
+                    <!-- Column 2: Graph -->
+                    <div class="w-56 h-36 relative opacity-90 flex-shrink-0">
+                        <div id="bookingSparkline" class="w-full h-full"></div>
+                    </div>
                 </div>
-                <div class="grid grid-cols-2 gap-8">
-                    <div class="space-y-4">
-                        <p class="text-[9px] font-bold text-label/60 uppercase tracking-widest">Sincronización</p>
-                        <p class="text-lg font-black text-primary tracking-tighter italic">ACTIVA / 98.4%</p>
+            </div>
+
+            <!-- Card 2: Performance A / On Time (Premium Card Design) -->
+            <div class="kpi-card-premium border-l-4 border-l-primary group">
+                <div class="grid grid-cols-[1fr_auto] h-full items-center relative z-10 gap-4">
+                    <div class="grid grid-rows-[auto_1fr] h-full">
+                        <div class="kpi-icon-wrapper bg-primary/10 text-primary shadow-inner">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div class="flex flex-col justify-end mt-4">
+                            <h3 class="text-3xl font-black text-bi-main tracking-tighter">1,381</h3>
+                            <p class="text-[11px] font-black text-primary uppercase tracking-widest mt-1">On Time</p>
+                        </div>
+                    </div>
+                    <div class="relative w-56 h-56 flex items-center justify-center flex-shrink-0">
+                        <div id="onTimeRadial" class="w-full h-full"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Performance B / Late Delivery (Premium Card Design) -->
+            <div class="kpi-card-premium border-l-4 border-l-peach group">
+                <div class="grid grid-cols-[1fr_auto] h-full items-center relative z-10 gap-4">
+                    <div class="grid grid-rows-[auto_1fr] h-full">
+                        <div class="kpi-icon-wrapper bg-peach/10 text-peach shadow-inner">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        </div>
+                        <div class="flex flex-col justify-end mt-4">
+                            <h3 class="text-3xl font-black text-bi-main tracking-tighter">2,201</h3>
+                            <p class="text-[11px] font-black text-peach uppercase tracking-widest mt-1">Late Delivery</p>
+                        </div>
+                    </div>
+                    <div class="relative w-56 h-56 flex items-center justify-center flex-shrink-0">
+                        <div id="lateDeliveryRadial" class="w-full h-full"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4: Grid Data Metrics (Road Grid Design) -->
+            <div class="kpi-road kpi-road-rounded group">
+                <div class="grid grid-cols-2 grid-rows-2 h-full relative z-10 py-2">
+                    <div class="flex flex-col items-center justify-center text-center border-r border-b border-panel-border/30">
+                        <h4 class="text-2xl font-black text-bi-main tracking-tight">1.235</h4>
+                        <p class="text-[9px] font-black text-bi-muted uppercase tracking-widest mt-1">Driver</p>
+                    </div>
+                    <div class="flex flex-col items-center justify-center text-center border-b border-panel-border/30">
+                        <h4 class="text-2xl font-black text-bi-main tracking-tight">36</h4>
+                        <p class="text-[9px] font-black text-bi-muted uppercase tracking-widest mt-1">Customer</p>
+                    </div>
+                    <div class="flex flex-col items-center justify-center text-center border-r border-panel-border/30">
+                        <h4 class="text-2xl font-black text-bi-main tracking-tight">7.93</h4>
+                        <p class="text-[9px] font-black text-bi-muted uppercase tracking-widest mt-1">Avg OCT</p>
+                    </div>
+                    <div class="flex flex-col items-center justify-center text-center">
+                        <h4 class="text-2xl font-black text-bi-main tracking-tight">703</h4>
+                        <p class="text-[9px] font-black text-bi-muted uppercase tracking-widest mt-1">Avg Distance</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- AI Panel (Accent Accent) -->
-        <div class="bg-panel-fill border-2 border-panel-border shadow-2xl shadow-primary/5 rounded-2xl p-8 relative overflow-hidden group">
+        <!-- Activity Monitor (Right Column) -->
+        <div class="lg:col-span-1 h-full min-h-0 flex flex-col bg-panel-fill border border-panel-border shadow-2xl shadow-primary/5 rounded-2xl pt-6 px-8 pb-4 relative overflow-hidden group flex flex-col h-full">
             <div class="absolute -right-12 -top-12 w-48 h-48 bg-primary/5 blur-3xl rounded-full group-hover:bg-primary/10 transition-all"></div>
-            <h2 class="text-xs font-black text-label/80 uppercase tracking-[0.3em] mb-8 relative z-10">Inteligencia Nexus</h2>
-            <div class="space-y-6 relative z-10">
-                <div class="p-4 bg-surface-container rounded-xl border border-panel-border">
-                    <p class="text-[11px] text-primary/90 leading-relaxed font-bold italic">
-                        "Optimizando flujo de datos en el sector 7. Sistema estable."
-                    </p>
+            
+            <!-- Header (Ultra-Compact Padding) -->
+            <div class="flex items-center justify-between pb-4 mb-1 border-b border-panel-border/50 relative z-10">
+                <div class="flex items-center gap-4">
+                    <h2 class="text-xs font-black text-label/80 uppercase tracking-[0.3em]">Monitoreo de Actividad</h2>
+                    <div class="monitor-status-dot bg-success"></div>
                 </div>
-                <p class="text-sm text-slate-900/90 mb-8 leading-relaxed font-bold">
-                    El sistema de auto-generación está activo. Pronto podrás crear módulos completos con un solo comando.
-                </p>
-                <button class="bg-button-bg text-button-text px-8 py-3 rounded-full text-xs font-black uppercase tracking-widest shadow-2xl active:scale-95 transition-all">
-                    Ver Roadmap
-                </button>
+                
+                <!-- Action Arrow with Tooltip -->
+                <div class="relative group/tooltip">
+                    <button class="w-8 h-8 flex items-center justify-center bg-surface-container border border-panel-border rounded-lg text-label/60 hover:text-primary hover:border-primary/50 transition-all active:scale-90">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                    </button>
+                    <!-- Tooltip -->
+                    <div class="absolute bottom-full right-0 mb-3 px-3 py-1.5 bg-slate-900 border border-slate-800 text-[10px] font-bold text-white uppercase tracking-widest rounded-lg opacity-0 group-hover/tooltip:opacity-100 transition-all pointer-events-none whitespace-nowrap shadow-2xl">
+                        Ver más detalle
+                        <div class="absolute top-full right-4 w-2 h-2 bg-slate-900 border-r border-b border-slate-800 rotate-45 -mt-1"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Body: Activity (Zero-Void Filled Layout) -->
+            <div class="relative z-10 flex-grow overflow-hidden">
+                <div class="flex flex-col h-full justify-between">
+                    {% for i in range(8) %}
+                    <div class="group/row hover:bg-surface-container/30 transition-all cursor-default flex items-center flex-grow px-2 rounded-xl">
+                        <!-- Status Column -->
+                        <div class="w-6 flex-shrink-0">
+                            <div class="w-1.5 h-1.5 rounded-full 
+                                {% if i == 0 %}bg-primary shadow-[0_0_6px_rgba(var(--color-primary),0.6)]
+                                {% elif i == 2 %}bg-peach shadow-[0_0_6px_rgba(251,167,114,0.6)]
+                                {% else %}bg-label/20{% endif %}"></div>
+                        </div>
+                        
+                        <!-- Event Content -->
+                        <div class="flex-grow pr-4">
+                            <div class="flex flex-col justify-center">
+                                <p class="text-[12px] font-bold text-body-text/90 leading-tight truncate">
+                                    {% if i == 0 %}Optimización Sector 7{% elif i == 1 %}Backup completado{% elif i == 2 %}Alerta Puerto 8080{% else %}System Log #{{ 1024 - i }}{% endif %}
+                                </p>
+                                <p class="text-[10px] text-label/40 mt-1 leading-none truncate">
+                                    {% if i == 0 %}Latencia ajustada a 420ms.{% elif i == 1 %}Nodo secundario sincronizado.{% elif i == 2 %}Mitigación activa.{% else %}Procesado correctamente.{% endif %}
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Time Column -->
+                        <div class="w-12 text-right">
+                            <span class="text-[9px] font-black {% if i == 0 %}text-primary{% elif i == 2 %}text-peach{% else %}text-label/40{% endif %} uppercase tracking-tighter">
+                                {% if i == 0 %}2M{% elif i == 1 %}15M{% elif i == 2 %}1H{% else %}{{ i + 2 }}H{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Pagination Footer (Compact) -->
+            <div class="mt-2 pt-3 border-t border-panel-border/30 flex items-center justify-between relative z-10">
+                <div class="flex items-center gap-3">
+                    <span class="text-[10px] font-black text-label/40 uppercase tracking-widest">Página</span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-7 h-7 flex items-center justify-center bg-primary text-white text-[11px] font-black rounded-lg shadow-lg shadow-primary/20">1</span>
+                        <span class="w-7 h-7 flex items-center justify-center text-label/60 text-[11px] font-black hover:bg-surface-container rounded-lg cursor-pointer transition-all">2</span>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <button class="w-9 h-9 flex items-center justify-center border border-panel-border rounded-xl text-label/40 hover:text-primary transition-all opacity-40 cursor-not-allowed">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    </button>
+                    <button class="w-9 h-9 flex items-center justify-center border border-panel-border rounded-xl text-label/60 hover:text-primary hover:border-primary/50 transition-all active:scale-95">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 </div>
+    </div>
+</div>
+<!-- Dashboard Logic Assets -->
+<script src="{{ url_for('serve_assets', filename='js/dashboard_1.js') }}"></script>
 {% endblock %}

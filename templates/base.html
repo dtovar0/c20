@@ -7,11 +7,16 @@
     
     <!-- Meta SEO -->
     <meta name="description" content="Dashboard de alta densidad con diseño basado en tokens y arquitectura modular.">
+    <meta name="color-scheme" content="light dark">
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <script src="{{ url_for('serve_assets', filename='js/global.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
     <!-- Styles -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -19,8 +24,6 @@
     <link rel="stylesheet" href="{{ url_for('serve_assets', filename='css/global.css') }}?v={{ range(1000, 9999) | random }}">
     <link rel="stylesheet" href="{{ url_for('serve_assets', filename='css/main.css') }}?v={{ range(1000, 9999) | random }}">
     <link rel="stylesheet" href="{{ url_for('serve_assets', filename='css/components.css') }}?v={{ range(1000, 9999) | random }}">
-    
-    <script src="{{ url_for('serve_assets', filename='js/global.js') }}"></script>
     
     <script>
         tailwind.config = {
@@ -38,6 +41,10 @@
                         'accent-a': 'rgb(var(--color-accent-a) / <alpha-value>)',
                         'accent-b': 'rgb(var(--color-accent-b) / <alpha-value>)',
                         'accent-c': 'rgb(var(--color-accent-c) / <alpha-value>)',
+                        'peach': 'rgb(var(--color-accent-peach) / <alpha-value>)',
+                        'violet': 'rgb(var(--color-accent-violet) / <alpha-value>)',
+                        'sky': 'rgb(var(--color-accent-sky) / <alpha-value>)',
+                        'kpi-highlight': 'rgb(var(--color-kpi-highlight) / <alpha-value>)',
                         'panel-fill': 'rgb(var(--color-panel-fill))',
                         'panel-border': 'rgb(var(--color-panel-border))',
                         'audit-body': 'rgb(var(--color-audit-body))',
@@ -57,6 +64,10 @@
                         'surface-container': 'rgb(var(--color-surface-container-bg) / <alpha-value>)',
                         'surface-container-border': 'rgb(var(--color-surface-container-border) / <alpha-value>)',
                         'icon-picker-hover': 'rgb(var(--color-icon-picker-hover) / <alpha-value>)',
+                        'bi-logistics': 'rgb(var(--color-bi-card-logistics))',
+                        'bi-ring': 'rgb(var(--color-bi-ring-bg))',
+                        'bi-main': 'rgb(var(--color-bi-text-main))',
+                        'bi-muted': 'rgb(var(--color-bi-text-muted))',
                     },
                     borderRadius: {
                         'base': 'var(--radius-base)',
@@ -66,13 +77,13 @@
         }
     </script>
 </head>
-<body class="bg-bg text-text h-full overflow-hidden transition-colors duration-300">
+<body class="bg-bg text-text h-full overflow-hidden">
     <div class="flex h-full overflow-hidden">
         <!-- Sidebar -->
         {% include 'components/sidebar.html' %}
 
         <!-- Main Wrapper -->
-        <div id="mainContent" class="flex-grow flex flex-col h-full min-w-0 transition-all duration-300 bg-transparent">
+        <div id="mainContent" class="flex-grow flex flex-col h-full min-w-0 bg-bg">
             <!-- Topbar -->
             <header class="h-16 border-b border-panel-border bg-panel-fill/80 backdrop-blur-md sticky top-0 z-30 flex items-center justify-between px-6 transition-colors">
                 <div class="flex items-center gap-4">
@@ -116,7 +127,7 @@
             </header>
             
             <!-- Main Content -->
-            <main class="flex-grow overflow-y-auto custom-scrollbar p-6">
+            <main class="flex-grow overflow-y-auto custom-scrollbar pt-4 px-6 pb-6">
                 <div class="w-full h-full flex flex-col">
                     {% block content %}{% endblock %}
                 </div>

@@ -1,28 +1,43 @@
-// 1. DOM Interaction Logic
+// 1. Immediate Persistence Logic (Prevent Flickering)
+(() => {
+    const html = document.documentElement;
+    const storedTheme = localStorage.getItem('theme');
+    const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+    const isMobile = window.innerWidth < 1024;
+    
+    // Immediate Theme Apply
+    if (storedTheme === 'dark' || (!storedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        html.classList.add('dark');
+    } else {
+        html.classList.remove('dark');
+    }
+
+    // Immediate Sidebar State Apply (Global Class)
+    if (isCollapsed && !isMobile) {
+        html.classList.add('sidebar-is-collapsed');
+    }
+})();
+
+// 2. DOM Interaction Logic
 document.addEventListener('DOMContentLoaded', () => {
     const sidebar = document.getElementById('sidebar');
     const sidebarToggle = document.getElementById('sidebarToggle');
+    const html = document.documentElement;
     
-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        document.documentElement.classList.add('dark');
+    // Sidebar State Sync (Apply local styling if global class is present)
+    if (sidebar && html.classList.contains('sidebar-is-collapsed')) {
+        sidebar.classList.remove('w-64', 'min-w-64');
+        sidebar.classList.add('w-16', 'min-w-16', 'is-collapsed');
+        document.querySelectorAll('.sidebar-text').forEach(el => el.classList.add('hidden'));
     }
 
     if (sidebarToggle && sidebar) {
-        // Initialize from memory
-        const isMobileInit = window.innerWidth < 1024;
-        if (!isMobileInit && localStorage.getItem('sidebarCollapsed') === 'true') {
-            sidebar.classList.remove('w-64', 'min-w-64');
-            sidebar.classList.add('w-16', 'min-w-16', 'is-collapsed');
-            document.querySelectorAll('.sidebar-text').forEach(el => el.classList.add('hidden'));
-        }
-
         sidebarToggle.addEventListener('click', () => {
             const isMobile = window.innerWidth < 1024;
             
             if (isMobile) {
                 sidebar.classList.toggle('-translate-x-full');
             } else {
-                // Toggle collapsed state
                 sidebar.classList.toggle('w-64');
                 sidebar.classList.toggle('min-w-64');
                 sidebar.classList.toggle('w-16');
@@ -33,31 +48,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     el.classList.toggle('hidden');
                 });
 
-                // Persist memory
                 const isCollapsed = sidebar.classList.contains('is-collapsed');
                 localStorage.setItem('sidebarCollapsed', isCollapsed);
+                
+                // Keep HTML class in sync
+                if (isCollapsed) html.classList.add('sidebar-is-collapsed');
+                else html.classList.remove('sidebar-is-collapsed');
             }
         });
     }
 
-    // 3. Theme Toggle Logic
+    // 3. Theme Toggle Listener
     const themeToggle = document.getElementById('themeToggle');
-    const html = document.documentElement;
-    
-    // Set initial theme based on localStorage or system preference
-    const storedTheme = localStorage.getItem('theme');
-    if (storedTheme) {
-        if (storedTheme === 'dark') html.classList.add('dark');
-        else html.classList.remove('dark');
-    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        html.classList.add('dark');
-    }
-
     if (themeToggle) {
         themeToggle.addEventListener('click', () => {
             html.classList.toggle('dark');
-            const newTheme = html.classList.contains('dark') ? 'dark' : 'light';
-            localStorage.setItem('theme', newTheme);
+            localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
         });
     }
 });

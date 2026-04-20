@@ -37,9 +37,9 @@ let filteredData = [...auditData];
 function renderTable() {
     const tbody = document.getElementById('auditTableBody');
     if (!tbody) return;
-    
-    tbody.innerHTML = '';
-    
+
+    let html = '';
+
     const start = (currentPage - 1) * recordsPerPage;
     const end = start + recordsPerPage;
     const pageData = filteredData.slice(start, end);
@@ -47,7 +47,7 @@ function renderTable() {
 
     // State Case: No Results
     if (filteredData.length === 0) {
-        tbody.innerHTML += `
+        html += `
             <tr class="bg-surface-container/10 border border-dashed border-panel-border rounded-xl pointer-events-none">
                 <td colspan="6" class="px-6 py-6 text-center">
                     <div class="flex items-center justify-center gap-3 opacity-30">
@@ -68,7 +68,7 @@ function renderTable() {
                 error: 'bg-red-500/10 text-red-500'
             }[row.status];
 
-            tbody.innerHTML += `
+            html += `
                 <tr class="bg-surface-container border border-surface-container-border rounded-xl hover:border-primary transition-all group active:scale-[0.995]">
                     <td class="px-4 py-3 text-[11px] font-bold text-label/60">
                         <div class="flex items-center gap-2">
@@ -95,7 +95,7 @@ function renderTable() {
 
     const ghostRowsCount = recordsPerPage - rowsRendered;
     for (let i = 0; i < ghostRowsCount; i++) {
-        tbody.innerHTML += `
+        html += `
             <tr class="bg-surface-container border border-surface-container-border rounded-xl pointer-events-none select-none">
                 <td class="px-4 py-3 text-[11px] font-bold text-transparent">-</td>
                 <td class="px-4 py-3 text-[11px] font-black text-transparent">-</td>
@@ -111,6 +111,7 @@ function renderTable() {
         `;
     }
 
+    tbody.innerHTML = html;
     updatePagination();
 }
 
@@ -121,13 +122,13 @@ function updatePagination() {
     const infoEl = document.getElementById('paginationInfo');
     const prevBtn = document.getElementById('prevPage');
     const nextBtn = document.getElementById('nextPage');
-    
+
     if (!infoEl || !prevBtn || !nextBtn) return;
 
     const total = filteredData.length;
     const start = total === 0 ? 0 : (currentPage - 1) * recordsPerPage + 1;
     const end = Math.min(currentPage * recordsPerPage, total);
-    
+
     infoEl.innerText = `Mostrando ${start}-${end} de ${total} registros`;
     prevBtn.disabled = currentPage === 1;
     nextBtn.disabled = end >= total;
@@ -142,9 +143,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (searchInput) {
         searchInput.addEventListener('input', (e) => {
             const term = e.target.value.toLowerCase();
-            filteredData = auditData.filter(item => 
-                item.user.toLowerCase().includes(term) || 
-                item.action.toLowerCase().includes(term) || 
+            filteredData = auditData.filter(item =>
+                item.user.toLowerCase().includes(term) ||
+                item.action.toLowerCase().includes(term) ||
                 item.detail.toLowerCase().includes(term) ||
                 item.ip.includes(term)
             );

@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block content %}
-<div id="notificationsWrapper" class="w-full h-full flex flex-col animate-fade-in relative">
+<div id="notificationsWrapper" class="w-full h-full flex flex-col relative">
     <!-- Luxury Tabs Navigation -->
     <div class="relative border-b border-panel-border backdrop-blur-lg transition-all duration-300">
         <div class="flex items-center p-1.5 gap-2">
@@ -55,10 +55,10 @@
             </header>
 
             <!-- PANEL BODY -->
-            <main class="flex-grow p-6 overflow-y-auto custom-scrollbar">
-                <div class="grid grid-cols-2 gap-6 h-full">
+            <main class="flex-grow p-6 overflow-hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full min-h-0">
                     <!-- Vertical Panel A (SMTP Configuration) -->
-                    <div class="tab-panel-inner">
+                    <div class="tab-panel-inner flex flex-col h-full overflow-y-auto custom-scrollbar">
                         <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-6 px-1 text-center">Configuración SMTP</label>
                         
                         <div class="space-y-6">
@@ -110,8 +110,8 @@
                         </div>
 
                     <!-- Vertical Panel B (User Credentials) -->
-                    <div class="tab-panel-inner">
-                        <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-6 px-1 text-center">Credenciales de Usuario</label>
+                    <div class="tab-panel-inner flex flex-col h-full overflow-y-auto custom-scrollbar">
+                        <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-6 px-1 text-center">Credenciales de Acceso</label>
                         
                         <div class="space-y-6 flex-grow">
                             <!-- Display Name Group -->
