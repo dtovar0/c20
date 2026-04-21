@@ -3,13 +3,14 @@
  * Logic for rendering and paginating the local users table.
  */
 
-// Demo User Database
+// Professional Demo User Database
 const localUsersData = [
-    { id: 1, name: 'dtovar', role: 'Super Admin', email: 'dtovar@nexus.core', activity: 'Hace 2 minutos', status: 'active' },
-    { id: 2, name: 'admin_security', role: 'Security Ops', email: 'sec@nexus.core', activity: 'Hace 1 hora', status: 'active' },
-    { id: 3, name: 'guest_observer', role: 'Viewer', email: 'guest@nexus.core', activity: 'Ayer, 14:20', status: 'inactive' },
-    { id: 4, name: 'system_bot', role: 'Automation', email: 'bot@nexus.core', activity: 'En línea', status: 'active' },
-    { id: 5, name: 'temp_user_01', role: 'External', email: 'ext@nexus.core', activity: 'Nunca', status: 'suspended' }
+    { id: 1, name: 'Daniel Tovar', role: 'Administrator', email: 'dtovar@nexus-infra.com', status: 'active' },
+    { id: 2, name: 'Sarah Chen', role: 'Security Architect', email: 'schen@nexus-infra.com', status: 'active' },
+    { id: 3, name: 'Marco Rosso', role: 'Network Operator', email: 'mrosso@nexus-infra.com', status: 'active' },
+    { id: 4, name: 'Alex Novak', role: 'Audit Compliance', email: 'anovak@nexus-infra.com', status: 'inactive' },
+    { id: 5, name: 'Service Engine', role: 'System', email: 'engine@nexus-internal.svc', status: 'active' },
+    { id: 6, name: 'External Auditor', role: 'Guest', email: 'auditor@external.com', status: 'suspended' }
 ];
 
 let currentUsersPage = 1;
