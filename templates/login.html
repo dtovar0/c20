@@ -77,15 +77,18 @@
         
         <!-- Brand Header (Sync with sys_config) -->
         <div class="text-center mb-10">
-            <div class="brand-icon-container inline-flex items-center justify-center w-24 h-24 rounded-3xl bg-primary border-2 border-white/20 shadow-[0_0_40px_rgba(var(--color-primary),0.4)] mb-6 animate-float overflow-hidden p-5">
+            <div class="brand-icon-container inline-flex items-center justify-center w-24 h-24 rounded-3xl border-2 border-white/20 mb-6 animate-float overflow-hidden p-5 transition-all duration-500"
+                 style="background-color: {{ sys_config.bg_color if sys_config else 'var(--color-primary)' }};
+                        color: {{ sys_config.text_color if sys_config else '#ffffff' }};
+                        box-shadow: 0 0 40px {{ sys_config.bg_color + '60' if sys_config else 'rgba(var(--color-primary-rgb), 0.4)' }};">
                 {% if sys_config and sys_config.portal_identity_type == 'image' and sys_config.portal_icon %}
                     <img src="{{ sys_config.portal_icon }}" alt="Logo" class="w-full h-full object-cover">
                 {% elif sys_config and sys_config.portal_icon %}
-                    <div class="text-white">
+                    <div style="color: inherit;">
                         {{ sys_config.portal_icon | safe }}
                     </div>
                 {% else %}
-                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    <svg class="w-10 h-10" style="color: inherit;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                 {% endif %}
             </div>
             <h1 class="text-4xl font-black tracking-tighter uppercase italic leading-none mb-2">
