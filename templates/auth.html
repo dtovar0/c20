@@ -303,5 +303,36 @@
     </div>
 </div>
 
+{% block scripts %}
+<script src="/assets/js/users.js"></script>
 <script src="{{ url_for('serve_assets', filename='js/auth.js') }}"></script>
+<script>
+    function addUserModal() {
+        console.log("Opening Add User Modal...");
+    }
+
+    function switchTab(tabId) {
+        // Hide all panels
+        document.querySelectorAll('.tab-panel').forEach(panel => {
+            panel.classList.add('hidden');
+        });
+        
+        // Deactivate all triggers
+        document.querySelectorAll('.tab-trigger').forEach(btn => {
+            btn.classList.remove('text-tab-active-text', 'bg-tab-active', 'shadow-xl', 'shadow-tab-active/20');
+            btn.classList.add('text-tab-inactive-text', 'bg-tab-inactive', 'border', 'border-panel-border');
+        });
+
+        // Show selected panel - Smart ID Matching
+        const targetPanel = document.getElementById(`tab-panel-${tabId}`) || document.getElementById(`tab-content-${tabId}`);
+        if(targetPanel) targetPanel.classList.remove('hidden');
+
+        // Activate selected trigger
+        const targetBtn = document.getElementById(`tab-trigger-${tabId}`);
+        if(targetBtn) {
+            targetBtn.classList.add('text-tab-active-text', 'bg-tab-active', 'shadow-xl', 'shadow-tab-active/20');
+            targetBtn.classList.remove('text-tab-inactive-text', 'bg-tab-inactive', 'border', 'border-panel-border');
+        }
+    }
+</script>
 {% endblock %}
