@@ -30,6 +30,7 @@ class AuthConfig(db.Model):
     ldap_base_dn = db.Column(db.String(200), nullable=True)
     ldap_user = db.Column(db.String(100), nullable=True)
     ldap_pass = db.Column(db.String(100), nullable=True)
+    ldap_user_attr = db.Column(db.String(50), default='sAMAccountName')
     
     # Role Mapping (LDAP Groups)
     ldap_group_admin = db.Column(db.String(200), nullable=True)
@@ -44,6 +45,7 @@ class AuthConfig(db.Model):
             "ldap_ssl": self.ldap_ssl,
             "ldap_base_dn": self.ldap_base_dn,
             "ldap_user": self.ldap_user,
+            "ldap_user_attr": self.ldap_user_attr,
             "ldap_group_admin": self.ldap_group_admin,
             "ldap_group_user": self.ldap_group_user
         }

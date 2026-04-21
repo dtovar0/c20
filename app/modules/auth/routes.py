@@ -57,6 +57,7 @@ def save():
         if "ldap_base_dn" in data: config.ldap_base_dn = data["ldap_base_dn"]
         if "ldap_user" in data: config.ldap_user = data["ldap_user"]
         if "ldap_pass" in data: config.ldap_pass = data["ldap_pass"]
+        if "ldap_user_attr" in data: config.ldap_user_attr = data["ldap_user_attr"]
         if "ldap_group_admin" in data: config.ldap_group_admin = data["ldap_group_admin"]
         if "ldap_group_user" in data: config.ldap_group_user = data["ldap_group_user"]
         
@@ -179,8 +180,8 @@ def test_ldap():
             host=data.get("ldap_host"),
             port=data.get("ldap_port"),
             use_ssl=data.get("ldap_ssl", False),
-            bind_dn=data.get("ldap_bind_dn"),
-            bind_pass=data.get("ldap_bind_pass")
+            bind_dn=data.get("ldap_user"),
+            bind_pass=data.get("ldap_pass")
         )
         
         return jsonify(result)
