@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template
 from flask_login import login_required
+from app.decorators import admin_required
 
 core_bp = Blueprint("core", __name__, url_prefix="/")
 
@@ -10,6 +11,7 @@ def index():
 
 @core_bp.route("/dashboard-2")
 @login_required
+@admin_required
 def dashboard_2():
     return render_template("dashboard_2.html")
 

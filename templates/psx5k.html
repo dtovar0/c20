@@ -68,9 +68,9 @@
     }
 </style>
 
-<div id="auditWrapper" class="w-full h-full flex flex-col relative px-8 py-6">
-    <div class="flex-grow flex flex-col overflow-hidden">
-        <div id="tab-panel-audit" class="tab-panel-content flex-grow flex flex-col animate-in fade-in slide-in-from-bottom-2 duration-500 rounded-2xl overflow-hidden border border-panel-border shadow-2xl shadow-primary/5 mb-2">
+<div id="auditWrapper" class="w-full h-full p-0 overflow-hidden">
+    <!-- PANEL PRINCIPAL (Directo) -->
+    <div id="tab-panel-audit" class="w-full h-full flex flex-col animate-in fade-in slide-in-from-bottom-2 duration-500 rounded-2xl overflow-hidden border border-panel-border shadow-2xl shadow-primary/5">
             <!-- PANEL HEADER -->
             <header class="bg-header border-b border-panel-border px-6 py-4 flex items-center justify-between">
                 <div class="flex items-center gap-4">
@@ -84,7 +84,7 @@
                 </div>
             </header>
 
-            <main class="flex-grow px-6 pt-4 pb-2 overflow-hidden flex flex-col bg-panel-fill">
+            <main class="flex-grow p-6 overflow-hidden flex flex-col bg-panel-fill">
                 <!-- Search and Table logic... (Standard Audit Clone) -->
                 <div class="mb-4 flex justify-between items-center gap-2">
                     <div class="relative group flex-grow max-w-md">
@@ -92,35 +92,54 @@
                         <input type="text" id="auditSearch" placeholder="Filtrar eventos PSX5K..." 
                                class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3 text-sm font-bold text-input outline-none focus:border-input-focus focus:ring-4 focus:ring-primary/10 transition-all">
                     </div>
-                    <button id="refreshAudit" class="h-12 px-8 rounded-2xl bg-primary text-white font-black text-[10px] uppercase tracking-widest flex items-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/20">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        <span>Tarea Nueva</span>
-                    </button>
+                    <div class="flex items-center gap-3">
+                        <button id="scheduleTaskBtn" class="h-12 w-[220px] rounded-2xl bg-tab-inactive border border-panel-border text-tab-inactive-text font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 hover:border-primary hover:text-primary transition-all active:scale-95 shadow-lg shadow-black/5">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span>Programar Tarea</span>
+                        </button>
+                        <button id="refreshAudit" class="h-12 w-[220px] rounded-2xl bg-primary text-white font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/20">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            <span>Tarea Nueva</span>
+                        </button>
+                    </div>
                 </div>
                 <div class="overflow-x-auto overflow-y-hidden custom-scrollbar flex-grow">
                     <table class="w-full h-full text-left border-separate border-spacing-y-1">
                         <thead class="sticky top-0 z-20">
                             <tr class="text-[9px] font-black text-white uppercase tracking-[0.2em]">
                                 <th class="px-5 py-4 bg-slate-900/50 rounded-l-2xl border-y border-l border-panel-border text-center">ID</th>
-                                <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Nombre</th>
                                 <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Accion</th>
                                 <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Estado</th>
                                 <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Fecha Inicio</th>
                                 <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border whitespace-nowrap">Fecha Fin</th>
                                 <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Resultado</th>
+                                <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border text-center">Grafica</th>
                                 <th class="px-5 py-4 bg-slate-900/50 rounded-r-2xl border-y border-r border-panel-border text-center">Detalles</th>
                             </tr>
                         </thead>
                         <tbody id="auditTableBody"></tbody>
                     </table>
                 </div>
-                <!-- Pagination... -->
+                <!-- Pagination Footer -->
+                <footer class="mt-4 px-4 py-3 bg-header/30 border border-panel-border/50 rounded-2xl flex items-center justify-between">
+                    <p id="paginationInfo" class="text-[10px] font-black text-label/40 uppercase tracking-widest">
+                        Mostrando 0-0 de 0 registros
+                    </p>
+                    <div class="flex items-center gap-2">
+                        <button id="prevPage" class="h-10 w-10 flex items-center justify-center rounded-xl bg-surface-container border border-panel-border text-label/40 hover:text-primary hover:border-primary transition-all disabled:opacity-20 active:scale-95">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        </button>
+                        <button id="nextPage" class="h-10 w-10 flex items-center justify-center rounded-xl bg-surface-container border border-panel-border text-label/40 hover:text-primary hover:border-primary transition-all disabled:opacity-20 active:scale-95">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+                    </div>
+                </footer>
+
             </main>
         </div>
     </div>
-</div>
 
-<!-- MODAL: PSX5K WIZARD -->
+    <!-- MODAL: PSX5K WIZARD -->
 <div id="psxWizardModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
     <div class="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onclick="closeWizard()"></div>
     <div class="w-full max-w-xl nx-modal-glass rounded-[32px] shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300">
@@ -138,30 +157,47 @@
         </header>
 
         <div class="h-1 w-full bg-panel-border relative"><div id="stepProgress" class="absolute inset-y-0 left-0 bg-primary transition-all duration-500" style="width: 33.33%;"></div></div>
-
-        <div class="p-8">
-            <div id="wizardStep1" class="step-content animate-in fade-in zoom-in-95 duration-300">
-                <div class="text-center">
-                    <h4 class="nx-label-strip mb-8 text-primary">Selección: Tipo de Operación</h4>
-                    <div class="grid grid-cols-2 gap-6">
-                        <button type="button" class="op-select-btn p-8 rounded-[32px] border-2 border-panel-border bg-surface-container/30 text-label/60 flex flex-col items-center gap-4 hover:border-primary hover:bg-primary/5 transition-all group">
-                            <div class="w-16 h-16 rounded-full bg-panel-border/30 group-hover:bg-primary/10 flex items-center justify-center transition-colors">
-                                <svg class="w-8 h-8 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+        <div class="p-8 h-[560px] flex flex-col relative overflow-hidden">
+            <!-- STEP 1: SELECTION -->
+            <div id="wizardStep1" class="step-content w-full flex-1 flex flex-col items-center justify-center animate-in fade-in zoom-in-95 duration-300">
+                <div class="max-w-md w-full flex flex-col items-center my-auto">
+                    <h4 class="nx-label-strip mb-12 text-primary/80 text-center">Selección: Tipo de Operación</h4>
+                    
+                    <div class="space-y-6 w-full">
+                        <!-- Botón AGREGAR -->
+                        <button type="button" class="op-select-btn w-full p-10 rounded-[40px] border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-primary hover:bg-primary/5 hover:shadow-[0_0_50px_rgba(rgb(var(--color-primary)),0.2)] transition-all group relative overflow-hidden">
+                            <div class="w-20 h-20 min-w-[80px] rounded-[32px] bg-panel-border/30 group-hover:bg-primary/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
+                                <svg class="w-10 h-10 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
                             </div>
-                            <span class="text-xs font-black uppercase tracking-widest">Agregar</span>
+                            <div class="text-left">
+                                <span class="block text-base font-black uppercase tracking-widest group-hover:text-primary transition-colors">Añadir registros</span>
+                                <span class="block text-xs opacity-40 font-bold mt-1.5">Integrar nuevos registros al nodo PSX5K</span>
+                            </div>
+                            <div class="absolute right-10 opacity-0 group-hover:opacity-100 transition-all -translate-x-3 group-hover:translate-x-0">
+                                <svg class="w-7 h-7 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                            </div>
                         </button>
-                        <button type="button" class="op-select-btn p-8 rounded-[32px] border-2 border-panel-border bg-surface-container/30 text-label/60 flex flex-col items-center gap-4 hover:border-accent-violet hover:bg-accent-violet/5 transition-all group">
-                            <div class="w-16 h-16 rounded-full bg-panel-border/30 group-hover:bg-accent-violet/10 flex items-center justify-center transition-colors">
-                                <svg class="w-8 h-8 group-hover:text-accent-violet transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+
+                        <!-- Botón BORRAR -->
+                        <button type="button" class="op-select-btn w-full p-10 rounded-[40px] border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-accent-violet hover:bg-accent-violet/5 hover:shadow-[0_0_50px_rgba(168,85,247,0.2)] transition-all group relative overflow-hidden">
+                            <div class="w-20 h-20 min-w-[80px] rounded-[32px] bg-panel-border/30 group-hover:bg-accent-violet/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
+                                <svg class="w-10 h-10 group-hover:text-accent-violet transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                             </div>
-                            <span class="text-xs font-black uppercase tracking-widest">Borrar</span>
+                            <div class="text-left">
+                                <span class="block text-base font-black uppercase tracking-widest group-hover:text-accent-violet transition-colors">Eliminar registros</span>
+                                <span class="block text-xs opacity-40 font-bold mt-1.5">Remover registros de la base operativa</span>
+                            </div>
+                            <div class="absolute right-10 opacity-0 group-hover:opacity-100 transition-all -translate-x-3 group-hover:translate-x-0">
+                                <svg class="w-7 h-7 text-accent-violet" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                            </div>
                         </button>
                     </div>
                 </div>
             </div>
 
-            <div id="wizardStep2" class="step-content hidden animate-in fade-in slide-in-from-right-4 duration-300">
-                <div class="space-y-6">
+            <!-- STEP 2: CONFIGURATION -->
+            <div id="wizardStep2" class="step-content w-full flex-col hidden animate-in fade-in slide-in-from-right-4 duration-300">
+                <div class="space-y-6 w-full">
                     <div id="opConfigSection" class="space-y-6">
                         <div>
                             <label class="nx-label-strip mb-3 block">Modo de Cliente</label>
@@ -188,22 +224,25 @@
                         </div>
                         <div id="methodFileUpload">
                             <label class="border-2 border-dashed border-panel-border rounded-[24px] h-40 w-full flex flex-col items-center justify-center gap-3 hover:border-primary hover:bg-primary/5 transition-all cursor-pointer group px-6 text-center">
-                                <input type="file" id="psxFileInput" accept=".xml,.csv" class="hidden" onchange="validateFile(this)">
-                                <svg class="w-8 h-8 text-primary opacity-40 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                                <input type="file" id="psxFileInput" accept=".csv,.xls,.xlsx" class="hidden" onchange="validateFile(this)">
+                                <div id="fileIconContainer" class="w-10 h-10 flex items-center justify-center text-primary transition-all">
+                                    <svg class="w-8 h-8 opacity-40 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                                </div>
                                 <p class="nx-label-strip" id="fileNameDisplay">Cargar Archivo Operativo</p>
                             </label>
                         </div>
-                        <div id="methodManualEntry" class="hidden"><textarea placeholder="Dato1, Dato2..." class="w-full bg-input-bg border-2 border-panel-border rounded-2xl h-40 px-5 py-4 text-xs font-bold text-input outline-none resize-none"></textarea></div>
+                        <div id="methodManualEntry" class="hidden"><textarea placeholder="individual: 8147777000 &#10;rangos:      8147777000-8147777100" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl h-40 px-5 py-4 text-xs font-bold text-input outline-none resize-none"></textarea></div>
                     </div>
                 </div>
             </div>
 
-            <div id="wizardStep3" class="step-content hidden animate-in fade-in">
+            <div id="wizardStep3" class="step-content h-full flex flex-col justify-center items-center hidden animate-in fade-in">
                 <!-- Verification logic... -->
-                <div class="space-y-6">
+                <div class="space-y-6 w-full max-w-md">
                     <div class="text-center mb-6">
                         <div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-primary mx-auto mb-4"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg></div>
                         <h4 class="text-lg font-black text-body-text uppercase italic">Verificación Técnica</h4>
+                        <p class="text-[9px] text-label/40 font-bold uppercase tracking-widest mt-1">Confirmación de parámetros</p>
                     </div>
                     <div class="bg-surface-container/50 border border-panel-border rounded-[24px] p-6 space-y-4">
                         <div class="grid grid-cols-[140px_1fr] items-center border-b border-panel-border pb-3"><span class="nx-label-strip opacity-40">Operación:</span><span class="text-xs font-bold text-body-text uppercase pl-4" id="summaryTaskType">-</span></div>
@@ -229,6 +268,195 @@
     </div>
 </div>
 
-<script src="{{ url_for('serve_assets', filename='js/audit.js') }}"></script>
+<!-- MODAL: PROGRAMAR TAREA WIZARD -->
+<div id="scheduleWizardModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+    <div class="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onclick="closeScheduleWizard()"></div>
+    <div class="w-full max-w-xl nx-modal-glass rounded-[32px] shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300">
+        <header class="px-8 py-6 border-b border-panel-border flex items-center justify-between bg-header/50">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-black tracking-tighter text-body-text uppercase italic leading-none">Programar Tarea PSX5K</h3>
+                    <p class="text-[9px] text-primary/60 font-bold tracking-widest uppercase mt-1">Paso <span id="scheduleStepNum">1</span> de 4</p>
+                </div>
+            </div>
+            <button onclick="closeScheduleWizard()" class="p-2 text-label/40 hover:text-label transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+        </header>
+
+        <div class="h-1 w-full bg-panel-border relative"><div id="scheduleStepProgress" class="absolute inset-y-0 left-0 bg-primary transition-all duration-500" style="width: 25%;"></div></div>
+        <div class="p-8 h-[560px] flex flex-col relative overflow-hidden">
+            <!-- STEP 1: SELECTION -->
+            <div id="scheduleStep1" class="step-content w-full flex-1 flex flex-col items-center justify-center animate-in fade-in zoom-in-95 duration-300">
+                <div class="max-w-md w-full flex flex-col items-center my-auto">
+                    <h4 class="nx-label-strip mb-12 text-primary/80 text-center">Selección: Tipo de Operación</h4>
+                    
+                    <div class="space-y-6 w-full">
+                        <!-- Botón AGREGAR -->
+                        <button type="button" class="schedule-op-btn w-full p-10 rounded-[40px] border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-primary hover:bg-primary/5 hover:shadow-[0_0_50px_rgba(rgb(var(--color-primary)),0.2)] transition-all group relative overflow-hidden">
+                            <div class="w-20 h-20 min-w-[80px] rounded-[32px] bg-panel-border/30 group-hover:bg-primary/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
+                                <svg class="w-10 h-10 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                            </div>
+                            <div class="text-left">
+                                <span class="block text-base font-black uppercase tracking-widest group-hover:text-primary transition-colors">Añadir registros</span>
+                                <span class="block text-xs opacity-40 font-bold mt-1.5">Integrar nuevos registros programados</span>
+                            </div>
+                        </button>
+
+                        <!-- Botón BORRAR -->
+                        <button type="button" class="schedule-op-btn w-full p-10 rounded-[40px] border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-accent-violet hover:bg-accent-violet/5 transition-all group relative overflow-hidden">
+                            <div class="w-20 h-20 min-w-[80px] rounded-[32px] bg-panel-border/30 group-hover:bg-accent-violet/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
+                                <svg class="w-10 h-10 group-hover:text-accent-violet transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </div>
+                            <div class="text-left">
+                                <span class="block text-base font-black uppercase tracking-widest group-hover:text-accent-violet transition-colors">Eliminar registros</span>
+                                <span class="block text-xs opacity-40 font-bold mt-1.5">Remover registros programados</span>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: CONFIGURATION -->
+            <div id="scheduleStep2" class="step-content w-full flex-col hidden animate-in fade-in slide-in-from-right-4 duration-300">
+                <div class="space-y-6 w-full">
+                    <div id="scheduleOpConfigSection" class="space-y-6">
+                        <div>
+                            <label class="nx-label-strip mb-3 block">Modo de Cliente</label>
+                            <select id="scheduleClientModeSelect" onchange="handleScheduleRoutingLabelState()" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl px-5 py-4 text-sm font-bold text-input outline-none focus:border-input-focus transition-all">
+                                <option value="calls_only">Cliente solo hace llamadas</option>
+                                <option value="both">Cliente hace y recibe llamadas</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="nx-label-strip mb-3 block opacity-40" id="scheduleRoutingLabelTag">Etiqueta de Ruta</label>
+                            <input type="text" id="scheduleRoutingLabelInput" placeholder="Bloqueado..." disabled class="w-full bg-input-bg border-2 border-panel-border rounded-2xl px-5 py-4 text-sm font-bold text-input outline-none disabled:opacity-30">
+                        </div>
+                    </div>
+                    <div class="pt-6 border-t border-panel-border">
+                        <label class="nx-label-strip mb-4 block">Fuente de Datos</label>
+                        <div class="flex items-center bg-surface-container/30 p-1 rounded-2xl border border-panel-border mb-6">
+                            <span class="text-[9px] font-black flex-1 text-center py-2.5 rounded-xl" id="scheduleLabelFileMode">Archivo</span>
+                            <label class="relative inline-flex items-center cursor-pointer px-2">
+                                <input type="checkbox" id="scheduleDataEntryToggle" class="sr-only peer" onchange="toggleScheduleDataMethod()">
+                                <div class="w-12 h-6 bg-panel-border rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[10px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                            </label>
+                            <span class="text-[9px] font-black flex-1 text-center py-2.5 rounded-xl opacity-40" id="scheduleLabelManualMode">Manual</span>
+                        </div>
+                        <div id="scheduleMethodFileUpload">
+                            <label class="border-2 border-dashed border-panel-border rounded-[24px] h-40 w-full flex flex-col items-center justify-center gap-3 hover:border-primary hover:bg-primary/5 transition-all cursor-pointer group px-6 text-center">
+                                <input type="file" id="scheduleFileInput" accept=".csv,.xls,.xlsx" class="hidden" onchange="validateScheduleFile(this)">
+                                <div id="scheduleFileIconContainer" class="w-10 h-10 flex items-center justify-center text-primary transition-all">
+                                    <svg class="w-8 h-8 opacity-40 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                                </div>
+                                <p class="nx-label-strip" id="scheduleFileNameDisplay">Cargar Archivo Operativo</p>
+                            </label>
+                        </div>
+                        <div id="scheduleMethodManualEntry" class="hidden"><textarea placeholder="individual: 8147777000 &#10;rangos:      8147777000-8147777100" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl h-40 px-5 py-4 text-xs font-bold text-input outline-none resize-none"></textarea></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3: SCHEDULING CONFIG -->
+            <div id="scheduleStep3" class="step-content w-full flex-col hidden animate-in fade-in slide-in-from-right-4 duration-300">
+                <div class="space-y-6 w-full py-2 max-w-sm mx-auto">
+                    <h4 class="nx-label-strip text-primary/80 text-center">Programación de Fecha</h4>
+                    
+                    <!-- CUSTOM CALENDAR -->
+                    <div class="bg-surface-container/30 border-2 border-panel-border rounded-[32px] p-5 overflow-hidden">
+                        <div class="flex items-center justify-between mb-4 px-2">
+                            <span id="calendarMonthLabel" class="text-xs font-black uppercase tracking-widest text-primary">Abril 2026</span>
+                            <div class="flex gap-1">
+                                <button type="button" onclick="changeCalendarMonth(-1)" class="p-1.5 hover:bg-primary/10 rounded-lg text-label/40 hover:text-primary transition-all"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path></svg></button>
+                                <button type="button" onclick="changeCalendarMonth(1)" class="p-1.5 hover:bg-primary/10 rounded-lg text-label/40 hover:text-primary transition-all"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg></button>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-7 gap-1 text-center mb-2">
+                            <span class="text-[8px] font-black text-label/20 uppercase">Do</span>
+                            <span class="text-[8px] font-black text-label/20 uppercase">Lu</span>
+                            <span class="text-[8px] font-black text-label/20 uppercase">Ma</span>
+                            <span class="text-[8px] font-black text-label/20 uppercase">Mi</span>
+                            <span class="text-[8px] font-black text-label/20 uppercase">Ju</span>
+                            <span class="text-[8px] font-black text-label/20 uppercase">Vi</span>
+                            <span class="text-[8px] font-black text-label/20 uppercase">Sa</span>
+                        </div>
+                        
+                        <div id="calendarGrid" class="grid grid-cols-7 gap-1">
+                            <!-- JS will populate days here -->
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <label class="nx-label-strip opacity-40 text-center block">Hora de Inicio (24h)</label>
+                        <input type="time" id="scheduleTimeInput" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl px-5 py-4 text-sm font-bold text-input text-center outline-none focus:border-primary transition-all">
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 4: VERIFICATION (SHIFTED) -->
+            <div id="scheduleStep4" class="step-content h-full flex flex-col justify-center items-center hidden animate-in fade-in">
+                <div class="space-y-6 w-full max-w-md">
+                    <div class="text-center mb-6">
+                        <div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-primary mx-auto mb-4"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg></div>
+                        <h4 class="text-lg font-black text-body-text uppercase italic">Confirmación Agenda</h4>
+                        <p class="text-[9px] text-label/40 font-bold uppercase tracking-widest mt-1">Verificación de parámetros programados</p>
+                    </div>
+                    <div class="bg-surface-container/50 border border-panel-border rounded-[24px] p-6 space-y-4">
+                        <div class="grid grid-cols-[140px_1fr] items-center border-b border-panel-border pb-3"><span class="nx-label-strip opacity-40">Operación:</span><span class="text-xs font-bold text-body-text uppercase pl-4" id="scheduleSummaryTaskType">-</span></div>
+                        <div id="scheduleSummaryModeRow" class="grid grid-cols-[140px_1fr] items-center border-b border-panel-border pb-3"><span class="nx-label-strip opacity-40">Modo:</span><span class="text-xs font-bold text-body-text uppercase pl-4" id="scheduleSummaryMode">-</span></div>
+                        <div id="scheduleSummaryRoutingRow" class="grid grid-cols-[140px_1fr] items-center border-b border-panel-border pb-3"><span class="nx-label-strip opacity-40">Routing:</span><span class="text-xs font-bold text-body-text pl-4" id="scheduleSummaryRouting">-</span></div>
+                        <div class="grid grid-cols-[140px_1fr] items-center border-b border-panel-border pb-3"><span class="nx-label-strip opacity-40">Fecha:</span><span class="text-xs font-bold text-primary pl-4" id="scheduleSummaryDate">-</span></div>
+                        <div class="grid grid-cols-[140px_1fr] items-center border-b border-panel-border pb-3"><span class="nx-label-strip opacity-40">Hora:</span><span class="text-xs font-bold text-primary pl-4" id="scheduleSummaryTime">-</span></div>
+                        <div class="grid grid-cols-[140px_1fr] items-center border-b border-panel-border pb-3"><span class="nx-label-strip opacity-40">Fuente:</span><span class="text-xs font-bold text-body-text pl-4" id="scheduleSummaryData">-</span></div>
+                        <div class="grid grid-cols-[140px_1fr] items-center"><span class="nx-label-strip opacity-40">Registros:</span><span class="text-xs font-bold text-body-text pl-4 truncate" id="scheduleSummaryFileName">-</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <footer class="px-8 py-6 border-t border-panel-border bg-header/50 flex items-center">
+            <div class="flex-1 flex justify-start"><button id="schedulePrevStepBtn" onclick="changeScheduleStep(-1)" class="nx-btn-base nx-btn-back">Atrás</button></div>
+            <div class="flex-1 flex justify-end">
+                <button id="scheduleNextStepBtn" onclick="if (currentScheduleStep === 4) collectScheduleData(); changeScheduleStep(1)" class="nx-btn-base nx-btn-primary">Siguiente Paso</button>
+                <button id="scheduleLaunchBtn" onclick="finalizeScheduleWizard()" class="nx-btn-base nx-btn-primary hidden">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                    <span>Guardar</span>
+                </button>
+            </div>
+        </footer>
+    </div>
+</div>
+    </div>
+</div>
+
+<!-- PROGRESS MODAL (Telemetría de Carga) -->
+<div id="psxProgressModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
+    <div class="w-full max-w-sm nx-modal-glass rounded-[32px] border border-panel-border p-8 text-center animate-in zoom-in-95 duration-300">
+        <div class="mb-6">
+            <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary mx-auto mb-4 relative">
+                <svg class="w-8 h-8 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                <div class="absolute inset-0 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+            </div>
+            <h4 class="text-base font-black text-body-text uppercase italic">Procesando Tarea</h4>
+            <p id="progressStatusText" class="text-[10px] text-label/40 font-bold uppercase tracking-widest mt-1">Iniciando transferencia...</p>
+        </div>
+
+        <!-- Barra de Progreso Nexus -->
+        <div class="h-2 w-full bg-panel-border rounded-full overflow-hidden mb-4 shadow-inner">
+            <div id="uploadProgressBar" class="h-full bg-primary transition-all duration-300 shadow-[0_0_15px_rgba(rgb(var(--color-primary)),0.5)]" style="width: 0%;"></div>
+        </div>
+
+        <div class="space-y-1.5 text-left bg-black/40 rounded-xl p-4 font-mono text-[9px] text-primary/60 border border-panel-border/30">
+            <div class="flex gap-2"><span>[OK]</span><span class="text-label/60">Conexión con Nodo establecida</span></div>
+            <div id="logValidation" class="flex gap-2 opacity-0"><span>[OK]</span><span class="text-label/60">Integridad de datos validada</span></div>
+            <div id="logIndexing" class="flex gap-2 opacity-0"><span>[OK]</span><span class="text-label/60">Registros indexados en DB</span></div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('serve_assets', filename='js/psx5k.js') }}"></script>
 <script src="{{ url_for('serve_assets', filename='js/psx-wizard.js') }}"></script>
 {% endblock %}

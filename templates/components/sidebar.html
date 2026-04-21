@@ -22,33 +22,47 @@
                     {{ (sys_config.portal_name if sys_config and sys_config.portal_name else 'NEXUS') }}
                 </span>
             </div>
-            <!-- Collapsed state simple icon (hidden on desktop normally) -->
         </div>
 
         <!-- Navigation -->
         <nav class="flex-grow space-y-1 overflow-x-hidden px-4">
             <p class="text-[10px] font-bold text-label/60 uppercase tracking-widest px-3 mb-2 sidebar-text">Inicio</p>
             
-            <a href="{{ url_for('core.index') }}" title="Dashboard" 
+            {% if current_user.role == 'administrador' %}
+            <!-- Dashboard Usuario (Admin view) -->
+            <a href="{{ url_for('core.index') }}" title="Dashboard Usuario" 
                class="nav-item {% if request.endpoint == 'core.index' %}nav-item-active{% endif %} gap-4 px-3 py-3 rounded-base transition-all group">
-                <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                <span class="sidebar-text text-base whitespace-nowrap">Dashboard</span>
+                <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 011 1v4a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <span class="sidebar-text text-base whitespace-nowrap">Dashboard Usuario</span>
             </a>
 
-            <a href="{{ url_for('core.dashboard_2') }}" title="Dashboard 2" 
+            <!-- Dashboard Admin (Admin view) -->
+            <a href="{{ url_for('core.dashboard_2') }}" title="Dashboard Admin" 
                class="nav-item {% if request.endpoint == 'core.dashboard_2' %}nav-item-active{% endif %} gap-4 px-3 py-3 text-secondary hover:text-primary hover:bg-surface-container rounded-base transition-all group">
                 <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                <span class="sidebar-text text-base whitespace-nowrap">Dashboard 2</span>
+                <span class="sidebar-text text-base whitespace-nowrap">Dashboard Admin</span>
             </a>
+            {% else %}
+            <!-- Dashboard (Regular user view) -->
+            <a href="{{ url_for('core.index') }}" title="Dashboard" 
+               class="nav-item {% if request.endpoint == 'core.index' %}nav-item-active{% endif %} gap-4 px-3 py-3 rounded-base transition-all group">
+                <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 011 1v4a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <span class="sidebar-text text-base whitespace-nowrap">Dashboard</span>
+            </a>
+            {% endif %}
 
             <p class="text-[10px] font-bold text-label/60 uppercase tracking-widest px-3 mb-2 mt-6 sidebar-text">Operaciones</p>
 
             <a href="{{ url_for('core.psx5k') }}" title="PSX5K" 
                class="nav-item {% if request.endpoint == 'core.psx5k' %}nav-item-active{% endif %} gap-4 px-3 py-3 text-secondary hover:text-primary hover:bg-surface-container rounded-base transition-all group">
-                <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
+                <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
                 <span class="sidebar-text text-base whitespace-nowrap">PSX5K</span>
             </a>
 
+
+
+            <!-- Administrators Section -->
+            {% if current_user.role == 'administrador' %}
             <p class="text-[10px] font-bold text-label/60 uppercase tracking-widest px-3 mb-2 mt-6 sidebar-text">Configuración</p>
             
             <a href="{{ url_for('settings.index') }}" title="Ajustes" 
@@ -82,6 +96,7 @@
                 <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17l.354-.354"></path></svg>
                 <span class="sidebar-text text-base whitespace-nowrap">Diseño</span>
             </a>
+            {% endif %}
         </nav>
 
         <!-- Sidebar Footer: User Profile -->

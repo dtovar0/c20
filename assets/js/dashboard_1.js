@@ -4,92 +4,90 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Booking Count Sparkline (Area Chart)
+    // 1. Panel de Líneas: Volumen Operativo
     const optionsBooking = {
         series: [{
             name: 'Bookings',
-            data: [31, 40, 28, 51, 42, 109, 100]
+            data: [31, 40, 28, 51, 42, 109, 100, 120, 80, 95, 110, 140]
         }],
         chart: {
-            height: 160,
-            type: 'area',
+            height: 200,
+            type: 'line',
             sparkline: { enabled: true },
-            animations: { enabled: true, easing: 'easeinout', speed: 800 }
+            animations: { enabled: true, easing: 'easeinout', speed: 1000 }
         },
         dataLabels: { enabled: false },
-        stroke: { curve: 'smooth', width: 3, colors: ['#ffffff'] },
-        fill: {
-            type: 'gradient',
-            gradient: {
-                shadeIntensity: 1,
-                opacityFrom: 0.4,
-                opacityTo: 0,
-                stops: [0, 90, 100]
-            }
+        stroke: { 
+            curve: 'smooth', 
+            width: 4, 
+            colors: ['#0ea5e9'],
+            lineCap: 'round'
         },
-        tooltip: { theme: 'dark', x: { show: false } },
-        colors: ['#ffffff']
+        markers: {
+            size: 0,
+            hover: { size: 6 }
+        },
+        tooltip: { 
+            theme: 'dark', 
+            x: { show: false },
+            y: { title: { formatter: () => 'Total:' } }
+        },
+        colors: ['#0ea5e9']
     };
 
-    new ApexCharts(document.querySelector("#bookingSparkline"), optionsBooking).render();
+    const chart1 = new ApexCharts(document.querySelector("#bookingSparkline"), optionsBooking);
+    if (document.querySelector("#bookingSparkline")) chart1.render();
 
-    // 2. On Time Radial Bar (Performance A)
+    // 2. Panel de Columnas: Cumplimiento (On Time)
     const optionsOnTime = {
-        series: [39],
+        series: [{
+            name: 'Eficiencia',
+            data: [44, 55, 57, 56, 61, 58, 63, 60, 66, 70, 75, 80]
+        }],
         chart: {
-            height: 240,
-            type: 'radialBar',
-            sparkline: { enabled: true }
+            height: 200,
+            type: 'bar',
+            sparkline: { enabled: false },
+            toolbar: { show: false }
         },
         plotOptions: {
-            radialBar: {
-                hollow: { size: '65%' },
-                track: { background: 'rgba(59, 130, 246, 0.1)' },
-                dataLabels: {
-                    name: { show: false },
-                    value: {
-                        offsetY: 10,
-                        fontSize: '28px',
-                        fontWeight: '900',
-                        color: '#1e293b',
-                        formatter: function (val) { return val + "%" }
-                    }
+            bar: {
+                columnWidth: '45%',
+                borderRadius: 8,
+                colors: {
+                    ranges: [{
+                        from: 0,
+                        to: 100,
+                        color: 'rgb(var(--color-primary))'
+                    }]
                 }
             }
         },
-        colors: ['#3b82f6'], // Primary
-        labels: ['On Time'],
-    };
-
-    new ApexCharts(document.querySelector("#onTimeRadial"), optionsOnTime).render();
-
-    // 3. Late Delivery Radial Bar (Performance B)
-    const optionsLate = {
-        series: [61],
-        chart: {
-            height: 240,
-            type: 'radialBar',
-            sparkline: { enabled: true }
+        dataLabels: { enabled: false },
+        xaxis: {
+            labels: { show: false },
+            axisBorder: { show: false },
+            axisTicks: { show: false }
         },
-        plotOptions: {
-            radialBar: {
-                hollow: { size: '65%' },
-                track: { background: 'rgba(251, 167, 114, 0.1)' },
-                dataLabels: {
-                    name: { show: false },
-                    value: {
-                        offsetY: 10,
-                        fontSize: '28px',
-                        fontWeight: '900',
-                        color: '#1e293b',
-                        formatter: function (val) { return val + "%" }
-                    }
+        yaxis: {
+            labels: {
+                show: true,
+                style: {
+                    colors: 'rgb(var(--color-label-text))',
+                    fontSize: '10px',
+                    fontWeight: '900'
                 }
             }
         },
-        colors: ['#fba772'], // Peach Accent
-        labels: ['Late Delivery'],
+        grid: {
+            show: true,
+            borderColor: 'rgba(var(--color-panel-border), 0.3)',
+            strokeDashArray: 4
+        },
+        tooltip: { theme: 'dark' },
+        colors: ['rgb(var(--color-primary))']
     };
 
-    new ApexCharts(document.querySelector("#lateDeliveryRadial"), optionsLate).render();
+    const chart2 = new ApexCharts(document.querySelector("#onTimeRadial"), optionsOnTime);
+    if (document.querySelector("#onTimeRadial")) chart2.render();
 });

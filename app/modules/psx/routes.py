@@ -1,12 +1,14 @@
 from flask import Blueprint, request, jsonify
+from flask_login import current_user
 from werkzeug.utils import secure_filename
 import os
+import datetime
 
 psx_bp = Blueprint('psx', __name__, url_prefix='/api/psx')
 
 # Configuración de carga
 UPLOAD_FOLDER = '/home/dtovar/bayblade/c20/uploads/psx5k'
-ALLOWED_EXTENSIONS = {'xml', 'csv'}
+ALLOWED_EXTENSIONS = {'xml', 'csv', 'xls', 'xlsx'}
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -15,7 +17,7 @@ def allowed_file(filename):
 @psx_bp.route('/upload', methods=['POST'])
 def upload_file():
     """
-    Endpoint para recibir y almacenar archivos del terminal PSX5K
+    Endpoint para recibir, etiquetar y almacenar archivos del terminal PSX5K
     """
     if 'file' not in request.files:
         return jsonify({"status": "error", "message": "No se detectó parte de archivo"}), 400
@@ -26,19 +28,27 @@ def upload_file():
         return jsonify({"status": "error", "message": "No se seleccionó ningún archivo"}), 400
     
     if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        # Asegurar que el directorio existe
+        # 1. Generar Etiqueta Operativa: usuario_fecha_hora_original
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        username = current_user.username if current_user.is_authenticated else "anon"
+        clean_filename = secure_filename(file.filename)
+        
+        nexus_filename = f"{username}_{timestamp}_{clean_filename}"
+        
+        # 2. Asegurar que el directorio existe
         if not os.path.exists(UPLOAD_FOLDER):
             os.makedirs(UPLOAD_FOLDER)
             
-        save_path = os.path.join(UPLOAD_FOLDER, filename)
+        save_path = os.path.join(UPLOAD_FOLDER, nexus_filename)
         file.save(save_path)
         
         return jsonify({
             "status": "success", 
-            "message": "Archivo cargado correctamente",
-            "filename": filename,
+            "message": "Archivo etiquetado y cargado correctamente",
+            "filename": nexus_filename,
             "path": save_path
         }), 200
     
-    return jsonify({"status": "error", "message": "Extensión de archivo no permitida (Solo XML/CSV)"}), 400
+    return jsonify({"status": "error", "message": "Extensión no permitida (Solo CSV, XLS, XLSX, XML)"}), 400
+
+
