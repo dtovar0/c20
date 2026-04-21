@@ -139,3 +139,27 @@ def delete_users():
     except Exception as e:
         db.session.rollback()
         return jsonify({"status": "error", "message": str(e)}), 500
+
+@auth_bp.route("/users/update", methods=["POST"])
+@login_required
+def update_user():
+    try:
+        data = request.get_json()
+        user_id = data.get('user_id')
+        user = User.query.get(user_id)
+        
+        if not user:
+            return jsonify({"status": "error", "message": "Usuario no encontrado"}), 404
+            
+        if "username" in data: user.username = data["username"]
+        if "email" in data: user.email = data["email"]
+        if "role" in data: user.role = data["role"]
+        
+        if "password" in data and data["password"]:
+            user.set_password(data["password"])
+            
+        db.session.commit()
+        return jsonify({"status": "success", "message": "Usuario actualizado correctamente"})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"status": "error", "message": str(e)}), 500

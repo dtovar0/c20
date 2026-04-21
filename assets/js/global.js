@@ -149,11 +149,20 @@ function validateNexusForm(containerId) {
         } 
         
         // check email format if type is email
-        else if (input.type === 'email') {
+        else if (input.type === 'email' || input.dataset.validationType === 'email') {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(value)) {
                 inputError = true;
-                showToast('Formato Inválido: La dirección de correo no es correcta.', 'warning');
+            }
+        }
+        
+        // check match (passwords)
+        else if (input.dataset.validationType === 'match') {
+            const targetId = input.dataset.matchTarget;
+            const targetEl = document.getElementById(targetId);
+            if (!targetEl || value !== targetEl.value) {
+                inputError = true;
+                showToast('Las contraseñas no coinciden', 'warning');
             }
         }
 
@@ -179,42 +188,70 @@ function validateNexusForm(containerId) {
 
 /**
  * PREMIUM MODAL CONTROLLER
+ * Optimized for nexus-modal architecture with smooth transitions.
  */
-function showPremiumModal(modalId) {
+function openModal(modalId) {
     const modal = document.getElementById(modalId);
-    if (!modal) return;
-    
-    // Clear all inputs inside the modal before opening
-    const allInputs = modal.querySelectorAll('input, select, textarea');
-    allInputs.forEach(input => {
-        if (input.type === 'checkbox' || input.type === 'radio') {
-            input.checked = false;
-        } else {
-            input.value = '';
-        }
-        input.classList.remove('border-error', 'animate-shake');
-    });
+    if (modal) {
+        // Clear previous state
+        const allInputs = modal.querySelectorAll('input, select, textarea');
+        allInputs.forEach(input => {
+            if (input.type === 'checkbox' || input.type === 'radio') input.checked = false;
+            else if (!input.getAttribute('name')?.includes('user_id')) input.value = '';
+            input.classList.remove('border-error', 'animate-shake');
+        });
 
-    modal.classList.add('show');
-    
-    // Focus first input if any
-    const firstInput = modal.querySelector('input');
-    if (firstInput) setTimeout(() => firstInput.focus(), 300);
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        // Force reflow
+        modal.offsetWidth;
+        modal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+        
+        // Focus first input
+        const firstInput = modal.querySelector('input:not([type="hidden"])');
+        if (firstInput) setTimeout(() => firstInput.focus(), 400);
+    }
 }
 
-function closePremiumModal(modalId) {
+function closeModal(modalId) {
     const modal = document.getElementById(modalId);
-    if (!modal) return;
+    if (!modal) {
+        // If no ID, attempt to close the currently open modal
+        const openModal = document.querySelector('.nexus-modal.show');
+        if (openModal) modalId = openModal.id;
+        else return;
+    }
     
-    modal.classList.remove('show');
+    const targetModal = document.getElementById(modalId);
+    if (targetModal) {
+        targetModal.classList.remove('show');
+        document.body.style.overflow = '';
+        setTimeout(() => {
+            targetModal.classList.remove('flex');
+            targetModal.classList.add('hidden');
+        }, 300);
+    }
 }
 
-// Global Listener for ESC key
+// Global Listener for ESC key (Close Modals, Dropdowns, and Clear Search)
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-        const openModal = document.querySelector('.modal-backdrop.show');
-        if (openModal) {
-            closePremiumModal(openModal.id);
+        const activeEl = document.activeElement;
+        
+        // 1. Logic for Search Inputs (If focused and has content)
+        if (activeEl && activeEl.tagName === 'INPUT' && (activeEl.id.toLowerCase().includes('search') || activeEl.placeholder.toLowerCase().includes('buscar'))) {
+            if (activeEl.value !== '') {
+                activeEl.value = '';
+                activeEl.dispatchEvent(new Event('input', { bubbles: true }));
+                return; // Consume the event if we cleared a search
+            }
+        }
+
+        // 2. Logic for Modals
+        const activeModal = document.querySelector('.nexus-modal.show');
+        if (activeModal) {
+            closeModal(activeModal.id);
         }
     }
 });
@@ -239,17 +276,24 @@ document.addEventListener('input', (e) => {
         } else if (type === 'port' && val.length > 0) {
             const portNum = parseInt(val, 10);
             isValid = /^\d+$/.test(val) && portNum > 0 && portNum <= 65535;
+        } else if (type === 'match' && val.length > 0) {
+            const targetId = input.dataset.matchTarget;
+            const targetEl = document.getElementById(targetId);
+            isValid = targetEl && val === targetEl.value;
         }
 
         // Apply visual premium token feedback
         if (isValid) {
-            input.classList.remove('border-error', 'border-panel-border', 'focus:ring-primary/10');
+            input.classList.remove('border-error');
             input.style.borderColor = '#10b981'; // Emerald 500
             input.style.boxShadow = '0 0 0 4px rgba(16, 185, 129, 0.1)';
         } else {
-            input.classList.add('border-error');
-            input.style.borderColor = ''; // Revert to let border-error take CSS control
-            input.style.boxShadow = '';
+            // Only show error if there is content or it's a required mismatch
+            if (val.length > 0 || input.required) {
+                input.classList.add('border-error');
+                input.style.borderColor = ''; 
+                input.style.boxShadow = '';
+            }
         }
     }
 });

@@ -46,15 +46,15 @@ function renderUsersTable() {
     if (fetchedUsers.length === 0) {
         html += `
             <tr class="group transition-all duration-300">
-                <td colspan="1" class="px-6 py-6 bg-surface-container/10 border-y border-l border-panel-border/20 rounded-l-2xl text-center">
+                <td colspan="1" class="px-6 py-6 bg-surface-container/40 border-y border-l border-panel-border/20 rounded-l-2xl text-center">
                     <div class="flex items-center justify-center gap-3 opacity-30">
                         <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                     </div>
                 </td>
-                <td colspan="3" class="px-6 py-6 bg-surface-container/10 border-y border-panel-border/20 text-center">
+                <td colspan="3" class="px-6 py-6 bg-surface-container/40 border-y border-panel-border/20 text-center">
                     <span class="text-[10px] font-black uppercase tracking-[0.2em] text-label italic opacity-30">No se encontraron registros en la base de datos</span>
                 </td>
-                <td colspan="1" class="px-6 py-6 bg-surface-container/10 border-y border-r border-panel-border/20 rounded-r-2xl text-center"></td>
+                <td colspan="1" class="px-6 py-6 bg-surface-container/40 border-y border-r border-panel-border/20 rounded-r-2xl text-center"></td>
             </tr>
         `;
         rowsRendered = 1;
@@ -106,12 +106,28 @@ function renderUsersTable() {
     const ghostRowsCount = usersPerPage - rowsRendered;
     for (let i = 0; i < ghostRowsCount; i++) {
         html += `
-            <tr class="group transition-all duration-300 pointer-events-none select-none">
-                <td class="py-8 bg-surface-container/10 rounded-l-2xl border-y border-l border-panel-border/20" colspan="1"></td>
-                <td class="py-8 bg-surface-container/10 border-y border-panel-border/20 text-center" colspan="3">
-                    <div class="h-1.5 w-32 bg-label/20 dark:bg-white/10 rounded-full mx-auto"></div>
+            <tr class="animate-pulse pointer-events-none select-none">
+                <td class="px-6 py-3 bg-surface-container border-y border-l border-surface-container-border/50 rounded-l-2xl">
+                    <div class="w-4 h-4 rounded border-2 border-label/20"></div>
                 </td>
-                <td class="py-8 bg-surface-container/10 rounded-r-2xl border-y border-r border-panel-border/20" colspan="1"></td>
+                <td class="px-4 py-3 bg-surface-container border-y border-surface-container-border/50">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-label/20"></div>
+                        <div class="h-2 w-24 bg-label/20 rounded-full"></div>
+                    </div>
+                </td>
+                <td class="px-4 py-3 bg-surface-container border-y border-surface-container-border/50">
+                    <div class="h-2 w-32 bg-label/20 rounded-full opacity-40"></div>
+                </td>
+                <td class="px-4 py-3 bg-surface-container border-y border-surface-container-border/50">
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded bg-label/20"></div>
+                        <div class="h-2 w-16 bg-label/20 rounded-full"></div>
+                    </div>
+                </td>
+                <td class="px-6 py-3 bg-surface-container border-y border-r border-surface-container-border/50 rounded-r-2xl text-right">
+                    <div class="h-4 w-16 bg-label/20 rounded-full ml-auto opacity-60"></div>
+                </td>
             </tr>
         `;
     }
@@ -190,22 +206,7 @@ function updateUsersPagination() {
     if (btnNext) btnNext.disabled = (currentUsersPage >= totalPages || total === 0);
 }
 
-// Modal Controls
-function openModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.classList.remove('hidden');
-        document.body.style.overflow = 'hidden'; // Prevent scroll
-    }
-}
-
-function closeModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.classList.add('hidden');
-        document.body.style.overflow = ''; // Restore scroll
-    }
-}
+// Modal logic moved to global.js for system-wide availability
 
 // Global actions
 function addUserModal() {
@@ -216,8 +217,22 @@ function modifyUser() {
     const targetId = Array.from(selectedUsers)[0];
     const user = fetchedUsers.find(u => u.id === targetId);
     if (user) {
-        console.log(`📡 Solicitud de edición para: ${user.name}`);
-        // Logica para cargar datos en modal de edicion
+        const form = document.getElementById('form-modify-user');
+        if (form) {
+            form.elements['user_id'].value = user.id;
+            form.elements['username'].value = user.name;
+            form.elements['email'].value = user.email;
+            
+            // Set toggle state
+            const isAdmin = user.role.toLowerCase() === 'admin';
+            form.elements['is_admin'].checked = isAdmin;
+            
+            // Update helper text
+            const textEl = document.getElementById('admin_role_text_modify');
+            if (textEl) textEl.textContent = isAdmin ? 'Rol: Administrador Total' : 'Rol: Usuario Estándar';
+
+            openModal('modal-modify-user');
+        }
     }
 }
 
@@ -284,8 +299,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (formAdd) {
         formAdd.addEventListener('submit', async (e) => {
             e.preventDefault();
+            if (!validateNexusForm('modal-add-user')) return;
+
             const formData = new FormData(formAdd);
             const data = Object.fromEntries(formData.entries());
+            
+            // Transform toggle to role
+            data.role = data.is_admin ? 'admin' : 'user';
+            delete data.is_admin;
 
             try {
                 const response = await fetch('/auth/users/create', {
@@ -298,10 +319,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (res.status === 'success') {
                     closeModal('modal-add-user');
                     formAdd.reset();
+                    // Reset toggle text
+                    document.getElementById('admin_role_text_add').textContent = 'Rol: Usuario Estándar';
                     fetchUsers();
                     if(typeof showToast === 'function') showToast('Usuario creado correctamente', 'success');
                 } else {
-                    alert(res.message);
+                    showToast(res.message, 'error');
                 }
             } catch (error) {
                 console.error('Error creating user:', error);
@@ -330,6 +353,42 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } catch (error) {
                 console.error('Error deleting users:', error);
+            }
+        });
+    }
+
+    // FORM: Modify User
+    const formModify = document.getElementById('form-modify-user');
+    if (formModify) {
+        formModify.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!validateNexusForm('modal-modify-user')) return;
+
+            const formData = new FormData(formModify);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Transform toggle to role
+            data.role = data.is_admin ? 'admin' : 'user';
+            delete data.is_admin;
+
+            try {
+                const response = await fetch('/auth/users/update', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const res = await response.json();
+                
+                if (res.status === 'success') {
+                    closeModal('modal-modify-user');
+                    selectedUsers.clear();
+                    fetchUsers();
+                    if(typeof showToast === 'function') showToast('Usuario actualizado', 'success');
+                } else {
+                    showToast(res.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error updating user:', error);
             }
         });
     }
