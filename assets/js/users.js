@@ -217,6 +217,9 @@ function modifyUser() {
     const targetId = Array.from(selectedUsers)[0];
     const user = fetchedUsers.find(u => u.id === targetId);
     if (user) {
+        // Open modal first to triggers the internal reset logic
+        openModal('modal-modify-user');
+        
         const form = document.getElementById('form-modify-user');
         if (form) {
             form.elements['user_id'].value = user.id;
@@ -230,17 +233,31 @@ function modifyUser() {
             // Update helper text
             const textEl = document.getElementById('admin_role_text_modify');
             if (textEl) textEl.textContent = isAdmin ? 'Rol: Administrador Total' : 'Rol: Usuario Estándar';
-
-            openModal('modal-modify-user');
         }
     }
 }
 
 function deleteUser() {
     const count = selectedUsers.size;
+    const displayEl = document.getElementById('delete-user-display');
     const msgEl = document.getElementById('delete-modal-msg');
+    
+    if (displayEl) {
+        if (count === 1) {
+            const targetId = Array.from(selectedUsers)[0];
+            const user = fetchedUsers.find(u => u.id === targetId);
+            displayEl.textContent = user ? user.name : 'Identidad Seleccionada';
+            displayEl.classList.add('text-white/90');
+        } else {
+            displayEl.textContent = `${count} Usuarios`;
+            displayEl.classList.add('text-red-500');
+        }
+    }
+
     if (msgEl) {
-        msgEl.innerText = `Estás a punto de eliminar permanentemente ${count} usuario(s) de la base de datos. Esta acción no se puede deshacer.`;
+        msgEl.innerText = count === 1 
+            ? `Estás a punto de eliminar permanentemente este usuario. Esta acción no se puede deshacer.`
+            : `Estás a punto de eliminar permanentemente ${count} usuarios de la matriz. Esta acción es irreversible.`;
     }
     openModal('modal-delete-confirm');
 }

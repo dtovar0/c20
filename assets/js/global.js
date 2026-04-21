@@ -148,11 +148,18 @@ function validateNexusForm(containerId) {
             inputError = true;
         } 
         
-        // check email format if type is email
-        else if (input.type === 'email' || input.dataset.validationType === 'email') {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(value)) {
+        // check password rules
+        else if (input.dataset.validationType === 'password') {
+            const hasLetters = /[a-zA-Z]/.test(value);
+            const hasNumbers = /\d/.test(value);
+            const hasSpecial = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(value);
+            
+            if (value.length < 12) {
                 inputError = true;
+                showToast('Seguridad: La contraseña debe tener al menos 12 caracteres', 'warning');
+            } else if (!hasLetters || !hasNumbers || !hasSpecial) {
+                inputError = true;
+                showToast('Seguridad: Usa letras, números y al menos 1 carácter especial', 'warning');
             }
         }
         
@@ -162,7 +169,7 @@ function validateNexusForm(containerId) {
             const targetEl = document.getElementById(targetId);
             if (!targetEl || value !== targetEl.value) {
                 inputError = true;
-                showToast('Las contraseñas no coinciden', 'warning');
+                showToast('Las contraseñas no coinciden', 'error');
             }
         }
 
@@ -196,9 +203,15 @@ function openModal(modalId) {
         // Clear previous state
         const allInputs = modal.querySelectorAll('input, select, textarea');
         allInputs.forEach(input => {
-            if (input.type === 'checkbox' || input.type === 'radio') input.checked = false;
-            else if (!input.getAttribute('name')?.includes('user_id')) input.value = '';
+            if (input.type === 'checkbox' || input.type === 'radio') {
+                input.checked = false;
+            } else if (!input.getAttribute('name')?.includes('user_id')) {
+                input.value = '';
+            }
+            
+            // Clean visual validation state
             input.classList.remove('border-error', 'animate-shake');
+            input.style.borderColor = '';
         });
 
         modal.classList.remove('hidden');
@@ -271,6 +284,12 @@ document.addEventListener('input', (e) => {
         // Context-aware deep validation
         if (type === 'email' && val.length > 0) {
             isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+        } else if (type === 'password' && val.length > 0) {
+            // Enterprise rules: min 12 chars, alphanumeric, 1 special char
+            const hasLetters = /[a-zA-Z]/.test(val);
+            const hasNumbers = /\d/.test(val);
+            const hasSpecial = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(val);
+            isValid = val.length >= 12 && hasLetters && hasNumbers && hasSpecial;
         } else if (type === 'server' && val.length > 0) {
             isValid = /^([a-zA-Z0-9.-]+)\.([a-zA-Z]{2,})$/.test(val) || /^localhost$/.test(val);
         } else if (type === 'port' && val.length > 0) {
@@ -279,7 +298,7 @@ document.addEventListener('input', (e) => {
         } else if (type === 'match' && val.length > 0) {
             const targetId = input.dataset.matchTarget;
             const targetEl = document.getElementById(targetId);
-            isValid = targetEl && val === targetEl.value;
+            isValid = targetEl && val === targetEl.value && val.length >= 12;
         }
 
         // Apply visual premium token feedback

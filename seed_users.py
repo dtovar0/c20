@@ -9,9 +9,10 @@ def seed_users():
         
         # Definición de datos profesionales
         demo_users = [
-            { 'username': 'dtovar', 'name': 'Daniel Tovar', 'role': 'Administrator', 'email': 'dtovar@nexus-infra.com', 'active': True },
-            { 'username': 'schen', 'name': 'Sarah Chen', 'role': 'Security Architect', 'email': 'schen@nexus-infra.com', 'active': True },
-            { 'username': 'mrosso', 'name': 'Marco Rosso', 'role': 'Network Operator', 'email': 'mrosso@nexus-infra.com', 'active': True },
+            { 'username': 'admin', 'name': 'Administrador Principal', 'role': 'admin', 'email': 'admin@nexus.com', 'active': True },
+            { 'username': 'dtovar', 'name': 'Daniel Tovar', 'role': 'admin', 'email': 'dtovar@nexus-infra.com', 'active': True },
+            { 'username': 'schen', 'name': 'Sarah Chen', 'role': 'user', 'email': 'schen@nexus-infra.com', 'active': True },
+            { 'username': 'mrosso', 'name': 'Marco Rosso', 'role': 'user', 'email': 'mrosso@nexus-infra.com', 'active': True },
             { 'username': 'anovak', 'name': 'Alex Novak', 'role': 'Audit Compliance', 'email': 'anovak@nexus-infra.com', 'active': False },
             { 'username': 'engine', 'name': 'Service Engine', 'role': 'System', 'email': 'engine@nexus-internal.svc', 'active': True },
             { 'username': 'auditor', 'name': 'External Auditor', 'role': 'Guest', 'email': 'auditor@external.com', 'active': False }

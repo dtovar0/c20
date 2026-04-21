@@ -353,29 +353,29 @@
                 <div class="space-y-1.5 group">
                     <label class="text-[9px] font-black uppercase tracking-widest text-label/60 ml-1 group-focus-within:text-primary transition-colors">Nombre de Usuario</label>
                     <div class="relative">
-                        <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/20 transition-colors group-focus-within:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                        <input type="text" name="username" required placeholder="p. ej. dtovar" class="premium-validate" data-validation-type="text"
-                               class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-11 pr-4 py-3.5 text-sm font-bold text-input outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all">
+                        <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/60 transition-colors group-focus-within:text-primary z-10 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        <input type="text" name="username" required placeholder="Juan Perez" data-validation-type="text" autocomplete="off"
+                               class="premium-validate w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-11 pr-4 py-3.5 text-sm font-bold text-input outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all">
                     </div>
                 </div>
                 <div class="space-y-1.5 group">
                     <label class="text-[9px] font-black uppercase tracking-widest text-label/60 ml-1 group-focus-within:text-primary transition-colors">Email Corporativo</label>
                     <div class="relative">
-                        <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/20 transition-colors group-focus-within:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                        <input type="email" name="email" required placeholder="usuario@nexus.com" class="premium-validate" data-validation-type="email"
-                               class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-11 pr-4 py-3.5 text-sm font-bold text-input outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all">
+                        <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/60 transition-colors group-focus-within:text-primary z-10 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        <input type="email" name="email" required placeholder="juan.perez@nexus.com" data-validation-type="email" autocomplete="off"
+                               class="premium-validate w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-11 pr-4 py-3.5 text-sm font-bold text-input outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all">
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div class="space-y-1.5 group">
                         <label class="text-[9px] font-black uppercase tracking-widest text-label/60 ml-1 group-focus-within:text-primary transition-colors">Password</label>
-                        <input type="password" id="add_password" name="password" required placeholder="••••••••" class="premium-validate" data-validation-type="password"
-                               class="w-full bg-input-bg border-2 border-panel-border rounded-2xl px-4 py-3.5 text-sm font-bold text-input outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all">
+                        <input type="password" id="add_password" name="password" required placeholder="••••••••" data-validation-type="password" autocomplete="new-password"
+                               class="premium-validate w-full bg-input-bg border-2 border-panel-border rounded-2xl px-4 py-3.5 text-sm font-bold text-input outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all">
                     </div>
                     <div class="space-y-1.5 group">
                         <label class="text-[9px] font-black uppercase tracking-widest text-label/60 ml-1 group-focus-within:text-primary transition-colors">Confirmar Password</label>
-                        <input type="password" name="confirm_password" required placeholder="••••••••" class="premium-validate" data-validation-type="match" data-match-target="add_password"
-                               class="w-full bg-input-bg border-2 border-panel-border rounded-2xl px-4 py-3.5 text-sm font-bold text-input outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all">
+                        <input type="password" name="confirm_password" required placeholder="••••••••" data-validation-type="match" data-match-target="add_password" autocomplete="new-password"
+                               class="premium-validate w-full bg-input-bg border-2 border-panel-border rounded-2xl px-4 py-3.5 text-sm font-bold text-input outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all">
                     </div>
                 </div>
 
@@ -397,8 +397,14 @@
                 </div>
             </div>
             <footer class="modal-footer">
-                <button type="button" onclick="closeModal('modal-add-user')" class="flex-1 py-4 bg-label/5 border border-panel-border text-label/60 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-label/10 hover:text-label transition-all active:scale-95">Descartar</button>
-                <button type="submit" class="flex-1 py-4 bg-primary text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 transition-all active:scale-95">Guardar Identidad</button>
+                <button type="button" onclick="closeModal('modal-add-user')" class="flex-1 py-4 bg-label/5 border border-panel-border text-label/60 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-label/10 hover:text-label transition-all active:scale-95 flex items-center justify-center gap-2">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    Descartar
+                </button>
+                <button type="submit" class="flex-1 py-4 bg-primary text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 transition-all active:scale-95 flex items-center justify-center gap-2">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                    Guardar
+                </button>
             </footer>
         </form>
     </div>
@@ -427,24 +433,30 @@
             <div class="modal-body space-y-5">
                 <div class="space-y-1.5 group">
                     <label class="text-[9px] font-black uppercase tracking-widest text-label/60 ml-1 group-focus-within:text-primary transition-colors">Nombre de Usuario</label>
-                    <input type="text" name="username" required class="premium-validate" data-validation-type="text"
-                           class="w-full bg-input-bg border-2 border-panel-border rounded-2xl px-5 py-3.5 text-sm font-bold text-input outline-none focus:border-primary transition-all">
+                    <div class="relative">
+                        <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/60 transition-colors group-focus-within:text-primary z-10 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        <input type="text" name="username" required placeholder="Juan Perez" data-validation-type="text" autocomplete="off"
+                               class="premium-validate w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-11 pr-4 py-3.5 text-sm font-bold text-input outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all">
+                    </div>
                 </div>
                 <div class="space-y-1.5 group">
-                    <label class="text-[9px] font-black uppercase tracking-widest text-label/60 ml-1 group-focus-within:text-primary transition-colors">Email</label>
-                    <input type="email" name="email" required class="premium-validate" data-validation-type="email"
-                           class="w-full bg-input-bg border-2 border-panel-border rounded-2xl px-5 py-3.5 text-sm font-bold text-input outline-none focus:border-primary transition-all">
+                    <label class="text-[9px] font-black uppercase tracking-widest text-label/60 ml-1 group-focus-within:text-primary transition-colors">Email Corporativo</label>
+                    <div class="relative">
+                        <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/30 transition-colors z-10 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        <input type="email" name="email" disabled placeholder="juan.perez@nexus.com" data-validation-type="email" autocomplete="off"
+                               class="premium-validate w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-11 pr-4 py-3.5 text-sm font-bold text-input opacity-60 cursor-not-allowed outline-none transition-all">
+                    </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div class="space-y-1.5 group">
                         <label class="text-[9px] font-black uppercase tracking-widest text-label/60 ml-1 group-focus-within:text-primary transition-colors">Nuevo Password</label>
-                        <input type="password" id="modify_password" name="password" placeholder="••••••••" class="premium-validate" data-validation-type="password"
-                               class="w-full bg-input-bg border-2 border-panel-border rounded-2xl px-5 py-3.5 text-sm font-bold text-input outline-none focus:border-primary transition-all">
+                        <input type="password" id="modify_password" name="password" placeholder="••••••••" data-validation-type="password" autocomplete="new-password"
+                               class="premium-validate w-full bg-input-bg border-2 border-panel-border rounded-2xl px-5 py-3.5 text-sm font-bold text-input outline-none focus:border-primary transition-all">
                     </div>
                     <div class="space-y-1.5 group">
                         <label class="text-[9px] font-black uppercase tracking-widest text-label/60 ml-1 group-focus-within:text-primary transition-colors">Confirmar Password</label>
-                        <input type="password" name="confirm_password" placeholder="••••••••" class="premium-validate" data-validation-type="match" data-match-target="modify_password"
-                               class="w-full bg-input-bg border-2 border-panel-border rounded-2xl px-5 py-3.5 text-sm font-bold text-input outline-none focus:border-primary transition-all">
+                        <input type="password" name="confirm_password" placeholder="••••••••" data-validation-type="match" data-match-target="modify_password" autocomplete="new-password"
+                               class="premium-validate w-full bg-input-bg border-2 border-panel-border rounded-2xl px-5 py-3.5 text-sm font-bold text-input outline-none focus:border-primary transition-all">
                     </div>
                 </div>
 
@@ -466,8 +478,14 @@
                 </div>
             </div>
             <footer class="modal-footer">
-                <button type="button" onclick="closeModal('modal-modify-user')" class="flex-1 py-4 bg-label/5 border border-panel-border text-label/60 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-label/10 hover:text-label transition-all active:scale-95">Ignorar</button>
-                <button type="submit" class="flex-1 py-4 bg-primary text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 transition-all active:scale-95">Sincronizar Cambios</button>
+                <button type="button" onclick="closeModal('modal-modify-user')" class="flex-1 py-4 bg-label/5 border border-panel-border text-label/60 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-label/10 hover:text-label transition-all active:scale-95 flex items-center justify-center gap-2">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    Descartar
+                </button>
+                <button type="submit" class="flex-1 py-4 bg-primary text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 transition-all active:scale-95 flex items-center justify-center gap-2">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                    Guardar
+                </button>
             </footer>
         </form>
     </div>
@@ -481,6 +499,10 @@
             <div class="w-20 h-20 bg-red-500/10 text-red-500 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-red-500/20 rotate-3 animate-pulse">
                 <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
             </div>
+            
+            <!-- Target Identification -->
+            <div id="delete-user-display" class="text-2xl font-black text-white/90 uppercase tracking-tighter mb-4 italic animate-in fade-in zoom-in duration-500">IDENTIDAD_NEXUS</div>
+
             <h3 class="text-xs font-black uppercase tracking-[0.25em] text-red-500 mb-3">Borrado Permanente</h3>
             <p id="delete-modal-msg" class="text-label/40 text-[11px] font-bold leading-relaxed mb-0">Esta acción eliminará de forma irreversible los registros seleccionados de la matriz de usuarios.</p>
         </div>
