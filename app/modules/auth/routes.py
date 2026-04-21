@@ -63,3 +63,33 @@ def save():
     except Exception as e:
         db.session.rollback()
         return jsonify({"status": "error", "message": str(e)}), 500
+
+@auth_bp.route("/users/list")
+@login_required
+def list_users():
+    search = request.args.get('search', '').lower()
+    
+    query = User.query
+    if search:
+        query = query.filter(
+            (User.username.ilike(f'%{search}%')) | 
+            (User.email.ilike(f'%{search}%')) | 
+            (User.role.ilike(f'%{search}%'))
+        )
+    
+    users = query.all()
+    user_list = []
+    for u in users:
+        # Map db state to UI status
+        status = 'active' if u.is_active else 'inactive'
+        # Check suspended logic if needed, for now using binary state
+        
+        user_list.append({
+            "id": u.id,
+            "name": u.username,
+            "email": u.email,
+            "role": u.role,
+            "status": status
+        })
+        
+    return jsonify(user_list)
