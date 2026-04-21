@@ -30,6 +30,11 @@ class AuthConfig(db.Model):
     ldap_base_dn = db.Column(db.String(200), nullable=True)
     ldap_user = db.Column(db.String(100), nullable=True)
     ldap_pass = db.Column(db.String(100), nullable=True)
+    
+    # Role Mapping (LDAP Groups)
+    ldap_group_admin = db.Column(db.String(200), nullable=True)
+    ldap_group_user = db.Column(db.String(200), nullable=True)
+    
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     def to_dict(self):
@@ -38,5 +43,7 @@ class AuthConfig(db.Model):
             "ldap_port": self.ldap_port,
             "ldap_ssl": self.ldap_ssl,
             "ldap_base_dn": self.ldap_base_dn,
-            "ldap_user": self.ldap_user
+            "ldap_user": self.ldap_user,
+            "ldap_group_admin": self.ldap_group_admin,
+            "ldap_group_user": self.ldap_group_user
         }

@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, jsonify, redirect, url_fo
 from flask_login import login_user, logout_user, login_required, current_user
 from app import db
 from app.modules.auth.models import User, AuthConfig
+from app.modules.auth.services import validate_ldap_connection
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
@@ -56,6 +57,8 @@ def save():
         if "ldap_base_dn" in data: config.ldap_base_dn = data["ldap_base_dn"]
         if "ldap_user" in data: config.ldap_user = data["ldap_user"]
         if "ldap_pass" in data: config.ldap_pass = data["ldap_pass"]
+        if "ldap_group_admin" in data: config.ldap_group_admin = data["ldap_group_admin"]
+        if "ldap_group_user" in data: config.ldap_group_user = data["ldap_group_user"]
         
         db.session.commit()
         return jsonify({"status": "success", "message": "Configuración de Directorio Guardada"})
@@ -162,4 +165,25 @@ def update_user():
         return jsonify({"status": "success", "message": "Usuario actualizado correctamente"})
     except Exception as e:
         db.session.rollback()
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@auth_bp.route("/test_ldap", methods=["POST"])
+@login_required
+def test_ldap():
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"status": "error", "message": "No se recibieron datos"}), 400
+            
+        result = validate_ldap_connection(
+            host=data.get("ldap_host"),
+            port=data.get("ldap_port"),
+            use_ssl=data.get("ldap_ssl", False),
+            bind_dn=data.get("ldap_bind_dn"),
+            bind_pass=data.get("ldap_bind_pass")
+        )
+        
+        return jsonify(result)
+        
+    except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500

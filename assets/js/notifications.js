@@ -1,7 +1,46 @@
-/**
- * NOTIFICATIONS MODULE LOGIC
- * Manages SMTP configuration persistence
- */
+document.addEventListener('DOMContentLoaded', function() {
+    const authToggle = document.getElementById('smtpAuthToggle');
+    const authInputs = ['smtpName', 'smtpUser', 'smtpPass'];
+    const authStatusText = document.getElementById('authStatusText');
+
+    function updateAuthFields() {
+        const isEnabled = authToggle.checked;
+        authInputs.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.disabled = !isEnabled;
+                // Visual feedback correction
+                if (!isEnabled) {
+                    el.classList.add('opacity-30', 'cursor-not-allowed');
+                } else {
+                    el.classList.remove('opacity-30', 'cursor-not-allowed');
+                }
+            }
+        });
+        if (authStatusText) {
+            authStatusText.innerText = isEnabled ? 'Activo' : 'Inactivo';
+            authStatusText.className = isEnabled 
+                ? 'text-[9px] text-primary/60 font-bold uppercase tracking-widest' 
+                : 'text-[9px] text-label/40 font-bold uppercase tracking-widest';
+        }
+    }
+
+    if (authToggle) {
+        authToggle.addEventListener('change', updateAuthFields);
+        updateAuthFields(); // Initialize state
+    }
+    
+    // Password Visibility Toggle
+    const togglePassBtn = document.getElementById('togglePassVisibility');
+    if (togglePassBtn) {
+        togglePassBtn.addEventListener('click', function() {
+            const passInput = document.getElementById('smtpPass');
+            if (passInput) {
+                passInput.type = passInput.type === 'password' ? 'text' : 'password';
+            }
+        });
+    }
+});
 
 function saveNotifications(containerId) {
     if (!validateNexusForm(containerId)) return;

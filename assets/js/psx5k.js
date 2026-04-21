@@ -12,13 +12,7 @@ let currentPage = 1;
 /**
  * MOCK DATA GENERATOR (Operational Context)
  */
-const mockPsxData = [
-    { id: 'PSX-9421', operacion: 'add', estado: 'running', inicio: '2026-04-21 11:45:02', fin: '-', resultado: 'PROCESANDO' },
-    { id: 'PSX-9388', operacion: 'delete', estado: 'finished', inicio: '2026-04-21 10:30:15', fin: '2026-04-21 10:35:42', resultado: 'EXITO' },
-    { id: 'PSX-9210', operacion: 'add', estado: 'pending', inicio: '2026-04-21 12:00:00', fin: '-', resultado: 'EN COLA' },
-    { id: 'PSX-9105', operacion: 'add', estado: 'finished', inicio: '2026-04-21 09:00:00', fin: '2026-04-21 09:12:10', resultado: 'EXITO' },
-    { id: 'PSX-8992', operacion: 'delete', estado: 'finished', inicio: '2026-04-21 08:30:00', fin: '2026-04-21 08:35:00', resultado: 'FALLIDO' }
-];
+const mockPsxData = [];
 
 /**
  * GENERA UNA BARRA DE PROGRESO TERMINAL (Mainframe Style)

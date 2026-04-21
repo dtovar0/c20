@@ -161,21 +161,16 @@ document.addEventListener('DOMContentLoaded', function() {
 function saveAuthConfig(containerId) {
     if (!validateNexusForm(containerId)) return;
 
-    // Direct selectors from auth.html
-    const lapHost = document.querySelector('input[placeholder="ldap.empresa.com"]')?.value;
-    const ldapPort = document.querySelector('input[placeholder="389"]')?.value;
-    const ldapSsl = document.querySelector('#tab-panel-users input[type="checkbox"]')?.checked;
-    const ldapBase = document.querySelector('input[placeholder*="BÚSQUEDA"]')?.value || document.querySelectorAll('#tab-panel-users input')[3]?.value;
-    const ldapUser = document.querySelector('input[placeholder*="CN="]')?.value;
-    const ldapPass = document.querySelector('#tab-panel-users input[type="password"]')?.value;
-
     const data = {
-        ldap_host: lapHost,
-        ldap_port: ldapPort,
-        ldap_ssl: ldapSsl,
-        ldap_base_dn: ldapBase,
-        ldap_user: ldapUser,
-        ldap_pass: ldapPass
+        ldap_host: document.getElementById('ldap_host')?.value,
+        ldap_port: document.getElementById('ldap_port')?.value,
+        ldap_ssl: document.getElementById('ldap_ssl')?.checked,
+        ldap_bind_dn: document.getElementById('ldap_bind_dn')?.value,
+        ldap_bind_pass: document.getElementById('ldap_bind_pass')?.value,
+        ldap_base_dn: document.getElementById('ldap_base_dn')?.value,
+        ldap_user_attr: document.getElementById('ldap_user_attr')?.value,
+        ldap_group_admin: document.getElementById('ldap_group_admin')?.value,
+        ldap_group_user: document.getElementById('ldap_group_user')?.value
     };
 
     showToast('Sincronizando Directorio...', 'info');
@@ -196,5 +191,47 @@ function saveAuthConfig(containerId) {
     .catch(error => {
         console.error('Error:', error);
         showToast('Error de conexión', 'error');
+    });
+}
+
+/**
+ * Tests the LDAP connection with current parameters
+ */
+function testLdapConnection() {
+    const data = {
+        ldap_host: document.getElementById('ldap_host')?.value,
+        ldap_port: document.getElementById('ldap_port')?.value,
+        ldap_ssl: document.getElementById('ldap_ssl')?.checked,
+        ldap_bind_dn: document.getElementById('ldap_bind_dn')?.value,
+        ldap_bind_pass: document.getElementById('ldap_bind_pass')?.value,
+        ldap_base_dn: document.getElementById('ldap_base_dn')?.value,
+        ldap_user_attr: document.getElementById('ldap_user_attr')?.value,
+        ldap_group_admin: document.getElementById('ldap_group_admin')?.value,
+        ldap_group_user: document.getElementById('ldap_group_user')?.value
+    };
+
+    if (!data.ldap_host || !data.ldap_port) {
+        showToast('Host y Puerto son obligatorios', 'error');
+        return;
+    }
+
+    showToast('Validando parámetros LDAP...', 'info');
+
+    fetch('/auth/test_ldap', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.status === 'success') {
+            showToast('Conexión LDAP Exitosa', 'success');
+        } else {
+            showToast('Error de Conexión: ' + result.message, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast('Error al conectar con el servidor', 'error');
     });
 }

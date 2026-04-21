@@ -225,7 +225,8 @@ IP: {ip}</textarea>
 </div>
 
 <!-- PREMIUM MODAL: Test Email -->
-<div id="modal-test-email" class="modal-backdrop">
+<div id="modal-test-email" class="nexus-modal">
+    <div class="modal-backdrop" onclick="closePremiumModal('modal-test-email')"></div>
     <div class="modal-panel animate-zoom-in relative">
         <!-- Close Button -->
         <button onclick="closePremiumModal('modal-test-email')" class="absolute top-6 right-6 w-10 h-10 rounded-xl bg-panel-border/10 text-label/40 hover:text-primary hover:bg-primary/10 transition-all flex items-center justify-center group active:scale-90">
@@ -233,7 +234,7 @@ IP: {ip}</textarea>
         </button>
 
         <!-- HEADER -->
-        <div class="flex items-center gap-6 mb-8">
+        <div class="flex items-center gap-6 mb-8 px-8 pt-8">
             <div class="w-16 h-16 rounded-[24px] bg-primary/10 flex items-center justify-center text-primary shadow-inner">
                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
             </div>
@@ -246,30 +247,32 @@ IP: {ip}</textarea>
         <div class="h-px bg-panel-border/30 w-full mb-8"></div>
 
         <!-- BODY -->
-        <p class="text-sm text-label/70 font-bold mb-8 leading-relaxed max-w-md">
-            Ingresa la dirección de correo electrónico donde deseas recibir el mensaje de prueba para validar la conectividad del canal.
-        </p>
+        <div class="px-8 pb-8">
+            <p class="text-sm text-label/70 font-bold mb-8 leading-relaxed max-w-md">
+                Ingresa la dirección de correo electrónico donde deseas recibir el mensaje de prueba para validar la conectividad del canal.
+            </p>
 
-        <div id="modal-form-area" class="space-y-6 mb-10">
-            <div class="group">
-                <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-3 px-1">Correo Destinatario</label>
-                <div class="relative group">
-                    <svg class="w-5 h-5 absolute left-5 top-1/2 -translate-y-1/2 text-label/40 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.206"></path></svg>
-                    <input type="email" id="testTargetEmail" placeholder="notificaciones@ejemplo.com" class="w-full bg-input-bg border-2 border-panel-border rounded-[20px] pl-14 pr-6 py-5 text-base font-bold text-input outline-none focus:border-input-focus transition-all">
+            <div id="modal-form-area" class="space-y-6 mb-10">
+                <div class="group">
+                    <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-3 px-1">Correo Destinatario</label>
+                    <div class="relative group">
+                        <svg class="w-5 h-5 absolute left-5 top-1/2 -translate-y-1/2 text-label/40 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.206"></path></svg>
+                        <input type="email" id="testTargetEmail" placeholder="notificaciones@ejemplo.com" class="w-full bg-input-bg border-2 border-panel-border rounded-[20px] pl-14 pr-6 py-5 text-base font-bold text-input outline-none focus:border-input-focus transition-all">
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="h-px bg-panel-border/30 w-full mb-8"></div>
+            <div class="h-px bg-panel-border/30 w-full mb-8"></div>
 
-        <!-- FOOTER -->
-        <div class="flex gap-4">
-            <button onclick="closePremiumModal('modal-test-email')" class="flex-1 py-5 bg-panel-border/10 text-label rounded-[20px] text-[11px] font-black uppercase tracking-widest hover:bg-panel-border/20 transition-all active:scale-95">
-                Cancelar
-            </button>
-            <button onclick="if(validateNexusForm('modal-form-area')) { closePremiumModal('modal-test-email'); showToast('Enviando...', 'info'); setTimeout(() => showToast('Correo Enviado', 'success'), 1200); }" class="flex-1 py-5 bg-button-bg text-button-text rounded-[20px] text-[11px] font-black uppercase tracking-widest shadow-2xl shadow-button-bg/20 hover:opacity-90 transition-all active:scale-95">
-                Confirmar Envío
-            </button>
+            <!-- FOOTER -->
+            <div class="flex gap-4">
+                <button onclick="closePremiumModal('modal-test-email')" class="flex-1 py-5 bg-panel-border/10 text-label rounded-[20px] text-[11px] font-black uppercase tracking-widest hover:bg-panel-border/20 transition-all active:scale-95">
+                    Cancelar
+                </button>
+                <button onclick="if(validateNexusForm('modal-form-area')) { closePremiumModal('modal-test-email'); showToast('Enviando...', 'info'); setTimeout(() => showToast('Correo Enviado', 'success'), 1200); }" class="flex-1 py-5 bg-button-bg text-button-text rounded-[20px] text-[11px] font-black uppercase tracking-widest shadow-2xl shadow-button-bg/20 hover:opacity-90 transition-all active:scale-95">
+                    Confirmar Envío
+                </button>
+            </div>
         </div>
     </div>
 </div>

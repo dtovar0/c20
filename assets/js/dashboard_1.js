@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const optionsBooking = {
         series: [{
             name: 'Bookings',
-            data: [31, 40, 28, 51, 42, 109, 100, 120, 80, 95, 110, 140]
+            data: []
         }],
         chart: {
             height: 200,
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const optionsOnTime = {
         series: [{
             name: 'Eficiencia',
-            data: [44, 55, 57, 56, 61, 58, 63, 60, 66, 70, 75, 80]
+            data: []
         }],
         chart: {
             height: 200,
