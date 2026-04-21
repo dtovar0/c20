@@ -1,11 +1,48 @@
 /**
  * SETTINGS MODULE LOGIC
- * Manages identity mode toggling and live preview synchronization
+ * Manages identity mode toggling, live preview synchronization, and state recovery.
  */
+
+let currentIdentityMode = 'icon'; // Global track for save logic
 
 document.addEventListener('DOMContentLoaded', () => {
     initLivePreview();
+    recoverState();
 });
+
+/**
+ * Recovers state from the 'settings-state' data attributes
+ */
+function recoverState() {
+    const stateEl = document.getElementById('settings-state');
+    if (!stateEl) return;
+
+    if (stateEl.dataset.configExists === 'true') {
+        const identityType = stateEl.dataset.identityType;
+        const savedIconPath = stateEl.dataset.portalIconPath;
+        
+        toggleIdentityMode(identityType);
+
+        if (identityType === 'icon' && savedIconPath) {
+            // INFALLIBLE FINGERPRINT HIGHLIGHTING
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = savedIconPath;
+            const targetD = tempDiv.querySelector('path')?.getAttribute('d');
+            
+            if (targetD) {
+                const iconButtons = document.querySelectorAll('#group-icon-picker button');
+                iconButtons.forEach(btn => {
+                    const btnPath = btn.querySelector('path')?.getAttribute('d');
+                    if (btnPath === targetD) {
+                        btn.classList.add('bg-primary/20', 'text-primary', 'shadow-lg', 'shadow-primary/20', 'z-10');
+                        btn.classList.remove('text-primary/60');
+                        btn.scrollIntoView({ behavior: 'auto', block: 'center' });
+                    }
+                });
+            }
+        }
+    }
+}
 
 /**
  * Initializes all live preview listeners
@@ -35,7 +72,7 @@ function initLivePreview() {
                 b.classList.add('text-primary/60');
             });
 
-            // Add active state to selected (No scale to maintain symmetry)
+            // Add active state to selected
             btn.classList.add('bg-primary/20', 'text-primary', 'shadow-lg', 'shadow-primary/20', 'z-10');
             btn.classList.remove('text-primary/60');
 
@@ -43,7 +80,6 @@ function initLivePreview() {
             const svg = btn.querySelector('svg').outerHTML;
             previewPortalIcon.innerHTML = svg;
             
-            // Visual feedback on the board
             animatePreviewBoard();
         });
     });
@@ -70,7 +106,6 @@ function initLivePreview() {
     if (bgColorInput) {
         bgColorInput.addEventListener('input', (e) => {
             previewPortalIcon.style.backgroundColor = e.target.value;
-            // Also sync sidebar logo in real-time
             const sidebarLogo = document.querySelector('#sidebar div.brand-text > div');
             if (sidebarLogo) sidebarLogo.style.backgroundColor = e.target.value;
         });
@@ -79,14 +114,11 @@ function initLivePreview() {
     if (textColorInput) {
         textColorInput.addEventListener('input', (e) => {
             previewPortalIcon.style.color = e.target.value;
-            // Also sync sidebar logo text/icon color in real-time
             const sidebarLogo = document.querySelector('#sidebar div.brand-text > div');
             if (sidebarLogo) sidebarLogo.style.color = e.target.value;
         });
     }
 }
-
-let currentIdentityMode = 'icon'; // Global track for save logic
 
 /**
  * Toggles between Icon selection and Image upload modes
@@ -105,13 +137,13 @@ function toggleIdentityMode(mode) {
         iconGroup.classList.remove('hidden');
         imageGroup.classList.add('hidden');
         if (imageInput) imageInput.disabled = true;
-        btnIcon.className = "flex-grow py-4 bg-button-bg text-button-text rounded-2xl text-xs font-black uppercase tracking-widest shadow-lg shadow-button-bg/20 hover:opacity-90 transition-all active:scale-95 flex items-center justify-center gap-2";
+        btnIcon.className = "flex-grow py-4 bg-button-bg text-button-text shadow-lg shadow-button-bg/20 rounded-2xl text-xs font-black uppercase tracking-widest hover:opacity-90 transition-all active:scale-95 flex items-center justify-center gap-2";
         btnImage.className = "flex-grow py-4 bg-panel-fill border-2 border-button-bg/20 text-label rounded-2xl text-xs font-black uppercase tracking-widest hover:border-button-bg transition-all active:scale-95 flex items-center justify-center gap-2";
     } else {
         iconGroup.classList.add('hidden');
         imageGroup.classList.remove('hidden');
         if (imageInput) imageInput.disabled = false;
-        btnImage.className = "flex-grow py-4 bg-button-bg text-button-text rounded-2xl text-xs font-black uppercase tracking-widest shadow-lg shadow-button-bg/20 hover:opacity-90 transition-all active:scale-95 flex items-center justify-center gap-2";
+        btnImage.className = "flex-grow py-4 bg-button-bg text-button-text shadow-lg shadow-button-bg/20 rounded-2xl text-xs font-black uppercase tracking-widest hover:opacity-90 transition-all active:scale-95 flex items-center justify-center gap-2";
         btnIcon.className = "flex-grow py-4 bg-panel-fill border-2 border-button-bg/20 text-label rounded-2xl text-xs font-black uppercase tracking-widest hover:border-button-bg transition-all active:scale-95 flex items-center justify-center gap-2";
     }
 
@@ -130,8 +162,26 @@ function animatePreviewBoard() {
 }
 
 /**
+ * Updates default port based on engine selection
+ */
+function updateDefaultPort(engine) {
+    const portInput = document.getElementById('db-port');
+    if (!portInput) return;
+    
+    if (engine === 'mysql') {
+        portInput.value = '3306';
+        portInput.placeholder = '3306';
+    } else if (engine === 'postgres') {
+        portInput.value = '5432';
+        portInput.placeholder = '5432';
+    }
+    
+    portInput.parentElement.classList.add('scale-[1.02]');
+    setTimeout(() => portInput.parentElement.classList.remove('scale-[1.02]'), 200);
+}
+
+/**
  * Saves settings to the backend
- * @param {string} containerId 
  */
 function saveSettings(containerId) {
     const portalName = document.getElementById('portal-name-input')?.value;
@@ -139,10 +189,10 @@ function saveSettings(containerId) {
     
     let portalIconValue = '';
     if (currentIdentityMode === 'icon') {
-        portalIconValue = previewBoard?.innerHTML; // Save full SVG code
+        portalIconValue = previewBoard?.innerHTML; 
     } else {
         const img = previewBoard?.querySelector('img');
-        portalIconValue = img ? img.src : ''; // Save DataURL only
+        portalIconValue = img ? img.src : ''; 
     }
 
     const data = {
@@ -153,7 +203,6 @@ function saveSettings(containerId) {
         text_color: document.getElementById('portal-text-color')?.value
     };
 
-    // Only show "Sincronizando" for Database (Higher latency expectation)
     if (containerId === 'tab-panel-database') {
         showToast('Sincronizando...', 'info');
     }
@@ -167,7 +216,6 @@ function saveSettings(containerId) {
     })
     .then(response => response.json())
     .then(result => {
-        // Aesthetic delay for smooth transition
         setTimeout(() => {
             if (result.status === 'success') {
                 showToast(result.message, 'success', true);

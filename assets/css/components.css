@@ -515,3 +515,54 @@ input[name="db_engine"]:checked + label .w-5.h-5 .bg-primary {
     pointer-events: none;
     opacity: 0;
 }
+
+/* --- AUTH & LOGIN PREMIUM STYLES --- */
+.auth-body {
+    background: radial-gradient(circle at top right, rgba(var(--color-primary), 0.15), transparent 40%),
+                radial-gradient(circle at bottom left, rgba(var(--color-accent), 0.1), transparent 40%),
+                var(--color-body-bg);
+    color: var(--color-body-text);
+    font-family: 'Inter', sans-serif;
+}
+
+.glass-panel {
+    background-color: rgb(var(--color-panel-fill));
+    border: 2px solid rgb(var(--color-panel-border));
+    box-shadow: 0 25px 70px -10px rgba(0, 0, 0, 0.6);
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.animate-float { animation: float 6s ease-in-out infinite; }
+
+.brand-icon-container svg {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+}
+
+.input-focus-ring {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.input-focus-ring:focus {
+    box-shadow: 0 0 0 4px rgba(var(--color-primary), 0.2);
+    border-color: rgb(var(--color-primary));
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.auth-error { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+
+/* Dynamic Brand Variables */
+:root {
+    --color-brand-identity-bg: var(--color-primary);
+    --color-brand-identity-text: #ffffff;
+}

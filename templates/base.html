@@ -26,21 +26,9 @@
     <link rel="stylesheet" href="{{ url_for('serve_assets', filename='css/main.css') }}?v={{ range(1000, 9999) | random }}">
     <link rel="stylesheet" href="{{ url_for('serve_assets', filename='css/components.css') }}?v={{ range(1000, 9999) | random }}">
 
-    {% if sys_config %}
-    <style>
-        :root {
-            {% if sys_config.bg_color %}
-            --color-brand-identity-bg: {{ sys_config.bg_color }};
-            {% endif %}
-
-            {% if sys_config.text_color %}
-            --color-brand-identity-text: {{ sys_config.text_color }};
-            {% endif %}
-        }
-    </style>
-    {% endif %}
-</head>
-<body class="bg-bg text-text h-full overflow-hidden">
+    <body class="bg-bg text-text h-full overflow-hidden" 
+          data-brand-bg="{{ sys_config.bg_color if sys_config else '' }}" 
+          data-brand-text="{{ sys_config.text_color if sys_config else '' }}">
     <div class="flex h-full overflow-hidden">
         <!-- Sidebar -->
         {% include 'components/sidebar.html' %}

@@ -347,56 +347,9 @@
     </div>
 </div>
 
+<div id="settings-state" class="hidden" 
+     data-config-exists="{% if config %}true{% else %}false{% endif %}"
+     data-identity-type="{{ config.portal_identity_type if config else 'icon' }}"
+     data-portal-icon-path="{{ config.portal_icon if config and config.portal_identity_type == 'icon' else '' }}"></div>
 <script src="{{ url_for('serve_assets', filename='js/settings.js') }}"></script>
-<script>
-    function updateDefaultPort(engine) {
-        const portInput = document.getElementById('db-port');
-        if (!portInput) return;
-        
-        if (engine === 'mysql') {
-            portInput.value = '3306';
-            portInput.placeholder = '3306';
-        } else if (engine === 'postgres') {
-            portInput.value = '5432';
-            portInput.placeholder = '5432';
-        }
-        
-        // Visual feedback
-        portInput.parentElement.classList.add('scale-[1.02]');
-        setTimeout(() => portInput.parentElement.classList.remove('scale-[1.02]'), 200);
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        {% if config %}
-        currentIdentityMode = "{{ config.portal_identity_type }}";
-        
-        if (currentIdentityMode === 'image') {
-            document.getElementById('group-icon-picker')?.classList.add('hidden');
-            document.getElementById('group-image-upload')?.classList.remove('hidden');
-            document.getElementById('portal-image-input').disabled = false;
-        } else {
-            document.getElementById('group-icon-picker')?.classList.remove('hidden');
-            document.getElementById('group-image-upload')?.classList.add('hidden');
-            document.getElementById('portal-image-input').disabled = true;
-            
-            // INFALLIBLE FINGERPRINT HIGHLIGHTING
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = `{{ config.portal_icon | safe }}`;
-            const savedPath = tempDiv.querySelector('path')?.getAttribute('d');
-            
-            if (savedPath) {
-                const iconButtons = document.querySelectorAll('#group-icon-picker button');
-                iconButtons.forEach(btn => {
-                    const btnPath = btn.querySelector('path')?.getAttribute('d');
-                    if (btnPath === savedPath) {
-                        btn.classList.add('bg-primary/20', 'text-primary', 'shadow-lg', 'shadow-primary/20', 'z-10');
-                        btn.classList.remove('text-primary/60');
-                        btn.scrollIntoView({ behavior: 'auto', block: 'center' });
-                    }
-                });
-            }
-        }
-        {% endif %}
-    });
-</script>
 {% endblock %}

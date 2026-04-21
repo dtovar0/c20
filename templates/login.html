@@ -4,67 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nexus | Secure Access</title>
-    <script>
-        // Immediate Theme Sync
-        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    </script>
+    <script src="{{ url_for('serve_assets', filename='js/global.js') }}"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="/assets/js/tailwind-config.js"></script>
-    <link rel="stylesheet" href="/assets/css/global.css">
-    <link rel="stylesheet" href="/static/css/tokens.css">
-    <link rel="stylesheet" href="/assets/css/components.css">
-    <style>
-        body {
-            background: radial-gradient(circle at top right, rgba(var(--color-primary), 0.15), transparent 40%),
-                        radial-gradient(circle at bottom left, rgba(var(--color-accent), 0.1), transparent 40%),
-                        var(--color-body-bg);
-            color: var(--color-body-text);
-            font-family: 'Inter', sans-serif;
-        }
-
-        .glass-panel {
-            background-color: rgb(var(--color-panel-fill));
-            border: 2px solid rgb(var(--color-panel-border));
-            box-shadow: 0 25px 70px -10px rgba(0, 0, 0, 0.6);
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .animate-float { animation: float 6s ease-in-out infinite; }
-
-        /* Universal SVG Scale Normalization (No color force) */
-        .brand-icon-container svg {
-            width: 100% !important;
-            height: 100% !important;
-            display: block;
-        }
-
-        .input-focus-ring {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .input-focus-ring:focus {
-            box-shadow: 0 0 0 4px rgba(var(--color-primary), 0.2);
-            border-color: rgb(var(--color-primary));
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-            20%, 40%, 60%, 80% { transform: translateX(5px); }
-        }
-
-        .auth-error { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
-    </style>
+    <script src="{{ url_for('serve_assets', filename='js/tailwind-config.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tokens.css') }}">
+    <link rel="stylesheet" href="{{ url_for('serve_assets', filename='css/global.css') }}">
+    <link rel="stylesheet" href="{{ url_for('serve_assets', filename='css/components.css') }}">
 </head>
-<body class="h-full flex flex-col items-center justify-center p-6 overflow-hidden">
+<body class="h-full flex flex-col items-center justify-center p-6 overflow-hidden auth-body">
     
     <!-- Animated background elements -->
     <div class="fixed inset-0 pointer-events-none overflow-hidden">
@@ -78,9 +25,8 @@
         <!-- Brand Header (Sync with sys_config) -->
         <div class="text-center mb-10">
             <div class="brand-icon-container inline-flex items-center justify-center w-24 h-24 rounded-3xl border-2 border-white/20 mb-6 animate-float overflow-hidden p-5 transition-all duration-500"
-                 style="background-color: {{ sys_config.bg_color if sys_config else 'var(--color-primary)' }};
-                        color: {{ sys_config.text_color if sys_config else '#ffffff' }};
-                        box-shadow: 0 0 40px {{ sys_config.bg_color + '60' if sys_config else 'rgba(var(--color-primary-rgb), 0.4)' }};">
+                 data-bg-color="{{ sys_config.bg_color if sys_config else 'var(--color-primary)' }}"
+                 data-text-color="{{ sys_config.text_color if sys_config else '#ffffff' }}">
                 {% if sys_config and sys_config.portal_identity_type == 'image' and sys_config.portal_icon %}
                     <img src="{{ sys_config.portal_icon }}" alt="Logo" class="w-full h-full object-cover">
                 {% elif sys_config and sys_config.portal_icon %}
@@ -108,7 +54,8 @@
                             <svg class="w-5 h-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             <span class="text-xs font-bold text-rose-500 uppercase tracking-widest">{{ message }}</span>
                         </div>
-                        <script>document.getElementById('loginForm').classList.add('auth-error');</script>
+                        <!-- Error marker for JS -->
+                        <div class="hidden auth-trigger-error"></div>
                     {% endfor %}
                 {% endif %}
             {% endwith %}

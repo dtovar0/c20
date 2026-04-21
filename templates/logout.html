@@ -4,35 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nexus | Sesión Finalizada</title>
-    <script>
-        // Immediate Theme Sync
-        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    </script>
+    <script src="{{ url_for('serve_assets', filename='js/global.js') }}"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="/assets/js/tailwind-config.js"></script>
-    <link rel="stylesheet" href="/static/css/tokens.css">
-    <style>
-        body {
-            background-color: var(--color-body-bg);
-            color: var(--color-body-text);
-            font-family: 'Inter', sans-serif;
-            overflow: hidden;
-        }
-        .progress-ring {
-            transition: stroke-dashoffset 1s linear;
-        }
-
-        /* Universal SVG Scale Normalization (No color force) */
-        .brand-icon-container svg {
-            width: 100% !important;
-            height: 100% !important;
-            display: block;
-        }
-    </style>
+    <script src="{{ url_for('serve_assets', filename='js/tailwind-config.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tokens.css') }}">
+    <link rel="stylesheet" href="{{ url_for('serve_assets', filename='css/global.css') }}">
+    <link rel="stylesheet" href="{{ url_for('serve_assets', filename='css/components.css') }}">
 </head>
 <body class="h-full flex flex-col items-center justify-center p-6">
     
@@ -43,9 +20,8 @@
     <div class="w-full max-w-sm text-center relative z-10 animate-in fade-in zoom-in duration-700">
         <!-- Success Icon / Brand Icon -->
         <div class="brand-icon-container inline-flex items-center justify-center w-24 h-24 rounded-[32px] border-2 border-white/20 mb-8 overflow-hidden p-5 transition-all duration-500"
-             style="background-color: {{ sys_config.bg_color if sys_config else 'var(--color-primary)' }};
-                    color: {{ sys_config.text_color if sys_config else '#ffffff' }};
-                    box-shadow: 0 0 40px {{ sys_config.bg_color + '60' if sys_config else 'rgba(var(--color-primary-rgb), 0.4)' }};">
+             data-bg-color="{{ sys_config.bg_color if sys_config else 'var(--color-primary)' }}"
+             data-text-color="{{ sys_config.text_color if sys_config else '#ffffff' }}">
             {% if sys_config and sys_config.portal_identity_type == 'image' and sys_config.portal_icon %}
                 <img src="{{ sys_config.portal_icon }}" alt="Logo" class="w-full h-full object-cover">
             {% elif sys_config and sys_config.portal_icon %}
@@ -82,25 +58,8 @@
         </div>
     </div>
 
-    <script>
-        let count = 5;
-        const countdownEl = document.getElementById('countdown');
-        const progressEl = document.getElementById('progress');
-        const dashArray = 377;
-        
-        const timer = setInterval(() => {
-            count--;
-            countdownEl.textContent = count;
-            
-            // Update progress circle
-            const offset = dashArray - (dashArray * (count / 5));
-            progressEl.style.strokeDashoffset = offset;
-
-            if (count <= 0) {
-                clearInterval(timer);
-                window.location.href = "{{ url_for('auth.login') }}";
-            }
-        }, 1000);
-    </script>
+    <!-- Auto-redirect config for JS -->
+    <div id="logout-config" class="hidden" data-login-url="{{ url_for('auth.login') }}"></div>
+    <script src="{{ url_for('serve_assets', filename='js/app.js') }}"></script>
 </body>
 </html>
