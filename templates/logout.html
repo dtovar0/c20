@@ -42,15 +42,18 @@
 
     <div class="w-full max-w-sm text-center relative z-10 animate-in fade-in zoom-in duration-700">
         <!-- Success Icon / Brand Icon -->
-        <div class="brand-icon-container inline-flex items-center justify-center w-24 h-24 rounded-[32px] bg-primary border-2 border-white/20 shadow-[0_0_40px_rgba(var(--color-primary),0.4)] mb-8 overflow-hidden p-5">
+        <div class="brand-icon-container inline-flex items-center justify-center w-24 h-24 rounded-[32px] border-2 border-white/20 mb-8 overflow-hidden p-5 transition-all duration-500"
+             style="background-color: {{ sys_config.bg_color if sys_config else 'var(--color-primary)' }};
+                    color: {{ sys_config.text_color if sys_config else '#ffffff' }};
+                    box-shadow: 0 0 40px {{ sys_config.bg_color + '60' if sys_config else 'rgba(var(--color-primary-rgb), 0.4)' }};">
             {% if sys_config and sys_config.portal_identity_type == 'image' and sys_config.portal_icon %}
                 <img src="{{ sys_config.portal_icon }}" alt="Logo" class="w-full h-full object-cover">
             {% elif sys_config and sys_config.portal_icon %}
-                <div class="text-white">
+                <div style="color: inherit;">
                     {{ sys_config.portal_icon | safe }}
                 </div>
             {% else %}
-                <svg class="w-12 h-12 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-12 h-12" style="color: inherit;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
                 </svg>
             {% endif %}
