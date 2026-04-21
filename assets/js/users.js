@@ -75,21 +75,8 @@ function renderUsersTable() {
                     <td class="px-4 py-3 bg-surface-container border-y border-surface-container-border group-hover:border-primary/30 transition-colors">
                         <span class="text-[10px] font-mono text-label/40">${user.email}</span>
                     </td>
-                    <td class="px-4 py-3 bg-surface-container border-y border-surface-container-border group-hover:border-primary/30 transition-colors text-[10px] font-bold text-label/60">
-                        ${user.activity}
-                    </td>
-                    <td class="px-4 py-3 bg-surface-container border-y border-surface-container-border group-hover:border-primary/30 transition-colors">
-                        <span class="px-3 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest ${statusClass}">${user.status}</span>
-                    </td>
                     <td class="px-6 py-3 text-right bg-surface-container border-y border-r border-surface-container-border rounded-r-2xl group-hover:border-primary/30 transition-colors">
-                        <div class="flex items-center justify-end gap-2">
-                            <button class="w-8 h-8 rounded-xl bg-label/5 text-label/40 hover:bg-primary/20 hover:text-primary transition-all flex items-center justify-center">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                            </button>
-                            <button class="w-8 h-8 rounded-xl bg-label/5 text-label/40 hover:bg-red-500/20 hover:text-red-500 transition-all flex items-center justify-center">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                            </button>
-                        </div>
+                        <span class="px-3 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest ${statusClass}">${user.status}</span>
                     </td>
                 </tr>
             `;
@@ -105,12 +92,8 @@ function renderUsersTable() {
                 <td class="px-6 py-3 bg-surface-container/5 border-y border-l border-surface-container-border/20 rounded-l-2xl text-transparent">-</td>
                 <td class="px-4 py-3 bg-surface-container/5 border-y border-surface-container-border/20 text-transparent">-</td>
                 <td class="px-4 py-3 bg-surface-container/5 border-y border-surface-container-border/20 text-transparent">-</td>
-                <td class="px-4 py-3 bg-surface-container/5 border-y border-surface-container-border/20 text-transparent">-</td>
-                <td class="px-4 py-3 bg-surface-container/5 border-y border-surface-container-border/20">
-                    <div class="h-4 w-16 bg-label/10 rounded-full mx-auto opacity-10"></div>
-                </td>
                 <td class="px-6 py-3 bg-surface-container/5 border-y border-r border-surface-container-border/20 rounded-r-2xl text-right">
-                    <div class="w-16 h-8 rounded-xl bg-label/5 ml-auto opacity-10"></div>
+                    <div class="h-4 w-16 bg-label/10 rounded-full ml-auto opacity-10"></div>
                 </td>
             </tr>
         `;
