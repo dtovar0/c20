@@ -192,20 +192,44 @@ function updateUsersPagination() {
     if (btnNext) btnNext.disabled = (currentUsersPage >= totalPages || total === 0);
 }
 
-// Global actions placeholders
+// Modal Controls
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden'; // Prevent scroll
+    }
+}
+
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.classList.add('hidden');
+        document.body.style.overflow = ''; // Restore scroll
+    }
+}
+
+// Global actions
+function addUserModal() {
+    openModal('modal-add-user');
+}
+
 function modifyUser() {
     const targetId = Array.from(selectedUsers)[0];
     const user = fetchedUsers.find(u => u.id === targetId);
     if (user) {
         console.log(`📡 Solicitud de edición para: ${user.name}`);
-        if(typeof showToast === 'function') showToast(`Editando a ${user.name}`, 'info');
+        // Logica para cargar datos en modal de edicion
     }
 }
 
 function deleteUser() {
     const count = selectedUsers.size;
-    console.log(`📡 Solicitud de eliminación para ${count} registros`);
-    if(typeof showToast === 'function') showToast(`${count} usuarios procesados para eliminación`, 'warning');
+    const msgEl = document.getElementById('delete-modal-msg');
+    if (msgEl) {
+        msgEl.innerText = `Estás a punto de eliminar permanentemente ${count} usuario(s) de la base de datos. Esta acción no se puede deshacer.`;
+    }
+    openModal('modal-delete-confirm');
 }
 
 // Initialization
@@ -253,6 +277,61 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentUsersPage++;
                 selectedUsers.clear();
                 renderUsersTable();
+            }
+        });
+    }
+
+    // FORM: Add User
+    const formAdd = document.getElementById('form-add-user');
+    if (formAdd) {
+        formAdd.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(formAdd);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch('/auth/users/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const res = await response.json();
+                
+                if (res.status === 'success') {
+                    closeModal('modal-add-user');
+                    formAdd.reset();
+                    fetchUsers();
+                    if(typeof showToast === 'function') showToast('Usuario creado correctamente', 'success');
+                } else {
+                    alert(res.message);
+                }
+            } catch (error) {
+                console.error('Error creating user:', error);
+            }
+        });
+    }
+
+    // ACTION: Confirm Delete
+    const btnConfirmDelete = document.getElementById('confirm-delete-action');
+    if (btnConfirmDelete) {
+        btnConfirmDelete.addEventListener('click', async () => {
+            const ids = Array.from(selectedUsers);
+            try {
+                const response = await fetch('/auth/users/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ids })
+                });
+                const res = await response.json();
+                
+                if (res.status === 'success') {
+                    closeModal('modal-delete-confirm');
+                    selectedUsers.clear();
+                    fetchUsers();
+                    if(typeof showToast === 'function') showToast(`${ids.length} usuarios eliminados`, 'success');
+                }
+            } catch (error) {
+                console.error('Error deleting users:', error);
             }
         });
     }

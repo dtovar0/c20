@@ -93,3 +93,49 @@ def list_users():
         })
         
     return jsonify(user_list)
+
+@auth_bp.route("/users/create", methods=["POST"])
+@login_required
+def create_user():
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"status": "error", "message": "Faltan datos"}), 400
+            
+        # Validar si ya existe
+        if User.query.filter_by(username=data['username']).first():
+            return jsonify({"status": "error", "message": "El nombre de usuario ya existe"}), 400
+            
+        new_user = User(
+            username=data['username'],
+            email=data['email'],
+            role=data['role'],
+            is_active=True
+        )
+        new_user.set_password(data['password'])
+        
+        db.session.add(new_user)
+        db.session.commit()
+        
+        return jsonify({"status": "success", "message": "Usuario creado"})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@auth_bp.route("/users/delete", methods=["POST"])
+@login_required
+def delete_users():
+    try:
+        data = request.get_json()
+        ids = data.get('ids', [])
+        
+        if not ids:
+            return jsonify({"status": "error", "message": "No se proporcionaron IDs"}), 400
+            
+        User.query.filter(User.id.in_(ids)).delete(synchronize_session=False)
+        db.session.commit()
+        
+        return jsonify({"status": "success", "message": f"{len(ids)} usuarios eliminados"})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"status": "error", "message": str(e)}), 500
