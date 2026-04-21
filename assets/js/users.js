@@ -4,7 +4,7 @@
  */
 
 let currentUsersPage = 1;
-const usersPerPage = 8;
+const usersPerPage = 6;
 let fetchedUsers = [];
 let selectedUsers = new Set();
 let isFetching = false;
