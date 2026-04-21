@@ -177,10 +177,19 @@ function updateUserActions() {
 
 function updateUsersPagination() {
     const infoEl = document.getElementById('usersPaginationInfo');
+    const btnPrev = document.getElementById('prevUsersPage');
+    const btnNext = document.getElementById('nextUsersPage');
+
     const total = fetchedUsers.length;
+    const totalPages = Math.ceil(total / usersPerPage);
     const start = total === 0 ? 0 : (currentUsersPage - 1) * usersPerPage + 1;
     const end = Math.min(currentUsersPage * usersPerPage, total);
+
     if (infoEl) infoEl.innerText = `Mostrando ${start}-${end} de ${total} registros reales`;
+    
+    // Update button states
+    if (btnPrev) btnPrev.disabled = (currentUsersPage <= 1);
+    if (btnNext) btnNext.disabled = (currentUsersPage >= totalPages || total === 0);
 }
 
 // Global actions placeholders
@@ -220,6 +229,31 @@ document.addEventListener('DOMContentLoaded', () => {
     if (selectAll) {
         selectAll.addEventListener('change', (e) => {
             toggleAllUsers(e.target.checked);
+        });
+    }
+
+    // Pagination Listeners
+    const btnPrev = document.getElementById('prevUsersPage');
+    const btnNext = document.getElementById('nextUsersPage');
+
+    if (btnPrev) {
+        btnPrev.addEventListener('click', () => {
+            if (currentUsersPage > 1) {
+                currentUsersPage--;
+                selectedUsers.clear();
+                renderUsersTable();
+            }
+        });
+    }
+
+    if (btnNext) {
+        btnNext.addEventListener('click', () => {
+            const totalPages = Math.ceil(fetchedUsers.length / usersPerPage);
+            if (currentUsersPage < totalPages) {
+                currentUsersPage++;
+                selectedUsers.clear();
+                renderUsersTable();
+            }
         });
     }
 
