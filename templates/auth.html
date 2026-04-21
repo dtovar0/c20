@@ -39,34 +39,49 @@
     <!-- PANEL AREA -->
     <div class="flex-grow flex flex-col overflow-hidden">
         
-        <!-- Tab Panel: Usuarios (Locales) -->
-        <div id="tab-panel-users" class="tab-panel tab-panel-content flex-grow flex flex-col animate-in fade-in slide-in-from-bottom-2 duration-500 rounded-2xl overflow-hidden border border-panel-border shadow-2xl shadow-primary/5 mb-2">
-            <!-- PANEL HEADER -->
-            <header class="bg-header border-b border-panel-border px-6 py-4 flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                    </div>
-                    <div>
-                        <h2 class="text-xl font-black tracking-tighter text-primary uppercase italic leading-none">Local Users Management</h2>
-                        <p class="text-[9px] text-primary/60 font-bold tracking-widest uppercase mt-0.5">Status: Gestión Interna / Base de Datos</p>
+            <!-- PANEL BODY -->
+            <main class="flex-grow p-6 flex flex-col overflow-hidden">
+                <!-- Search & Filters Bar -->
+                <div class="flex items-center justify-between mb-6 gap-4">
+                    <div class="relative flex-grow max-w-md">
+                        <input type="text" id="userSearch" placeholder="Buscar usuarios por nombre, email o rol..." 
+                            class="w-full pl-12 pr-4 py-3 bg-surface-container/20 border-2 border-panel-border rounded-2xl text-xs font-bold text-label focus:border-primary outline-none transition-all placeholder:opacity-30">
+                        <svg class="w-4 h-4 absolute left-5 top-1/2 -translate-y-1/2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-3">
-                    <button onclick="addUserModal()" class="nexus-btn-save bg-primary text-white hover:bg-primary-focus">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                        Añadir Usuario
-                    </button>
+                <!-- Users Table Container -->
+                <div class="overflow-x-auto overflow-y-hidden custom-scrollbar flex-grow">
+                    <table class="w-full text-left border-separate border-spacing-y-2">
+                        <thead>
+                            <tr class="text-[10px] font-black uppercase tracking-[0.2em] text-primary transition-all duration-300">
+                                <th class="px-6 py-4 bg-slate-900/50 rounded-l-2xl border-y border-l border-panel-border transition-all duration-300">Usuario</th>
+                                <th class="px-4 py-4 bg-slate-900/50 border-y border-panel-border transition-all duration-300">Rol / Perfil</th>
+                                <th class="px-4 py-4 bg-slate-900/50 border-y border-panel-border transition-all duration-300">Email</th>
+                                <th class="px-4 py-4 bg-slate-900/50 border-y border-panel-border transition-all duration-300">Última Actividad</th>
+                                <th class="px-4 py-4 bg-slate-900/50 border-y border-panel-border transition-all duration-300">Estado</th>
+                                <th class="px-6 py-4 bg-slate-900/50 rounded-r-2xl border-y border-r border-panel-border text-right pr-6 transition-all duration-300">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <!-- Skeleton Placeholders -->
+                            <tr class="group transition-all duration-300">
+                                <td class="py-8 bg-surface-container/10 rounded-l-2xl border-y border-l border-panel-border/20" colspan="1"></td>
+                                <td class="py-8 bg-surface-container/10 border-y border-panel-border/20" colspan="4"></td>
+                                <td class="py-8 bg-surface-container/10 rounded-r-2xl border-y border-r border-panel-border/20" colspan="1"></td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-            </header>
 
-            <!-- PANEL BODY (Placeholder for now) -->
-            <main class="flex-grow p-6 flex items-center justify-center opacity-30 select-none">
-                <div class="text-center">
-                    <svg class="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                    <p class="text-[10px] font-black uppercase tracking-[0.3em]">Módulo de Usuarios Locales en Desarrollo</p>
-                </div>
+                <!-- Table Footer / Pagination -->
+                <footer class="bg-header border-t border-panel-border px-6 py-4 flex items-center justify-between mt-auto">
+                    <span id="usersPaginationInfo" class="text-[10px] font-bold text-label/40 uppercase tracking-widest">Calculando registros...</span>
+                    <div class="flex items-center gap-2">
+                        <button id="prevUsersPage" class="nexus-pagination-btn" disabled>Anterior</button>
+                        <button id="nextUsersPage" class="nexus-pagination-btn" disabled>Siguiente</button>
+                    </div>
+                </footer>
             </main>
         </div>
         
