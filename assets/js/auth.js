@@ -153,3 +153,48 @@ document.addEventListener('DOMContentLoaded', function() {
 
     renderTable();
 });
+
+/**
+ * Saves Auth Configuration to backend
+ * @param {string} containerId 
+ */
+function saveAuthConfig(containerId) {
+    if (!validateNexusForm(containerId)) return;
+
+    // Direct selectors from auth.html
+    const lapHost = document.querySelector('input[placeholder="ldap.empresa.com"]')?.value;
+    const ldapPort = document.querySelector('input[placeholder="389"]')?.value;
+    const ldapSsl = document.querySelector('#tab-panel-users input[type="checkbox"]')?.checked;
+    const ldapBase = document.querySelector('input[placeholder*="BÚSQUEDA"]')?.value || document.querySelectorAll('#tab-panel-users input')[3]?.value;
+    const ldapUser = document.querySelector('input[placeholder*="CN="]')?.value;
+    const ldapPass = document.querySelector('#tab-panel-users input[type="password"]')?.value;
+
+    const data = {
+        ldap_host: lapHost,
+        ldap_port: ldapPort,
+        ldap_ssl: ldapSsl,
+        ldap_base_dn: ldapBase,
+        ldap_user: ldapUser,
+        ldap_pass: ldapPass
+    };
+
+    showToast('Sincronizando Directorio...', 'info');
+
+    fetch('/auth/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.status === 'success') {
+            showToast(result.message, 'success');
+        } else {
+            showToast('Error: ' + result.message, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast('Error de conexión', 'error');
+    });
+}

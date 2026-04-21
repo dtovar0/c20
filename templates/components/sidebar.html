@@ -1,12 +1,27 @@
 <aside id="sidebar" class="flex-shrink-0 w-64 min-w-64 bg-panel-fill border-r border-panel-border transition-all duration-300 fixed inset-y-0 left-0 z-40 -translate-x-full lg:translate-x-0 lg:static lg:inset-0 shadow-sm">
     <div class="h-full flex flex-col">
         <!-- Brand / Logo -->
+        <!-- Brand / Logo -->
         <div class="h-16 px-6 border-b border-panel-border flex items-center justify-between mb-6 flex-shrink-0">
             <div class="flex items-center gap-3 brand-text overflow-hidden transition-all duration-300">
-                <div class="w-8 h-8 flex-shrink-0 bg-primary rounded-lg flex items-center justify-center shadow-lg shadow-primary/20">
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                </div>
-                <span class="sidebar-text text-xl font-bold tracking-tighter whitespace-nowrap">NEXUS</span>
+                {% if sys_config and sys_config.portal_identity_type == 'image' and sys_config.portal_image %}
+                    <div class="w-8 h-8 flex-shrink-0 rounded-lg overflow-hidden flex items-center justify-center shadow-lg shadow-primary/20">
+                        <img src="{{ sys_config.portal_image }}" alt="Logo" class="w-full h-full object-cover">
+                    </div>
+                {% elif sys_config and sys_config.portal_icon %}
+                    <div class="w-8 h-8 flex-shrink-0 rounded-lg flex items-center justify-center shadow-lg shadow-primary/20" 
+                         style="background-color: var(--color-brand-identity-bg, rgb(var(--color-primary))); color: var(--color-brand-identity-text, white);">
+                        {{ sys_config.portal_icon | safe }}
+                    </div>
+                {% else %}
+                    <div class="w-8 h-8 flex-shrink-0 rounded-lg flex items-center justify-center shadow-lg shadow-primary/20"
+                         style="background-color: var(--color-brand-identity-bg, rgb(var(--color-primary))); color: var(--color-brand-identity-text, white);">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                {% endif %}
+                <span class="sidebar-text text-xl font-bold tracking-tighter whitespace-nowrap uppercase">
+                    {{ (sys_config.portal_name if sys_config and sys_config.portal_name else 'NEXUS') }}
+                </span>
             </div>
         </div>
 

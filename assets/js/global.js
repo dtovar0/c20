@@ -70,9 +70,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
 /**
  * PREMIUM TOAST SYSTEM
- * Usage: showToast('Message', 'success' | 'error' | 'info' | 'warning')
+ * Usage: showToast('Message', 'success' | 'error' | 'info' | 'warning', clearAll = false)
  */
-function showToast(message, type = 'info') {
+function showToast(message, type = 'info', clearAll = false) {
+    if (clearAll) {
+        document.querySelectorAll('.toast').forEach(t => {
+            t.classList.remove('show');
+            setTimeout(() => t.remove(), 300);
+        });
+    }
+
     let container = document.getElementById('toast-container');
     if (!container) {
         container = document.createElement('div');
@@ -284,17 +291,59 @@ document.addEventListener('change', (e) => {
             authStatusText.textContent = isAuth ? 'Activo' : 'Inactivo';
         }
         
-        if (smtpPass) {
-            smtpPass.disabled = !isAuth;
-            if (!isAuth) {
-                // Clear validation tokens when disabling
-                smtpPass.classList.remove('border-error');
-                smtpPass.style.borderColor = '';
-                smtpPass.style.boxShadow = '';
-            } else {
-                // Re-evaluate validity instantly when enabling
-                smtpPass.dispatchEvent(new Event('input', { bubbles: true }));
+            if (smtpPass) {
+                smtpPass.disabled = !isAuth;
+                if (!isAuth) {
+                    // Clear validation tokens when disabling
+                    smtpPass.classList.remove('border-error');
+                    smtpPass.style.borderColor = '';
+                    smtpPass.style.boxShadow = '';
+                } else {
+                    // Re-evaluate validity instantly when enabling
+                    smtpPass.dispatchEvent(new Event('input', { bubbles: true }));
+                }
             }
-        }
+    }
+});
+
+// 4. Notification Dropdown Logic (Encapsulated)
+document.addEventListener('DOMContentLoaded', () => {
+    const notificationBtn = document.getElementById('notificationBtn');
+    const notificationDropdown = document.getElementById('notificationDropdown');
+    const notificationBadge = document.getElementById('notificationBadge');
+
+    if (notificationBtn && notificationDropdown) {
+        notificationBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isHidden = notificationDropdown.classList.contains('opacity-0');
+            
+            if (isHidden) {
+                // Open
+                notificationDropdown.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+                // Hide badge on open
+                if (notificationBadge) {
+                    notificationBadge.style.opacity = '0';
+                    notificationBadge.style.transform = 'scale(0)';
+                    setTimeout(() => notificationBadge.classList.add('hidden'), 300);
+                }
+            } else {
+                // Close
+                notificationDropdown.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+            }
+        });
+
+        // Close on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !notificationDropdown.classList.contains('opacity-0')) {
+                notificationDropdown.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+            }
+        });
+
+        // Close on click outside
+        document.addEventListener('click', (e) => {
+            if (!notificationDropdown.contains(e.target) && !notificationBtn.contains(e.target)) {
+                notificationDropdown.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+            }
+        });
     }
 });

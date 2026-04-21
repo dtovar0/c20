@@ -52,8 +52,8 @@
                         'button-text': 'rgb(var(--color-button-text) / <alpha-value>)',
                         'button-disabled': 'rgb(var(--color-button-disabled-bg) / <alpha-value>)',
                         'button-disabled-text': 'rgb(var(--color-button-disabled-text) / <alpha-value>)',
-                        'input': 'rgb(var(--color-input-bg))',
-                        'input-text': 'var(--color-input-text)',
+                        'input': 'var(--color-input-text)',
+                        'input-bg': 'rgb(var(--color-input-bg))',
                         'input-border': 'rgb(var(--color-input-border))',
                         'input-focus': 'rgb(var(--color-input-focus))',
                         'label': 'rgb(var(--color-label-text) / <alpha-value>)',
@@ -76,6 +76,20 @@
             }
         }
     </script>
+
+    {% if sys_config %}
+    <style>
+        :root {
+            {% if sys_config.bg_color %}
+            --color-brand-identity-bg: {{ sys_config.bg_color }};
+            {% endif %}
+
+            {% if sys_config.text_color %}
+            --color-brand-identity-text: {{ sys_config.text_color }};
+            {% endif %}
+        }
+    </style>
+    {% endif %}
 </head>
 <body class="bg-bg text-text h-full overflow-hidden">
     <div class="flex h-full overflow-hidden">
@@ -105,18 +119,57 @@
 
                 <div class="flex items-center gap-4">
                     <!-- Search -->
-                    <div class="hidden sm:flex items-center bg-input px-3 py-1.5 rounded-base gap-2 border border-input-border focus-within:border-input-focus transition-all">
-                        <svg class="w-4 h-4 text-secondary group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        <input type="text" placeholder="Buscar..." class="bg-transparent border-none focus:ring-0 text-input text-sm w-48 outline-none">
+                    <div class="hidden sm:flex items-center bg-input-bg px-4 py-2 rounded-xl gap-3 border border-panel-border focus-within:border-input-focus transition-all shadow-sm">
+                        <svg class="w-4 h-4 text-label/40 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        <input type="text" placeholder="Buscar en el sistema..." class="bg-transparent border-none focus:ring-0 text-input text-xs font-bold w-48 outline-none placeholder:text-label/30">
                     </div>
 
                     <!-- Notifications -->
-                    <button class="relative p-2 hover:bg-surface-container rounded-base transition-all group active:scale-95">
-                        <svg class="w-5 h-5 text-secondary group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-                        </svg>
-                        <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white dark:border-slate-900 group-hover:scale-110 transition-transform"></span>
-                    </button>
+                    <div class="relative items-center flex">
+                        <button id="notificationBtn" class="relative p-2 hover:bg-surface-container rounded-base transition-all group active:scale-95">
+                            <svg class="w-5 h-5 text-secondary group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                            </svg>
+                            <span id="notificationBadge" class="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-white dark:border-slate-900 group-hover:scale-125 transition-transform active:scale-90"></span>
+                        </button>
+
+                        <!-- Notification Dropdown -->
+                        <div id="notificationDropdown" class="absolute right-0 top-full mt-2 w-80 bg-panel-fill/95 backdrop-blur-xl border border-panel-border rounded-2xl shadow-2xl opacity-0 translate-y-4 pointer-events-none transition-all duration-300 z-50 overflow-hidden">
+                            <div class="p-4 border-b border-panel-border flex justify-between items-center bg-surface-container/30">
+                                <h3 class="text-[10px] font-black text-label uppercase tracking-widest">Notificaciones</h3>
+                                <button class="text-[9px] font-bold text-primary hover:underline uppercase tracking-tighter">Marcar todo</button>
+                            </div>
+                            <div class="max-h-[360px] overflow-y-auto custom-scrollbar" id="notificationList">
+                                <!-- Notificación Mock 1 -->
+                                <div class="p-4 border-b border-panel-border/50 hover:bg-surface-container/40 cursor-pointer transition-colors group">
+                                    <div class="flex gap-3">
+                                        <div class="w-8 h-8 rounded-lg bg-primary/10 flex-shrink-0 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                        </div>
+                                        <div class="flex-grow">
+                                            <p class="text-xs font-bold text-text mb-0.5 line-clamp-1 italic">Sistema Actualizado</p>
+                                            <p class="text-[10px] text-label/60 leading-tight">La base de datos se ha sincronizado correctamente con el nuevo esquema.</p>
+                                            <span class="text-[9px] font-bold text-primary/40 mt-1 block">Hace 5 min</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Notificación Mock 2 -->
+                                <div class="p-4 border-b border-panel-border/50 hover:bg-surface-container/40 cursor-pointer transition-colors group">
+                                    <div class="flex gap-3">
+                                        <div class="w-8 h-8 rounded-lg bg-orange-500/10 flex-shrink-0 flex items-center justify-center text-orange-500 group-hover:scale-110 transition-transform">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                        </div>
+                                        <div class="flex-grow">
+                                            <p class="text-xs font-bold text-text mb-0.5 line-clamp-1 italic">Intento de Acceso</p>
+                                            <p class="text-[10px] text-label/60 leading-tight">Se detectó un intento de inicio de sesión desde una nueva IP.</p>
+                                            <span class="text-[9px] font-bold text-orange-500/40 mt-1 block">Hace 1 h</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="#" class="p-3 bg-surface-container/30 border-t border-panel-border text-center block text-[10px] font-black text-label uppercase tracking-widest hover:text-primary transition-colors">Ver todas las alertas</a>
+                        </div>
+                    </div>
 
                     <!-- Theme Toggle -->
                     <button id="themeToggle" class="p-2 hover:bg-surface-container rounded-base transition-all group flex items-center justify-center relative overflow-hidden active:scale-95">
