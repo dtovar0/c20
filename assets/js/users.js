@@ -106,21 +106,21 @@ function renderUsersTable() {
     const ghostRowsCount = usersPerPage - rowsRendered;
     for (let i = 0; i < ghostRowsCount; i++) {
         html += `
-            <tr class="pointer-events-none select-none opacity-40">
-                <td class="px-6 py-3 bg-surface-container/5 border-y border-l border-surface-container-border/20 rounded-l-2xl">
-                    <div class="h-8 flex items-center"><div class="w-4 h-4 rounded bg-label/5"></div></div>
+            <tr class="pointer-events-none select-none opacity-50 dark:opacity-40">
+                <td class="px-6 py-3 bg-label/[0.03] dark:bg-surface-container/5 border-y border-l border-panel-border/20 rounded-l-2xl">
+                    <div class="h-8 flex items-center"><div class="w-4 h-4 rounded bg-label/10"></div></div>
                 </td>
-                <td class="px-4 py-3 bg-surface-container/5 border-y border-surface-container-border/20">
+                <td class="px-4 py-3 bg-label/[0.03] dark:bg-surface-container/5 border-y border-panel-border/20">
                     <div class="h-8 flex items-center"><div class="h-2 w-24 bg-label/10 rounded-full"></div></div>
                 </td>
-                <td class="px-4 py-3 bg-surface-container/5 border-y border-surface-container-border/20">
+                <td class="px-4 py-3 bg-label/[0.03] dark:bg-surface-container/5 border-y border-panel-border/20">
                     <div class="h-8 flex items-center"><div class="h-2 w-32 bg-label/10 rounded-full"></div></div>
                 </td>
-                <td class="px-4 py-3 bg-surface-container/5 border-y border-surface-container-border/20">
+                <td class="px-4 py-3 bg-label/[0.03] dark:bg-surface-container/5 border-y border-panel-border/20">
                     <div class="h-8 flex items-center"><div class="h-2 w-20 bg-label/10 rounded-full"></div></div>
                 </td>
-                <td class="px-6 py-3 bg-surface-container/5 border-y border-r border-surface-container-border/20 rounded-r-2xl text-right">
-                    <div class="h-8 flex items-center justify-end"><div class="h-4 w-16 bg-label/10 rounded-full opacity-10"></div></div>
+                <td class="px-6 py-3 bg-label/[0.03] dark:bg-surface-container/5 border-y border-r border-panel-border/20 rounded-r-2xl text-right">
+                    <div class="h-8 flex items-center justify-end"><div class="h-4 w-16 bg-label/20 rounded-full opacity-20"></div></div>
                 </td>
             </tr>
         `;
