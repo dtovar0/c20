@@ -48,13 +48,16 @@ function renderTable() {
     // State Case: No Results
     if (filteredData.length === 0) {
         html += `
-            <tr class="bg-surface-container/10 border border-dashed border-panel-border rounded-xl pointer-events-none">
-                <td colspan="6" class="px-6 py-6 text-center">
+            <tr class="group transition-all duration-300">
+                <td colspan="1" class="px-6 py-6 bg-surface-container/10 border-y border-l border-panel-border/20 rounded-l-2xl text-center">
                     <div class="flex items-center justify-center gap-3 opacity-30">
                         <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 9.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <span class="text-[10px] font-black uppercase tracking-[0.2em] text-label italic">No se encontraron registros activos</span>
                     </div>
                 </td>
+                <td colspan="4" class="px-6 py-6 bg-surface-container/10 border-y border-panel-border/20 text-center">
+                    <span class="text-[10px] font-black uppercase tracking-[0.2em] text-label italic opacity-30">No se encontraron registros activos</span>
+                </td>
+                <td colspan="1" class="px-6 py-6 bg-surface-container/10 border-y border-r border-panel-border/20 rounded-r-2xl text-center"></td>
             </tr>
         `;
         rowsRendered = 1;
@@ -69,22 +72,22 @@ function renderTable() {
             }[row.status];
 
             html += `
-                <tr class="bg-surface-container border border-surface-container-border rounded-xl hover:border-primary transition-all group active:scale-[0.995]">
-                    <td class="px-4 py-3 text-[11px] font-bold text-label/60">
+                <tr class="transition-all group active:scale-[0.995] cursor-default">
+                    <td class="px-6 py-3 text-[11px] font-bold text-label/60 bg-surface-container border-y border-l border-surface-container-border rounded-l-2xl group-hover:border-primary/30 transition-colors">
                         <div class="flex items-center gap-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-primary/40"></span>
+                            <span class="w-1.5 h-1.5 rounded-full bg-primary/40 group-hover:bg-primary transition-colors"></span>
                             ${row.time}
                         </div>
                     </td>
-                    <td class="px-4 py-3 text-[11px] font-black text-label uppercase tracking-tighter">${row.user}</td>
-                    <td class="px-4 py-3 text-[11px] font-bold text-label">${row.action}</td>
-                    <td class="px-4 py-3 text-[10px] font-mono text-label/40">${row.ip}</td>
-                    <td class="px-4 py-3">
+                    <td class="px-4 py-3 text-[11px] font-black text-label uppercase tracking-tighter bg-surface-container border-y border-surface-container-border group-hover:border-primary/30 transition-colors">${row.user}</td>
+                    <td class="px-4 py-3 text-[11px] font-bold text-label bg-surface-container border-y border-surface-container-border group-hover:border-primary/30 transition-colors">${row.action}</td>
+                    <td class="px-4 py-3 text-[10px] font-mono text-label/40 bg-surface-container border-y border-surface-container-border group-hover:border-primary/30 transition-colors">${row.ip}</td>
+                    <td class="px-4 py-3 bg-surface-container border-y border-surface-container-border group-hover:border-primary/30 transition-colors">
                         <span class="px-3 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest ${statusClass}">${row.status}</span>
                     </td>
-                    <td class="px-4 py-3 text-right pr-4">
-                        <button class="w-7 h-7 rounded-lg bg-label/5 text-label/40 hover:bg-primary/20 hover:text-primary transition-all flex items-center justify-center ml-auto">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <td class="px-6 py-3 text-right bg-surface-container border-y border-r border-surface-container-border rounded-r-2xl group-hover:border-primary/30 transition-colors">
+                        <button class="w-8 h-8 rounded-xl bg-label/5 text-label/40 hover:bg-primary/20 hover:text-primary transition-all flex items-center justify-center ml-auto">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </button>
                     </td>
                 </tr>
@@ -96,19 +99,19 @@ function renderTable() {
     const ghostRowsCount = recordsPerPage - rowsRendered;
     for (let i = 0; i < ghostRowsCount; i++) {
         html += `
-            <tr class="bg-surface-container border border-surface-container-border rounded-xl pointer-events-none select-none">
-                <td class="px-4 py-3 text-[11px] font-bold text-transparent">-</td>
-                <td class="px-4 py-3 text-[11px] font-black text-transparent">-</td>
-                <td class="px-4 py-3 text-[11px] font-bold text-transparent">-</td>
-                <td class="px-4 py-3 text-[10px] font-mono text-transparent">-</td>
-                <td class="px-4 py-3">
-                    <div class="h-4 w-16 bg-label/10 rounded-full mx-auto opacity-30"></div>
-                </td>
-                <td class="px-4 py-3 text-right pr-4">
-                    <div class="w-7 h-7 rounded-lg bg-label/5 ml-auto opacity-30"></div>
-                </td>
-            </tr>
-        `;
+                <tr class="pointer-events-none select-none">
+                    <td class="px-6 py-3 bg-surface-container/5 border-y border-l border-surface-container-border/20 rounded-l-2xl text-transparent">-</td>
+                    <td class="px-4 py-3 bg-surface-container/5 border-y border-surface-container-border/20 text-transparent">-</td>
+                    <td class="px-4 py-3 bg-surface-container/5 border-y border-surface-container-border/20 text-transparent">-</td>
+                    <td class="px-4 py-3 bg-surface-container/5 border-y border-surface-container-border/20 text-transparent">-</td>
+                    <td class="px-4 py-3 bg-surface-container/5 border-y border-surface-container-border/20">
+                        <div class="h-4 w-16 bg-label/10 rounded-full mx-auto opacity-10"></div>
+                    </td>
+                    <td class="px-6 py-3 bg-surface-container/5 border-y border-r border-surface-container-border/20 rounded-r-2xl text-right">
+                        <div class="w-8 h-8 rounded-xl bg-label/5 ml-auto opacity-10"></div>
+                    </td>
+                </tr>
+            `;
     }
 
     tbody.innerHTML = html;
