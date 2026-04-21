@@ -1,6 +1,6 @@
 /**
  * MODULE: Local User Management
- * Logic for rendering and paginating the local users table.
+ * Logic for rendering, selecting and managing local users.
  */
 
 // Professional Demo User Database
@@ -16,6 +16,7 @@ const localUsersData = [
 let currentUsersPage = 1;
 const usersPerPage = 8;
 let filteredUsers = [...localUsersData];
+let selectedUsers = new Set();
 
 /**
  * Renders the users table content
@@ -38,7 +39,7 @@ function renderUsersTable() {
                         <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                     </div>
                 </td>
-                <td colspan="4" class="px-6 py-6 bg-surface-container/10 border-y border-panel-border/20 text-center">
+                <td colspan="3" class="px-6 py-6 bg-surface-container/10 border-y border-panel-border/20 text-center">
                     <span class="text-[10px] font-black uppercase tracking-[0.2em] text-label italic opacity-30">No se encontraron usuarios locales</span>
                 </td>
                 <td colspan="1" class="px-6 py-6 bg-surface-container/10 border-y border-r border-panel-border/20 rounded-r-2xl text-center"></td>
@@ -47,6 +48,7 @@ function renderUsersTable() {
         rowsRendered = 1;
     } else {
         pageData.forEach(user => {
+            const isSelected = selectedUsers.has(user.id);
             const statusClass = {
                 active: 'bg-green-500/10 text-green-500',
                 inactive: 'bg-label/10 text-label/40',
@@ -58,8 +60,11 @@ function renderUsersTable() {
                 : '<svg class="w-3 h-3 text-label/40" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/></svg>';
 
             html += `
-                <tr class="transition-all group active:scale-[0.995] cursor-default">
-                    <td class="px-6 py-3 bg-surface-container border-y border-l border-surface-container-border rounded-l-2xl group-hover:border-primary/30 transition-colors">
+                <tr onclick="toggleUserSelection(${user.id})" class="transition-all group active:scale-[0.995] cursor-pointer ${isSelected ? 'bg-primary/5' : ''}">
+                    <td class="px-6 py-3 bg-surface-container border-y border-l border-surface-container-border rounded-l-2xl group-hover:border-primary/30 transition-colors w-12">
+                        <input type="checkbox" ${isSelected ? 'checked' : ''} onclick="event.stopPropagation(); toggleUserSelection(${user.id})" class="nexus-checkbox">
+                    </td>
+                    <td class="px-4 py-3 bg-surface-container border-y border-surface-container-border group-hover:border-primary/30 transition-colors">
                         <div class="flex items-center gap-3">
                             <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-black text-primary border border-primary/20">
                                 ${user.name.charAt(0).toUpperCase()}
@@ -93,6 +98,7 @@ function renderUsersTable() {
                 <td class="px-6 py-3 bg-surface-container/5 border-y border-l border-surface-container-border/20 rounded-l-2xl text-transparent">-</td>
                 <td class="px-4 py-3 bg-surface-container/5 border-y border-surface-container-border/20 text-transparent">-</td>
                 <td class="px-4 py-3 bg-surface-container/5 border-y border-surface-container-border/20 text-transparent">-</td>
+                <td class="px-4 py-3 bg-surface-container/5 border-y border-surface-container-border/20 text-transparent">-</td>
                 <td class="px-6 py-3 bg-surface-container/5 border-y border-r border-surface-container-border/20 rounded-r-2xl text-right">
                     <div class="h-4 w-16 bg-label/10 rounded-full ml-auto opacity-10"></div>
                 </td>
@@ -102,6 +108,61 @@ function renderUsersTable() {
 
     tbody.innerHTML = html;
     updateUsersPagination();
+    updateUserActions();
+}
+
+/**
+ * Toggles a single user selection
+ */
+function toggleUserSelection(userId) {
+    if (selectedUsers.has(userId)) {
+        selectedUsers.delete(userId);
+    } else {
+        selectedUsers.add(userId);
+    }
+    renderUsersTable();
+}
+
+/**
+ * Toggles all users on current page
+ */
+function toggleAllUsers(checked) {
+    const start = (currentUsersPage - 1) * usersPerPage;
+    const end = start + usersPerPage;
+    const pageData = filteredUsers.slice(start, end);
+
+    pageData.forEach(user => {
+        if (checked) {
+            selectedUsers.add(user.id);
+        } else {
+            selectedUsers.delete(user.id);
+        }
+    });
+
+    renderUsersTable();
+}
+
+/**
+ * Updates the state of action buttons based on selection
+ */
+function updateUserActions() {
+    const btnModify = document.getElementById('btn-modify-user');
+    const btnDelete = document.getElementById('btn-delete-user');
+    const count = selectedUsers.size;
+
+    if (!btnModify || !btnDelete) return;
+
+    // Default: both disabled
+    btnModify.disabled = true;
+    btnDelete.disabled = true;
+
+    if (count === 1) {
+        btnModify.disabled = false;
+        btnDelete.disabled = false;
+    } else if (count >= 2) {
+        btnModify.disabled = true;
+        btnDelete.disabled = false;
+    }
 }
 
 function updateUsersPagination() {
@@ -112,8 +173,25 @@ function updateUsersPagination() {
     if (infoEl) infoEl.innerText = `Mostrando ${start}-${end} de ${total} usuarios locales`;
 }
 
+// Global actions placeholders
+function modifyUser() {
+    const targetId = Array.from(selectedUsers)[0];
+    const user = localUsersData.find(u => u.id === targetId);
+    if (user) {
+        console.log(`Modificando usuario: ${user.name} (ID: ${user.id})`);
+        // showToast(`Editando a ${user.name}`, 'info');
+    }
+}
+
+function deleteUser() {
+    const count = selectedUsers.size;
+    console.log(`Eliminando ${count} usuarios: ${Array.from(selectedUsers).join(', ')}`);
+    // showToast(`${count} usuarios eliminados permanentemente`, 'success');
+}
+
 // Initialization
 document.addEventListener('DOMContentLoaded', () => {
+    // Search logic
     const searchInput = document.getElementById('userSearch');
     if (searchInput) {
         searchInput.addEventListener('input', (e) => {
@@ -124,8 +202,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 user.email.toLowerCase().includes(term)
             );
             currentUsersPage = 1;
+            selectedUsers.clear(); // Clear selection on search
             renderUsersTable();
         });
     }
+
+    // Select All logic
+    const selectAll = document.getElementById('selectAllUsers');
+    if (selectAll) {
+        selectAll.addEventListener('change', (e) => {
+            toggleAllUsers(e.target.checked);
+        });
+    }
+
     renderUsersTable();
 });
