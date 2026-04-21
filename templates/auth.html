@@ -14,7 +14,7 @@
     <div class="relative backdrop-blur-lg transition-all duration-300 mb-2">
         <div class="flex items-center p-2 gap-2">
             <!-- Local Users Tab (Active) -->
-            <button onclick="switchTab('users')" id="tab-trigger-users" 
+            <button onclick="switchTab('usuario')" id="tab-trigger-usuario" 
                 class="tab-trigger w-60 relative py-3.5 flex items-center justify-center gap-3 rounded-xl text-[10px] font-black uppercase tracking-[0.25em] transition-all duration-300 z-10 text-tab-active-text bg-tab-active shadow-xl shadow-tab-active/20 active:scale-95">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                 <span>Usuarios</span>
@@ -38,7 +38,28 @@
 
     <!-- PANEL AREA -->
     <div class="flex-grow flex flex-col overflow-hidden">
-        
+        <!-- Tab Panel: Usuarios (Locales) -->
+        <div id="tab-content-usuario" class="tab-panel tab-panel-content flex-grow flex flex-col animate-in fade-in slide-in-from-bottom-2 duration-500 rounded-2xl overflow-hidden border border-panel-border shadow-2xl shadow-primary/5 mb-2">
+            <!-- PANEL HEADER -->
+            <header class="bg-header border-b border-panel-border px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-black tracking-tighter text-primary uppercase italic leading-none">Local Users Management</h2>
+                        <p class="text-[9px] text-primary/60 font-bold tracking-widest uppercase mt-0.5">Status: Gestión Interna / Base de Datos</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button onclick="addUserModal()" class="nexus-btn-save bg-primary text-white hover:bg-primary-focus">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                        Añadir Usuario
+                    </button>
+                </div>
+            </header>
+
             <!-- PANEL BODY -->
             <main class="flex-grow p-6 flex flex-col overflow-hidden">
                 <!-- Search & Filters Bar -->
