@@ -24,9 +24,8 @@
         
         <!-- Brand Header (Sync with sys_config) -->
         <div class="text-center mb-10">
-            <div class="brand-icon-container inline-flex items-center justify-center w-24 h-24 rounded-3xl border-2 border-white/20 mb-6 animate-float overflow-hidden p-5 transition-all duration-500"
-                 data-bg-color="{{ sys_config.bg_color if sys_config else 'var(--color-primary)' }}"
-                 data-text-color="{{ sys_config.text_color if sys_config else '#ffffff' }}">
+            <div class="brand-icon-container inline-flex items-center justify-center w-24 h-24 rounded-3xl border-2 border-panel-border mb-6 animate-float overflow-hidden p-5 transition-all duration-500"
+                 style="background-color: var(--color-brand-identity-bg, rgb(var(--color-primary))); color: var(--color-brand-identity-text, #ffffff);">
                 {% if sys_config and sys_config.portal_identity_type == 'image' and sys_config.portal_icon %}
                     <img src="{{ sys_config.portal_icon }}" alt="Logo" class="w-full h-full object-cover">
                 {% elif sys_config and sys_config.portal_icon %}
@@ -91,8 +90,8 @@
             <div class="mt-4 pt-8 border-t border-white/5 flex flex-col items-center gap-4">
                 <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">© 2026 Nexus Infrastructure</p>
                 <div class="flex gap-4">
-                    <div class="w-2 h-2 rounded-full bg-success animate-pulse"></div>
-                    <span class="text-[8px] text-success font-black uppercase tracking-widest">Sistemas Operativos</span>
+                    <div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+                    <span class="text-[8px] text-primary font-black uppercase tracking-widest">Sistemas Operativos</span>
                 </div>
             </div>
         </div>

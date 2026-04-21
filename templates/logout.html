@@ -14,14 +14,13 @@
 <body class="h-full flex flex-col items-center justify-center p-6">
     
     <div class="fixed inset-0 pointer-events-none">
-        <div class="absolute inset-0 bg-gradient-to-tr from-blue-900/20 via-transparent to-transparent"></div>
+        <div class="absolute inset-0 bg-gradient-to-tr from-primary/10 via-transparent to-transparent"></div>
     </div>
 
     <div class="w-full max-w-sm text-center relative z-10 animate-in fade-in zoom-in duration-700">
         <!-- Success Icon / Brand Icon -->
-        <div class="brand-icon-container inline-flex items-center justify-center w-24 h-24 rounded-[32px] border-2 border-white/20 mb-8 overflow-hidden p-5 transition-all duration-500"
-             data-bg-color="{{ sys_config.bg_color if sys_config else 'var(--color-primary)' }}"
-             data-text-color="{{ sys_config.text_color if sys_config else '#ffffff' }}">
+        <div class="brand-icon-container inline-flex items-center justify-center w-24 h-24 rounded-[32px] border-2 border-panel-border mb-8 overflow-hidden p-5 transition-all duration-500"
+             style="background-color: var(--color-brand-identity-bg, rgb(var(--color-primary))); color: var(--color-brand-identity-text, #ffffff);">
             {% if sys_config and sys_config.portal_identity_type == 'image' and sys_config.portal_icon %}
                 <img src="{{ sys_config.portal_icon }}" alt="Logo" class="w-full h-full object-cover">
             {% elif sys_config and sys_config.portal_icon %}
@@ -37,7 +36,7 @@
 
         <h1 class="text-3xl font-black tracking-tighter uppercase italic leading-none mb-4">
             {{ (sys_config.portal_name if sys_config and sys_config.portal_name else 'NEXUS') }}
-            <span class="text-success">Portal</span>
+            <span class="text-primary">Portal</span>
         </h1>
         <p class="text-sm text-slate-400 font-medium mb-12">Tu sesión de Nexus ha finalizado correctamente. Has sido desconectado de forma segura de todos los sistemas.</p>
 

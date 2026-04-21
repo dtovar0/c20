@@ -1,0 +1,234 @@
+{% extends 'base.html' %}
+
+{% block title %}PSX5K | Nexus Operational Terminal{% endblock %}
+
+{% block breadcrumbs %}
+<span class="text-secondary">Nexus</span>
+<svg class="w-4 h-4 text-label/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+<span class="text-primary">PSX5K Terminal</span>
+{% endblock %}
+
+{% block content %}
+<div id="psx-view-marker" class="hidden"></div>
+
+<style>
+    :root {
+        --nx-primary: rgb(var(--color-primary));
+        --nx-border: rgb(var(--color-panel-border));
+    }
+    .nx-modal-glass {
+        background-color: rgb(var(--color-panel-fill));
+        border: 2px solid var(--nx-border);
+    }
+    
+    /* Solid Premium Button Style */
+    .nx-btn-base {
+        height: 48px;
+        min-width: 160px;
+        padding-left: 2rem;
+        padding-right: 2rem;
+        border-radius: 16px;
+        font-size: 10px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        border: none;
+    }
+
+    .nx-btn-primary { 
+        background-color: var(--nx-primary); 
+        color: white;
+        box-shadow: 0 4px 12px rgba(var(--color-primary), 0.2);
+    }
+    .nx-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(var(--color-primary), 0.3); }
+    .nx-btn-primary:active { transform: translateY(0); }
+
+    .nx-btn-back { 
+        background-color: rgb(var(--color-tab-inactive-bg)); 
+        color: rgb(var(--color-tab-inactive-text)); 
+    }
+    .nx-btn-back:hover { opacity: 0.8; }
+
+    .nx-input-field {
+        background-color: rgb(var(--color-input-bg));
+        border: 2px solid var(--nx-border);
+        color: var(--color-body-text);
+    }
+    .nx-label-strip {
+        color: rgb(var(--color-label-text));
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-size: 10px;
+    }
+</style>
+
+<div id="auditWrapper" class="w-full h-full flex flex-col relative px-8 py-6">
+    <div class="flex-grow flex flex-col overflow-hidden">
+        <div id="tab-panel-audit" class="tab-panel-content flex-grow flex flex-col animate-in fade-in slide-in-from-bottom-2 duration-500 rounded-2xl overflow-hidden border border-panel-border shadow-2xl shadow-primary/5 mb-2">
+            <!-- PANEL HEADER -->
+            <header class="bg-header border-b border-panel-border px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-black tracking-tighter text-primary uppercase italic leading-none">PSX5K Terminal</h2>
+                        <p class="text-[9px] text-primary/60 font-bold tracking-widest uppercase mt-0.5">Status: Gestión Operativa / Trazabilidad</p>
+                    </div>
+                </div>
+            </header>
+
+            <main class="flex-grow px-6 pt-4 pb-2 overflow-hidden flex flex-col bg-panel-fill">
+                <!-- Search and Table logic... (Standard Audit Clone) -->
+                <div class="mb-4 flex justify-between items-center gap-2">
+                    <div class="relative group flex-grow max-w-md">
+                        <svg class="w-4 h-4 absolute left-5 top-1/2 -translate-y-1/2 text-label/40 group-focus-within:text-primary transition-colors z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        <input type="text" id="auditSearch" placeholder="Filtrar eventos PSX5K..." 
+                               class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3 text-sm font-bold text-input outline-none focus:border-input-focus focus:ring-4 focus:ring-primary/10 transition-all">
+                    </div>
+                    <button id="refreshAudit" class="h-12 px-8 rounded-2xl bg-primary text-white font-black text-[10px] uppercase tracking-widest flex items-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/20">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        <span>Tarea Nueva</span>
+                    </button>
+                </div>
+                <div class="overflow-x-auto overflow-y-hidden custom-scrollbar flex-grow">
+                    <table class="w-full h-full text-left border-separate border-spacing-y-1">
+                        <thead class="sticky top-0 z-20">
+                            <tr class="text-[9px] font-black text-white uppercase tracking-[0.2em]">
+                                <th class="px-5 py-4 bg-slate-900/50 rounded-l-2xl border-y border-l border-panel-border text-center">ID</th>
+                                <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Nombre</th>
+                                <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Accion</th>
+                                <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Estado</th>
+                                <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Fecha Inicio</th>
+                                <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border whitespace-nowrap">Fecha Fin</th>
+                                <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Resultado</th>
+                                <th class="px-5 py-4 bg-slate-900/50 rounded-r-2xl border-y border-r border-panel-border text-center">Detalles</th>
+                            </tr>
+                        </thead>
+                        <tbody id="auditTableBody"></tbody>
+                    </table>
+                </div>
+                <!-- Pagination... -->
+            </main>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: PSX5K WIZARD -->
+<div id="psxWizardModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+    <div class="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onclick="closeWizard()"></div>
+    <div class="w-full max-w-xl nx-modal-glass rounded-[32px] shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300">
+        <header class="px-8 py-6 border-b border-panel-border flex items-center justify-between bg-header/50">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-black tracking-tighter text-body-text uppercase italic leading-none">Configurador PSX5K</h3>
+                    <p class="text-[9px] text-primary/60 font-bold tracking-widest uppercase mt-1">Paso <span id="currentStepNum">1</span> de 3</p>
+                </div>
+            </div>
+            <button onclick="closeWizard()" class="p-2 text-label/40 hover:text-label transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+        </header>
+
+        <div class="h-1 w-full bg-panel-border relative"><div id="stepProgress" class="absolute inset-y-0 left-0 bg-primary transition-all duration-500" style="width: 33.33%;"></div></div>
+
+        <div class="p-8">
+            <div id="wizardStep1" class="step-content animate-in fade-in zoom-in-95 duration-300">
+                <div class="text-center">
+                    <h4 class="nx-label-strip mb-8 text-primary">Selección: Tipo de Operación</h4>
+                    <div class="grid grid-cols-2 gap-6">
+                        <button type="button" class="op-select-btn p-8 rounded-[32px] border-2 border-panel-border bg-surface-container/30 text-label/60 flex flex-col items-center gap-4 hover:border-primary hover:bg-primary/5 transition-all group">
+                            <div class="w-16 h-16 rounded-full bg-panel-border/30 group-hover:bg-primary/10 flex items-center justify-center transition-colors">
+                                <svg class="w-8 h-8 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                            </div>
+                            <span class="text-xs font-black uppercase tracking-widest">Agregar</span>
+                        </button>
+                        <button type="button" class="op-select-btn p-8 rounded-[32px] border-2 border-panel-border bg-surface-container/30 text-label/60 flex flex-col items-center gap-4 hover:border-accent-violet hover:bg-accent-violet/5 transition-all group">
+                            <div class="w-16 h-16 rounded-full bg-panel-border/30 group-hover:bg-accent-violet/10 flex items-center justify-center transition-colors">
+                                <svg class="w-8 h-8 group-hover:text-accent-violet transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </div>
+                            <span class="text-xs font-black uppercase tracking-widest">Borrar</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="wizardStep2" class="step-content hidden animate-in fade-in slide-in-from-right-4 duration-300">
+                <div class="space-y-6">
+                    <div id="opConfigSection" class="space-y-6">
+                        <div>
+                            <label class="nx-label-strip mb-3 block">Modo de Cliente</label>
+                            <select id="clientModeSelect" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl px-5 py-4 text-sm font-bold text-input outline-none focus:border-input-focus transition-all">
+                                <option value="calls_only">Cliente solo hace llamadas</option>
+                                <option value="both">Cliente hace y recibe llamadas</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="nx-label-strip mb-3 block opacity-40" id="routingLabelTag">Etiqueta de Ruta</label>
+                            <input type="text" id="routingLabelInput" placeholder="Bloqueado..." disabled class="w-full bg-input-bg border-2 border-panel-border rounded-2xl px-5 py-4 text-sm font-bold text-input outline-none disabled:opacity-30">
+                        </div>
+                    </div>
+                    <!-- Data Method Toggle... -->
+                    <div class="pt-6 border-t border-panel-border">
+                        <label class="nx-label-strip mb-4 block">Fuente de Datos</label>
+                        <div class="flex items-center bg-surface-container/30 p-1 rounded-2xl border border-panel-border mb-6">
+                            <span class="text-[9px] font-black flex-1 text-center py-2.5 rounded-xl" id="labelFileMode">Archivo</span>
+                            <label class="relative inline-flex items-center cursor-pointer px-2">
+                                <input type="checkbox" id="dataEntryToggle" class="sr-only peer" onchange="toggleDataMethod()">
+                                <div class="w-12 h-6 bg-panel-border rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[10px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                            </label>
+                            <span class="text-[9px] font-black flex-1 text-center py-2.5 rounded-xl opacity-40" id="labelManualMode">Manual</span>
+                        </div>
+                        <div id="methodFileUpload">
+                            <label class="border-2 border-dashed border-panel-border rounded-[24px] h-40 w-full flex flex-col items-center justify-center gap-3 hover:border-primary hover:bg-primary/5 transition-all cursor-pointer group px-6 text-center">
+                                <input type="file" id="psxFileInput" accept=".xml,.csv" class="hidden" onchange="validateFile(this)">
+                                <svg class="w-8 h-8 text-primary opacity-40 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                                <p class="nx-label-strip" id="fileNameDisplay">Cargar Archivo Operativo</p>
+                            </label>
+                        </div>
+                        <div id="methodManualEntry" class="hidden"><textarea placeholder="Dato1, Dato2..." class="w-full bg-input-bg border-2 border-panel-border rounded-2xl h-40 px-5 py-4 text-xs font-bold text-input outline-none resize-none"></textarea></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="wizardStep3" class="step-content hidden animate-in fade-in">
+                <!-- Verification logic... -->
+                <div class="space-y-6">
+                    <div class="text-center mb-6">
+                        <div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-primary mx-auto mb-4"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg></div>
+                        <h4 class="text-lg font-black text-body-text uppercase italic">Verificación Técnica</h4>
+                    </div>
+                    <div class="bg-surface-container/50 border border-panel-border rounded-[24px] p-6 space-y-4">
+                        <div class="grid grid-cols-[140px_1fr] items-center border-b border-panel-border pb-3"><span class="nx-label-strip opacity-40">Operación:</span><span class="text-xs font-bold text-body-text uppercase pl-4" id="summaryTaskType">-</span></div>
+                        <div id="summaryModeRow" class="grid grid-cols-[140px_1fr] items-center border-b border-panel-border pb-3"><span class="nx-label-strip opacity-40">Modo:</span><span class="text-xs font-bold text-body-text uppercase pl-4" id="summaryMode">-</span></div>
+                        <div id="summaryRoutingRow" class="grid grid-cols-[140px_1fr] items-center border-b border-panel-border pb-3"><span class="nx-label-strip opacity-40">Routing:</span><span class="text-xs font-bold text-body-text pl-4" id="summaryRouting">-</span></div>
+                        <div class="grid grid-cols-[140px_1fr] items-center border-b border-panel-border pb-3"><span class="nx-label-strip opacity-40" id="summaryDataLabel">Fuente:</span><span class="text-xs font-bold text-body-text pl-4" id="summaryData">-</span></div>
+                        <div class="grid grid-cols-[140px_1fr] items-center"><span class="nx-label-strip opacity-40" id="summaryFileLabel">Registros:</span><span class="text-xs font-bold text-body-text pl-4 truncate" id="summaryFileName">-</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="px-8 py-6 border-t border-panel-border bg-header/50 flex items-center">
+            <div class="flex-1 flex justify-start"><button id="prevStepBtn" onclick="changeStep(-1)" class="nx-btn-base nx-btn-back">Atrás</button></div>
+            <div class="flex-1 flex justify-end">
+                <button id="nextStepBtn" onclick="changeStep(1)" class="nx-btn-base nx-btn-primary">Siguiente Paso</button>
+                <button id="launchBtn" onclick="finalizeWizard()" class="nx-btn-base nx-btn-primary">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                    <span>Guardar</span>
+                </button>
+            </div>
+        </footer>
+    </div>
+</div>
+
+<script src="{{ url_for('serve_assets', filename='js/audit.js') }}"></script>
+<script src="{{ url_for('serve_assets', filename='js/psx-wizard.js') }}"></script>
+{% endblock %}

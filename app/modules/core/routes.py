@@ -12,3 +12,8 @@ def index():
 @login_required
 def dashboard_2():
     return render_template("dashboard_2.html")
+
+@core_bp.route("/psx5k")
+@login_required
+def psx5k():
+    return render_template("psx5k.html")

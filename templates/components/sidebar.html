@@ -1,7 +1,6 @@
 <aside id="sidebar" class="flex-shrink-0 w-64 min-w-64 bg-panel-fill border-r border-panel-border transition-all duration-300 fixed inset-y-0 left-0 z-40 -translate-x-full lg:translate-x-0 lg:static lg:inset-0 shadow-sm">
     <div class="h-full flex flex-col">
         <!-- Brand / Logo -->
-        <!-- Brand / Logo -->
         <div class="h-16 px-6 border-b border-panel-border flex items-center justify-between mb-6 flex-shrink-0">
             <div class="flex items-center gap-3 brand-text overflow-hidden transition-all duration-300">
                 {% if sys_config and sys_config.portal_identity_type == 'image' and sys_config.portal_image %}
@@ -23,11 +22,12 @@
                     {{ (sys_config.portal_name if sys_config and sys_config.portal_name else 'NEXUS') }}
                 </span>
             </div>
+            <!-- Collapsed state simple icon (hidden on desktop normally) -->
         </div>
 
         <!-- Navigation -->
         <nav class="flex-grow space-y-1 overflow-x-hidden px-4">
-            <p class="text-[10px] font-bold text-label/60 uppercase tracking-widest px-3 mb-2 sidebar-text">Principal</p>
+            <p class="text-[10px] font-bold text-label/60 uppercase tracking-widest px-3 mb-2 sidebar-text">Inicio</p>
             
             <a href="{{ url_for('core.index') }}" title="Dashboard" 
                class="nav-item {% if request.endpoint == 'core.index' %}nav-item-active{% endif %} gap-4 px-3 py-3 rounded-base transition-all group">
@@ -41,6 +41,14 @@
                 <span class="sidebar-text text-base whitespace-nowrap">Dashboard 2</span>
             </a>
 
+            <p class="text-[10px] font-bold text-label/60 uppercase tracking-widest px-3 mb-2 mt-6 sidebar-text">Operaciones</p>
+
+            <a href="{{ url_for('core.psx5k') }}" title="PSX5K" 
+               class="nav-item {% if request.endpoint == 'core.psx5k' %}nav-item-active{% endif %} gap-4 px-3 py-3 text-secondary hover:text-primary hover:bg-surface-container rounded-base transition-all group">
+                <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
+                <span class="sidebar-text text-base whitespace-nowrap">PSX5K</span>
+            </a>
+
             <p class="text-[10px] font-bold text-label/60 uppercase tracking-widest px-3 mb-2 mt-6 sidebar-text">Configuración</p>
             
             <a href="{{ url_for('settings.index') }}" title="Ajustes" 
@@ -48,7 +56,6 @@
                 <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
                 <span class="sidebar-text text-base whitespace-nowrap">Ajustes</span>
             </a>
-
 
             <a href="{{ url_for('auth.index') }}" title="Autenticación" 
                class="nav-item {% if request.endpoint == 'auth.index' %}nav-item-active{% endif %} gap-4 px-3 py-3 text-secondary hover:text-primary hover:bg-surface-container rounded-base transition-all group">
@@ -79,7 +86,6 @@
 
         <!-- Sidebar Footer: User Profile -->
         <div class="mt-auto pt-0 border-t border-panel-border relative">
-            <!-- User Dropdown Menu (Hidden by default) -->
             <div id="userDropdown" class="absolute bottom-full left-4 right-4 mb-2 bg-panel-fill border border-panel-border rounded-2xl shadow-2xl overflow-hidden opacity-0 translate-y-4 pointer-events-none transition-all duration-300 z-50 backdrop-blur-xl">
                 <div class="p-2">
                     <a href="{{ url_for('auth.logout') }}" class="flex items-center gap-3 px-4 py-3 text-sm font-bold text-rose-500 hover:bg-rose-500/10 rounded-xl transition-all group/logout">
@@ -90,14 +96,12 @@
             </div>
 
             <div id="userProfileBtn" class="flex items-center gap-3 px-4 py-3 hover:bg-surface-container rounded-base transition-all cursor-pointer group">
-                <!-- Avatar -->
                 <div class="w-10 h-10 flex-shrink-0 rounded-full bg-primary/10 flex items-center justify-center border-2 border-primary/20 group-hover:border-primary/40 transition-all">
-                    <span class="text-primary font-bold text-sm">AD</span>
+                    <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                 </div>
-                <!-- Info -->
-                <div class="sidebar-text overflow-hidden transition-all duration-300">
-                    <p class="text-sm font-bold truncate">Admin User</p>
-                    <p class="text-[10px] text-secondary truncate">admin@nexus.ai</p>
+                <div class="sidebar-text overflow-hidden">
+                    <p class="text-sm font-bold text-text truncate">{{ current_user.username if current_user.is_authenticated else 'Invitado' }}</p>
+                    <p class="text-[10px] text-label/60 font-medium truncate italic">{{ current_user.role if current_user.is_authenticated else 'nexus_user' }}</p>
                 </div>
             </div>
         </div>

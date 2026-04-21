@@ -31,6 +31,12 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.sidebar-text').forEach(el => el.classList.add('hidden'));
     }
 
+    // Dynamic Brand Color Injection (Sync with DB)
+    const brandBg = document.body.getAttribute('data-brand-bg');
+    const brandText = document.body.getAttribute('data-brand-text');
+    if (brandBg) html.style.setProperty('--color-brand-identity-bg', brandBg);
+    if (brandText) html.style.setProperty('--color-brand-identity-text', brandText);
+
     if (sidebarToggle && sidebar) {
         sidebarToggle.addEventListener('click', () => {
             const isMobile = window.innerWidth < 1024;

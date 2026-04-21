@@ -566,3 +566,67 @@ input[name="db_engine"]:checked + label .w-5.h-5 .bg-primary {
     --color-brand-identity-bg: var(--color-primary);
     --color-brand-identity-text: #ffffff;
 }
+
+/* Operational Badges (PSX5K System) */
+.badge-nexus {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-width: 1.5px;
+    transition: all 0.3s ease;
+}
+
+/* Estados */
+.badge-pending {
+    background-color: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+    border-color: rgba(245, 158, 11, 0.2);
+}
+
+.badge-running {
+    background-color: rgba(var(--color-primary), 0.1);
+    color: rgb(var(--color-primary));
+    border-color: rgba(var(--color-primary), 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.badge-running::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: currentColor;
+    animation: nexus-pulse 2s infinite;
+}
+
+@keyframes nexus-pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.5); opacity: 0.4; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.badge-finished {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    border-color: rgba(16, 185, 129, 0.2);
+}
+
+/* Operaciones */
+.badge-op-add {
+    background-color: rgba(139, 92, 246, 0.1);
+    color: #a78bfa;
+    border-color: rgba(139, 92, 246, 0.2);
+}
+
+.badge-op-delete {
+    background-color: rgba(244, 63, 94, 0.1);
+    color: #fb7185;
+    border-color: rgba(244, 63, 94, 0.2);
+}

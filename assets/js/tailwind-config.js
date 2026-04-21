@@ -44,6 +44,7 @@ tailwind.config = {
                 'label': 'rgb(var(--color-label-text))',
                 
                 // Navigation & Tabs
+                'tab-bar': 'rgb(var(--color-tab-bar-bg))',
                 'tab-active': 'rgb(var(--color-tab-active-bg))',
                 'tab-active-text': 'rgb(var(--color-tab-active-text))',
                 'tab-inactive': 'rgb(var(--color-tab-inactive-bg))',

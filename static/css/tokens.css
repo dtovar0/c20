@@ -28,11 +28,12 @@ html, body {
   --color-button-disabled-bg: 203 213 225;
   --color-button-disabled-text: 100 116 139;
 
-  /* Tab Tokens */
+  /* Tab Tokens (Light Mode optimized) */
+  --color-tab-bar-bg: 226 232 240;       /* Raíl de fondo */
   --color-tab-active-bg: var(--color-primary);
   --color-tab-active-text: 255 255 255;
-  --color-tab-inactive-bg: 241 245 249;
-  --color-tab-inactive-text: 100 116 139;
+  --color-tab-inactive-bg: 195 205 215;
+  --color-tab-inactive-text: 15 23 42;   /* Slate-800: Sólido */
 
   /* Panel & Surface System */
   --color-panel-fill: 255 255 255;
@@ -74,8 +75,9 @@ html, body {
     --color-panel-border: 51 65 85;
     --color-panel-shadow: 0 0 0 / 0;
 
-    --color-tab-inactive-bg: 51 65 85;
-    --color-tab-inactive-text: 148 163 184;
+    --color-tab-bar-bg: 15 22 36;
+    --color-tab-inactive-bg: 71 85 105 / 0.25; /* Gris sutil para que sobresalga */
+    --color-tab-inactive-text: 226 232 240;    /* Slate-400 para equilibrio */
 
     --color-bi-card-logistics: 71 85 105;
     --color-bi-ring-bg: 15 23 42;
@@ -112,4 +114,7 @@ html.dark {
     --color-label-text: 148 163 184;
     --color-audit-body: 15 23 42;
     --color-audit-body-alpha: 0.3;
+    --color-tab-bar-bg: 15 22 36;
+    --color-tab-inactive-bg: 71 85 105 / 0.25;
+    --color-tab-inactive-text: 226 232 240;
 }
