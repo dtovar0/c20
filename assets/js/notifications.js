@@ -1,22 +1,19 @@
 document.addEventListener('DOMContentLoaded', function() {
     const authToggle = document.getElementById('smtpAuthToggle');
-    const authInputs = ['smtpName', 'smtpUser', 'smtpPass'];
     const authStatusText = document.getElementById('authStatusText');
 
     function updateAuthFields() {
         const isEnabled = authToggle.checked;
-        authInputs.forEach(id => {
-            const el = document.getElementById(id);
-            if (el) {
-                el.disabled = !isEnabled;
-                // Visual feedback correction
-                if (!isEnabled) {
-                    el.classList.add('opacity-30', 'cursor-not-allowed');
-                } else {
-                    el.classList.remove('opacity-30', 'cursor-not-allowed');
-                }
+        const passInput = document.getElementById('smtpPass');
+        
+        if (passInput) {
+            passInput.disabled = !isEnabled;
+            if (!isEnabled) {
+                passInput.classList.add('opacity-30', 'cursor-not-allowed');
+            } else {
+                passInput.classList.remove('opacity-30', 'cursor-not-allowed');
             }
-        });
+        }
         if (authStatusText) {
             authStatusText.innerText = isEnabled ? 'Activo' : 'Inactivo';
             authStatusText.className = isEnabled 
