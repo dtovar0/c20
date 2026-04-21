@@ -109,7 +109,7 @@ function renderUsersTable() {
             <tr class="group transition-all duration-300 pointer-events-none select-none">
                 <td class="py-8 bg-surface-container/10 rounded-l-2xl border-y border-l border-panel-border/20" colspan="1"></td>
                 <td class="py-8 bg-surface-container/10 border-y border-panel-border/20 text-center" colspan="3">
-                    <div class="h-1.5 w-32 bg-label/5 rounded-full mx-auto opacity-20"></div>
+                    <div class="h-1.5 w-32 bg-label/20 dark:bg-white/10 rounded-full mx-auto"></div>
                 </td>
                 <td class="py-8 bg-surface-container/10 rounded-r-2xl border-y border-r border-panel-border/20" colspan="1"></td>
             </tr>
