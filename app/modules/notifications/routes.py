@@ -3,6 +3,7 @@ from flask_login import login_required
 from app.decorators import admin_required
 from app import db
 from app.modules.notifications.models import SMTPConfig
+from app.modules.notifications.services import send_test_email
 
 notifications_bp = Blueprint("notifications", __name__, url_prefix="/notifications")
 
@@ -42,4 +43,35 @@ def save():
         
     except Exception as e:
         db.session.rollback()
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@notifications_bp.route("/test", methods=["POST"])
+@login_required
+@admin_required
+def test_connection():
+    try:
+        data = request.get_json()
+        target_email = data.get("target_email")
+        
+        if not target_email:
+            return jsonify({"status": "error", "message": "Falta el correo destinatario"}), 400
+            
+        config = SMTPConfig.query.first()
+        if not config:
+            return jsonify({"status": "error", "message": "Configura y guarda el servidor primero"}), 400
+            
+        result = send_test_email(
+            server=config.server,
+            port=config.port,
+            encryption=config.encryption,
+            user=config.user,
+            password=config.password,
+            sender_name=config.sender_name,
+            sender_email=config.sender_email,
+            target_email=target_email
+        )
+        
+        return jsonify(result)
+        
+    except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500

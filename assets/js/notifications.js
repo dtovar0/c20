@@ -75,3 +75,33 @@ function saveNotifications(containerId) {
         showToast('Error de conexión', 'error');
     });
 }
+
+function sendTestEmail() {
+    const targetEmail = document.getElementById('testTargetEmail')?.value;
+    
+    if (!targetEmail) {
+        showToast('Ingresa un correo destinatario', 'warning');
+        return;
+    }
+
+    showToast('Iniciando transferencia SMTP...', 'info');
+
+    fetch('/notifications/test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ target_email: targetEmail })
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.status === 'success') {
+            showToast(result.message, 'success');
+            closeModal('modal-test-email');
+        } else {
+            showToast('Falla SMTP: ' + result.message, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast('Error crítico de conexión', 'error');
+    });
+}
