@@ -53,10 +53,7 @@
                 </div>
 
                 <div class="flex items-center gap-3">
-                    <button onclick="addUserModal()" class="nexus-btn-save bg-primary text-white hover:bg-primary-focus">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                        Añadir Usuario
-                    </button>
+                    <!-- Botón de añadir eliminado por solicitud -->
                 </div>
             </header>
 
@@ -307,10 +304,6 @@
 <script src="/assets/js/users.js"></script>
 <script src="{{ url_for('serve_assets', filename='js/auth.js') }}"></script>
 <script>
-    function addUserModal() {
-        console.log("Opening Add User Modal...");
-    }
-
     function switchTab(tabId) {
         // Hide all panels
         document.querySelectorAll('.tab-panel').forEach(panel => {
