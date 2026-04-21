@@ -1,15 +1,18 @@
 from flask import Blueprint, render_template, request, jsonify
+from flask_login import login_required
 from app import db
 from app.modules.notifications.models import SMTPConfig
 
 notifications_bp = Blueprint("notifications", __name__, url_prefix="/notifications")
 
 @notifications_bp.route("/")
+@login_required
 def index():
     config = SMTPConfig.query.first()
     return render_template("notifications.html", config=config)
 
 @notifications_bp.route("/save", methods=["POST"])
+@login_required
 def save():
     try:
         data = request.get_json()

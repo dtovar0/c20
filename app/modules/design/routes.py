@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, jsonify
+from flask_login import login_required
 import os
 import re
 
@@ -11,10 +12,12 @@ def hex_to_rgb_str(hex_color):
     return f"{rgb[0]} {rgb[1]} {rgb[2]}"
 
 @design_bp.route("/")
+@login_required
 def index():
     return render_template("design.html")
 
 @design_bp.route("/update", methods=["POST"])
+@login_required
 def update_tokens():
     try:
         data = request.json

@@ -347,3 +347,38 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// 5. Sidebar User Dropdown Logic
+document.addEventListener('DOMContentLoaded', () => {
+    const userProfileBtn = document.getElementById('userProfileBtn');
+    const userDropdown = document.getElementById('userDropdown');
+
+    if (userProfileBtn && userDropdown) {
+        userProfileBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isHidden = userDropdown.classList.contains('opacity-0');
+            
+            if (isHidden) {
+                // Open
+                userDropdown.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+            } else {
+                // Close
+                userDropdown.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+            }
+        });
+
+        // Close on escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !userDropdown.classList.contains('opacity-0')) {
+                userDropdown.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+            }
+        });
+
+        // Close on click away
+        document.addEventListener('click', (e) => {
+            if (!userDropdown.contains(e.target) && !userProfileBtn.contains(e.target)) {
+                userDropdown.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+            }
+        });
+    }
+});

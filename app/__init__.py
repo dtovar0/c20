@@ -1,21 +1,24 @@
 from flask import Flask, send_from_directory
 from flask_compress import Compress
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
 from dotenv import load_dotenv
 import os
 
 # Cargar variables de entorno
 load_dotenv()
 
-# Instancia global de DB
+# Instancias globales
 db = SQLAlchemy()
+login_manager = LoginManager()
 
 def create_app():
     app = Flask(__name__, 
                 template_folder='../templates', 
                 static_folder='../static')
 
-    # Configuración de base de datos
+    # Configuración de base de datos y seguridad
+    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'nexus-premium-secret-key')
     db_engine = os.getenv('DB_ENGINE', 'sqlite')
     if db_engine == 'mysql':
         db_uri = f"mysql+pymysql://{os.getenv('DB_USER')}:{os.getenv('DB_PASS')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}"
@@ -28,6 +31,15 @@ def create_app():
     # Inicializar Extensiones
     Compress(app)
     db.init_app(app)
+    login_manager.init_app(app)
+    login_manager.login_view = 'auth.login'
+    login_manager.login_message = "Por favor, inicie sesión para acceder."
+    login_manager.login_message_category = "info"
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        from app.modules.auth.models import User
+        return User.query.get(int(user_id))
 
     # Registro de Blueprints
     from app.modules.core.routes import core_bp
@@ -48,12 +60,20 @@ def create_app():
     from app.modules.settings.models import SystemConfig
     from app.modules.audit.models import AuditLog
     from app.modules.notifications.models import SMTPConfig
-    from app.modules.auth.models import AuthConfig
+    from app.modules.auth.models import AuthConfig, User
 
     # Crear tablas automáticamente dentro del contexto de la app
     with app.app_context():
         try:
             db.create_all()
+            # Crear usuario inicial si no existe ninguno
+            from app.modules.auth.models import User
+            if not User.query.first():
+                admin = User(username='admin', email='admin@nexus.ai', role='admin')
+                admin.set_password('admin123')
+                db.session.add(admin)
+                db.session.commit()
+                print("👤 Usuario Maestro Creado: admin / admin123")
             print("🚀 Base de Datos Sincronizada Correctamente")
         except Exception as e:
             print(f"❌ Error al sincronizar base de datos: {e}")

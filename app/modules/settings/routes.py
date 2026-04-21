@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, jsonify
+from flask_login import login_required, current_user
 from app import db
 from app.modules.settings.models import SystemConfig
 from app.modules.audit.models import AuditLog
@@ -6,11 +7,13 @@ from app.modules.audit.models import AuditLog
 settings_bp = Blueprint("settings", __name__, url_prefix="/settings")
 
 @settings_bp.route("/")
+@login_required
 def index():
     config = SystemConfig.query.first()
     return render_template("settings.html", config=config)
 
 @settings_bp.route("/save", methods=["POST"])
+@login_required
 def save():
     try:
         data = request.get_json()
@@ -66,7 +69,7 @@ def save():
         
         # Add Audit Log Entry
         audit = AuditLog(
-            user="ADMIN",
+            user=current_user.username,
             action="SET_IDENTITY",
             ip_address=request.remote_addr,
             status="success",

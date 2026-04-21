@@ -20,62 +20,11 @@
 
     <!-- Styles -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="{{ url_for('serve_assets', filename='js/tailwind-config.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/tokens.css') }}?v={{ range(1000, 9999) | random }}">
     <link rel="stylesheet" href="{{ url_for('serve_assets', filename='css/global.css') }}?v={{ range(1000, 9999) | random }}">
     <link rel="stylesheet" href="{{ url_for('serve_assets', filename='css/main.css') }}?v={{ range(1000, 9999) | random }}">
     <link rel="stylesheet" href="{{ url_for('serve_assets', filename='css/components.css') }}?v={{ range(1000, 9999) | random }}">
-    
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: 'rgb(var(--color-primary) / <alpha-value>)',
-                        bg: 'var(--color-body-bg)',
-                        text: 'var(--color-body-text)',
-                        header: 'var(--color-header-bg)',
-                        'header-text': 'var(--color-header-text)',
-                        accent: 'rgb(var(--color-accent) / <alpha-value>)',
-                        secondary: 'rgb(var(--color-secondary) / <alpha-value>)',
-                        'accent-a': 'rgb(var(--color-accent-a) / <alpha-value>)',
-                        'accent-b': 'rgb(var(--color-accent-b) / <alpha-value>)',
-                        'accent-c': 'rgb(var(--color-accent-c) / <alpha-value>)',
-                        'peach': 'rgb(var(--color-accent-peach) / <alpha-value>)',
-                        'violet': 'rgb(var(--color-accent-violet) / <alpha-value>)',
-                        'sky': 'rgb(var(--color-accent-sky) / <alpha-value>)',
-                        'kpi-highlight': 'rgb(var(--color-kpi-highlight) / <alpha-value>)',
-                        'panel-fill': 'rgb(var(--color-panel-fill))',
-                        'panel-border': 'rgb(var(--color-panel-border))',
-                        'audit-body': 'rgb(var(--color-audit-body))',
-                        'button-bg': 'rgb(var(--color-button-bg) / <alpha-value>)',
-                        'button-text': 'rgb(var(--color-button-text) / <alpha-value>)',
-                        'button-disabled': 'rgb(var(--color-button-disabled-bg) / <alpha-value>)',
-                        'button-disabled-text': 'rgb(var(--color-button-disabled-text) / <alpha-value>)',
-                        'input': 'var(--color-input-text)',
-                        'input-bg': 'rgb(var(--color-input-bg))',
-                        'input-border': 'rgb(var(--color-input-border))',
-                        'input-focus': 'rgb(var(--color-input-focus))',
-                        'label': 'rgb(var(--color-label-text) / <alpha-value>)',
-                        'tab-active': 'rgb(var(--color-tab-active-bg) / <alpha-value>)',
-                        'tab-active-text': 'rgb(var(--color-tab-active-text) / <alpha-value>)',
-                        'tab-inactive': 'rgb(var(--color-tab-inactive-bg))',
-                        'tab-inactive-text': 'rgb(var(--color-tab-inactive-text) / <alpha-value>)',
-                        'surface-container': 'rgb(var(--color-surface-container-bg) / <alpha-value>)',
-                        'surface-container-border': 'rgb(var(--color-surface-container-border) / <alpha-value>)',
-                        'icon-picker-hover': 'rgb(var(--color-icon-picker-hover) / <alpha-value>)',
-                        'bi-logistics': 'rgb(var(--color-bi-card-logistics))',
-                        'bi-ring': 'rgb(var(--color-bi-ring-bg))',
-                        'bi-main': 'rgb(var(--color-bi-text-main))',
-                        'bi-muted': 'rgb(var(--color-bi-text-muted))',
-                    },
-                    borderRadius: {
-                        'base': 'var(--radius-base)',
-                    }
-                }
-            }
-        }
-    </script>
 
     {% if sys_config %}
     <style>

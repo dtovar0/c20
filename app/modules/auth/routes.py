@@ -1,10 +1,38 @@
-from flask import Blueprint, render_template, request, jsonify
+from flask import Blueprint, render_template, request, jsonify, redirect, url_for, flash
+from flask_login import login_user, logout_user, login_required, current_user
 from app import db
-from app.modules.auth.models import AuthConfig
+from app.modules.auth.models import User, AuthConfig
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
+@auth_bp.route("/login", methods=["GET", "POST"])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('core.index'))
+        
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        
+        user = User.query.filter_by(username=username).first()
+        
+        if user and user.check_password(password):
+            login_user(user)
+            return redirect(url_for('core.index'))
+        
+        flash("Credenciales inválidas", "error")
+        return redirect(url_for('auth.login'))
+
+    return render_template("login.html")
+
+@auth_bp.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return render_template("logout.html")
+
 @auth_bp.route("/")
+@login_required
 def index():
     config = AuthConfig.query.first()
     return render_template("auth.html", config=config)

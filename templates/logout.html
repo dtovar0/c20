@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus | Sesión Finalizada</title>
+    <script>
+        // Immediate Theme Sync
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/assets/js/tailwind-config.js"></script>
+    <link rel="stylesheet" href="/static/css/tokens.css">
+    <style>
+        body {
+            background-color: var(--color-body-bg);
+            color: var(--color-body-text);
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+        }
+        .progress-ring {
+            transition: stroke-dashoffset 1s linear;
+        }
+
+        /* Universal SVG Scale Normalization (No color force) */
+        .brand-icon-container svg {
+            width: 100% !important;
+            height: 100% !important;
+            display: block;
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col items-center justify-center p-6">
+    
+    <div class="fixed inset-0 pointer-events-none">
+        <div class="absolute inset-0 bg-gradient-to-tr from-blue-900/20 via-transparent to-transparent"></div>
+    </div>
+
+    <div class="w-full max-w-sm text-center relative z-10 animate-in fade-in zoom-in duration-700">
+        <!-- Success Icon / Brand Icon -->
+        <div class="brand-icon-container inline-flex items-center justify-center w-24 h-24 rounded-[32px] bg-primary border-2 border-white/20 shadow-[0_0_40px_rgba(var(--color-primary),0.4)] mb-8 overflow-hidden p-5">
+            {% if sys_config and sys_config.portal_identity_type == 'image' and sys_config.portal_icon %}
+                <img src="{{ sys_config.portal_icon }}" alt="Logo" class="w-full h-full object-cover">
+            {% elif sys_config and sys_config.portal_icon %}
+                <div class="text-white">
+                    {{ sys_config.portal_icon | safe }}
+                </div>
+            {% else %}
+                <svg class="w-12 h-12 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                </svg>
+            {% endif %}
+        </div>
+
+        <h1 class="text-3xl font-black tracking-tighter uppercase italic leading-none mb-4">
+            {{ (sys_config.portal_name if sys_config and sys_config.portal_name else 'NEXUS') }}
+            <span class="text-success">Portal</span>
+        </h1>
+        <p class="text-sm text-slate-400 font-medium mb-12">Tu sesión de Nexus ha finalizado correctamente. Has sido desconectado de forma segura de todos los sistemas.</p>
+
+        <!-- Countdown Circle -->
+        <div class="relative inline-flex items-center justify-center mb-12">
+            <svg class="w-32 h-32 transform -rotate-90">
+                <circle cx="64" cy="64" r="60" stroke="currentColor" stroke-width="4" fill="transparent" class="text-slate-800"></circle>
+                <circle id="progress" cx="64" cy="64" r="60" stroke="currentColor" stroke-width="4" fill="transparent" stroke-dasharray="377" stroke-dashoffset="0" class="text-primary progress-ring"></circle>
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                <span id="countdown" class="text-4xl font-black italic">5</span>
+                <span class="text-[8px] font-black uppercase tracking-widest text-slate-500">Segundos</span>
+            </div>
+        </div>
+
+        <div class="flex flex-col gap-4">
+            <a href="{{ url_for('auth.login') }}" class="text-[10px] font-black uppercase tracking-[0.3em] text-primary hover:text-white transition-colors">Volver al Login ahora</a>
+        </div>
+    </div>
+
+    <script>
+        let count = 5;
+        const countdownEl = document.getElementById('countdown');
+        const progressEl = document.getElementById('progress');
+        const dashArray = 377;
+        
+        const timer = setInterval(() => {
+            count--;
+            countdownEl.textContent = count;
+            
+            // Update progress circle
+            const offset = dashArray - (dashArray * (count / 5));
+            progressEl.style.strokeDashoffset = offset;
+
+            if (count <= 0) {
+                clearInterval(timer);
+                window.location.href = "{{ url_for('auth.login') }}";
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

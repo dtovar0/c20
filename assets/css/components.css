@@ -515,3 +515,19 @@ input[name="db_engine"]:checked + label .w-5.h-5 {
 input[name="db_engine"]:checked + label .w-5.h-5 .bg-primary {
     transform: scale(1) !important;
 }
+
+/* User Dropdown Collapsed State Support */
+#sidebar.is-collapsed #userDropdown {
+    left: 100% !important;
+    right: auto !important;
+    bottom: 0 !important;
+    margin-left: 0.75rem !important;
+    margin-bottom: 0 !important;
+    width: 180px !important;
+    transform: translateY(0) !important;
+}
+
+#sidebar.is-collapsed #userDropdown.opacity-0 {
+    pointer-events: none;
+    opacity: 0;
+}

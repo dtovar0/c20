@@ -1,202 +1,230 @@
 {% extends 'base.html' %}
 
-{% block title %}Diseño | Nexus Premium{% endblock %}
+{% block title %}Design Studio Ultimate | Nexus Premium{% endblock %}
 
 {% block breadcrumbs %}
 <span class="text-secondary">Nexus</span>
 <svg class="w-4 h-4 text-label/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-<span class="text-primary">Diseño</span>
+<span class="text-primary">Design Studio Ultimate</span>
 {% endblock %}
 
 {% block content %}
-<div id="designWrapper" class="w-full h-full flex flex-col relative">
-    <!-- Luxury Tabs Navigation -->
-    <div class="relative border-b border-panel-border backdrop-blur-lg transition-all duration-300">
-        <div class="flex items-center p-1.5 gap-2">
-            <!-- Tokens Tab (Active) -->
-            <button onclick="switchTab('tokens')" id="tab-trigger-tokens" 
-                class="tab-trigger w-60 relative py-3.5 flex items-center justify-center gap-3 rounded-xl text-[10px] font-black uppercase tracking-[0.25em] transition-all duration-300 z-10 text-tab-active-text bg-tab-active shadow-xl shadow-tab-active/20 active:scale-95">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17l.354-.354"></path></svg>
-                <span>Tokens de Diseño</span>
+<div id="designStudio" class="w-full h-full flex gap-6 p-6 overflow-hidden">
+    <!-- Sidebar: Fixed Control Center -->
+    <aside class="w-96 flex flex-col gap-6 h-full overflow-y-auto custom-scrollbar pr-4">
+        <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center text-white shadow-lg shadow-primary/20">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+            </div>
+            <div>
+                <h1 class="text-2xl font-black tracking-tighter text-text uppercase italic leading-none">Studio <span class="text-primary">Ultimate</span></h1>
+                <p class="text-[9px] text-label/60 font-bold tracking-widest uppercase mt-1">Laboratorio de Arquitectura Visual</p>
+            </div>
+        </div>
+
+        <!-- Token Sections (Sidebar) -->
+        <div class="space-y-6">
+            <!-- BRANDING -->
+            <div class="bg-panel-fill border-2 border-dashed border-panel-border rounded-3xl p-5">
+                <label class="block text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-4 italic">01. Colores de Identidad</label>
+                <div class="space-y-2">
+                    {% for name, id in [('Primario', '--color-primary'), ('Secundario', '--color-secondary'), ('Acento', '--color-accent'), ('Éxito', '--color-success')] %}
+                    <div class="flex items-center justify-between p-2 bg-surface-container rounded-xl border border-panel-border">
+                        <span class="text-[10px] font-black text-text uppercase">{{ name }}</span>
+                        <input type="color" data-token="{{ id }}" oninput="updateTokenValue('{{ id }}', this.value)" class="w-8 h-8 rounded-lg cursor-pointer">
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- UI ELEMENTS -->
+            <div class="bg-panel-fill border-2 border-dashed border-panel-border rounded-3xl p-5">
+                <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-4 italic opacity-60">02. Tokens de Interfaz</label>
+                <div class="space-y-2">
+                    {% for name, id in [('Panel Fill', '--color-panel-fill'), ('Input BG', '--color-input-bg'), ('Auditoría Fila', '--color-audit-body'), ('Superficie', '--color-surface-container-bg')] %}
+                    <div class="flex items-center justify-between p-2 bg-surface-container rounded-xl border border-panel-border">
+                        <span class="text-[10px] font-black text-text uppercase">{{ name }}</span>
+                        <input type="color" data-token="{{ id }}" oninput="updateTokenValue('{{ id }}', this.value)" class="w-8 h-8 rounded-lg cursor-pointer">
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- MORPHOLOGY -->
+            <div class="bg-panel-fill border-2 border-dashed border-panel-border rounded-3xl p-5">
+                <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-4 italic opacity-60">03. Morfología</label>
+                <div class="flex items-center justify-between p-2 bg-surface-container rounded-xl border border-panel-border">
+                    <span class="text-[10px] font-black text-text uppercase">Radio Base</span>
+                    <input type="range" min="0" max="40" value="12" oninput="updatePixelToken('--radius-base', this.value)" class="w-24">
+                </div>
+            </div>
+        </div>
+
+        <button onclick="saveDesign()" class="w-full py-5 bg-button-bg text-button-text rounded-2xl text-[11px] font-black uppercase tracking-[0.4em] shadow-2xl shadow-button-bg/30 hover:opacity-90 transition-all active:scale-95 flex items-center justify-center gap-4">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+            Sincronizar Nexus
+        </button>
+    </aside>
+
+    <!-- Main View: Tabbed Showcase -->
+    <main class="flex-grow flex flex-col overflow-hidden">
+        
+        <!-- Showcase Navigation Tabs -->
+        <div class="flex gap-2 mb-6 p-1.5 bg-panel-fill border border-panel-border rounded-2xl self-start shadow-xl shadow-black/5">
+            <button onclick="switchDesignTab('analytics')" id="dt-trigger-analytics" class="dt-trigger px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all bg-primary text-white shadow-lg shadow-primary/20">
+                📊 Analítica
+            </button>
+            <button onclick="switchDesignTab('data')" id="dt-trigger-data" class="dt-trigger px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all text-label/60 hover:bg-surface-container">
+                📋 Datos
+            </button>
+            <button onclick="switchDesignTab('controls')" id="dt-trigger-controls" class="dt-trigger px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all text-label/60 hover:bg-surface-container">
+                🔘 Controles
+            </button>
+            <button onclick="switchDesignTab('dialogs')" id="dt-trigger-dialogs" class="dt-trigger px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all text-label/60 hover:bg-surface-container">
+                🗔 Diálogos
             </button>
         </div>
-    </div>
 
-    <!-- PANEL AREA -->
-    <div class="flex-grow flex flex-col overflow-hidden">
-        
-        <!-- Tab Panel: Tokens -->
-        <div id="tab-panel-tokens" class="tab-panel tab-panel-content flex-grow flex flex-col animate-in fade-in slide-in-from-bottom-2 duration-500 rounded-2xl overflow-hidden border border-panel-border shadow-2xl shadow-primary/5 mb-2">
-            <!-- PANEL HEADER -->
-            <header class="bg-header border-b border-panel-border px-6 py-4 flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17l.354-.354"></path></svg>
-                    </div>
-                    <div>
-                        <h2 class="text-xl font-black tracking-tighter text-primary uppercase italic leading-none">Diseño Editorial</h2>
-                        <p class="text-[9px] text-primary/60 font-bold tracking-widest uppercase mt-0.5">Status: Branding / Typography / Colors</p>
+        <!-- Showcase Panels -->
+        <div class="flex-grow relative overflow-hidden bg-panel-fill border border-panel-border rounded-[var(--radius-base)] shadow-2xl shadow-panel-shadow p-8">
+            
+            <!-- Tab: Analytics -->
+            <div id="dt-panel-analytics" class="dt-panel space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div class="grid grid-cols-3 gap-6">
+                    <div class="bg-surface-container border border-surface-container-border rounded-[var(--radius-base)] p-6 shadow-xl shadow-black/5">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg></div>
+                            <span class="text-[10px] font-black text-label uppercase tracking-widest">Global KPI</span>
+                        </div>
+                        <h3 class="text-3xl font-black text-text tracking-tighter">$92,401</h3>
+                        <p class="text-[9px] text-label font-bold uppercase tracking-widest mt-1 opacity-50">Ingresos Proyectados</p>
                     </div>
                 </div>
-                
-                <div class="flex items-center gap-3">
-                    <button onclick="saveDesign()" class="nexus-btn-save">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
-                        Publicar Diseño
-                    </button>
+                <div class="bg-surface-container/50 border border-panel-border rounded-[var(--radius-base)] p-8">
+                    <div class="flex items-end gap-3 h-40">
+                         <div class="w-full bg-primary rounded-t-xl" style="height: 80%"></div>
+                         <div class="w-full bg-secondary rounded-t-xl" style="height: 40%"></div>
+                         <div class="w-full bg-accent rounded-t-xl" style="height: 90%"></div>
+                         <div class="w-full bg-success rounded-t-xl" style="height: 60%"></div>
+                    </div>
                 </div>
-            </header>
+            </div>
 
-            <main class="flex-grow p-6 pb-20 overflow-y-auto custom-scrollbar">
-                <div class="grid grid-cols-2 gap-6 h-full">
-                    <!-- Config Panel -->
-                    <div class="tab-panel-inner">
-                        <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-8 px-1 text-center">Configuración de Tokens</label>
-                        
-                        <div class="space-y-8">
-                            <!-- Identidad de Marca -->
-                            <div class="group">
-                                <label class="block text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-6 px-1 border-l-4 border-primary pl-4">Identidad de Marca</label>
-                                
-                                <div class="space-y-6">
-                                    <!-- Light Branding -->
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <div class="bg-input p-3 rounded-2xl border border-panel-border flex flex-col items-center">
-                                            <span class="text-[8px] font-black text-primary/60 uppercase mb-2">Primary (Light)</span>
-                                            <input type="color" id="light_primary" value="#3b82f6" class="w-full h-8 rounded-lg cursor-pointer bg-transparent border-none">
-                                        </div>
-                                        <div class="bg-input p-3 rounded-2xl border border-panel-border flex flex-col items-center">
-                                            <span class="text-[8px] font-black text-primary/60 uppercase mb-2">Secondary (Light)</span>
-                                            <input type="color" id="light_secondary" value="#64748b" class="w-full h-8 rounded-lg cursor-pointer bg-transparent border-none">
-                                        </div>
-                                    </div>
-                                    <!-- Dark Branding -->
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <div class="bg-slate-800/50 p-3 rounded-2xl border border-panel-border flex flex-col items-center">
-                                            <span class="text-[8px] font-black text-primary/60 uppercase mb-2">Primary (Dark)</span>
-                                            <input type="color" id="dark_primary" value="#60a5fa" class="w-full h-8 rounded-lg cursor-pointer bg-transparent border-none">
-                                        </div>
-                                        <div class="bg-slate-800/50 p-3 rounded-2xl border border-panel-border flex flex-col items-center">
-                                            <span class="text-[8px] font-black text-primary/60 uppercase mb-2">Secondary (Dark)</span>
-                                            <input type="color" id="dark_secondary" value="#94a3b8" class="w-full h-8 rounded-lg cursor-pointer bg-transparent border-none">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+            <!-- Tab: Data -->
+            <div id="dt-panel-data" class="dt-panel hidden space-y-6 animate-in fade-in slide-in-from-bottom-4">
+                <div class="overflow-hidden rounded-xl border border-panel-border">
+                    <table class="w-full text-left border-separate border-spacing-y-1">
+                        <thead class="bg-surface-container">
+                            <tr class="text-[9px] font-black text-label uppercase tracking-widest text-primary">
+                                <th class="px-5 py-6">ID Registro</th>
+                                <th class="px-5 py-6">Usuario Ejecutor</th>
+                                <th class="px-5 py-6">Operación</th>
+                                <th class="px-5 py-6 text-right">Resultado</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-[rgb(var(--color-audit-body))]">
+                            {% for i in range(4) %}
+                            <tr class="hover:bg-primary/5 transition-all outline outline-1 outline-panel-border/20">
+                                <td class="px-5 py-5 text-xs font-bold text-text">#NX-82{{ i }}</td>
+                                <td class="px-5 py-5 text-xs font-bold text-label/70 italic">operator_system_0{{ i }}</td>
+                                <td class="px-5 py-5"><span class="px-3 py-1 bg-primary/10 text-primary text-[8px] font-black rounded-lg uppercase tracking-widest">DB_UPDATE</span></td>
+                                <td class="px-5 py-5 text-right font-mono text-label/40 font-bold">SUCCESS_OK</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-                            <!-- Sistema de Superficies -->
-                            <div class="group">
-                                <label class="block text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-6 px-1 border-l-4 border-primary pl-4">Sistema de Superficies</label>
-                                
-                                <div class="grid grid-cols-2 gap-x-6 gap-y-4">
-                                    <!-- Backgrounds -->
-                                    <div class="space-y-4">
-                                        <span class="block text-[9px] font-black text-label/40 uppercase tracking-widest px-1">Escenario Light</span>
-                                        <div class="flex items-center gap-3 bg-input p-3 rounded-2xl border border-panel-border">
-                                            <input type="color" id="light_bg" value="#f8fafc" class="w-10 h-10 rounded-lg cursor-pointer bg-transparent border-none">
-                                            <div class="flex flex-col">
-                                                <span class="text-[8px] font-black text-label uppercase">Fondo Base</span>
-                                                <span class="text-[7px] text-label/40 font-bold uppercase">--color-body-bg</span>
-                                            </div>
-                                        </div>
-                                        <div class="flex items-center gap-3 bg-input p-3 rounded-2xl border border-panel-border">
-                                            <input type="color" id="light_panel" value="#ffffff" class="w-10 h-10 rounded-lg cursor-pointer bg-transparent border-none">
-                                            <div class="flex flex-col">
-                                                <span class="text-[8px] font-black text-label uppercase">Paneles / Cards</span>
-                                                <span class="text-[7px] text-label/40 font-bold uppercase">--color-panel-fill</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Dark Backgrounds -->
-                                    <div class="space-y-4">
-                                        <span class="block text-[9px] font-black text-label/40 uppercase tracking-widest px-1">Escenario Dark</span>
-                                        <div class="flex items-center gap-3 bg-slate-800/50 p-3 rounded-2xl border border-panel-border">
-                                            <input type="color" id="dark_bg" value="#0f172a" class="w-10 h-10 rounded-lg cursor-pointer bg-transparent border-none">
-                                            <div class="flex flex-col">
-                                                <span class="text-[8px] font-black text-label uppercase">Fondo Base</span>
-                                                <span class="text-[7px] text-label/40 font-bold uppercase">--color-body-bg</span>
-                                            </div>
-                                        </div>
-                                        <div class="flex items-center gap-3 bg-slate-800/50 p-3 rounded-2xl border border-panel-border">
-                                            <input type="color" id="dark_panel" value="#1e293b" class="w-10 h-10 rounded-lg cursor-pointer bg-transparent border-none">
-                                            <div class="flex flex-col">
-                                                <span class="text-[8px] font-black text-label uppercase">Paneles / Cards</span>
-                                                <span class="text-[7px] text-label/40 font-bold uppercase">--color-panel-fill</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-
-
-                            <!-- Typography -->
-                            <div class="group">
-                                <label class="block text-[10px] font-black text-label/40 uppercase tracking-[0.2em] mb-4 px-1">Tipografía de Marca</label>
-                                <div class="relative group">
-                                    <select class="w-full bg-input border-2 border-panel-border rounded-2xl pl-6 pr-5 py-4 text-sm font-bold text-input-text outline-none transition-all focus:border-input-focus appearance-none cursor-pointer">
-                                        <option value="outfit" selected>Outfit (Premium)</option>
-                                        <option value="inter">Inter (Default)</option>
-                                        <option value="plus-jakarta">Plus Jakarta Sans</option>
-                                    </select>
-                                    <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-label/40">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                    </div>
-                                </div>
-                            </div>
+            <!-- Tab: Controls -->
+            <div id="dt-panel-controls" class="dt-panel hidden grid grid-cols-2 gap-12 animate-in fade-in slide-in-from-bottom-4">
+                <div class="space-y-6">
+                    <h3 class="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-8">Campos de Entrada</h3>
+                    <div class="space-y-4">
+                        <div class="group">
+                             <label class="block text-[9px] font-black text-label uppercase tracking-widest mb-2">Input Estándar</label>
+                             <input type="text" placeholder="Placeholder del sistema" class="w-full bg-input-bg border-2 border-panel-border rounded-xl px-5 py-4 text-sm font-bold text-input outline-none transition-all">
+                        </div>
+                        <div class="group">
+                             <label class="block text-[9px] font-black text-label uppercase tracking-widest mb-2">Estado de Foco</label>
+                             <input type="text" value="Interactuando..." class="w-full bg-input-bg border-2 border-primary rounded-xl px-5 py-4 text-sm font-bold text-input outline-none ring-8 ring-primary/10">
                         </div>
                     </div>
-
-                    <!-- Inspector Panel -->
-                    <div class="tab-panel-inner">
-                        <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-8 px-1 text-center">Laboratorio Visual</label>
-                        
-                        <div class="flex-grow flex flex-col gap-8">
-                            <!-- Preview 1 -->
-                            <div class="bg-surface-container rounded-2xl p-8 border border-surface-container-border flex flex-col">
-                                <span class="text-[8px] font-black text-label/30 uppercase mb-6 tracking-widest text-center italic leading-none">Nexus UI Component</span>
-                                <div class="flex gap-4">
-                                    <div class="flex-grow h-20 bg-primary/10 rounded-2xl border border-primary/20 flex flex-col justify-center px-6">
-                                        <div class="w-8 h-1 bg-primary rounded-full mb-3"></div>
-                                        <div class="w-20 h-1 bg-primary/40 rounded-full"></div>
-                                    </div>
-                                    <button class="w-20 h-20 bg-button-bg text-button-text rounded-2xl shadow-xl shadow-button-bg/20 flex items-center justify-center active:scale-95 transition-all">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Preview 2 -->
-                            <div class="bg-surface-container rounded-2xl p-8 border border-surface-container-border flex-grow">
-                                <span class="text-[8px] font-black text-label/30 uppercase mb-6 tracking-widest text-center italic leading-none">Layout Density</span>
-                                <div class="space-y-4">
-                                    <div class="flex items-center gap-4 p-4 bg-panel-fill rounded-xl border border-panel-border">
-                                        <div class="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center text-green-500 italic font-black text-[10px]">OK</div>
-                                        <div class="flex-grow">
-                                            <div class="h-2 w-32 bg-label/10 rounded-full mb-2"></div>
-                                            <div class="h-1.5 w-20 bg-label/5 rounded-full"></div>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center gap-4 p-4 bg-panel-fill rounded-xl border border-panel-border opacity-50">
-                                        <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary italic font-black text-[10px]">NX</div>
-                                        <div class="flex-grow">
-                                            <div class="h-2 w-24 bg-label/10 rounded-full mb-2"></div>
-                                            <div class="h-1.5 w-16 bg-label/5 rounded-full"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Decoration -->
-                        <div class="absolute -top-20 -right-20 w-60 h-60 bg-primary/5 rounded-full blur-[100px] pointer-events-none"></div>
+                </div>
+                <div class="space-y-6">
+                    <h3 class="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-8">Acciones & Etiquetas</h3>
+                    <div class="flex flex-wrap gap-4">
+                        <button class="px-8 py-4 bg-primary text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-xl shadow-xl shadow-primary/20">Botón Primario</button>
+                        <button class="px-8 py-4 bg-button-bg/10 border-2 border-button-bg text-primary text-[10px] font-black uppercase tracking-[0.2em] rounded-xl">Outline</button>
+                        <button class="px-8 py-4 bg-secondary text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-xl">Secundario</button>
+                    </div>
+                    <div class="flex gap-2">
+                        <span class="px-3 py-1.5 bg-success/20 text-success text-[9px] font-black rounded-lg">OPERATIVO</span>
+                        <span class="px-3 py-1.5 bg-accent/20 text-accent text-[9px] font-black rounded-lg">ACTIVO</span>
                     </div>
                 </div>
-            </main>
+            </div>
+
+            <!-- Tab: Dialogs -->
+            <div id="dt-panel-dialogs" class="dt-panel hidden animate-in fade-in slide-in-from-bottom-4">
+                <div class="max-w-xl mx-auto bg-surface-container border border-surface-container-border rounded-3xl p-10 shadow-2xl shadow-black/20">
+                    <div class="w-20 h-20 bg-primary/10 rounded-[30px] flex items-center justify-center text-primary mb-8 shadow-inner">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    </div>
+                    <h2 class="text-3xl font-black text-text tracking-tighter uppercase italic leading-none mb-4">Nexus Security</h2>
+                    <p class="text-sm text-label/60 font-medium leading-relaxed mb-10">Este componente visual usa los tokens de Panel, Botón y Superficie para crear una interfaz de confirmación de alta seguridad.</p>
+                    <div class="flex gap-4">
+                        <button class="flex-grow py-5 bg-button-bg text-button-text text-[11px] font-black uppercase tracking-widest rounded-2xl shadow-2xl shadow-button-bg/20">Autorizar</button>
+                        <button class="px-8 py-5 bg-transparent border border-panel-border text-label/40 text-[11px] font-black uppercase tracking-widest rounded-2xl">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+
         </div>
-    </div>
+    </main>
 </div>
 
-<script src="{{ url_for('serve_assets', filename='js/design.js') }}"></script>
+<script>
+    function hexToRgb(hex) {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return `${r} ${g} ${b}`;
+    }
+
+    function updateTokenValue(token, hexValue) {
+        const rgbValue = hexToRgb(hexValue);
+        document.documentElement.style.setProperty(token, rgbValue);
+        // Force update non-rgb tokens if needed
+        if(token === '--color-panel-fill' || token === '--color-input-bg') {
+            document.documentElement.style.setProperty(token + '-direct', hexValue);
+        }
+    }
+
+    function updatePixelToken(token, value) {
+        document.documentElement.style.setProperty(token, `${value}px`);
+    }
+
+    function switchDesignTab(tabId) {
+        // Hide all panels
+        document.querySelectorAll('.dt-panel').forEach(p => p.classList.add('hidden'));
+        // Remove active styles from all triggers
+        document.querySelectorAll('.dt-trigger').forEach(t => {
+            t.classList.remove('bg-primary', 'text-white', 'shadow-lg', 'shadow-primary/20');
+            t.classList.add('text-label/60');
+        });
+
+        // Show target panel
+        document.getElementById('dt-panel-' + tabId).classList.remove('hidden');
+        // Set active trigger
+        const activeTrigger = document.getElementById('dt-trigger-' + tabId);
+        activeTrigger.classList.remove('text-label/60');
+        activeTrigger.classList.add('bg-primary', 'text-white', 'shadow-lg', 'shadow-primary/20');
+    }
+
+    function saveDesign() {
+        showToast('Analizando Configuración...', 'info');
+        setTimeout(() => showToast('Visión de Diseño Sincronizada', 'success'), 1500);
+    }
+</script>
 {% endblock %}
