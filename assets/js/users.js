@@ -68,13 +68,13 @@ function renderUsersTable() {
                         </div>
                     </td>
                     <td class="px-4 py-3 bg-surface-container border-y border-surface-container-border group-hover:border-primary/30 transition-colors">
+                        <span class="text-[10px] font-mono text-label/40">${user.email}</span>
+                    </td>
+                    <td class="px-4 py-3 bg-surface-container border-y border-surface-container-border group-hover:border-primary/30 transition-colors">
                         <div class="flex items-center gap-2">
                             ${roleIcon}
                             <span class="text-[10px] font-bold text-label/60 uppercase tracking-widest">${user.role}</span>
                         </div>
-                    </td>
-                    <td class="px-4 py-3 bg-surface-container border-y border-surface-container-border group-hover:border-primary/30 transition-colors">
-                        <span class="text-[10px] font-mono text-label/40">${user.email}</span>
                     </td>
                     <td class="px-6 py-3 text-right bg-surface-container border-y border-r border-surface-container-border rounded-r-2xl group-hover:border-primary/30 transition-colors">
                         <span class="px-3 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest ${statusClass}">${user.status}</span>
