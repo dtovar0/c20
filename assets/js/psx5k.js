@@ -82,7 +82,7 @@ function renderNexusTable() {
                     <div class="flex items-center h-full">${row.fecha_fin ? row.fecha_fin.replace('T', ' ') : '-'}</div>
                 </td>
                 <td class="px-5 py-0 h-[56px] text-[10px] font-black uppercase text-label/60 bg-surface-container/30 border-y border-panel-border group-hover:border-primary/30 transition-colors">
-                    <div class="flex items-center h-full tracking-tighter shadow-inner px-3 py-1 bg-black/10 rounded-lg">${row.tipo || 'MANUAL'}</div>
+                    <div class="flex items-center h-full tracking-tighter shadow-inner px-3 py-1 bg-black/10 rounded-lg">${row.accion_tipo || 'MANUAL'}</div>
                 </td>
                 <td class="px-5 py-0 h-[56px] bg-surface-container/30 border-y border-panel-border group-hover:border-primary/30 transition-colors text-center">
                     <div class="flex items-center justify-center h-full">${generateSegmentedBars()}</div>

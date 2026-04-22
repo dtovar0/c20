@@ -6,13 +6,15 @@ class PSX5KTask(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     usuario = db.Column(db.String(100), nullable=False)
-    accion = db.Column(db.String(20), nullable=False)  # add/delete
+    accion = db.Column(db.String(20), nullable=False)      # add/delete
     estado = db.Column(db.String(20), default='Programada')  # Ejecutando | Programada | Terminada | Pendiente
-    tipo = db.Column(db.String(20), nullable=True) # Manual | Archivo
+    accion_tipo = db.Column(db.String(20), nullable=True)  # Manual | Archivo
+    routing_label = db.Column(db.String(100), nullable=True) # Etiqueta de ruta
     fecha_inicio = db.Column(db.DateTime, nullable=True)
     fecha_fin = db.Column(db.DateTime, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    config_json = db.Column(db.Text, nullable=True) # Configuración general del envío
+    datos_tipo = db.Column(db.String(50), nullable=True)   # Tipo de datos contenidos
+    datos = db.Column(db.Text, nullable=True)              # Información adicional/Nota (Legacy o metadata)
     
     # Relación con detalles
     detalles = db.relationship('PSX5KDetail', backref='task', lazy=True, cascade="all, delete-orphan")
@@ -23,11 +25,13 @@ class PSX5KTask(db.Model):
             "usuario": self.usuario,
             "accion": self.accion,
             "estado": self.estado,
-            "tipo": self.tipo,
+            "accion_tipo": self.accion_tipo,
+            "routing_label": self.routing_label,
             "fecha_inicio": self.fecha_inicio.isoformat() if self.fecha_inicio else None,
             "fecha_fin": self.fecha_fin.isoformat() if self.fecha_fin else None,
             "created_at": self.created_at.isoformat(),
-            "config": self.config_json,
+            "datos_tipo": self.datos_tipo,
+            "datos": self.datos,
             "total_items": len(self.detalles)
         }
 
