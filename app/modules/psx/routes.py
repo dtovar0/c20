@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, render_template
 from flask_login import current_user, login_required
-from .models import PSX5K
+from .models import PSX5KTask, PSX5KDetail
 import os
 import datetime
 
@@ -16,7 +16,7 @@ def list_tasks():
     """
     Lista de tareas PSX5K para la tabla principal
     """
-    tasks = PSX5K.query.order_by(PSX5K.created_at.desc()).all()
+    tasks = PSX5KTask.query.order_by(PSX5KTask.created_at.desc()).all()
     return jsonify({
         "status": "success",
         "tasks": [t.to_dict() for t in tasks]
@@ -28,7 +28,7 @@ def task_detail(task_id):
     """
     Vista independiente para el detalle de una tarea PSX5K
     """
-    task = PSX5K.query.get_or_404(task_id)
+    task = PSX5KTask.query.get_or_404(task_id)
     return render_template('psx_detail.html', task=task)
 
 def allowed_file(filename):

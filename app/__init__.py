@@ -63,7 +63,7 @@ def create_app():
     from app.modules.audit.models import AuditLog
     from app.modules.notifications.models import SMTPConfig, NotificationTemplate
     from app.modules.auth.models import AuthConfig, User
-    from app.modules.psx.models import PSX5K
+    from app.modules.psx.models import PSX5KTask, PSX5KDetail
 
     # Crear tablas automáticamente dentro del contexto de la app
     with app.app_context():
