@@ -33,6 +33,42 @@ def task_detail(task_id):
     task = PSX5KTask.query.get_or_404(task_id)
     return render_template('psx_detail.html', task=task)
 
+@psx_bp.route('/stats')
+@login_required
+def get_stats():
+    """
+    Retorna estadísticas de tareas filtradas por el usuario actual
+    """
+    try:
+        username = current_user.username
+        
+        # 1. Total de tareas del usuario
+        total_tareas = PSX5KTask.query.filter_by(usuario=username).count()
+        
+        # 2. Tareas Pendientes (Programada o Pendiente)
+        pendientes = PSX5KTask.query.filter(
+            PSX5KTask.usuario == username,
+            PSX5KTask.estado.in_(['Programada', 'Pendiente'])
+        ).count()
+        
+        # 3. Tareas Programadas (Estado Pendiente según solicitud del usuario)
+        programadas = PSX5KTask.query.filter_by(usuario=username, estado='Pendiente').count()
+        
+        # 4. Tarea Activa (La más reciente con estado Ejecutando)
+        activa = PSX5KTask.query.filter_by(usuario=username, estado='Ejecutando').order_by(PSX5KTask.created_at.desc()).first()
+        
+        return jsonify({
+            "status": "success",
+            "stats": {
+                "total": total_tareas,
+                "pending": pendientes,
+                "scheduled": programadas,
+                "active_task": activa.id if activa else "NINGUNA"
+            }
+        })
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
 @psx_bp.route('/create', methods=['POST'])
 @login_required
 def create_task():

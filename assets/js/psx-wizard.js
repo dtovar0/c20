@@ -609,10 +609,25 @@ function updateScheduleUI() {
         if (el) el.style.display = (idx + 1 === currentScheduleStep) ? 'flex' : 'none';
     });
 
+    const activeBtn = Array.from(document.querySelectorAll('.schedule-op-btn')).find(b => b.classList.contains('active'));
+    const isEliminar = activeBtn && activeBtn.innerText.includes('Eliminar');
+
     // Progress Bar
     const progress = (currentScheduleStep / 4) * 100;
     const progressBar = document.getElementById('scheduleStepProgress');
-    if (progressBar) progressBar.style.width = `${progress}%`;
+    if (progressBar) {
+        progressBar.style.width = `${progress}%`;
+        progressBar.style.backgroundColor = isEliminar ? 'rgb(239, 68, 68)' : 'var(--nx-primary)';
+        progressBar.style.boxShadow = isEliminar ? '0 0 15px rgba(239, 68, 68, 0.4)' : 'none';
+    }
+
+    // Visibility in Step 2
+    if (currentScheduleStep === 2) {
+        const configSection = document.getElementById('scheduleOpConfigSection');
+        if (configSection) {
+            configSection.style.display = isEliminar ? 'none' : 'block';
+        }
+    }
 
     // Step Num
     const stepNum = document.getElementById('scheduleStepNum');

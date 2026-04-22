@@ -90,4 +90,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const chart2 = new ApexCharts(document.querySelector("#onTimeRadial"), optionsOnTime);
     if (document.querySelector("#onTimeRadial")) chart2.render();
+
+    // 3. PSX5K Stats Integration
+    async function loadPSXStats() {
+        try {
+            const response = await fetch('/api/psx/stats');
+            const data = await response.json();
+            
+            if (data.status === 'success') {
+                const s = data.stats;
+                const totalEl = document.getElementById('kpiTotalTasks');
+                const pendingEl = document.getElementById('kpiPendingTasks');
+                const scheduledEl = document.getElementById('kpiScheduledTasks');
+                const activeEl = document.getElementById('kpiActiveTask');
+
+                if (totalEl) totalEl.textContent = s.total.toLocaleString();
+                if (pendingEl) pendingEl.textContent = s.pending.toLocaleString();
+                if (scheduledEl) scheduledEl.textContent = s.scheduled.toLocaleString();
+                if (activeEl) {
+                    activeEl.textContent = s.active_task !== "NINGUNA" ? `PSX-${s.active_task}` : "NINGUNA";
+                    if (s.active_task !== "NINGUNA") {
+                        activeEl.classList.add('text-emerald-500');
+                    } else {
+                        activeEl.classList.remove('text-emerald-500');
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Error loading PSX stats:', error);
+        }
+    }
+
+    loadPSXStats();
+    // Auto-refresh stats every 30 seconds
+    setInterval(loadPSXStats, 30000);
 });
