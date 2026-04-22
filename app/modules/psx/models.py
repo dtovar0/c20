@@ -6,7 +6,7 @@ class PSX5KTask(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     usuario = db.Column(db.String(100), nullable=False)
-    accion = db.Column(db.String(20), nullable=False)
+    tarea = db.Column(db.String(20), nullable=False)
     estado = db.Column(db.String(20), default='Programada')
     accion_tipo = db.Column(db.String(20), nullable=True)
     routing_label = db.Column(db.String(100), nullable=True)
@@ -27,7 +27,7 @@ class PSX5KTask(db.Model):
         return {
             "id": self.id,
             "usuario": self.usuario,
-            "accion": self.accion,
+            "tarea": self.tarea,
             "estado": self.estado,
             "accion_tipo": self.accion_tipo,
             "routing_label": self.routing_label,

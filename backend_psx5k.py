@@ -75,7 +75,7 @@ def main():
             
             # 3. Flujo de procesamiento
             for idx, task in enumerate(tasks):
-                print(f"⚙️ Iniciando Ejecución [{idx+1}/5]: Tarea ID {task.id}")
+                print(f"⚙️ Iniciando Ejecución [{idx+1}/5]: Tarea ID {task.id} (Tarea: {task.tarea})")
                 
                 # Actualizar estado inicial
                 task.estado = 'Ejecutando'

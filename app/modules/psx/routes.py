@@ -79,7 +79,7 @@ def create_task():
     try:
         new_task = PSX5KTask(
             usuario=current_user.username,
-            accion=data.get('accion'),
+            tarea=data.get('tarea'),
             estado=data.get('estado', 'Pendiente'),
             accion_tipo=data.get('accion_tipo'),
             routing_label=data.get('routing_label'),

@@ -60,8 +60,8 @@ function renderNexusTable() {
                           row.estado === 'Terminada' ? 'badge-finished' : 
                           row.estado === 'Programada' ? 'badge-scheduled' : 'badge-pending';
         
-        const opBadge = row.accion === 'add' ? 'badge-op-add' : 'badge-op-delete';
-        const opLabel = row.accion === 'add' ? 'AGREGAR' : 'BORRAR';
+        const opBadge = row.tarea === 'add' ? 'badge-op-add' : 'badge-op-delete';
+        const opLabel = row.tarea === 'add' ? 'AGREGAR' : 'BORRAR';
         const statusLabel = row.estado.toUpperCase();
 
         html += `

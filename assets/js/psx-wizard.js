@@ -232,7 +232,7 @@ async function finalizeWizard() {
 
     // 1. Preparar Payload Base
     const taskPayload = {
-        accion: isEliminar ? 'delete' : 'add',
+        tarea: isEliminar ? 'delete' : 'add',
         estado: 'Pendiente',
         accion_tipo: isManual ? 'Manual' : 'Archivo',
         routing_label: isEliminar ? null : routingLabel,
@@ -675,7 +675,7 @@ async function finalizeScheduleWizard() {
     scheduledDateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
 
     const taskPayload = {
-        accion: isEliminar ? 'delete' : 'add',
+        tarea: isEliminar ? 'delete' : 'add',
         estado: 'Programada',
         accion_tipo: isManual ? 'Manual' : 'Archivo',
         routing_label: isEliminar ? null : routingLabel,

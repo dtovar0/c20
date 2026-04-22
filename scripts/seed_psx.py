@@ -16,15 +16,15 @@ with app.app_context():
     now = datetime.utcnow()
     
     # Tarea 1
-    db.session.add(PSX5KTask(id=1, usuario="OPERADOR_ALPHA", accion="add", estado="Terminada", accion_tipo="Archivo"))
+    db.session.add(PSX5KTask(id=1, usuario="OPERADOR_ALPHA", tarea="add", estado="Terminada", accion_tipo="Archivo"))
     db.session.add(PSX5KDetail(id=1, total=1500, ok=1498, fail=2))
     
     # Tarea 2
-    db.session.add(PSX5KTask(id=2, usuario="ADMIN_NEXUS", accion="add", estado="Ejecutando", accion_tipo="Manual"))
+    db.session.add(PSX5KTask(id=2, usuario="ADMIN_NEXUS", tarea="add", estado="Ejecutando", accion_tipo="Manual"))
     db.session.add(PSX5KDetail(id=2, total=50, ok=35, fail=0))
     
     # Tarea 3
-    db.session.add(PSX5KTask(id=3, usuario="TECNICO_09", accion="delete", estado="Programada", accion_tipo="Manual"))
+    db.session.add(PSX5KTask(id=3, usuario="TECNICO_09", tarea="delete", estado="Programada", accion_tipo="Manual"))
     db.session.add(PSX5KDetail(id=3, total=1, ok=0, fail=0))
 
     db.session.commit()
