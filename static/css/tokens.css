@@ -69,6 +69,8 @@ html, body {
   --color-ntf-card-border: 226 232 240;
   --color-ntf-editor-bg: 255 255 255;    /* Fondo del editor */
   --color-ntf-editor-border: 226 232 240;
+  --color-ntf-editor-header-bg: 241 245 249; /* Gris muy tenue en Light */
+  --color-ntf-editor-input-bg: 255 255 255;  /* Blanco puro en Light */
   --color-ntf-preview-card: 255 255 255; /* Tarjeta de previsualización */
   --color-ntf-text-editor: 15 23 42;     /* Indigo profundo en Light */
   --color-ntf-text-subject: 59 130 246;  /* Azul primario vibrante */
@@ -113,6 +115,8 @@ html, body {
     --color-ntf-card-bg: 30 41 59 / 0.4;
     --color-ntf-card-border: 255 255 255 / 0.05;
     --color-ntf-editor-bg: 15 23 42;
+    --color-ntf-editor-header-bg: 0 0 0 / 0.4;
+    --color-ntf-editor-input-bg: 0 0 0 / 0.2;
     --color-ntf-editor-border: 255 255 255 / 0.05;
     --color-ntf-preview-card: 15 23 42;
     --color-ntf-text-editor: 56 189 248;  /* Sky-400 */
@@ -146,6 +150,14 @@ html.dark {
     --color-tab-inactive-text: 226 232 240;
 
     /* Notification Dark Overrides */
+    --color-ntf-panel-bg: 2 6 23;
+    --color-ntf-card-bg: 30 41 59 / 0.4;
+    --color-ntf-card-border: 255 255 255 / 0.05;
+    --color-ntf-editor-bg: 15 23 42;
+    --color-ntf-editor-header-bg: 0 0 0 / 0.4;
+    --color-ntf-editor-input-bg: 0 0 0 / 0.2;
+    --color-ntf-editor-border: 255 255 255 / 0.05;
+    --color-ntf-preview-card: 15 23 42;
     --color-ntf-text-editor: 56 189 248;
     --color-ntf-text-subject: 125 211 252;
 }
