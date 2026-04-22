@@ -57,12 +57,12 @@
             </header>
 
             <!-- PANEL BODY -->
-            <main class="flex-grow p-6 flex flex-col overflow-hidden">
+            <main class="flex-grow px-4 pt-2 pb-1 flex flex-col overflow-hidden">
                 <div class="flex items-center justify-between mb-6 gap-6">
                     <div class="relative flex-grow max-w-md group">
                         <input type="text" id="userSearch" placeholder="Buscar usuarios locales..." 
-                            class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3 text-sm font-bold text-input outline-none transition-all focus:border-input-focus focus:ring-4 focus:ring-primary/10 placeholder:opacity-30">
-                        <svg class="w-4 h-4 absolute left-5 top-1/2 -translate-y-1/2 text-label/20 transition-all group-focus-within:text-primary group-focus-within:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></svg>
+                            class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3 text-sm font-bold text-input outline-none transition-all focus:border-input-focus focus:ring-4 focus:ring-primary/10 placeholder:opacity-60">
+                        <svg class="w-4 h-4 absolute left-5 top-1/2 -translate-y-1/2 text-label/60 transition-all group-focus-within:text-primary group-focus-within:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></svg>
                     </div>
 
                     <div class="flex items-center gap-3">
@@ -89,11 +89,11 @@
                     </div>
                 </div>
 
-                <div class="overflow-x-auto overflow-y-hidden custom-scrollbar flex-grow">
-                    <table class="w-full text-left border-separate border-spacing-y-2">
+                <div class="overflow-x-auto overflow-y-hidden custom-scrollbar flex-grow pr-1">
+                    <table class="w-full text-left table-fixed">
                         <thead>
                             <tr class="text-[10px] font-black uppercase tracking-[0.2em] text-white">
-                                <th class="px-6 py-4 bg-slate-900/50 rounded-l-2xl border-y border-l border-panel-border transition-all duration-300 w-12 mr-0 pr-0">
+                                <th class="px-6 py-4 bg-slate-900/50 rounded-l-2xl border-y border-l border-panel-border transition-all duration-300 w-[70px] mr-0 pr-0">
                                     <input type="checkbox" id="selectAllUsers" class="nexus-checkbox">
                                 </th>
                                 <th class="px-4 py-4 bg-slate-900/50 border-y border-panel-border transition-all duration-300">Usuario</th>
@@ -102,17 +102,11 @@
                                 <th class="px-6 py-4 bg-slate-900/50 rounded-r-2xl border-y border-r border-panel-border text-right pr-6 transition-all duration-300">Estado</th>
                             </tr>
                         </thead>
-                        <tbody id="usersTableBody">
-                            <tr class="group transition-all duration-300">
-                                <td class="py-8 bg-surface-container/10 rounded-l-2xl border-y border-l border-panel-border/20"></td>
-                                <td class="py-8 bg-surface-container/10 border-y border-panel-border/20" colspan="3"></td>
-                                <td class="py-8 bg-surface-container/10 rounded-r-2xl border-y border-r border-panel-border/20"></td>
-                            </tr>
-                        </tbody>
+                        <tbody id="usersTableBody"></tbody>
                     </table>
                 </div>
 
-                <footer class="bg-header border-t border-panel-border px-6 py-2 flex items-center justify-between mt-auto">
+                <div class="py-1 mt-auto flex items-center justify-between px-2">
                     <span id="usersPaginationInfo" class="text-[10px] font-bold text-label/40 uppercase tracking-widest">Calculando registros...</span>
                     <div class="flex gap-2">
                         <button id="prevUsersPage" class="p-2 bg-surface-container border border-surface-container-border rounded-lg text-label hover:border-primary disabled:opacity-30 transition-all active:scale-90" disabled>
@@ -122,7 +116,7 @@
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                         </button>
                     </div>
-                </footer>
+                </div>
             </main>
         </div>
         

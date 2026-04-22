@@ -30,12 +30,12 @@
             </header>
 
             <!-- PANEL BODY -->
-            <main class="flex-grow px-6 pt-4 pb-2 overflow-hidden flex flex-col">
+            <main class="flex-grow px-4 pt-2 pb-1 overflow-hidden flex flex-col">
                 <div class="mb-4 flex justify-between items-center gap-2">
                     <div class="relative group flex-grow max-w-md">
-                        <svg class="w-4 h-4 absolute left-5 top-1/2 -translate-y-1/2 text-label/40 group-focus-within:text-primary transition-colors z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        <svg class="w-4 h-4 absolute left-5 top-1/2 -translate-y-1/2 text-label/60 group-focus-within:text-primary transition-colors z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         <input type="text" id="auditSearch" placeholder="Filtrar eventos de auditoría..." 
-                               class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3 text-sm font-bold text-input outline-none focus:border-input-focus focus:ring-4 focus:ring-primary/10 transition-all">
+                               class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3 text-sm font-bold text-input outline-none focus:border-input-focus focus:ring-4 focus:ring-primary/10 transition-all placeholder:text-label/50">
                     </div>
                     <button id="refreshAudit" 
                             class="h-12 px-6 rounded-2xl bg-primary text-white font-black text-[10px] uppercase tracking-widest flex items-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/20 group">
@@ -43,14 +43,14 @@
                         <span>Refrescar</span>
                     </button>
                 </div>
-                <div class="overflow-x-auto overflow-y-hidden custom-scrollbar flex-grow">
-                    <table class="w-full h-full text-left border-separate border-spacing-y-1">
+                <div class="overflow-x-auto overflow-y-hidden custom-scrollbar flex-grow pr-1">
+                    <table class="w-full text-left table-fixed">
                         <thead class="sticky top-0 z-20">
                             <tr class="text-[9px] font-black text-white uppercase tracking-[0.2em]">
                                 <th class="px-5 py-4 bg-slate-900/50 rounded-l-2xl border-y border-l border-panel-border text-center">ID</th>
                                 <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Usuario</th>
                                 <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Acción</th>
-                                <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border text-center">Status</th>
+                                <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border text-center">ESTATUS</th>
                                 <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Detalle</th>
                                 <th class="px-5 py-4 bg-slate-900/50 rounded-r-2xl border-y border-r border-panel-border">Fecha</th>
                             </tr>
@@ -61,7 +61,7 @@
                     </table>
                 </div>
 
-                <div class="py-2 flex items-center justify-between px-2">
+                <div class="py-1 mt-auto flex items-center justify-between px-2">
                     <p class="text-[10px] font-bold text-label/40 uppercase tracking-widest" id="paginationInfo">Cargando registros...</p>
                     <div class="flex gap-2">
                         <button id="prevPage" class="p-2 bg-surface-container border border-surface-container-border rounded-lg text-label hover:border-primary disabled:opacity-30 transition-all active:scale-90">

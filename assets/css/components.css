@@ -1,11 +1,75 @@
-/* Audit Table Custom Styles */
-#auditTableBody {
-    height: auto;
-}
-
 #auditTableBody tr {
     height: 1px; /* Hack para que las filas se expandan equitativamente ocupando el 100% */
 }
+
+/* === NEXUS DATATABLES INTEGRATION === */
+.dt-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.dt-layout-row {
+    display: none !important; /* Ocultamos los controles por defecto para usar los de Nexus */
+}
+
+table.dataTable {
+    border-collapse: separate !important;
+    border-spacing: 0 4px !important;
+    width: 100% !important;
+    margin: 0 0 8px 0 !important;
+}
+
+table.dataTable thead th {
+    background-color: rgba(15, 23, 42, 0.5) !important;
+    border: 1px solid rgb(var(--color-panel-border)) !important;
+    color: white !important;
+    font-size: 9px !important;
+    font-weight: 900 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.2rem !important;
+    padding: 1rem 1.25rem !important;
+    border-top: none !important;
+}
+
+table.dataTable thead th:first-child { border-radius: 1rem 0 0 1rem !important; border-left: 1px solid rgb(var(--color-panel-border)) !important; }
+table.dataTable thead th:last-child { border-radius: 0 1rem 1rem 0 !important; border-right: 1px solid rgb(var(--color-panel-border)) !important; }
+
+table.dataTable tbody tr {
+    background-color: transparent !important;
+    transition: all 0.3s ease !important;
+}
+
+table.dataTable tbody td {
+    background-color: rgb(var(--color-surface-container-bg) / 0.3) !important;
+    border-top: 1px solid rgb(var(--color-panel-border)) !important;
+    border-bottom: 1px solid rgb(var(--color-panel-border)) !important;
+    padding: 0 1.25rem !important;
+    height: 52px !important;
+    color: var(--color-body-text) !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    transition: all 0.3s ease !important;
+}
+
+table.dataTable tbody td:first-child { 
+    border-left: 1px solid rgb(var(--color-panel-border)) !important; 
+    border-radius: 1rem 0 0 1rem !important; 
+}
+
+table.dataTable tbody td:last-child { 
+    border-right: 1px solid rgb(var(--color-panel-border)) !important; 
+    border-radius: 0 1rem 1rem 0 !important; 
+}
+
+table.dataTable tbody tr:hover td {
+    background-color: rgb(var(--color-primary) / 0.05) !important;
+    border-color: rgb(var(--color-primary) / 0.3) !important;
+}
+
+/* Esconder el wrapper de DataTables que a veces añade padding */
+.dataTables_wrapper { padding: 0 !important; }
+.dataTables_scrollBody { border: none !important; }
 
 /* Locked Grid Architecture Dashboard 2 (3x2) */
 .dashboard-grid-locked {
@@ -651,4 +715,44 @@ input[name="db_engine"]:checked + label .w-5.h-5 .bg-primary {
     font-size: 14px;
     font-weight: 900;
     margin-right: 2px;
+}
+/* === NEXUS CHECKBOX PREMIUM === */
+.nexus-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgb(var(--color-panel-border));
+    border-radius: 5px;
+    background-color: rgba(var(--color-panel-fill), 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    outline: none;
+}
+
+.nexus-checkbox:hover {
+    border-color: rgb(var(--color-primary) / 0.5);
+}
+
+.nexus-checkbox:checked {
+    background-color: rgb(var(--color-primary));
+    border-color: rgb(var(--color-primary));
+}
+
+.nexus-checkbox:checked::after {
+    content: '';
+    display: block;
+    width: 9px;
+    height: 5px;
+    border-left: 2px solid white;
+    border-bottom: 2px solid white;
+    transform: rotate(-45deg) translate(1px, -1px);
+}
+
+.nexus-checkbox:focus {
+    box-shadow: 0 0 0 3px rgb(var(--color-primary) / 0.15);
 }

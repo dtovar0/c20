@@ -1,21 +1,12 @@
 /**
- * MODULE: PSX5K Operational Terminal Controller
- * Dedicated logic for rendering PSX5K tasks with 7-column layout.
+ * MODULE: PSX5K Operational Terminal Controller (DataTables Powered)
+ * Dedicated logic for rendering PSX5K tasks with DataTables integration.
  */
 
-// Global Configuration
-const tableRecordsLimit = 7;
-let psxData = [];
-let filteredData = [];
-let currentPage = 1;
+let psxDataTable;
 
 /**
- * MOCK DATA GENERATOR (Operational Context)
- */
-const mockPsxData = [];
-
-/**
- * GENERA UNA GRÁFICA DE SEGMENTOS REAL (Basada en psx5k_details)
+ * GENERA UNA GRÁFICA DE SEGMENTOS REAL
  */
 function generateTaskGraphic(resumen) {
     if (!resumen || resumen.total === 0) {
@@ -44,168 +35,165 @@ function generateTaskGraphic(resumen) {
 }
 
 /**
- * Renders the table with exactly 10 rows (8 Columns Standard for PSX)
+ * INITIALIZATION
  */
-function renderNexusTable() {
-    const tbody = document.getElementById('auditTableBody');
-    if (!tbody) return;
+$(document).ready(function() {
+    initPSXDataTable();
 
-    const start = (currentPage - 1) * tableRecordsLimit;
-    const end = start + tableRecordsLimit;
-    const pageData = filteredData.slice(start, end);
-    
-    let html = '';
-
-    // 1. Render Real Data Rows
-    pageData.forEach(row => {
-        // Mapping backend states to frontend badges
-        const statusBadge = row.estado === 'Ejecutando' ? 'badge-running' : 
-                          row.estado === 'Terminada' ? 'badge-finished' : 
-                          row.estado === 'Programada' ? 'badge-scheduled' : 'badge-pending';
-        
-        const opBadge = row.tarea === 'add' ? 'badge-op-add' : 'badge-op-delete';
-        const opLabel = row.tarea === 'add' ? 'AGREGAR' : 'BORRAR';
-        const statusLabel = row.estado.toUpperCase();
-
-        html += `
-            <tr class="group hover:bg-primary/5 transition-all duration-300">
-                <td class="px-5 py-0 h-[56px] text-[11px] font-black text-primary/80 bg-surface-container/30 border-y border-l border-panel-border rounded-l-2xl group-hover:border-primary/30 transition-colors">
-                    <div class="flex items-center h-full">#${String(row.id).padStart(5, '0')}</div>
-                </td>
-                <td class="px-5 py-0 h-[56px] bg-surface-container/30 border-y border-panel-border group-hover:border-primary/30 transition-colors">
-                    <div class="flex items-center h-full"><div class="badge-nexus ${opBadge}">${opLabel}</div></div>
-                </td>
-                <td class="px-5 py-0 h-[56px] bg-surface-container/30 border-y border-panel-border group-hover:border-primary/30 transition-colors">
-                    <div class="flex items-center h-full"><div class="badge-nexus ${statusBadge}">${statusLabel}</div></div>
-                </td>
-                <td class="px-5 py-0 h-[56px] text-[10px] font-mono font-bold text-label/60 bg-surface-container/30 border-y border-panel-border group-hover:border-primary/30 transition-colors">
-                    <div class="flex items-center h-full text-primary/70">${row.fecha_inicio ? row.fecha_inicio.replace('T', ' ') : 'PENDIENTE'}</div>
-                </td>
-                <td class="px-5 py-0 h-[56px] text-[10px] font-mono font-bold text-label/60 bg-surface-container/30 border-y border-panel-border group-hover:border-primary/30 transition-colors">
-                    <div class="flex items-center h-full">${row.fecha_fin ? row.fecha_fin.replace('T', ' ') : '-'}</div>
-                </td>
-                <td class="px-5 py-0 h-[56px] text-[10px] font-black uppercase text-label/40 bg-surface-container/30 border-y border-panel-border group-hover:border-primary/30 transition-colors">
-                    <div class="flex items-center h-full tracking-[0.1em]">${row.datos_tipo || 'MANUAL'}</div>
-                </td>
-                <td class="px-5 py-0 h-[56px] bg-surface-container/30 border-y border-panel-border group-hover:border-primary/30 transition-colors text-center">
-                    <div class="flex items-center justify-center h-full">${generateTaskGraphic(row.resumen)}</div>
-                </td>
-                <td class="px-5 py-0 h-[56px] bg-surface-container/30 rounded-r-2xl border-y border-r border-panel-border text-center group-hover:border-primary/30 transition-colors">
-                    <div class="flex items-center justify-center h-full">
-                        <a href="/api/psx/detail/${row.id}" target="_blank" class="p-2 hover:bg-primary/10 text-primary/40 hover:text-primary rounded-xl transition-all active:scale-90" title="Ver Detalles">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        </a>
-                    </div>
-                </td>
-            </tr>
-        `;
+    // Universal Search Integration
+    $('#auditSearch').on('input', function() {
+        if (psxDataTable) {
+            psxDataTable.search(this.value).draw();
+        }
     });
 
-    // 2. Ghost Row Complementation (8 Columns)
-    const ghostRowsCount = tableRecordsLimit - pageData.length;
-    for (let i = 0; i < ghostRowsCount; i++) {
-        html += `
-            <tr class="animate-pulse pointer-events-none select-none opacity-40">
-                <td class="px-5 py-0 h-[56px] bg-surface-container/5 border-y border-l border-panel-border/10 rounded-l-2xl">
-                    <div class="flex items-center h-full mx-auto"><div class="h-2 w-12 bg-label/10 rounded-full"></div></div>
-                </td>
-                <td class="px-5 py-0 h-[56px] bg-surface-container/5 border-y border-panel-border/10">
-                    <div class="flex items-center h-full"><div class="h-2 w-full bg-label/5 rounded-full"></div></div>
-                </td>
-                <td class="px-5 py-0 h-[56px] bg-surface-container/5 border-y border-panel-border/10">
-                    <div class="flex items-center h-full"><div class="h-2 w-full bg-label/5 rounded-full"></div></div>
-                </td>
-                <td class="px-5 py-0 h-[56px] bg-surface-container/5 border-y border-panel-border/10">
-                    <div class="flex items-center h-full"><div class="h-2 w-full bg-label/5 rounded-full"></div></div>
-                </td>
-                <td class="px-5 py-0 h-[56px] bg-surface-container/5 border-y border-panel-border/10">
-                    <div class="flex items-center h-full"><div class="h-2 w-full bg-label/5 rounded-full"></div></div>
-                </td>
-                <td class="px-5 py-0 h-[56px] bg-surface-container/5 border-y border-panel-border/10">
-                    <div class="flex items-center h-full"><div class="h-2 w-full bg-label/5 rounded-full"></div></div>
-                </td>
-                <td class="px-5 py-0 h-[56px] bg-surface-container/5 border-y border-panel-border/10">
-                    <div class="flex items-center h-full"><div class="h-2 w-full bg-label/5 rounded-full"></div></div>
-                </td>
-                <td class="px-5 py-0 h-[56px] bg-surface-container/5 border-y border-r border-panel-border/10 rounded-r-2xl text-center">
-                    <div class="flex items-center justify-center h-full"><div class="h-2 w-full bg-label/5 rounded-full mx-2"></div></div>
-                </td>
-            </tr>
-
-        `;
-    }
-
-    tbody.innerHTML = html;
-    updatePaginationUI();
-}
-
-/**
- * FETCH DATA FROM BACKEND
- */
-async function fetchPSXData() {
-    try {
-        const response = await fetch('/api/psx/list');
-        const result = await response.json();
-        
-        if (result.status === 'success') {
-            psxData = result.tasks;
-            filteredData = [...psxData];
-            renderNexusTable();
+    // Refresh Action
+    $('#refreshAudit').on('click', function() {
+        if (psxDataTable) {
+            psxDataTable.ajax.reload();
         }
-    } catch (error) {
-        console.error('Error fetching PSX data:', error);
-    }
-}
+    });
+
+    // Custom Pagination Listeners
+    $('#prevPage').on('click', function() {
+        if (psxDataTable) psxDataTable.page('previous').draw('page');
+    });
+
+    $('#nextPage').on('click', function() {
+        if (psxDataTable) psxDataTable.page('next').draw('page');
+    });
+});
 
 /**
- * Pagination Controls UI Sync
+ * Initializes DataTables for PSX5K
  */
-function updatePaginationUI() {
+function initPSXDataTable() {
+    const tableEl = $('#auditTableBody').closest('table');
+    if (!tableEl.length) return;
+
+    psxDataTable = tableEl.DataTable({
+        ajax: {
+            url: '/api/psx/list',
+            dataSrc: 'tasks'
+        },
+        columns: [
+            { data: 'id', width: '70px', render: (data) => `<div class="flex items-center h-full text-[11px] font-black text-primary/80">#${String(data).padStart(5, '0')}</div>` },
+            { 
+                data: 'tarea', 
+                width: '120px',
+                render: (data) => {
+                    const opBadge = data === 'add' ? 'badge-op-add' : 'badge-op-delete';
+                    const opLabel = data === 'add' ? 'AGREGAR' : 'BORRAR';
+                    return `<div class="flex items-center h-full"><div class="badge-nexus ${opBadge}">${opLabel}</div></div>`;
+                }
+            },
+            { 
+                data: 'estado', 
+                width: '140px',
+                render: (data) => {
+                    const statusBadge = data === 'Ejecutando' ? 'badge-running' : 
+                                      data === 'Terminada' ? 'badge-finished' : 
+                                      data === 'Programada' ? 'badge-scheduled' : 'badge-pending';
+                    return `<div class="flex items-center h-full"><div class="badge-nexus ${statusBadge}">${data.toUpperCase()}</div></div>`;
+                }
+            },
+            { data: 'fecha_inicio', width: '160px', render: (data) => `<div class="flex items-center h-full text-[10px] font-mono font-bold text-primary/70">${data ? data.replace('T', ' ') : 'PENDIENTE'}</div>` },
+            { data: 'fecha_fin', width: '160px', render: (data) => `<div class="flex items-center h-full text-[10px] font-mono font-bold text-label/60">${data ? data.replace('T', ' ') : '-'}</div>` },
+            { data: 'datos_tipo', width: '120px', render: (data) => `<div class="flex items-center h-full text-[10px] font-black uppercase text-label/40 tracking-[0.1em]">${data || 'MANUAL'}</div>` },
+            { data: 'resumen', width: '120px', orderable: false, render: (data) => `<div class="flex items-center justify-center h-full min-w-0 overflow-hidden">${generateTaskGraphic(data)}</div>` },
+            { 
+                data: 'id', 
+                width: '60px',
+                orderable: false,
+                render: (data) => `
+                    <div class="flex items-center justify-center h-full">
+                        <a href="/api/psx/detail/${data}" target="_blank" class="p-2 hover:bg-primary/10 text-primary/40 hover:text-primary rounded-xl transition-all" title="Ver Detalles">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </a>
+                    </div>`
+            }
+        ],
+        autoWidth: false,
+        pageLength: 10,
+        order: [[0, 'desc']],
+        dom: 'rt',
+        language: {
+            zeroRecords: "No se encontraron tareas",
+            info: "Mostrando _START_-_END_ de _TOTAL_ registros"
+        },
+        drawCallback: function(settings) {
+            updatePaginationUI(settings);
+            renderGhostRows(settings, 8); // 8 columns for PSX
+        }
+    });
+}
+
+function updatePaginationUI(settings) {
+    const api = new $.fn.dataTable.Api(settings);
+    const info = api.page.info();
+    
     const infoEl = document.getElementById('paginationInfo');
     const prevBtn = document.getElementById('prevPage');
     const nextBtn = document.getElementById('nextPage');
 
-    if (!infoEl || !prevBtn || !nextBtn) return;
+    if (infoEl) {
+        infoEl.innerText = `Mostrando ${info.recordsDisplay > 0 ? info.start + 1 : 0}-${info.end} de ${info.recordsDisplay} registros`;
+    }
 
-    const total = filteredData.length;
-    const start = total === 0 ? 0 : (currentPage - 1) * tableRecordsLimit + 1;
-    const end = Math.min(currentPage * tableRecordsLimit, total);
-
-    infoEl.innerText = `Mostrando ${start}-${end} de ${total} registros`;
-    prevBtn.disabled = currentPage === 1;
-    nextBtn.disabled = end >= total;
+    if (prevBtn) prevBtn.disabled = info.page === 0;
+    if (nextBtn) nextBtn.disabled = info.page >= info.pages - 1;
 }
 
 /**
- * INITIALIZATION
+ * Renders ghost (skeleton) rows to fill the table container dynamically
  */
-document.addEventListener('DOMContentLoaded', () => {
-    fetchPSXData(); // Load real data on start
+function renderGhostRows(settings, columns) {
+    const api = new $.fn.dataTable.Api(settings);
+    const info = api.page.info();
+    const tbody = $(settings.nTBody);
+    
+    // Remove default empty message if present
+    tbody.find('.dataTables_empty').closest('tr').remove();
 
-    // Search Integration
-    const searchInput = document.getElementById('auditSearch');
-    if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
-            const term = e.target.value.toLowerCase();
-            filteredData = psxData.filter(item =>
-                Object.values(item).some(val => String(val).toLowerCase().includes(term))
-            );
-            currentPage = 1;
-            renderNexusTable();
-        });
+    const rowsOnPage = info.end - info.start;
+    
+    // Adaptive Logic: Calculate how many rows fit in the current viewport
+    const container = tbody.closest('.overflow-x-auto');
+    const containerHeight = container.innerHeight() || 500;
+    const rowHeight = 56; // High density row height including spacing (52px + 4px)
+    const headerHeight = tbody.closest('table').find('thead').outerHeight() || 50;
+    
+    // STRICT LIMIT: Always target 10 rows to match pagination exactly
+    const targetTotal = 10;
+    const ghostCount = targetTotal - rowsOnPage;
+
+    if (ghostCount <= 0) return;
+
+    let ghostHtml = '';
+    for (let i = 0; i < ghostCount; i++) {
+        ghostHtml += `
+            <tr class="animate-pulse pointer-events-none select-none opacity-40">
+                <td class="bg-surface-container/5 border-y border-l border-panel-border/10 rounded-l-2xl h-[52px]">
+                    <div class="h-1.5 w-10 bg-label/10 rounded-full mx-auto"></div>
+                </td>
+                ${Array(columns - 2).fill(0).map(() => `
+                    <td class="bg-surface-container/5 border-y border-panel-border/10 h-[52px]">
+                        <div class="h-1 w-full bg-label/5 rounded-full"></div>
+                    </td>
+                `).join('')}
+                <td class="bg-surface-container/5 border-y border-r border-panel-border/10 rounded-r-2xl h-[52px]">
+                    <div class="h-1 w-full bg-label/5 rounded-full"></div>
+                </td>
+            </tr>
+        `;
     }
+    
+    setTimeout(() => {
+        tbody.append(ghostHtml);
+    }, 0);
+}
 
-    // Actions Listeners
-    const refreshBtn = document.getElementById('refreshAudit');
-    if (refreshBtn) {
-        refreshBtn.addEventListener('click', () => fetchPSXData());
-    }
-
-    const prevBtn = document.getElementById('prevPage');
-    const nextBtn = document.getElementById('nextPage');
-
-    if (prevBtn) prevBtn.addEventListener('click', () => { if (currentPage > 1) { currentPage--; renderNexusTable(); } });
-    if (nextBtn) nextBtn.addEventListener('click', () => { if (currentPage * tableRecordsLimit < filteredData.length) { currentPage++; renderNexusTable(); } });
-
-    renderNexusTable();
+// Adaptive Redraw on Resize
+$(window).on('resize', () => {
+    if (psxDataTable) psxDataTable.draw(false);
 });

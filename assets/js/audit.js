@@ -1,178 +1,178 @@
 /**
- * MODULE: Centralized Nexus Table Engine
- * Logic for rendering Audit and operational tables with 10 fixed rows.
+ * MODULE: Centralized Nexus Table Engine (DataTables Powered)
+ * Logic for rendering Audit tables with DataTables integration.
  */
 
-// Global Configuration
-const tableRecordsLimit = 10;
-let auditData = [];
-let filteredData = [];
-let currentPage = 1;
-
-/**
- * MOCK DATA GENERATOR (Audit Context)
- */
-const mockAuditData = [
-    { id: 'AUD-001', user: 'admin', action: 'LOGIN', status: 'SUCCESS', time: '2026-04-21 11:45:02' },
-    { id: 'AUD-002', user: 'dtovar', action: 'UPDATE_PLATFORM', status: 'SUCCESS', time: '2026-04-21 10:30:15' },
-    { id: 'AUD-003', user: 'system', action: 'BACKUP', status: 'PENDING', time: '2026-04-21 12:00:00' }
-];
-
-/**
- * Renders the table with exactly 10 rows (8 Columns Standard)
- */
-function renderNexusTable() {
-    const tbody = document.getElementById('auditTableBody');
-    if (!tbody) return;
-
-    const start = (currentPage - 1) * tableRecordsLimit;
-    const end = start + tableRecordsLimit;
-    const pageData = filteredData.slice(start, end);
-    
-    let html = '';
-
-    // 1. Render Real Data Rows
-    pageData.forEach(row => {
-        // Map status to visual styles
-        const statusColors = {
-            'success': 'text-emerald-400',
-            'error': 'text-rose-400',
-            'warning': 'text-amber-400',
-            'info': 'text-primary'
-        };
-
-        const colorClass = statusColors[row.status] || statusColors['info'];
-
-        // Map action type to visual styles
-        const actionColors = {
-            'tarea creada': 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-            'tarea terminada': 'bg-violet-500/10 text-violet-400 border-violet-500/20',
-            'tarea iniciada': 'bg-primary/10 text-primary border-primary/20',
-            'LOGIN': 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
-            'LOGOUT': 'bg-slate-500/10 text-slate-400 border-slate-500/20',
-            'SET_IDENTITY': 'bg-amber-500/10 text-amber-400 border-amber-500/20'
-        };
-
-        const actionClass = actionColors[row.action] || 'bg-primary/5 text-primary/70 border-primary/20';
-
-        html += `
-            <tr class="group hover:bg-primary/5 transition-all duration-300">
-                <td class="px-5 py-0 h-[52px] text-[10px] font-black text-primary/60 bg-surface-container/30 border-y border-l border-panel-border rounded-l-2xl group-hover:border-primary/30 transition-colors">
-                    #${String(row.id).padStart(5, '0')}
-                </td>
-                <td class="px-5 py-0 h-[52px] text-xs font-bold text-label/80 bg-surface-container/30 border-y border-panel-border group-hover:border-primary/30 transition-colors">
-                    ${row.user || 'SYSTEM'}
-                </td>
-                <td class="px-5 py-0 h-[52px] bg-surface-container/30 border-y border-panel-border group-hover:border-primary/30 transition-colors">
-                    <div class="inline-flex px-3 py-1 text-[9px] font-black tracking-widest uppercase border rounded-lg ${actionClass}">
-                        ${row.action}
-                    </div>
-                </td>
-                <td class="px-5 py-0 h-[52px] text-center bg-surface-container/30 border-y border-panel-border group-hover:border-primary/30 transition-colors">
-                    <span class="text-[9px] font-black tracking-widest uppercase ${colorClass}">${row.status}</span>
-                </td>
-                <td class="px-5 py-0 h-[52px] bg-surface-container/30 border-y border-panel-border group-hover:border-primary/30 transition-colors">
-                    <div class="text-[10px] font-bold text-label/60 line-clamp-1 max-w-[300px]" title="${row.detail || ''}">
-                        ${row.detail || '-'}
-                    </div>
-                </td>
-                <td class="px-5 py-0 h-[52px] text-[10px] font-mono font-bold text-label/60 bg-surface-container/30 rounded-r-2xl border-y border-r border-panel-border group-hover:border-primary/30 transition-colors">
-                    ${row.time}
-                </td>
-            </tr>
-        `;
-    });
-
-    // 2. Ghost Row Complementation (6 Columns)
-    const ghostRowsCount = tableRecordsLimit - pageData.length;
-    for (let i = 0; i < ghostRowsCount; i++) {
-        html += `
-            <tr class="animate-pulse pointer-events-none select-none opacity-40">
-                <td class="px-5 py-0 h-[52px] bg-surface-container/5 border-y border-l border-panel-border/10 rounded-l-2xl">
-                    <div class="h-2 w-10 bg-label/10 rounded-full mx-auto"></div>
-                </td>
-                <td class="px-5 py-0 h-[52px] bg-surface-container/5 border-y border-panel-border/10" colspan="4">
-                    <div class="h-2 w-full bg-label/5 rounded-full"></div>
-                </td>
-                <td class="px-5 py-0 h-[52px] bg-surface-container/5 border-y border-r border-panel-border/10 rounded-r-2xl">
-                    <div class="h-2 w-full bg-label/5 rounded-full"></div>
-                </td>
-            </tr>
-        `;
-    }
-
-    tbody.innerHTML = html;
-    updatePaginationUI();
-}
-
-/**
- * Pagination Controls UI Sync
- */
-function updatePaginationUI() {
-    const infoEl = document.getElementById('paginationInfo');
-    const prevBtn = document.getElementById('prevPage');
-    const nextBtn = document.getElementById('nextPage');
-
-    if (!infoEl || !prevBtn || !nextBtn) return;
-
-    const total = filteredData.length;
-    const start = total === 0 ? 0 : (currentPage - 1) * tableRecordsLimit + 1;
-    const end = Math.min(currentPage * tableRecordsLimit, total);
-
-    infoEl.innerText = `Mostrando ${start}-${end} de ${total} registros`;
-    prevBtn.disabled = currentPage === 1;
-    nextBtn.disabled = end >= total;
-}
-
-/**
- * FETCH DATA FROM BACKEND
- */
-async function fetchAuditData() {
-    try {
-        const response = await fetch('/audit/api/list');
-        const result = await response.json();
-        
-        if (result.status === 'success') {
-            auditData = result.logs;
-            filteredData = [...auditData];
-            renderNexusTable();
-        }
-    } catch (error) {
-        console.error('Error fetching Audit data:', error);
-        if (typeof showToast === 'function') showToast('Error cargando auditoría', 'error');
-    }
-}
+let auditDataTable;
 
 /**
  * INITIALIZATION
  */
-document.addEventListener('DOMContentLoaded', () => {
-    fetchAuditData();
+$(document).ready(function() {
+    initAuditDataTable();
 
-    // Search Integration
-    const searchInput = document.getElementById('auditSearch');
-    if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
-            const term = e.target.value.toLowerCase();
-            filteredData = auditData.filter(item =>
-                Object.values(item).some(val => String(val).toLowerCase().includes(term))
-            );
-            currentPage = 1;
-            renderNexusTable();
-        });
-    }
+    // Universal Search Integration
+    $('#auditSearch').on('input', function() {
+        if (auditDataTable) {
+            auditDataTable.search(this.value).draw();
+        }
+    });
 
-    // Actions Listeners
-    const refreshBtn = document.getElementById('refreshAudit');
-    if (refreshBtn) {
-        refreshBtn.addEventListener('click', () => fetchAuditData());
-    }
+    // Refresh Action
+    $('#refreshAudit').on('click', function() {
+        if (auditDataTable) {
+            auditDataTable.ajax.reload();
+        }
+    });
 
+    // Custom Pagination Listeners
+    $('#prevPage').on('click', function() {
+        if (auditDataTable) auditDataTable.page('previous').draw('page');
+    });
+
+    $('#nextPage').on('click', function() {
+        if (auditDataTable) auditDataTable.page('next').draw('page');
+    });
+});
+
+/**
+ * Initializes DataTables for Audit
+ */
+function initAuditDataTable() {
+    const tableEl = $('table'); // Selector genérico o específico si hay varias
+    if (!tableEl.length) return;
+
+    auditDataTable = tableEl.DataTable({
+        ajax: {
+            url: '/audit/api/list',
+            dataSrc: 'logs'
+        },
+        columns: [
+            { data: 'id', width: '80px', render: (data) => `<div class="flex items-center h-full text-primary/60 font-black">#${String(data).padStart(5, '0')}</div>` },
+            { data: 'user', width: '130px', render: (data) => `<div class="flex items-center h-full font-bold text-label/80 truncate">${data || 'SYSTEM'}</div>` },
+            { 
+                data: 'action', 
+                width: '170px',
+                render: (data) => {
+                    const actionColors = {
+                        'tarea creada': 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+                        'tarea terminada': 'bg-violet-500/10 text-violet-400 border-violet-500/20',
+                        'tarea iniciada': 'bg-primary/10 text-primary border-primary/20',
+                        'LOGIN': 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
+                        'LOGOUT': 'bg-slate-500/10 text-slate-400 border-slate-500/20',
+                        'SET_IDENTITY': 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                    };
+                    const actionClass = actionColors[data] || 'bg-primary/5 text-primary/70 border-primary/20';
+                    return `<div class="flex items-center h-full"><div class="inline-flex px-3 py-1 text-[9px] font-black tracking-widest uppercase border rounded-lg ${actionClass} truncate">${data}</div></div>`;
+                }
+            },
+            { 
+                data: 'status', 
+                width: '100px',
+                render: (data) => {
+                    const statusColors = {
+                        'success': 'text-emerald-400',
+                        'error': 'text-rose-400',
+                        'warning': 'text-amber-400',
+                        'info': 'text-primary'
+                    };
+                    const colorClass = statusColors[data.toLowerCase()] || statusColors['info'];
+                    return `<div class="flex items-center justify-center h-full"><span class="text-[9px] font-black tracking-widest uppercase ${colorClass}">${data}</span></div>`;
+                }
+            },
+            { data: 'detail', width: 'auto', render: (data) => `<div class="flex items-center h-full text-[10px] font-bold text-label/60 line-clamp-1 min-w-0 overflow-hidden text-ellipsis" title="${data || ''}">${data || '-'}</div>` },
+            { data: 'time', width: '180px', render: (data) => `<div class="flex items-center h-full font-mono text-[10px] font-bold text-label/60 justify-end">${data}</div>` }
+        ],
+        autoWidth: false,
+        pageLength: 10,
+        order: [[0, 'desc']],
+        dom: 'rt', // Solamente Table y Processing. La paginación e info se manejan con el footer de Nexus.
+        language: {
+            zeroRecords: "No se encontraron registros",
+            info: "Mostrando _START_-_END_ de _TOTAL_ registros",
+            infoEmpty: "Mostrando 0-0 de 0 registros",
+            infoFiltered: "(filtrado de _MAX_ registros totales)"
+        },
+        drawCallback: function(settings) {
+            updatePaginationUI(settings);
+            renderGhostRows(settings, 6); // 6 columns for Audit
+        }
+    });
+}
+
+/**
+ * Updates the custom Nexus pagination UI with DataTables state
+ */
+function updatePaginationUI(settings) {
+    const api = new $.fn.dataTable.Api(settings);
+    const info = api.page.info();
+    
+    const infoEl = document.getElementById('paginationInfo');
     const prevBtn = document.getElementById('prevPage');
     const nextBtn = document.getElementById('nextPage');
 
-    if (prevBtn) prevBtn.addEventListener('click', () => { if (currentPage > 1) { currentPage--; renderNexusTable(); } });
-    if (nextBtn) nextBtn.addEventListener('click', () => { if (currentPage * tableRecordsLimit < filteredData.length) { currentPage++; renderNexusTable(); } });
+    if (infoEl) {
+        infoEl.innerText = `Mostrando ${info.start + 1}-${info.end} de ${info.recordsDisplay} registros`;
+    }
 
-    renderNexusTable();
+    if (prevBtn) prevBtn.disabled = info.page === 0;
+    if (nextBtn) nextBtn.disabled = info.page >= info.pages - 1;
+}
+
+/**
+ * Renders ghost (skeleton) rows to fill the table container dynamically
+ */
+function renderGhostRows(settings, columns) {
+    const api = new $.fn.dataTable.Api(settings);
+    const info = api.page.info();
+    const tbody = $(settings.nTBody);
+    
+    // Remove default empty message if present
+    tbody.find('.dataTables_empty').closest('tr').remove();
+
+    const rowsOnPage = info.end - info.start;
+    
+    // Adaptive Logic: Calculate how many rows fit in the current viewport
+    const container = tbody.closest('.overflow-x-auto');
+    const containerHeight = container.innerHeight() || 500;
+    const rowHeight = 56; // High density row height including spacing (52px + 4px)
+    const headerHeight = tbody.closest('table').find('thead').outerHeight() || 50;
+    
+    // Calculate available space for rows
+    const availableHeight = containerHeight - headerHeight;
+    
+    // STRICT LIMIT: Always target 10 rows to match pagination exactly
+    const targetTotal = 10;
+    const ghostCount = targetTotal - rowsOnPage;
+
+    if (ghostCount <= 0) return;
+
+    let ghostHtml = '';
+    for (let i = 0; i < ghostCount; i++) {
+        ghostHtml += `
+            <tr class="animate-pulse pointer-events-none select-none opacity-40">
+                <td class="bg-surface-container/5 border-y border-l border-panel-border/10 rounded-l-2xl h-[52px]">
+                    <div class="h-1.5 w-10 bg-label/10 rounded-full mx-auto"></div>
+                </td>
+                ${Array(columns - 2).fill(0).map(() => `
+                    <td class="bg-surface-container/5 border-y border-panel-border/10 h-[52px]">
+                        <div class="h-1 w-full bg-label/5 rounded-full"></div>
+                    </td>
+                `).join('')}
+                <td class="bg-surface-container/5 border-y border-r border-panel-border/10 rounded-r-2xl h-[52px]">
+                    <div class="h-1 w-full bg-label/5 rounded-full"></div>
+                </td>
+            </tr>
+        `;
+    }
+    
+    // Use setTimeout to ensure we don't conflict with DataTables internal draw timing
+    setTimeout(() => {
+        tbody.append(ghostHtml);
+    }, 0);
+}
+
+// Adaptive Redraw on Resize
+$(window).on('resize', () => {
+    if (auditDataTable) auditDataTable.draw(false);
 });

@@ -25,6 +25,11 @@
     <link rel="stylesheet" href="{{ url_for('serve_assets', filename='css/global.css') }}?v={{ range(1000, 9999) | random }}">
     <link rel="stylesheet" href="{{ url_for('serve_assets', filename='css/main.css') }}?v={{ range(1000, 9999) | random }}">
     <link rel="stylesheet" href="{{ url_for('serve_assets', filename='css/components.css') }}?v={{ range(1000, 9999) | random }}">
+    
+    <!-- jQuery & DataTables -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.5/css/dataTables.dataTables.min.css">
+    <script src="https://cdn.datatables.net/2.0.5/js/dataTables.min.js"></script>
 
     <body class="bg-bg text-text h-full overflow-hidden" 
           data-brand-bg="{{ sys_config.bg_color if sys_config else '' }}" 
@@ -57,8 +62,8 @@
                 <div class="flex items-center gap-4">
                     <!-- Search -->
                     <div class="hidden sm:flex items-center bg-input-bg px-5 py-3 rounded-2xl gap-3 border border-panel-border focus-within:border-input-focus transition-all shadow-sm group">
-                        <svg class="w-4 h-4 text-label/40 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        <input type="text" placeholder="Buscar en el sistema..." class="bg-transparent border-none focus:ring-0 text-input text-sm font-bold w-64 outline-none placeholder:text-label/30">
+                        <svg class="w-4 h-4 text-label/60 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        <input type="text" placeholder="Buscar en el sistema..." class="bg-transparent border-none focus:ring-0 text-input text-sm font-bold w-64 outline-none placeholder:text-label/60">
                     </div>
 
                     <!-- Notifications -->
