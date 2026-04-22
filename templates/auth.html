@@ -243,6 +243,10 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
+                    <button onclick="addMappingRow()" class="flex items-center gap-2 px-5 py-3.5 bg-primary/10 text-primary border border-primary/20 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all active:scale-95">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                        Añadir Mapeo
+                    </button>
                     <button onclick="if(validateNexusForm('tab-panel-roles')) saveAuthConfig('tab-panel-roles')" class="nexus-btn-save">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
                         Guardar
@@ -250,59 +254,29 @@
                 </div>
             </header>
             
-            <main class="flex-grow p-6 overflow-y-auto custom-scrollbar">
-                <div class="grid grid-cols-2 gap-6 h-full">
-                    <!-- Vertical Panel A (Admin Mapping) -->
-                    <div class="tab-panel-inner">
-                        <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-6 px-1 text-center italic">Vinculación Admin (LDAP)</label>
-                        
-                        <div class="space-y-6 flex-grow">
-                            <div class="group">
-                                <label class="block text-[11px] font-black text-primary uppercase tracking-[0.2em] mb-4 px-1 leading-none italic">DN Grupo Administradores</label>
-                                <div class="relative">
-                                    <svg class="w-5 h-5 absolute left-5 top-1/2 -translate-y-1/2 text-primary animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                                    <input type="text" id="ldap_group_admin" value="{{ config.ldap_group_admin if config else '' }}" placeholder="CN=NexusAdmins,OU=Groups,DC=empresa,DC=com" 
-                                           class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-14 pr-6 py-4 text-sm font-bold text-input outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/10">
-                                </div>
-                            </div>
-
-                            <div class="p-6 bg-primary/5 rounded-2xl border border-dashed border-primary/20 flex items-start gap-4">
-                                <div class="text-primary mt-1">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                </div>
-                                <p class="text-[10px] text-primary/70 font-bold leading-relaxed tracking-wide uppercase italic">
-                                    Los usuarios de este grupo LDAP tendrán permisos totales de lectura, escritura y administración en el sistema.
-                                </p>
-                            </div>
-                        </div>
+            <main class="flex-grow p-8 overflow-y-auto custom-scrollbar">
+                <div class="max-w-5xl mx-auto">
+                    <!-- Direct Mapping Area -->
+                    <div id="mappingList" class="space-y-4">
+                        <!-- Dynamic rows will appear here -->
                     </div>
 
-                    <!-- Vertical Panel B (User Mapping) -->
-                    <div class="tab-panel-inner">
-                        <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-6 px-1 text-center italic">Vinculación Usuario (LDAP)</label>
-                        
-                        <div class="space-y-6 flex-grow">
-                            <div class="group">
-                                <label class="block text-[11px] font-black text-label uppercase tracking-[0.2em] mb-4 px-1 leading-none opacity-60">DN Grupo Usuarios</label>
-                                <div class="relative">
-                                    <svg class="w-5 h-5 absolute left-5 top-1/2 -translate-y-1/2 text-label/20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                                    <input type="text" id="ldap_group_user" value="{{ config.ldap_group_user if config else '' }}" placeholder="CN=NexusUsers,OU=Groups,DC=empresa,DC=com" 
-                                           class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-14 pr-6 py-4 text-sm font-bold text-input outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/10">
-                                </div>
-                            </div>
-
-                            <div class="p-6 bg-slate-500/5 rounded-2xl border border-dashed border-panel-border flex items-start gap-4">
-                                <div class="text-label/30 mt-1">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                </div>
-                                <p class="text-[10px] text-label/40 font-bold leading-relaxed tracking-wide uppercase italic">
-                                    Los usuarios de este grupo LDAP tendrán permisos limitados de visualización y consulta según su perfil local.
-                                </p>
-                            </div>
+                    <!-- Simplified Empty State -->
+                    <div id="mappingEmptyState" class="hidden py-32 text-center border-2 border-dashed border-panel-border rounded-3xl">
+                        <div class="w-16 h-16 bg-label/5 rounded-2xl flex items-center justify-center mx-auto mb-6 opacity-20">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                         </div>
+                        <p class="text-[10px] font-black uppercase tracking-[0.3em] text-label/30 italic">No hay registros definidos. Presione "+ Añadir Mapeo" en la cabecera para comenzar.</p>
                     </div>
                 </div>
             </main>
+            <!-- Store the data for JS in a hidden input -->
+            <input type="hidden" id="ldap_role_mappings_data" value="{{ config.ldap_role_mappings if config and config.ldap_role_mappings else '[]' }}">
+            <!-- Also keep the legacy inputs hidden to satisfy existing save logic if necessary, 
+                 but we'll update the JS to handle everything -->
+            <input type="hidden" id="ldap_group_admin" value="{{ config.ldap_group_admin if config else '' }}">
+            <input type="hidden" id="ldap_group_user" value="{{ config.ldap_group_user if config else '' }}">
+
         </div>
 
     </div>

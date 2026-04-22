@@ -77,14 +77,37 @@ def authenticate_user_ldap(username, password):
                         # Actualizar correo si cambió
                         local_user.email = email
                     
-                    # Lógica de Mapeo de Roles por Grupos LDAP (opcional)
-                    if config.ldap_group_admin:
-                        member_of = [str(g) for g in user_entry.memberOf] if 'memberOf' in user_entry else []
-                        if any(config.ldap_group_admin in group for group in member_of):
-                            local_user.role = 'administrador'
+                    # Lógica de Mapeo de Roles Avanzado (JSON + Legacy Fallback)
+                    new_role = 'usuario' # Default
+                    member_of = [str(g).lower() for g in user_entry.memberOf] if 'memberOf' in user_entry else []
+
+                    # 1. Intentar Mapeo Dinámico (JSON)
+                    if config.ldap_role_mappings:
+                        import json
+                        try:
+                            mappings = json.loads(config.ldap_role_mappings)
+                            # Mappings es una lista: [{"group": "...", "role": "..."}]
+                            for mapping in mappings:
+                                m_group = mapping.get('group', '').strip().lower()
+                                m_role = mapping.get('role', 'usuario')
+                                if any(m_group in group for group in member_of):
+                                    new_role = m_role
+                                    break
+                        except Exception as e:
+                            print(f"Error parsing role mappings: {e}")
+
+                    # 2. Fallback a Legacy (si sigue siendo usuario y hay legacy config)
+                    if new_role == 'usuario' and config.ldap_group_admin:
+                        legacy_groups = [g.strip().lower() for g in config.ldap_group_admin.split(',')]
+                        if any(any(lg in group for lg in legacy_groups) for group in member_of):
+                            new_role = 'administrador'
                     
+                    local_user.role = new_role
+                    
+                    from app.modules.audit.services import add_audit_log
                     db.session.commit()
                     return {"status": "success", "user": local_user}
+
                     
             except Exception as bind_err:
                 return {"status": "error", "message": "Contraseña LDAP incorrecta"}

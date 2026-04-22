@@ -35,6 +35,7 @@ class AuthConfig(db.Model):
     # Role Mapping (LDAP Groups)
     ldap_group_admin = db.Column(db.String(200), nullable=True)
     ldap_group_user = db.Column(db.String(200), nullable=True)
+    ldap_role_mappings = db.Column(db.Text, nullable=True) # JSON string for dynamic mappings
     
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -47,5 +48,6 @@ class AuthConfig(db.Model):
             "ldap_user": self.ldap_user,
             "ldap_user_attr": self.ldap_user_attr,
             "ldap_group_admin": self.ldap_group_admin,
-            "ldap_group_user": self.ldap_group_user
+            "ldap_group_user": self.ldap_group_user,
+            "ldap_role_mappings": self.ldap_role_mappings
         }

@@ -77,6 +77,7 @@ def save():
         if "ldap_user_attr" in data: config.ldap_user_attr = data["ldap_user_attr"]
         if "ldap_group_admin" in data: config.ldap_group_admin = data["ldap_group_admin"]
         if "ldap_group_user" in data: config.ldap_group_user = data["ldap_group_user"]
+        if "ldap_role_mappings" in data: config.ldap_role_mappings = data["ldap_role_mappings"]
         
         db.session.commit()
         return jsonify({"status": "success", "message": "Configuración de Directorio Guardada"})
