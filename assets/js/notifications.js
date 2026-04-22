@@ -292,7 +292,16 @@ function loadTemplate(type) {
                 subjectInput.value = subject;
                 syncPreview();
                 updateLineNumbers();
-                showToast(`Cargada plantilla predeterminada: ${type.toUpperCase()}`, 'info');
+                
+                const friendlyNames = {
+                    'test': 'TEST SYSTEM',
+                    'guardado': 'TAREA NUEVA',
+                    'inicio': 'INICIO TAREA',
+                    'terminado': 'TAREA TERMINADA',
+                    'error': 'ERROR CRÍTICO'
+                };
+                
+                showToast(`Cargada plantilla predeterminada: ${friendlyNames[type] || type.toUpperCase()}`, 'info');
             }
         });
 }
