@@ -183,7 +183,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-[1fr_2fr_2fr] gap-6 h-full max-h-full">
                     <!-- Column 1: Template Presets (20%) -->
                     <div class="flex flex-col h-full min-h-0 overflow-hidden gap-4">
-                        <div class="flex flex-col flex-grow bg-[rgb(var(--color-ntf-panel-bg))] border border-panel-border rounded-[1.5rem] relative overflow-hidden shadow-inner">
+                        <div class="flex flex-col flex-grow bg-[rgb(var(--color-ntf-panel-bg))] border-2 border-dashed border-panel-border rounded-[1.5rem] relative overflow-hidden shadow-inner">
                             <div class="flex-grow overflow-y-auto custom-scrollbar p-5">
                                 <p class="text-[9px] font-black text-primary uppercase tracking-[0.25em] mb-4 italic">Librería de Plantillas</p>
                                 <div class="space-y-3">
@@ -254,7 +254,7 @@
 
                     <!-- Column 2: Nexus Code Editor (40%) -->
                     <div class="flex flex-col h-full min-h-0 overflow-hidden gap-4">
-                        <div class="flex flex-col flex-grow bg-[rgb(var(--color-ntf-panel-bg))] border border-panel-border rounded-[1.5rem] group focus-within:border-primary/40 transition-all p-0 overflow-hidden min-h-0 shadow-inner">
+                        <div class="flex flex-col flex-grow bg-[rgb(var(--color-ntf-panel-bg))] border-2 border-dashed border-panel-border rounded-[1.5rem] group focus-within:border-primary/40 transition-all p-0 overflow-hidden min-h-0 shadow-inner">
                             <!-- Header -->
                             <div class="flex items-center justify-between p-4 border-b border-panel-border/50 bg-black/5 flex-shrink-0">
                                 <label class="text-[10px] font-black text-label uppercase tracking-widest italic opacity-60">Editor de Variables Nexus</label>
@@ -304,7 +304,7 @@
                                     </div>
                                     <div class="relative flex-grow flex flex-col bg-[rgb(var(--color-ntf-editor-bg))]">
                                         <!-- Línea decorativa izquierda -->
-                                        <div class="absolute left-8 top-6 bottom-6 w-px bg-white/5"></div>
+                                        <div class="absolute left-8 top-6 bottom-6 w-px bg-[rgb(var(--color-ntf-editor-border))]"></div>
                                         
                                         <textarea id="templateEditor" 
                                             class="flex-grow w-full bg-transparent pl-14 pr-6 py-5 text-sm font-mono font-bold text-[rgb(var(--color-ntf-text-editor))]/90 outline-none resize-none custom-scrollbar leading-relaxed"
@@ -334,7 +334,7 @@ Estado: CRÍTICO</textarea>
 
                     <!-- Column 3: High-Fidelity Visualizer (40%) -->
                     <div class="flex flex-col h-full min-h-0 overflow-hidden gap-4">
-                        <div class="flex flex-col flex-grow bg-[rgb(var(--color-ntf-panel-bg))] border border-panel-border rounded-[1.5rem] group transition-all p-0 overflow-hidden min-h-0 shadow-inner">
+                        <div class="flex flex-col flex-grow bg-[rgb(var(--color-ntf-panel-bg))] border-2 border-dashed border-panel-border rounded-[1.5rem] group transition-all p-0 overflow-hidden min-h-0 shadow-inner">
                             <!-- TECHNICAL HEADER -->
                             <div class="flex items-center justify-between p-4 border-b border-panel-border/50 bg-black/5 flex-shrink-0">
                                 <label class="text-[10px] font-black text-label uppercase tracking-widest italic opacity-60">Visualizador en Tiempo Real</label>
