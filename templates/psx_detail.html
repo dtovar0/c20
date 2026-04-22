@@ -135,6 +135,10 @@
                             <span class="font-mono text-sm text-violet-400/80">{{ task.fecha_fin.strftime('%Y-%m-%d %H:%M:%S') if task.fecha_fin else 'PENDIENTE' }}</span>
                         </div>
                         <div class="flex justify-between items-center">
+                            <span class="text-[10px] font-bold text-slate-500 uppercase">Origen de Datos</span>
+                            <span class="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-[10px] font-black text-sky-400 uppercase tracking-widest">{{ task.tipo or 'DESCONOCIDO' }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
                             <span class="text-[10px] font-bold text-slate-500 uppercase">Registro Terminal</span>
                             <span class="font-mono text-sm text-slate-400">{{ task.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</span>
                         </div>
