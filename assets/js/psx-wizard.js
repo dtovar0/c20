@@ -223,15 +223,24 @@ async function finalizeWizard() {
     const toggle = document.getElementById('dataEntryToggle');
     const isManual = toggle && toggle.checked;
     const fileInput = document.getElementById('psxFileInput');
-    
-    // Capturar datos antes de cerrar Wizard
-    let formData = null;
-    if (!isManual && fileInput && fileInput.files.length > 0) {
-        formData = new FormData();
-        formData.append('file', fileInput.files[0]);
-    }
+    const activeBtn = Array.from(document.querySelectorAll('.op-select-btn')).find(b => b.classList.contains('active'));
+    const isEliminar = activeBtn && activeBtn.innerText.includes('Eliminar');
+    const clientMode = document.getElementById('clientModeSelect').value;
+    const routingLabel = document.getElementById('routingLabelInput').value;
+    const manualData = document.querySelector('#methodManualEntry textarea').value;
 
-    closeWizard(); // Cierre del Wizard
+    // 1. Preparar Payload Base
+    const taskPayload = {
+        accion: isEliminar ? 'delete' : 'add',
+        estado: 'Ejecutando',
+        accion_tipo: isManual ? 'Manual' : 'Archivo',
+        routing_label: isEliminar ? null : routingLabel,
+        datos_tipo: isEliminar ? 'N/A' : clientMode,
+        datos: isManual ? manualData : (fileInput.files[0] ? fileInput.files[0].name : ''),
+        total_items: isManual ? manualData.split('\n').filter(l => l.trim() !== '').length : 0
+    };
+
+    closeWizard();
     
     const progressModal = document.getElementById('psxProgressModal');
     const progressBar = document.getElementById('uploadProgressBar');
@@ -239,20 +248,17 @@ async function finalizeWizard() {
     const log1 = document.getElementById('logValidation');
     const log2 = document.getElementById('logIndexing');
 
-    const activeBtn = Array.from(document.querySelectorAll('.op-select-btn')).find(b => b.classList.contains('active'));
-    const isEliminar = activeBtn && activeBtn.innerText.includes('Eliminar');
-
     if (progressModal) {
         if (progressBar) {
             progressBar.style.backgroundColor = isEliminar ? 'rgb(239, 68, 68)' : 'var(--nx-primary)';
-            progressBar.style.boxShadow = isEliminar ? '0 0 15px rgba(239, 68, 68, 0.5)' : '0 0 15px rgba(rgb(var(--color-primary)), 0.5)';
+            progressBar.style.boxShadow = isEliminar ? '0 0 15px rgba(239, 68, 68, 0.5)' : '0 0 15px rgba(var(--color-primary), 0.5)';
         }
         
         progressModal.classList.remove('opacity-0', 'pointer-events-none');
         
         let progress = 0;
         const interval = setInterval(() => {
-            if (progress < 90) progress += Math.floor(Math.random() * 5) + 2;
+            if (progress < 85) progress += Math.floor(Math.random() * 5) + 2;
             if (progressBar) progressBar.style.width = `${progress}%`;
             
             if (progress >= 30 && log1) log1.classList.remove('opacity-0');
@@ -260,24 +266,38 @@ async function finalizeWizard() {
                 log2.classList.remove('opacity-0');
                 if (statusText) statusText.innerText = 'Sincronizando con Nodo...';
             }
-        }, 300);
+        }, 200);
 
         try {
-            // EJECUCIÓN REAL DE CARGA
-            if (formData) {
-                const response = await fetch('/api/psx/upload', { method: 'POST', body: formData });
-                const result = await response.json();
-                if (result.status !== 'success') throw new Error(result.message);
+            // A. Si hay archivo, subirlo primero
+            if (!isManual && fileInput && fileInput.files.length > 0) {
+                const fileFormData = new FormData();
+                fileFormData.append('file', fileInput.files[0]);
+                const uploadRes = await fetch('/api/psx/upload', { method: 'POST', body: fileFormData });
+                const uploadResult = await uploadRes.json();
+                if (uploadResult.status !== 'success') throw new Error(uploadResult.message);
+                
+                // Actualizar datos con el nombre real guardado
+                taskPayload.datos = uploadResult.filename;
             }
 
-            // ÉXITO
+            // B. Crear la tarea en la DB
+            const createRes = await fetch('/api/psx/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(taskPayload)
+            });
+            const createResult = await createRes.json();
+            if (createResult.status !== 'success') throw new Error(createResult.message);
+
+            // ÉXITO FINAL
             clearInterval(interval);
             if (progressBar) progressBar.style.width = '100%';
-            if (statusText) statusText.innerText = 'ARCHIVO PROCESADO';
+            if (statusText) statusText.innerText = 'OPERACIÓN REGISTRADA';
             
             setTimeout(() => {
                 progressModal.classList.add('opacity-0', 'pointer-events-none');
-                if (typeof showToast === 'function') showToast('Archivo procesado correctamente', 'success');
+                if (typeof showToast === 'function') showToast('Tarea iniciada correctamente', 'success');
                 if (typeof renderNexusTable === 'function') renderNexusTable();
                 
                 setTimeout(() => {
@@ -289,12 +309,12 @@ async function finalizeWizard() {
 
         } catch (error) {
             clearInterval(interval);
-            if (statusText) statusText.innerText = 'ERROR EN PROCESAMIENTO';
+            if (statusText) statusText.innerText = 'ERROR EN OPERACIÓN';
             if (progressBar) progressBar.style.backgroundColor = 'rgb(239, 68, 68)';
             
             setTimeout(() => {
                 progressModal.classList.add('opacity-0', 'pointer-events-none');
-                if (typeof showToast === 'function') showToast(error.message || 'Error al procesar archivo', 'error');
+                if (typeof showToast === 'function') showToast(error.message || 'Error al procesar la tarea', 'error');
             }, 2000);
         }
     }

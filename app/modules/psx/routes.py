@@ -31,6 +31,46 @@ def task_detail(task_id):
     task = PSX5KTask.query.get_or_404(task_id)
     return render_template('psx_detail.html', task=task)
 
+@psx_bp.route('/create', methods=['POST'])
+@login_required
+def create_task():
+    """
+    Crea una nueva tarea PSX5K en la base de datos
+    """
+    data = request.json
+    try:
+        new_task = PSX5KTask(
+            usuario=current_user.username,
+            accion=data.get('accion'),
+            estado=data.get('estado', 'Ejecutando'),
+            accion_tipo=data.get('accion_tipo'),
+            routing_label=data.get('routing_label'),
+            datos_tipo=data.get('datos_tipo'),
+            datos=data.get('datos'),
+            fecha_inicio=datetime.datetime.now() if data.get('estado') == 'Ejecutando' else None
+        )
+        db.session.add(new_task)
+        db.session.flush() # Para obtener el ID
+        
+        # Crear detalle inicial (contadores en 0)
+        new_detail = PSX5KDetail(
+            id=new_task.id,
+            total=data.get('total_items', 0),
+            ok=0,
+            fail=0
+        )
+        db.session.add(new_detail)
+        db.session.commit()
+        
+        return jsonify({
+            "status": "success",
+            "message": "Tarea creada correctamente",
+            "task_id": new_task.id
+        }), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"status": "error", "message": str(e)}), 500
+
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
