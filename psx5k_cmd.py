@@ -4,7 +4,7 @@ import re
 import os
 import datetime
 
-def s5k_cmd(line_task, line_number, line_type=None, routing_label=None, force=False):
+def psx5k_cmd(line_task, line_number, line_type=None, routing_label=None, force=False):
     """
     Función de ejecución para nodo PSX5K (Standalone para validación).
     
@@ -22,6 +22,7 @@ def s5k_cmd(line_task, line_number, line_type=None, routing_label=None, force=Fa
         "total": 0,
         "ok": 0,
         "dup": 0,
+        "force_ok": 0,
         "fail": 0,
         "logs": []
     }
@@ -31,7 +32,7 @@ def s5k_cmd(line_task, line_number, line_type=None, routing_label=None, force=Fa
         
         # 1. Establecer Conexión SSH
         cmd = pexpect.spawn('ssh -o StrictHostKeyChecking=no -p 8122 admin@10.133.39.5', timeout=30, encoding='utf-8')
-        cmd.logfile = sys.stdout # Mantenemos logfile activado para validación del usuario
+        cmd.logfile = sys.stdout 
         cmd.setecho(False)
         cmd.delaybeforesend = 0.8
         
@@ -59,6 +60,7 @@ def s5k_cmd(line_task, line_number, line_type=None, routing_label=None, force=Fa
                     
                     if not found or force:
                         # Modo Inserción o Sobreescritura Forzada
+                        is_force = found and force
                         msg_prefix = "[OK]" if not found else "[FORCE-OK]"
                         
                         if line_type == 'call_in':
@@ -66,7 +68,8 @@ def s5k_cmd(line_task, line_number, line_type=None, routing_label=None, force=Fa
                             cmd.expect(EXPECT)
                             cmd.sendline(f"put destination National_Id {number} Country_Id 52 Custom_Script_Id BLOCKING Is_Subscriber 1")
                             cmd.expect(EXPECT)
-                            stats["ok"] += 1
+                            if is_force: stats["force_ok"] += 1
+                            else: stats["ok"] += 1
                             stats["logs"].append(f"{msg_prefix} {number} - call_in")
                             
                         elif line_type == 'call_inout':
@@ -85,7 +88,8 @@ def s5k_cmd(line_task, line_number, line_type=None, routing_label=None, force=Fa
                                 stats["fail"] += 1
                                 stats["logs"].append(f"[FAIL] {number} - Routing Label Inválido")
                             else:
-                                stats["ok"] += 1
+                                if is_force: stats["force_ok"] += 1
+                                else: stats["ok"] += 1
                                 stats["logs"].append(f"{msg_prefix} {number} - call_inout")
                     else:
                         # Registro existente y no se pidió forzar
@@ -110,7 +114,7 @@ def s5k_cmd(line_task, line_number, line_type=None, routing_label=None, force=Fa
         print("\n✅ Sesión PSX finalizada.")
         
     except Exception as e:
-        stats["fail"] = stats["total"] - stats["ok"] - stats["dup"]
+        stats["fail"] = stats["total"] - stats["ok"] - stats["dup"] - stats["force_ok"]
         stats["logs"].append(f"CRITICAL ERROR: {str(e)}")
         print(f"\n❌ Error Crítico: {str(e)}")
 

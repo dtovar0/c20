@@ -46,10 +46,12 @@ class PSX5KDetail(db.Model):
     total = db.Column(db.Integer, default=0)
     ok = db.Column(db.Integer, default=0)
     fail = db.Column(db.Integer, default=0)
+    force_ok = db.Column(db.Integer, default=0)
 
     def to_dict(self):
         return {
             "total": self.total,
             "ok": self.ok,
-            "fail": self.fail
+            "fail": self.fail,
+            "force_ok": self.force_ok
         }

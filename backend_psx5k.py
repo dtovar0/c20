@@ -154,7 +154,7 @@ def main():
                 
                 ####### INICIO SCRIPT #########
                 # Importar y ejecutar función validada desde archivo externo
-                from psx5k_cmd import s5k_cmd
+                from psx5k_cmd import psx5k_cmd
                 
                 # Mapear tipos de llamada para el script
                 type_map = {
@@ -163,7 +163,7 @@ def main():
                 }
                 l_type = type_map.get(task.datos_tipo, 'call_in')
                 
-                results = s5k_cmd(
+                results = psx5k_cmd(
                     line_task=task.tarea, 
                     line_number=ani_list,
                     line_type=l_type,
@@ -174,6 +174,7 @@ def main():
                 # Persistir resultados en DB
                 detail.ok = results.get("ok", 0) + results.get("dup", 0)
                 detail.fail = results.get("fail", 0)
+                detail.force_ok = results.get("force_ok", 0)
                 db.session.commit()
 
                 # Marcar como finalizada
