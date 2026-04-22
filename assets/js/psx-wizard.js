@@ -232,7 +232,7 @@ async function finalizeWizard() {
     // 1. Preparar Payload Base
     const taskPayload = {
         accion: isEliminar ? 'delete' : 'add',
-        estado: 'Ejecutando',
+        estado: 'Pendiente',
         accion_tipo: isManual ? 'Manual' : 'Archivo',
         routing_label: isEliminar ? null : routingLabel,
         datos_tipo: isEliminar ? 'N/A' : clientMode,
@@ -638,15 +638,29 @@ function updateScheduleUI() {
 }
 
 async function finalizeScheduleWizard() {
-    const toggle = document.getElementById('scheduleDataEntryToggle');
-    const isManual = toggle && toggle.checked;
+    const activeBtn = Array.from(document.querySelectorAll('.schedule-op-btn')).find(b => b.classList.contains('active'));
+    const isEliminar = activeBtn && activeBtn.innerText.includes('Eliminar');
+    const clientMode = document.getElementById('scheduleClientModeSelect').value;
+    const routingLabel = document.getElementById('scheduleRoutingLabelInput').value;
+    const isManual = document.getElementById('scheduleDataEntryToggle').checked;
     const fileInput = document.getElementById('scheduleFileInput');
-    
-    let formData = null;
-    if (!isManual && fileInput && fileInput.files.length > 0) {
-        formData = new FormData();
-        formData.append('file', fileInput.files[0]);
-    }
+    const manualData = document.querySelector('#scheduleMethodManualEntry textarea').value;
+
+    const timeVal = document.getElementById('scheduleTimeInput').value;
+    const [hours, minutes] = timeVal.split(':');
+    const scheduledDateTime = new Date(selectedDate);
+    scheduledDateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+
+    const taskPayload = {
+        accion: isEliminar ? 'delete' : 'add',
+        estado: 'Programada',
+        accion_tipo: isManual ? 'Manual' : 'Archivo',
+        routing_label: isEliminar ? null : routingLabel,
+        datos_tipo: isEliminar ? 'N/A' : clientMode,
+        datos: isManual ? manualData : (fileInput.files[0] ? fileInput.files[0].name : ''),
+        total_items: isManual ? manualData.split('\n').filter(l => l.trim() !== '').length : 0,
+        fecha_inicio: scheduledDateTime.toISOString()
+    };
 
     closeScheduleWizard();
     
@@ -660,15 +674,45 @@ async function finalizeScheduleWizard() {
         
         let progress = 0;
         const interval = setInterval(() => {
-            if (progress < 100) progress += 5;
+            if (progress < 90) progress += 10;
             if (progressBar) progressBar.style.width = `${progress}%`;
         }, 100);
 
-        setTimeout(() => {
+        try {
+            if (!isManual && fileInput && fileInput.files.length > 0) {
+                const fd = new FormData();
+                fd.append('file', fileInput.files[0]);
+                const up = await fetch('/api/psx/upload', { method: 'POST', body: fd });
+                const ur = await up.json();
+                if (ur.status === 'success') taskPayload.datos = ur.filename;
+            }
+
+            const res = await fetch('/api/psx/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(taskPayload)
+            });
+            const result = await res.json();
+            if (result.status !== 'success') throw new Error(result.message);
+
             clearInterval(interval);
-            progressModal.classList.add('opacity-0', 'pointer-events-none');
-            if (typeof showToast === 'function') showToast('Tarea programada con éxito', 'success');
-        }, 2500);
+            if (progressBar) progressBar.style.width = '100%';
+            if (statusText) statusText.innerText = 'TAREA PROGRAMADA';
+            
+            setTimeout(() => {
+                progressModal.classList.add('opacity-0', 'pointer-events-none');
+                if (typeof showToast === 'function') showToast('Tarea programada con éxito', 'success');
+                if (typeof renderNexusTable === 'function') renderNexusTable();
+            }, 1000);
+
+        } catch (error) {
+            clearInterval(interval);
+            if (statusText) statusText.innerText = 'ERROR EN PROGRAMACIÓN';
+            setTimeout(() => {
+                progressModal.classList.add('opacity-0', 'pointer-events-none');
+                if (typeof showToast === 'function') showToast(error.message, 'error');
+            }, 2000);
+        }
     }
 }
 
