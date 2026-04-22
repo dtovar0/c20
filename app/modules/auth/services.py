@@ -44,13 +44,14 @@ def authenticate_user_ldap(username, password):
 
         # 2. Construir el User DN para el Bind
         # Algunos servidores requieren el DN completo, otros solo el CN/UID
-        # Para AD suele ser: DOMAIN\username o username@domain.com
-        # Aquí usaremos el atributo configurado (ej: sAMAccountName={username})
+        # 2. Construir filtro según el Atributo de Usuario configurado
         user_filter = f"({config.ldap_user_attr}={username})"
         
-        # 3. Conexión de búsqueda (Desactivamos auto_referrals para evitar el error de AD)
+        ldap_logger.debug(f"Buscando usuario con filtro configurado: {user_filter}")
+        
+        # 3. Conexión de búsqueda
         with Connection(server, user=config.ldap_user, password=config.ldap_pass, auto_bind=True, auto_referrals=False) as conn:
-            conn.search(config.ldap_base_dn, user_filter, attributes=['mail', 'displayName', 'cn', 'memberOf'])
+            conn.search(config.ldap_base_dn, user_filter, attributes=['mail', 'displayName', 'cn', 'memberOf', 'sAMAccountName'])
             
             if not conn.entries:
                 # PROTOCOLO DE PURGA: Si el LDAP está arriba pero el usuario no existe, lo borramos localmente
