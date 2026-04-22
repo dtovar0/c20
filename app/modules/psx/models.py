@@ -15,6 +15,7 @@ class PSX5KTask(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     datos_tipo = db.Column(db.String(50), nullable=True)
     datos = db.Column(db.Text, nullable=True)
+    force = db.Column(db.Boolean, default=False)
     
     # Vinculación lógica mediante ID compartido
     @property

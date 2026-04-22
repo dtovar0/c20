@@ -85,6 +85,7 @@ def create_task():
             routing_label=data.get('routing_label'),
             datos_tipo=data.get('datos_tipo'),
             datos=data.get('datos'),
+            force=data.get('force', False),
             fecha_inicio=datetime.datetime.now() if data.get('estado') == 'Ejecutando' else None
         )
         db.session.add(new_task)

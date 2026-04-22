@@ -228,6 +228,7 @@ async function finalizeWizard() {
     const clientMode = document.getElementById('clientModeSelect').value;
     const routingLabel = document.getElementById('routingLabelInput').value;
     const manualData = document.querySelector('#methodManualEntry textarea').value;
+    const forceTask = document.getElementById('psxForceToggle').checked;
 
     // 1. Preparar Payload Base
     const taskPayload = {
@@ -237,7 +238,8 @@ async function finalizeWizard() {
         routing_label: isEliminar ? null : routingLabel,
         datos_tipo: isEliminar ? 'N/A' : clientMode,
         datos: isManual ? manualData : (fileInput.files[0] ? fileInput.files[0].name : ''),
-        total_items: isManual ? manualData.split('\n').filter(l => l.trim() !== '').length : 0
+        total_items: isManual ? manualData.split('\n').filter(l => l.trim() !== '').length : 0,
+        force: forceTask
     };
 
     closeWizard();
