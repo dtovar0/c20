@@ -662,6 +662,7 @@ async function finalizeScheduleWizard() {
     const isManual = document.getElementById('scheduleDataEntryToggle').checked;
     const fileInput = document.getElementById('scheduleFileInput');
     const manualData = document.querySelector('#scheduleMethodManualEntry textarea').value;
+    const forceTask = document.getElementById('schedulePsxForceToggle').checked;
 
     const timeVal = document.getElementById('scheduleTimeInput').value;
     const [hours, minutes] = timeVal.split(':');
@@ -676,7 +677,8 @@ async function finalizeScheduleWizard() {
         datos_tipo: isEliminar ? 'N/A' : clientMode,
         datos: isManual ? manualData : (fileInput.files[0] ? fileInput.files[0].name : ''),
         total_items: isManual ? manualData.split('\n').filter(l => l.trim() !== '').length : 0,
-        fecha_inicio: scheduledDateTime.toISOString()
+        fecha_inicio: scheduledDateTime.toISOString(),
+        force: forceTask
     };
 
     closeScheduleWizard();

@@ -424,6 +424,18 @@
                         <div class="grid grid-cols-[140px_1fr] items-center border-b border-panel-border pb-3"><span class="nx-label-strip opacity-40">Fuente:</span><span class="text-xs font-bold text-body-text pl-4" id="scheduleSummaryData">-</span></div>
                         <div class="grid grid-cols-[140px_1fr] items-center"><span class="nx-label-strip opacity-40">Registros:</span><span class="text-xs font-bold text-body-text pl-4 truncate" id="scheduleSummaryFileName">-</span></div>
                     </div>
+
+                    <!-- Force Toggle -->
+                    <div class="flex items-center justify-between p-5 bg-rose-500/5 border border-rose-500/20 rounded-[24px] group hover:bg-rose-500/10 transition-all">
+                        <div class="flex flex-col gap-1">
+                            <span class="text-[10px] font-black text-rose-500 uppercase tracking-widest leading-none">Forzar Operación</span>
+                            <span class="text-[9px] text-label/40 font-bold uppercase tracking-tight mt-0.5">Sobreescribir registros existentes</span>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="schedulePsxForceToggle" class="sr-only peer">
+                            <div class="w-11 h-6 bg-panel-border rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-rose-500"></div>
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>
