@@ -1,15 +1,6 @@
 import ssl
 import json
-import logging
 from ldap3 import Server, Connection, ALL, Tls
-
-# Configuración de Log de Depuración
-ldap_logger = logging.getLogger('ldap_debug')
-ldap_logger.setLevel(logging.DEBUG)
-if not ldap_logger.handlers:
-    fh = logging.FileHandler('ldap_debug.log')
-    fh.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
-    ldap_logger.addHandler(fh)
 
 def authenticate_user_ldap(username, password):
     """
@@ -31,8 +22,6 @@ def authenticate_user_ldap(username, password):
         # Sanitizar host y puerto
         host = config.ldap_host.strip()
         port = int(config.ldap_port) if config.ldap_port else 389
-        
-        ldap_logger.debug(f"Intentando login LDAP: {username} | Servidor: {host}:{port} | SSL: {config.ldap_ssl}")
 
         server = Server(
             host, 
@@ -47,16 +36,11 @@ def authenticate_user_ldap(username, password):
         # 2. Construir filtro según el Atributo de Usuario configurado
         user_filter = f"({config.ldap_user_attr}={username})"
         
-        ldap_logger.debug(f"Buscando usuario con filtro configurado: {user_filter}")
-        
         # 3. Conexión de búsqueda
         with Connection(server, user=config.ldap_user, password=config.ldap_pass, auto_bind=True, auto_referrals=False) as conn:
             conn.search(config.ldap_base_dn, user_filter, attributes=['mail', 'displayName', 'cn', 'memberOf', 'sAMAccountName'])
             
-            ldap_logger.debug(f"Búsqueda finalizada. Entradas encontradas: {len(conn.entries)}")
-
             if not conn.entries:
-                ldap_logger.warning(f"USUARIO NO ENCONTRADO en LDAP con el filtro proporcionado.")
                 # ... (resto del código igual)
                 # PROTOCOLO DE PURGA: Si el LDAP está arriba pero el usuario no existe, lo borramos localmente
                 local_user = User.query.filter_by(username=username).first()
@@ -134,7 +118,6 @@ def authenticate_user_ldap(username, password):
                 return {"status": "error", "message": "Contraseña LDAP incorrecta"}
 
     except Exception as e:
-        ldap_logger.exception(f"ERROR CRÍTICO LDAP en login para usuario {username}")
         return {"status": "error", "message": f"Error LDAP: {str(e)}"}
 
 def validate_ldap_connection(host, port, use_ssl=False, bind_dn=None, bind_pass=None):
@@ -163,7 +146,6 @@ def validate_ldap_connection(host, port, use_ssl=False, bind_dn=None, bind_pass=
             }
 
     except Exception as e:
-        ldap_logger.exception("ERROR CRÍTICO LDAP en prueba de conexión")
         return {
             "status": "error",
             "message": f"Fallo de conexión: {str(e)}"

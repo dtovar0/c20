@@ -117,84 +117,150 @@
         </div>
 
         <!-- Activity Monitor (Right Column) -->
-        <div class="lg:col-span-1 h-full min-h-0 flex flex-col bg-panel-fill border border-panel-border shadow-2xl shadow-primary/5 rounded-2xl pt-6 px-8 pb-4 relative overflow-hidden group flex flex-col h-full">
+        <div class="lg:col-span-1 flex flex-col bg-panel-fill border border-panel-border shadow-2xl shadow-primary/5 rounded-2xl pt-6 px-8 pb-8 relative overflow-hidden group h-full">
             <div class="absolute -right-12 -top-12 w-48 h-48 bg-primary/5 blur-3xl rounded-full group-hover:bg-primary/10 transition-all"></div>
             
             <!-- Header (Ultra-Compact Padding) -->
-            <div class="flex items-center justify-between pb-4 mb-1 border-b border-panel-border/50 relative z-10">
+            <div class="flex items-center justify-between pb-4 mb-4 border-b border-panel-border/50 relative z-10">
                 <div class="flex items-center gap-4">
                     <h2 class="text-xs font-black text-label/80 uppercase tracking-[0.3em]">Monitoreo de Actividad</h2>
                     <div class="monitor-status-dot bg-success"></div>
                 </div>
-                
-                <!-- Action Arrow with Tooltip -->
-                <div class="relative group/tooltip">
-                    <button class="w-8 h-8 flex items-center justify-center bg-surface-container border border-panel-border rounded-lg text-label/60 hover:text-primary hover:border-primary/50 transition-all active:scale-90">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
-                    </button>
-                    <!-- Tooltip -->
-                    <div class="absolute bottom-full right-0 mb-3 px-3 py-1.5 bg-slate-900 border border-slate-800 text-[10px] font-bold text-white uppercase tracking-widest rounded-lg opacity-0 group-hover/tooltip:opacity-100 transition-all pointer-events-none whitespace-nowrap shadow-2xl">
-                        Ver más detalle
-                        <div class="absolute top-full right-4 w-2 h-2 bg-slate-900 border-r border-b border-slate-800 rotate-45 -mt-1"></div>
-                    </div>
-                </div>
             </div>
-
-            <!-- Body: Activity (Zero-Void Filled Layout) -->
+ 
+            <!-- Body: Activity (Minimalist High-Impact Feed) -->
             <div class="relative z-10 flex-grow overflow-hidden">
-                <div class="flex flex-col h-full justify-between">
-                    {% for i in range(8) %}
-                    <div class="group/row hover:bg-surface-container/30 transition-all cursor-default flex items-center flex-grow px-2 rounded-xl">
-                        <!-- Status Column -->
-                        <div class="w-6 flex-shrink-0">
-                            <div class="w-1.5 h-1.5 rounded-full 
-                                {% if i == 0 %}bg-primary shadow-[0_0_6px_rgba(var(--color-primary),0.6)]
-                                {% elif i == 2 %}bg-peach shadow-[0_0_6px_rgba(251,167,114,0.6)]
-                                {% else %}bg-label/20{% endif %}"></div>
-                        </div>
-                        
-                        <!-- Event Content -->
-                        <div class="flex-grow pr-4">
-                            <div class="flex flex-col justify-center">
-                                <p class="text-[12px] font-bold text-body-text/90 leading-tight truncate">
-                                    {% if i == 0 %}Optimización Sector 7{% elif i == 1 %}Backup completado{% elif i == 2 %}Alerta Puerto 8080{% else %}System Log #{{ 1024 - i }}{% endif %}
-                                </p>
-                                <p class="text-[10px] text-label/40 mt-1 leading-none truncate">
-                                    {% if i == 0 %}Latencia ajustada a 420ms.{% elif i == 1 %}Nodo secundario sincronizado.{% elif i == 2 %}Mitigación activa.{% else %}Procesado correctamente.{% endif %}
-                                </p>
+                <div id="activityContainer" class="flex flex-col h-full justify-start relative z-10">
+
+                    {% if activity %}
+                        <!-- Page 1 Container -->
+                        <div id="activityPage1" class="activity-page flex flex-col space-y-1 transition-all duration-300">
+                        {% for log in activity[:6] %}
+                            <div class="group/row hover:bg-white/5 transition-all duration-300 cursor-default flex items-center py-2.5 px-2 rounded-2xl">
+                                <!-- High-Impact Icon Column -->
+                                <div class="w-14 h-14 flex-shrink-0 flex items-center justify-center">
+                                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-sm
+                                        {% if 'LOGIN' in log.action.upper() %} bg-primary/15 text-primary
+                                        {% elif 'TAREA' in log.action.upper() %} bg-sky/15 text-sky
+                                        {% elif 'IDENTITY' in log.action.upper() or 'USER' in log.action.upper() %} bg-violet/15 text-violet
+                                        {% else %} bg-slate-500/15 text-slate-400 {% endif %}">
+                                        
+                                        {% if 'LOGIN' in log.action.upper() %}
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-4.586l4.293-4.293A6 6 0 0115 3a6 6 0 015 5.5V9z"></path></svg>
+                                        {% elif 'TAREA' in log.action.upper() %}
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                                        {% elif 'IDENTITY' in log.action.upper() or 'USER' in log.action.upper() %}
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                        {% else %}
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="flex-grow pl-5 pr-4">
+                                    <div class="flex flex-col justify-center">
+                                        <p class="text-[14px] font-black text-body-text tracking-tight uppercase group-hover/row:text-primary transition-colors">{{ log.action }}</p>
+                                        <p class="text-[11px] text-label/70 mt-0.5 leading-tight italic truncate">{{ log.detail if log.detail else 'Finalizado.' }}</p>
+                                    </div>
+                                </div>
+                                <div class="w-16 text-right shrink-0">
+                                    <span class="text-[11px] font-black text-label/80">{{ log.timestamp.strftime('%H:%M') }}</span>
+                                </div>
                             </div>
+                        {% endfor %}
                         </div>
 
-                        <!-- Time Column -->
-                        <div class="w-12 text-right">
-                            <span class="text-[9px] font-black {% if i == 0 %}text-primary{% elif i == 2 %}text-peach{% else %}text-label/40{% endif %} uppercase tracking-tighter">
-                                {% if i == 0 %}2M{% elif i == 1 %}15M{% elif i == 2 %}1H{% else %}{{ i + 2 }}H{% endif %}
-                            </span>
+                        <!-- Page 2 Container (Hidden by default) -->
+                        <div id="activityPage2" class="activity-page hidden flex flex-col space-y-1 transition-all duration-300">
+                        {% for log in activity[6:12] %}
+                            <div class="group/row hover:bg-white/5 transition-all duration-300 cursor-default flex items-center py-2.5 px-2 rounded-2xl">
+                                <!-- Same high-impact logic -->
+                                <div class="w-14 h-14 flex-shrink-0 flex items-center justify-center">
+                                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-sm
+                                        {% if 'LOGIN' in log.action.upper() %} bg-primary/15 text-primary
+                                        {% elif 'TAREA' in log.action.upper() %} bg-sky/15 text-sky
+                                        {% elif 'IDENTITY' in log.action.upper() or 'USER' in log.action.upper() %} bg-violet/15 text-violet
+                                        {% else %} bg-slate-500/15 text-slate-400 {% endif %}">
+                                        
+                                        {% if 'LOGIN' in log.action.upper() %}
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-4.586l4.293-4.293A6 6 0 0115 3a6 6 0 015 5.5V9z"></path></svg>
+                                        {% elif 'TAREA' in log.action.upper() %}
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                                        {% elif 'IDENTITY' in log.action.upper() or 'USER' in log.action.upper() %}
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                        {% else %}
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="flex-grow pl-5 pr-4">
+                                    <div class="flex flex-col justify-center">
+                                        <p class="text-[14px] font-black text-body-text tracking-tight uppercase group-hover/row:text-primary transition-colors">{{ log.action }}</p>
+                                        <p class="text-[11px] text-label/70 mt-0.5 leading-tight italic truncate">{{ log.detail if log.detail else 'Finalizado.' }}</p>
+                                    </div>
+                                </div>
+                                <div class="w-16 text-right shrink-0">
+                                    <span class="text-[11px] font-black text-label/80">{{ log.timestamp.strftime('%H:%M') }}</span>
+                                </div>
+                            </div>
+                        {% endfor %}
                         </div>
-                    </div>
-                    {% endfor %}
+                    {% else %}
+                        <div class="h-full flex flex-col items-center justify-center py-24 opacity-20">
+                            <svg class="w-14 h-14 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            <p class="text-xs font-black uppercase tracking-[0.3em]">Cero Actividad</p>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
 
-            <!-- Pagination Footer (Compact) -->
-            <div class="mt-2 pt-3 border-t border-panel-border/30 flex items-center justify-between relative z-10">
+            <!-- Pagination Footer (Balanced for 2 pages of 6) -->
+            <div class="mt-4 pt-4 border-t border-panel-border/30 flex items-center justify-between relative z-10">
                 <div class="flex items-center gap-3">
                     <span class="text-[10px] font-black text-label/40 uppercase tracking-widest">Página</span>
-                    <div class="flex items-center gap-1.5">
-                        <span class="w-7 h-7 flex items-center justify-center bg-primary text-white text-[11px] font-black rounded-lg shadow-lg shadow-primary/20">1</span>
-                        <span class="w-7 h-7 flex items-center justify-center text-label/60 text-[11px] font-black hover:bg-surface-container rounded-lg cursor-pointer transition-all">2</span>
+                    <div class="flex items-center gap-1.5" id="activityPaginator">
+                        <button onclick="changeActivityPage(1)" id="btnPage1" class="w-7 h-7 flex items-center justify-center bg-primary text-white text-[11px] font-black rounded-lg shadow-lg shadow-primary/20 transition-all">1</button>
+                        {% if activity|length > 6 %}
+                        <button onclick="changeActivityPage(2)" id="btnPage2" class="w-7 h-7 flex items-center justify-center text-label/60 text-[11px] font-black hover:bg-surface-container rounded-lg cursor-pointer transition-all">2</button>
+                        {% endif %}
                     </div>
                 </div>
                 
                 <div class="flex items-center gap-2">
-                    <button class="w-9 h-9 flex items-center justify-center border border-panel-border rounded-xl text-label/40 hover:text-primary transition-all opacity-40 cursor-not-allowed">
+                    <button onclick="changeActivityPage(1)" class="w-9 h-9 flex items-center justify-center border border-panel-border rounded-xl text-label/40 hover:text-primary transition-all active:scale-95">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                     </button>
-                    <button class="w-9 h-9 flex items-center justify-center border border-panel-border rounded-xl text-label/60 hover:text-primary hover:border-primary/50 transition-all active:scale-95">
+                    <button onclick="changeActivityPage(2)" class="w-9 h-9 flex items-center justify-center border border-panel-border rounded-xl text-label/60 hover:text-primary hover:border-primary/50 transition-all active:scale-95">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                     </button>
                 </div>
             </div>
+
+            <script>
+                function changeActivityPage(page) {
+                    const p1 = document.getElementById('activityPage1');
+                    const p2 = document.getElementById('activityPage2');
+                    
+                    if (page === 1) {
+                        if(p1) p1.classList.remove('hidden');
+                        if(p2) p2.classList.add('hidden');
+                    } else {
+                        if(p1) p1.classList.add('hidden');
+                        if(p2) p2.classList.remove('hidden');
+                    }
+
+                    // Update buttons
+                    const b1 = document.getElementById('btnPage1');
+                    const b2 = document.getElementById('btnPage2');
+                    
+                    if (page === 1) {
+                        if(b1) b1.className = 'w-7 h-7 flex items-center justify-center bg-primary text-white text-[11px] font-black rounded-lg shadow-lg shadow-primary/20 transition-all';
+                        if(b2) b2.className = 'w-7 h-7 flex items-center justify-center text-label/60 text-[11px] font-black hover:bg-surface-container rounded-lg cursor-pointer transition-all';
+                    } else {
+                        if(b1) b1.className = 'w-7 h-7 flex items-center justify-center text-label/60 text-[11px] font-black hover:bg-surface-container rounded-lg cursor-pointer transition-all';
+                        if(b2) b2.className = 'w-7 h-7 flex items-center justify-center bg-primary text-white text-[11px] font-black rounded-lg shadow-lg shadow-primary/20 transition-all';
+                    }
+                }
+            </script>
         </div>
     </div>
 </div>
