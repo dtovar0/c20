@@ -72,7 +72,7 @@
                             <svg class="w-5 h-5 text-secondary group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                             </svg>
-                            <span id="notificationBadge" class="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-white dark:border-slate-900 group-hover:scale-125 transition-transform active:scale-90"></span>
+                            <span id="notificationBadge" class="hidden absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-gradient-to-br from-rose-500 to-pink-600 rounded-full border-2 border-bg shadow-[0_0_10px_rgba(244,63,94,0.4)] flex items-center justify-center text-[9px] font-black text-white transition-all duration-300 group-hover:scale-110 active:scale-90 z-10">0</span>
                         </button>
 
                         <!-- Notification Dropdown -->
@@ -98,7 +98,7 @@
                                     <p class="text-[10px] font-black uppercase tracking-widest">Sin notificaciones</p>
                                 </div>
                             </div>
-                            <a href="#" class="p-3 bg-surface-container/30 border-t border-panel-border text-center block text-[10px] font-black text-label uppercase tracking-widest hover:text-primary transition-colors">Ver todas las alertas</a>
+                            <a href="{{ url_for('audit.index') }}" class="p-3 bg-surface-container/30 border-t border-panel-border text-center block text-[10px] font-black text-label uppercase tracking-widest hover:text-primary transition-colors">Ver historial completo</a>
                         </div>
                     </div>
 

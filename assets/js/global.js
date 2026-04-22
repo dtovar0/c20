@@ -413,7 +413,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!notificationDropdown.contains(e.target) && !notificationBtn.contains(e.target)) {
                 notificationDropdown.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
             }
-                // --- DYNAMIC NOTIFICATION SYSTEM ---
+        });
+
+        // --- DYNAMIC NOTIFICATION SYSTEM ---
         let allNotifications = [];
         let activeFilter = 'all';
         
@@ -439,7 +441,15 @@ document.addEventListener('DOMContentLoaded', () => {
             // Update Badge (Always show total unread of ALL)
             if (unreadCount > 0) {
                 badge.classList.remove('hidden');
+                const oldText = badge.textContent;
                 badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+                
+                // Pulse effect if count changed
+                if (oldText !== badge.textContent) {
+                    badge.classList.add('scale-150');
+                    setTimeout(() => badge.classList.remove('scale-150'), 300);
+                }
+                
                 badge.style.opacity = '1';
                 badge.style.transform = 'scale(1)';
             } else {
@@ -551,8 +561,6 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         window.deleteAllNotifications = async () => {
-            if (!confirm('¿Estás seguro de que quieres borrar TODAS las notificaciones?')) return;
-            
             try {
                 const response = await fetch('/notifications/api/delete-all', {
                     method: 'DELETE'
