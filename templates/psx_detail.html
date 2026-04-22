@@ -162,7 +162,7 @@
                         <div class="glass-panel border-white/5 rounded-2xl p-5 flex items-center justify-between">
                             <div>
                                 <p class="text-[9px] font-black uppercase text-slate-500 tracking-widest mb-1">Total Registros</p>
-                                <p class="text-3xl font-black text-white">{{ task.detalle.total if task.detalle else 0 }}</p>
+                                <p class="text-3xl font-black text-white">{{ task.resumen.total if task.resumen else 0 }}</p>
                             </div>
                             <div class="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center text-slate-400">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
@@ -173,18 +173,18 @@
                             <!-- OK -->
                             <div class="bg-emerald-500/5 border border-emerald-500/20 rounded-2xl p-5">
                                 <p class="text-[9px] font-black uppercase text-emerald-500/60 tracking-widest mb-1">Finalizados OK</p>
-                                <p class="text-3xl font-black text-emerald-500">{{ task.detalle.ok if task.detalle else 0 }}</p>
+                                <p class="text-3xl font-black text-emerald-500">{{ task.resumen.ok if task.resumen else 0 }}</p>
                             </div>
                             <!-- FAIL -->
                             <div class="bg-rose-500/5 border border-rose-500/20 rounded-2xl p-5">
                                 <p class="text-[9px] font-black uppercase text-rose-500/60 tracking-widest mb-1">Errores (Fail)</p>
-                                <p class="text-3xl font-black text-rose-500">{{ task.detalle.fail if task.detalle else 0 }}</p>
+                                <p class="text-3xl font-black text-rose-500">{{ task.resumen.fail if task.resumen else 0 }}</p>
                             </div>
                         </div>
 
                         <!-- Progress Bar logic -->
-                        {% set total = task.detalle.total if task.detalle and task.detalle.total > 0 else 1 %}
-                        {% set ok = task.detalle.ok if task.detalle else 0 %}
+                        {% set total = task.resumen.total if task.resumen and task.resumen.total > 0 else 1 %}
+                        {% set ok = task.resumen.ok if task.resumen else 0 %}
                         {% set percent = (ok / total * 100) | round(0) %}
                         <div class="pt-4">
                             <div class="flex justify-between items-center mb-2">
