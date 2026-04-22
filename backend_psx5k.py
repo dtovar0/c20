@@ -3,9 +3,9 @@ import sys
 import time
 import datetime
 import signal
+import xml.etree.ElementTree as ET
 from app import create_app, db
 from app.modules.psx.models import PSX5KTask, PSX5KDetail
-
 from app.modules.notifications.services import send_notification_by_slug
 from app.modules.auth.models import User
 
@@ -33,8 +33,66 @@ def handle_stale_lock(app):
                     target_email=admin.email,
                     context={'usuario': 'SYSTEM_BACKEND', 'ip': 'LOCAL_WORKER', 'error': 'STALE_LOCK_TIMEOUT'}
                 )
-        return True # Indica que es stale
+        return True 
     return False
+
+def process_task_data(task):
+    """
+    Procesa el origen de datos (Manual o Archivo) y retorna la lista de registros (ANI).
+    """
+    records = []
+    
+    if task.accion_tipo == 'Manual':
+        print(f"📝 Procesando entrada MANUAL para Tarea {task.id}")
+        raw_data = task.datos or ""
+        items = raw_data.replace(';', '\n').replace(',', '\n').split('\n')
+        
+        for item in items:
+            item = item.strip()
+            if not item: continue
+            
+            if '-' in item:
+                try:
+                    parts = item.split('-')
+                    start = int(parts[0].strip())
+                    end = int(parts[1].strip())
+                    if start <= end:
+                        records.extend([str(x) for x in range(start, end + 1)])
+                    else:
+                        records.extend([str(x) for x in range(end, start + 1)])
+                except Exception as e:
+                    print(f"⚠️ Error procesando rango '{item}': {e}")
+            else:
+                records.append(item)
+    
+    elif task.accion_tipo == 'Archivo':
+        print(f"📁 Procesando ARCHIVO para Tarea {task.id}")
+        file_path = os.path.join('uploads/psx', task.datos)
+        
+        if not os.path.exists(file_path):
+            print(f"❌ Archivo no encontrado: {file_path}")
+            return []
+
+        try:
+            tree = ET.parse(file_path)
+            root = tree.getroot()
+            for ani_tag in root.findall('.//ANI'):
+                if ani_tag.text:
+                    records.append(ani_tag.text.strip())
+            
+            if not records:
+                for elem in root.iter():
+                    if elem.tag.upper() == 'ANI' and elem.text:
+                        records.append(elem.text.strip())
+        except Exception as e:
+            print(f"⚠️ Error procesando XML '{task.datos}': {e}")
+            try:
+                with open(file_path, 'r') as f:
+                    records = [line.strip() for line in f if line.strip()]
+            except:
+                pass
+
+    return list(set(records))
 
 def main():
     """
@@ -42,47 +100,37 @@ def main():
     """
     app = create_app()
 
-    # 1. Verificar/Generar LOCK
     if os.path.exists(LOCK_FILE):
         if not handle_stale_lock(app):
             print(f"⚠️ Proceso ya en ejecución o lock activo ({LOCK_FILE}). Abortando.")
             return
         else:
-            # Si el lock es stale, lo eliminamos para permitir ejecución
             os.remove(LOCK_FILE)
 
     try:
-        # Crear lock
         with open(LOCK_FILE, "w") as f:
             f.write(str(os.getpid()))
         print(f"🔒 Lock file creado (PID: {os.getpid()})")
 
-        # 2. Inicializar App Context
-        app = create_app()
         with app.app_context():
             print(f"🔍 Buscando tareas (Pendientes/Programadas) - {datetime.datetime.now()}")
-            
-            # Revisar si hay tareas pendientes o programadas (Top 5 por antigüedad)
             tasks = PSX5KTask.query.filter(
                 PSX5KTask.estado.in_(['Pendiente', 'Programada'])
             ).order_by(PSX5KTask.created_at.asc()).limit(5).all()
 
             if not tasks:
                 print("📭 No hay tareas por procesar.")
-                return # El bloque finally se encargará del lock
+                return
 
             print(f"🎯 Encontradas {len(tasks)} tareas para procesar.")
             
-            # 3. Flujo de procesamiento
             for idx, task in enumerate(tasks):
                 print(f"⚙️ Iniciando Ejecución [{idx+1}/5]: Tarea ID {task.id} (Tarea: {task.tarea})")
                 
-                # Actualizar estado inicial
                 task.estado = 'Ejecutando'
                 task.fecha_inicio = datetime.datetime.now()
                 db.session.commit()
 
-                # Notificar inicio
                 admin = User.query.filter_by(role='administrador').first()
                 if admin and admin.email:
                     send_notification_by_slug(
@@ -91,8 +139,28 @@ def main():
                         context={'usuario': task.usuario, 'hora': task.fecha_inicio.strftime('%Y-%m-%d %H:%M:%S')}
                     )
 
-                # Placeholder para la lógica operativa real
-                time.sleep(3) 
+                # --- PROCESAMIENTO DE DATOS ---
+                ani_list = process_task_data(task)
+                total_count = len(ani_list)
+                
+                detail = PSX5KDetail.query.get(task.id)
+                if not detail:
+                    detail = PSX5KDetail(id=task.id)
+                    db.session.add(detail)
+                
+                detail.total = total_count
+                db.session.commit()
+                
+                print(f"📊 Tarea {task.id}: {total_count} registros identificados.")
+                
+                if total_count == 0:
+                    print(f"⚠️ Tarea {task.id} abortada: No se encontraron registros válidos.")
+                    task.estado = 'Error'
+                    db.session.commit()
+                    continue
+                
+                # Siguiente paso del flujo (Simulación por ahora)
+                time.sleep(2)
 
             print("✅ Bloque de tareas finalizado.")
 
@@ -102,8 +170,6 @@ def main():
         cleanup_lock()
 
 if __name__ == "__main__":
-    # Registrar señales para limpieza forzada
     signal.signal(signal.SIGINT, lambda s, f: sys.exit(0))
     signal.signal(signal.SIGTERM, lambda s, f: sys.exit(0))
-    
     main()
