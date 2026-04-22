@@ -159,6 +159,10 @@ def main():
                     db.session.commit()
                     continue
                 
+                ####### INICIO SCRIPT #########
+                # Aquí se ejecutará la lógica de negocio final
+                ####### FIN SCRIPT #########
+
                 # Siguiente paso del flujo (Simulación por ahora)
                 time.sleep(2)
 
