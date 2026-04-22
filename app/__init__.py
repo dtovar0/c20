@@ -27,6 +27,12 @@ def create_app():
     
     app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    
+    # Prevención de pérdida de conexión (Recomendado para MySQL)
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+        "pool_pre_ping": True,
+        "pool_recycle": 3600,
+    }
 
     # Inicializar Extensiones
     Compress(app)
