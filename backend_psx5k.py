@@ -73,12 +73,28 @@ def main():
 
             print(f"🎯 Encontradas {len(tasks)} tareas para procesar.")
             
-            # 3. Flujo de procesamiento (Placeholder para las instrucciones del usuario)
+            # 3. Flujo de procesamiento
             for idx, task in enumerate(tasks):
-                print(f"⚙️ Procesando Top [{idx+1}/5]: Tarea ID {task.id} ({task.accion})")
-                # Aquí irá la lógica de flujo que definas
-                # Por ahora simulamos espera
-                time.sleep(2)
+                print(f"⚙️ Iniciando Ejecución [{idx+1}/5]: Tarea ID {task.id}")
+                
+                # Actualizar estado inicial
+                task.estado = 'Ejecutando'
+                task.fecha_inicio = datetime.datetime.now()
+                db.session.commit()
+
+                # Notificar inicio
+                admin = User.query.filter_by(role='administrador').first()
+                if admin and admin.email:
+                    send_notification_by_slug(
+                        slug='inicio',
+                        target_email=admin.email,
+                        context={'usuario': task.usuario, 'hora': task.fecha_inicio.strftime('%Y-%m-%d %H:%M:%S')}
+                    )
+
+                # Placeholder para la lógica operativa real
+                time.sleep(3) 
+
+            print("✅ Bloque de tareas finalizado.")
 
     except Exception as e:
         print(f"❌ Error crítico en el backend: {str(e)}")
