@@ -20,8 +20,8 @@ Backend + Base de Datos
 
 ## Módulo: PSX5K
 ### Regla: Registro de Operaciones
-Todas las acciones de agregado/eliminado de tareas en el terminal PSX5K deben quedar registradas con su estado (Ejecutando, Programada, Terminada) y marcas de tiempo precisas para auditoría.
+Todas las acciones de agregado/eliminado de tareas en el terminal PSX5K deben quedar registradas con su estado (Ejecutando, Programada, Terminada) y marcas de tiempo precisas para trazabilidad del proceso.
 ### Ejemplo
 Al programar una eliminación de lote, se crea un registro con estado 'Programada'. Al finalizar, el motor actualiza a 'Terminada' y estampa la 'Fecha Fin'.
 ### Impacto
-Operación + Auditoría
+Operación PSX5K
