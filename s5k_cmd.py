@@ -115,14 +115,3 @@ def s5k_cmd(line_task, line_number, line_type=None, routing_label=None, force=Fa
         print(f"\n❌ Error Crítico: {str(e)}")
 
     return stats
-
-if __name__ == "__main__":
-    # Bloque de prueba rápida
-    print("--- INICIO VALIDACIÓN STANDALONE ---")
-    test_anis = ["8147777000"]
-    # Prueba con force=True para validar la nueva lógica
-    res = s5k_cmd('add', test_anis, 'call_in', force=True)
-    print("\n--- RESUMEN FINAL ---")
-    print(f"Total: {res['total']} | OK: {res['ok']} | DUP: {res['dup']} | FAIL: {res['fail']}")
-    for log in res['logs']:
-        print(log)
