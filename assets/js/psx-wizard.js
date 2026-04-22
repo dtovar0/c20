@@ -605,11 +605,16 @@ function triggerScheduleShake() {
 
 function updateScheduleUI() {
     // Hide all steps
-    const steps = ['scheduleStep1', 'scheduleStep2', 'scheduleStep3', 'scheduleStep4'];
-    steps.forEach((id, idx) => {
-        const el = document.getElementById(id);
-        if (el) el.style.display = (idx + 1 === currentScheduleStep) ? 'flex' : 'none';
+    document.querySelectorAll('#scheduleWizardModal .step-content').forEach(step => {
+        step.style.display = 'none';
+        step.classList.add('hidden');
     });
+
+    const currentEl = document.getElementById(`scheduleStep${currentScheduleStep}`);
+    if (currentEl) {
+        currentEl.style.display = 'flex';
+        currentEl.classList.remove('hidden');
+    }
 
     const activeBtn = Array.from(document.querySelectorAll('.schedule-op-btn')).find(b => b.classList.contains('active'));
     const isEliminar = activeBtn && activeBtn.innerText.includes('Eliminar');
