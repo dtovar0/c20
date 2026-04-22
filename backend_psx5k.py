@@ -135,23 +135,30 @@ def main():
                 detail = PSX5KDetail.query.get(task.id) or PSX5KDetail(id=task.id)
                 detail.total = len(ani_list)
                 db.session.add(detail)
-                db.session.commit()
-
                 if detail.total == 0:
+                    print(f"⚠️ Tarea {task.id} abortada: No se encontraron registros válidos.")
                     task.estado = 'Error'
                     db.session.commit()
+                    add_audit_log("tarea terminada", status="error", detail=f"ID: {task.id} - Abortada: Sin registros válidos", user_override=task.usuario)
                     continue
 
                 # Ejecutar comando PSX
-                from psx5k_cmd import psx5k_cmd
-                results = psx5k_cmd(
-                    line_task=task.tarea, 
-                    line_number=ani_list,
-                    line_type=task.accion_tipo,
-                    routing_label=task.routing_label,
-                    force=task.force
-                )
-                
+                try:
+                    from psx5k_cmd import psx5k_cmd
+                    results = psx5k_cmd(
+                        line_task=task.tarea, 
+                        line_number=ani_list,
+                        line_type=task.accion_tipo,
+                        routing_label=task.routing_label,
+                        force=task.force
+                    )
+                except Exception as task_err:
+                    print(f"❌ Error ejecutando Tarea ID {task.id}: {task_err}")
+                    task.estado = 'Error'
+                    db.session.commit()
+                    add_audit_log("tarea terminada", status="error", detail=f"ID: {task.id} - Fallo Técnico: {str(task_err)[:100]}", user_override=task.usuario)
+                    continue
+               
                 # Resultados
                 detail.ok = results.get("ok", 0) + results.get("dup", 0)
                 detail.fail = results.get("fail", 0)

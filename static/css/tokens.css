@@ -5,159 +5,232 @@ html, body {
   padding: 0;
 }
 
-:root {
-  /* Core Palette (Cyber Blue Theme) */
-  --color-primary: 0 149 255;     /* Vibrant Cyber Blue */
-  --color-secondary: 100 116 139; /* #64748b - Slate */
-  --color-accent: 139 92 246;     /* #8b5cf6 - Violet */
-  --color-success: 16 185 129;    /* #10b981 - Emerald */
-  --color-accent-peach: 251 167 114; /* #fba772 - Peach */
-  --color-accent-violet: 139 92 246;  /* #8b5cf6 - Violet */
-  --color-accent-sky: 14 165 233;     /* #0ea5e9 - Sky */
+/*
+ * ╔══════════════════════════════════════════════════════════════╗
+ * ║         NEXUS DESIGN TOKENS — v2.0 "Deep Sapphire"          ║
+ * ║                                                              ║
+ * ║  Filosofía colorimétrica:                                    ║
+ * ║  • Paleta análoga: Azul-Zafiro → Índigo → Cian              ║
+ * ║  • Acento complementario: Ámbar cálido (60° opuesto)        ║
+ * ║  • Modo claro: fondo blanco cálido, no frío                 ║
+ * ║  • Modo oscuro: profundidad real, no negro plano            ║
+ * ║  • Contraste WCAG AA garantizado en todos los textos        ║
+ * ╚══════════════════════════════════════════════════════════════╝
+*/
 
-  /* Structural Tokens */
-  --color-kpi-highlight: var(--color-accent-peach);
-  --color-body-bg: #f8fafc;
-  --color-body-text: #1e293b;
-  --color-header-bg: #4f46e5;    /* indigo-600 */
+:root {
+  /* ─────────────────────────────────────────────
+     PALETA BASE — Referencia tonal global
+     Basada en el modelo HSL con rotación armónica
+  ───────────────────────────────────────────── */
+
+  /* Azul Zafiro — Color primario (219°, 92%, 50%) */
+  --color-primary: 37 99 235;          /* #2563eb — Blue-600  */
+
+  /* Índigo profundo — Color de header/brand */
+  --color-brand: 67 56 202;            /* #4338ca — Indigo-700 */
+
+  /* Cian eléctrico — Acento frío (análogo a primary) */
+  --color-accent-sky: 6 182 212;       /* #06b6d4 — Cyan-500   */
+
+  /* Violeta — Acento análogo */
+  --color-accent-violet: 124 58 237;   /* #7c3aed — Violet-600 */
+
+  /* Ámbar — Acento cálido complementario (KPI/highlight) */
+  --color-accent-peach: 245 158 11;    /* #f59e0b — Amber-500  */
+
+  /* Esmeralda — Estado positivo */
+  --color-success: 5 150 105;          /* #059669 — Emerald-600 */
+
+  /* Pizarra — Secundario neutro */
+  --color-secondary: 100 116 139;      /* #64748b — Slate-500  */
+
+  /* Acento general (violeta) */
+  --color-accent: 124 58 237;          /* #7c3aed — Violet-600 */
+
+
+  /* ─────────────────────────────────────────────
+     MODO CLARO — Superficie y tipografía
+     Warmth bias: blanco ligeramente azulado,
+     sombras con tinte brand suave
+  ───────────────────────────────────────────── */
+
+  --color-body-bg: #f0f6ff;            /* Azul-blanco suave, no estéril */
+  --color-body-text: #0f172a;          /* Slate-950: máximo contraste */
+
+  --color-header-bg: #2563eb;          /* Blue-600: coherente con primario */
   --color-header-text: #ffffff;
 
-  /* Button Tokens (Cohesive with Primary) */
+  --color-panel-fill: 255 255 255;
+  --color-panel-border: 219 234 254;   /* Blue-100: borde con tinte primario */
+  --color-panel-shadow: 37 99 235 / 0.07;
+
+  --color-surface-container-bg: 239 246 255;   /* Blue-50 */
+  --color-surface-container-border: 219 234 254;
+
+  --color-audit-body: 241 245 249;
+  --color-audit-body-alpha: 0.6;
+
+
+  /* ─────────────────────────────────────────────
+     BOTONES
+  ───────────────────────────────────────────── */
   --color-button-bg: var(--color-primary);
   --color-button-text: 255 255 255;
   --color-button-disabled-bg: 203 213 225;
-  --color-button-disabled-text: 100 116 139;
+  --color-button-disabled-text: 148 163 184;
 
-  /* Tab Tokens (Light Mode optimized) */
-  --color-tab-bar-bg: 226 232 240;       /* Raíl de fondo */
+
+  /* ─────────────────────────────────────────────
+     TABS
+  ───────────────────────────────────────────── */
+  --color-tab-bar-bg: 219 234 254;     /* Blue-100 */
   --color-tab-active-bg: var(--color-primary);
   --color-tab-active-text: 255 255 255;
-  --color-tab-inactive-bg: 195 205 215;
-  --color-tab-inactive-text: 15 23 42;   /* Slate-800: Sólido */
+  --color-tab-inactive-bg: 196 219 254;        /* Blue-200 */
+  --color-tab-inactive-text: 30 64 175;        /* Blue-800: contraste WCAG AA */
 
-  /* Panel & Surface System */
-  --color-panel-fill: 255 255 255;
-  --color-panel-border: 226 232 240;
-  --color-panel-shadow: 15 23 42 / 0.05;
-  --color-surface-container-bg: 248 250 252;
-  --color-surface-container-border: 226 232 240;
-  --color-audit-body: 241 245 249;
-  --color-audit-body-alpha: 0.5;
 
-  /* BI Card Analytics Tokens (Light) */
-  --color-bi-card-logistics: 92 124 148;
-  --color-bi-ring-bg: 241 245 249;
-  --color-bi-text-main: 30 41 59;   /* slate-800 */
-  --color-bi-text-muted: 100 116 139; /* slate-500 */
+  /* ─────────────────────────────────────────────
+     BI / ANALYTICS
+  ───────────────────────────────────────────── */
+  --color-bi-card-logistics: 71 85 105;
+  --color-bi-ring-bg: 239 246 255;
+  --color-bi-text-main: 15 23 42;
+  --color-bi-text-muted: 100 116 139;
+  --color-kpi-highlight: var(--color-accent-peach);
 
-  /* Input Tokens (Soft & professional) */
-  --color-input-bg: 248 250 252;
-  --color-input-text: #1e293b;
-  --color-input-border: 226 232 240;
+
+  /* ─────────────────────────────────────────────
+     INPUTS
+  ───────────────────────────────────────────── */
+  --color-input-bg: 255 255 255;
+  --color-input-text: #0f172a;
+  --color-input-border: 196 219 254;   /* Blue-200 */
   --color-input-focus: var(--color-primary);
+  --color-label-text: 51 65 85;        /* Slate-700: contraste AA */
 
-  /* Label Tokens */
-  --color-label-text: 71 85 105;
 
-  /* Spacing & Curvature */
+  /* ─────────────────────────────────────────────
+     NOTIFICACIONES
+  ───────────────────────────────────────────── */
+  --color-ntf-panel-bg: 239 246 255;
+  --color-ntf-card-bg: 255 255 255;
+  --color-ntf-card-border: 219 234 254;
+  --color-ntf-editor-bg: 255 255 255;
+  --color-ntf-editor-border: 219 234 254;
+  --color-ntf-editor-header-bg: 239 246 255;
+  --color-ntf-editor-input-bg: 255 255 255;
+  --color-ntf-preview-card: 255 255 255;
+  --color-ntf-text-editor: 15 23 42;
+  --color-ntf-text-subject: 37 99 235;
+  --color-ntf-border: 37 99 235 / 0.12;
+  --color-status-active: 37 99 235;
+
+
+  /* ─────────────────────────────────────────────
+     SPACING & CURVATURE
+  ───────────────────────────────────────────── */
   --space-1: 4px;
-  --radius-base: 12px;
-
-  /* Notification Module Tokens */
-  --color-ntf-panel-bg: 248 250 252;     /* Fondo de sección en Light */
-  --color-ntf-card-bg: 255 255 255;      /* Cartas de librería */
-  --color-ntf-card-border: 226 232 240;
-  --color-ntf-editor-bg: 255 255 255;    /* Fondo del editor */
-  --color-ntf-editor-border: 226 232 240;
-  --color-ntf-editor-header-bg: 241 245 249; /* Gris muy tenue en Light */
-  --color-ntf-editor-input-bg: 255 255 255;  /* Blanco puro en Light */
-  --color-ntf-preview-card: 255 255 255; /* Tarjeta de previsualización */
-  --color-ntf-text-editor: 15 23 42;     /* Indigo profundo en Light */
-  --color-ntf-text-subject: 59 130 246;  /* Azul primario vibrante */
-  --color-ntf-border: 59 130 246 / 0.1;
-  --color-status-active: 59 130 246;
+  --radius-base: 10px;
+  --radius-panel: 14px;
 }
 
-/* Dark Mode Transition */
+
+/* ══════════════════════════════════════════════════════════════
+   MODO OSCURO — "Midnight Ocean"
+   Filosofía: azul marino profundo, no negro plano.
+   Cada nivel de superficie +8% luminosidad relativa.
+══════════════════════════════════════════════════════════════ */
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-ntf-panel-bg: 2 6 23;      /* SLATE-950 en Dark Mode */
-    --color-status-active: 16 185 129;  /* EMERALD en Dark Mode */
-    --color-body-bg: #0f172a;
-    --color-body-text: #f1f5f9;
-    --color-header-bg: #4338ca;
-    
-    --color-panel-fill: 30 41 59;
-    --color-panel-border: 51 65 85;
+    --color-body-bg: #060d1f;
+    --color-body-text: #e2e8f4;
+
+    --color-header-bg: #1e3a8a;
+    --color-header-text: #e2e8f4;
+
+    --color-panel-fill: 13 27 62;
+    --color-panel-border: 37 99 235 / 0.18;
     --color-panel-shadow: 0 0 0 / 0;
 
-    --color-tab-bar-bg: 15 22 36;
-    --color-tab-inactive-bg: 71 85 105 / 0.25; /* Gris sutil para que sobresalga */
-    --color-tab-inactive-text: 226 232 240;    /* Slate-400 para equilibrio */
+    --color-surface-container-bg: 17 35 80;
+    --color-surface-container-border: 37 99 235 / 0.15;
 
-    --color-bi-card-logistics: 71 85 105;
-    --color-bi-ring-bg: 15 23 42;
-    --color-bi-text-main: 241 245 249;
+    --color-audit-body: 10 20 48;
+    --color-audit-body-alpha: 0.4;
+
+    --color-tab-bar-bg: 10 20 50;
+    --color-tab-inactive-bg: 30 58 138 / 0.3;
+    --color-tab-inactive-text: 147 197 253;
+
+    --color-bi-card-logistics: 100 116 139;
+    --color-bi-ring-bg: 10 20 48;
+    --color-bi-text-main: 226 232 244;
     --color-bi-text-muted: 148 163 184;
 
-    --color-input-bg: 15 23 42;
-    --color-input-text: #f1f5f9;
-    --color-input-border: 51 65 85;
-    
-    --color-surface-container-bg: 15 23 42;
-    --color-surface-container-border: 51 65 85;
-    --color-label-text: 148 163 184;
-    --color-audit-body: 15 23 42;
-    --color-audit-body-alpha: 0.3;
+    --color-input-bg: 10 20 48;
+    --color-input-text: #e2e8f4;
+    --color-input-border: 37 99 235 / 0.25;
+    --color-label-text: 147 197 253;
 
-    /* Notification Dark Overrides */
-    --color-ntf-panel-bg: 2 6 23;
-    --color-ntf-card-bg: 30 41 59 / 0.4;
-    --color-ntf-card-border: 255 255 255 / 0.05;
-    --color-ntf-editor-bg: 15 23 42;
-    --color-ntf-editor-header-bg: 0 0 0 / 0.4;
+    --color-ntf-panel-bg: 6 13 31;
+    --color-ntf-card-bg: 13 27 62 / 0.5;
+    --color-ntf-card-border: 255 255 255 / 0.06;
+    --color-ntf-editor-bg: 10 20 48;
+    --color-ntf-editor-header-bg: 0 0 0 / 0.35;
     --color-ntf-editor-input-bg: 0 0 0 / 0.2;
-    --color-ntf-editor-border: 255 255 255 / 0.05;
-    --color-ntf-preview-card: 15 23 42;
-    --color-ntf-text-editor: 56 189 248;  /* Sky-400 */
-    --color-ntf-text-subject: 125 211 252; /* Sky-300 */
-    --color-status-active: 16 185 129;
+    --color-ntf-editor-border: 255 255 255 / 0.06;
+    --color-ntf-preview-card: 10 20 48;
+    --color-ntf-text-editor: 96 165 250;
+    --color-ntf-text-subject: 147 197 253;
+    --color-status-active: 52 211 153;
   }
 }
 
-/* Force Dark Class Support */
-html.dark {
-    --color-ntf-panel-bg: 2 6 23;
-    --color-status-active: 16 185 129;
-    --color-body-bg: #0f172a;
-    --color-body-text: #f1f5f9;
-    --color-header-bg: #4338ca;
-    --color-panel-fill: 30 41 59;
-    --color-panel-border: 51 65 85;
-    --color-bi-card-logistics: 71 85 105;
-    --color-bi-ring-bg: 15 23 42;
-    --color-bi-text-main: 241 245 249;
-    --color-bi-text-muted: 148 163 184;
-    --color-input-bg: 15 23 42;
-    --color-input-text: #f1f5f9;
-    --color-input-border: 51 65 85;
-    --color-surface-container-bg: 15 23 42;
-    --color-label-text: 148 163 184;
-    --color-audit-body: 15 23 42;
-    --color-audit-body-alpha: 0.3;
-    --color-tab-bar-bg: 15 22 36;
-    --color-tab-inactive-bg: 71 85 105 / 0.25;
-    --color-tab-inactive-text: 226 232 240;
 
-    /* Notification Dark Overrides */
-    --color-ntf-panel-bg: 2 6 23;
-    --color-ntf-card-bg: 30 41 59 / 0.4;
-    --color-ntf-card-border: 255 255 255 / 0.05;
-    --color-ntf-editor-bg: 15 23 42;
-    --color-ntf-editor-header-bg: 0 0 0 / 0.4;
-    --color-ntf-editor-input-bg: 0 0 0 / 0.2;
-    --color-ntf-editor-border: 255 255 255 / 0.05;
-    --color-ntf-preview-card: 15 23 42;
-    --color-ntf-text-editor: 56 189 248;
-    --color-ntf-text-subject: 125 211 252;
+/* ══════════════════════════════════════════════════════════════
+   CLASE .dark — Mirror del media query para control JS
+══════════════════════════════════════════════════════════════ */
+html.dark {
+  --color-body-bg: #060d1f;
+  --color-body-text: #e2e8f4;
+  --color-header-bg: #1e3a8a;
+  --color-header-text: #e2e8f4;
+
+  --color-panel-fill: 13 27 62;
+  --color-panel-border: 37 99 235 / 0.18;
+  --color-panel-shadow: 0 0 0 / 0;
+
+  --color-surface-container-bg: 17 35 80;
+  --color-surface-container-border: 37 99 235 / 0.15;
+
+  --color-audit-body: 10 20 48;
+  --color-audit-body-alpha: 0.4;
+
+  --color-tab-bar-bg: 10 20 50;
+  --color-tab-inactive-bg: 30 58 138 / 0.3;
+  --color-tab-inactive-text: 147 197 253;
+
+  --color-bi-card-logistics: 100 116 139;
+  --color-bi-ring-bg: 10 20 48;
+  --color-bi-text-main: 226 232 244;
+  --color-bi-text-muted: 148 163 184;
+
+  --color-input-bg: 10 20 48;
+  --color-input-text: #e2e8f4;
+  --color-input-border: 37 99 235 / 0.25;
+  --color-label-text: 147 197 253;
+
+  --color-ntf-panel-bg: 6 13 31;
+  --color-ntf-card-bg: 13 27 62 / 0.5;
+  --color-ntf-card-border: 255 255 255 / 0.06;
+  --color-ntf-editor-bg: 10 20 48;
+  --color-ntf-editor-header-bg: 0 0 0 / 0.35;
+  --color-ntf-editor-input-bg: 0 0 0 / 0.2;
+  --color-ntf-editor-border: 255 255 255 / 0.06;
+  --color-ntf-preview-card: 10 20 48;
+  --color-ntf-text-editor: 96 165 250;
+  --color-ntf-text-subject: 147 197 253;
+  --color-status-active: 52 211 153;
 }
