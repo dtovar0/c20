@@ -201,7 +201,7 @@
                     <div id="opConfigSection" class="space-y-6">
                         <div>
                             <label class="nx-label-strip mb-3 block">Modo de Cliente</label>
-                            <select id="clientModeSelect" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl px-5 py-4 text-sm font-bold text-input outline-none focus:border-input-focus transition-all">
+                            <select id="clientModeSelect" onchange="handleRoutingLabelState()" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl px-5 py-4 text-sm font-bold text-input outline-none focus:border-input-focus transition-all">
                                 <option value="calls_only">Cliente solo hace llamadas</option>
                                 <option value="both">Cliente hace y recibe llamadas</option>
                             </select>
