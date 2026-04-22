@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Premium | Detalle de Operación PSX5K</title>
+    
+    <!-- Design Tokens & Tailwind -->
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/static/css/tokens.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        :root {
+            --cyber-blue: #0ea5e9;
+            --cyber-violet: #8b5cf6;
+            --cyber-emerald: #10b981;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #020617 0%, #0f172a 100%);
+            color: #f1f5f9;
+            font-family: 'Inter', sans-serif;
+            min-height: 100-vh;
+            overflow-x: hidden;
+        }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .cyber-grid {
+            mask-image: radial-gradient(circle at center, black, transparent 80%);
+            background-image: linear-gradient(rgba(14, 165, 233, 0.05) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(14, 165, 233, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        .gradient-text {
+            background: linear-gradient(to right, var(--cyber-blue), var(--cyber-violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 99px;
+            font-size: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .status-ejecutando { background: rgba(14, 165, 233, 0.1); color: var(--cyber-blue); border: 1px solid rgba(14, 165, 233, 0.2); }
+        .status-programada { background: rgba(139, 92, 246, 0.1); color: var(--cyber-violet); border: 1px solid rgba(139, 92, 246, 0.2); }
+        .status-terminada { background: rgba(16, 185, 129, 0.1); color: var(--cyber-emerald); border: 1px solid rgba(16, 185, 129, 0.2); }
+    </style>
+</head>
+<body class="p-4 md:p-12 flex flex-col items-center justify-center relative">
+    <!-- Decore background -->
+    <div class="fixed inset-0 cyber-grid pointer-events-none"></div>
+    <div class="fixed top-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/10 blur-[120px] rounded-full pointer-events-none"></div>
+    <div class="fixed bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-violet-500/10 blur-[120px] rounded-full pointer-events-none"></div>
+
+    <div class="w-full max-w-4xl relative z-10">
+        <!-- HEADER -->
+        <header class="mb-12 text-center md:text-left flex flex-col md:flex-row items-center justify-between gap-6">
+            <div>
+                <div class="flex items-center gap-3 mb-2 justify-center md:justify-start">
+                    <span class="w-10 h-[2px] bg-sky-500"></span>
+                    <span class="text-[10px] font-black uppercase tracking-[0.5em] text-sky-400/60">Operación PSX5K-CORE</span>
+                </div>
+                <h1 class="text-4xl md:text-6xl font-black gradient-text tracking-tighter">Detalle de Proceso</h1>
+            </div>
+            
+            <div class="flex flex-col items-end gap-2">
+                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">ID de Referencia</span>
+                <div class="px-6 py-2 bg-slate-900 border border-white/5 rounded-2xl text-xl font-mono text-white/90">
+                    #{{ task.id|string|zfill(6) }}
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN CONTENT CARD -->
+        <main class="glass-panel rounded-[2.5rem] p-8 md:p-12 relative overflow-hidden">
+            <!-- Decorative circle -->
+            <div class="absolute -top-12 -right-12 w-48 h-48 bg-white/5 rounded-full blur-3xl"></div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 relative">
+                
+                <!-- Info Column -->
+                <div class="space-y-10">
+                    <!-- Usuario Card -->
+                    <section>
+                        <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-3 block">Operador Responsable</label>
+                        <div class="flex items-center gap-4">
+                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-sky-500 to-indigo-600 flex items-center justify-center text-2xl font-black text-white shadow-lg shadow-sky-500/20">
+                                {{ task.usuario[0]|upper }}
+                            </div>
+                            <div>
+                                <p class="text-xl font-bold text-white">{{ task.usuario }}</p>
+                                <p class="text-[10px] font-bold text-sky-500/60 uppercase tracking-widest">Identity Verified</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Accion & Estado -->
+                    <div class="flex gap-12">
+                        <section>
+                            <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-3 block">Acción</label>
+                            <span class="text-2xl font-black uppercase {{ 'text-rose-500' if task.accion == 'delete' else 'text-emerald-500' }}">
+                                {{ task.accion }}
+                            </span>
+                        </section>
+                        <section>
+                            <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-3 block">Estado Actual</label>
+                            <span class="status-badge status-{{ task.estado|lower }}">
+                                ● {{ task.estado }}
+                            </span>
+                        </section>
+                    </div>
+
+                    <!-- Timestamps -->
+                    <div class="space-y-6 pt-6 border-t border-white/5">
+                        <div class="flex justify-between items-center">
+                            <span class="text-[10px] font-bold text-slate-500 uppercase">Fecha Inicio</span>
+                            <span class="font-mono text-sm text-sky-400/80">{{ task.fecha_inicio.strftime('%Y-%m-%d %H:%M:%S') if task.fecha_inicio else '---' }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-[10px] font-bold text-slate-500 uppercase">Fecha Fin</span>
+                            <span class="font-mono text-sm text-violet-400/80">{{ task.fecha_fin.strftime('%Y-%m-%d %H:%M:%S') if task.fecha_fin else 'PENDIENTE' }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-[10px] font-bold text-slate-500 uppercase">Registro Logs</span>
+                            <span class="font-mono text-sm text-slate-400">{{ task.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Column -->
+                <div class="flex flex-col h-full">
+                    <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-3 block">Metadata del Proceso</label>
+                    <div class="flex-grow bg-black/40 border border-white/5 rounded-[1.5rem] p-6 font-mono text-[11px] text-sky-300/70 leading-relaxed overflow-y-auto max-h-[300px] custom-scrollbar">
+                        {% if task.datos %}
+                            {{ task.datos }}
+                        {% else %}
+                            <div class="opacity-30 italic">No se han registrado metadatos adicionales para esta operación.</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mt-6 p-4 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center gap-4">
+                        <svg class="w-6 h-6 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        <p class="text-[9px] font-bold text-orange-500/80 uppercase leading-tight">Esta información es confidencial. El acceso ha sido registrado bajo el protocolo de seguridad Nexus-Core.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- FOOTER / NAV -->
+        <footer class="mt-12 flex flex-col md:flex-row items-center justify-between gap-6 opacity-40 hover:opacity-100 transition-opacity">
+            <p class="text-[10px] font-bold uppercase tracking-[0.3em]">&copy; 2026 Nexus Group | PSX5K Terminal Services</p>
+            <div class="flex gap-4">
+                <button onclick="window.print()" class="text-[10px] font-black uppercase tracking-widest px-6 py-2 border border-white/10 rounded-xl hover:bg-white/5 transition-all">Exportar PDF</button>
+                <button onclick="window.close()" class="text-[10px] font-black uppercase tracking-widest px-6 py-2 bg-white/5 rounded-xl hover:bg-white/10 transition-all">Cerrar Sesión Visual</button>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

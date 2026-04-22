@@ -1,6 +1,6 @@
-from flask import Blueprint, request, jsonify
-from flask_login import current_user
-from werkzeug.utils import secure_filename
+from flask import Blueprint, request, jsonify, render_template
+from flask_login import current_user, login_required
+from .models import PSX5K
 import os
 import datetime
 
@@ -9,6 +9,15 @@ psx_bp = Blueprint('psx', __name__, url_prefix='/api/psx')
 # Configuración de carga
 UPLOAD_FOLDER = '/home/dtovar/bayblade/c20/uploads/psx5k'
 ALLOWED_EXTENSIONS = {'xml', 'csv', 'xls', 'xlsx'}
+
+@psx_bp.route('/detail/<int:task_id>')
+@login_required
+def task_detail(task_id):
+    """
+    Vista independiente para el detalle de una tarea PSX5K
+    """
+    task = PSX5K.query.get_or_404(task_id)
+    return render_template('psx_detail.html', task=task)
 
 def allowed_file(filename):
     return '.' in filename and \
