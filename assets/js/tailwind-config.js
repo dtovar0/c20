@@ -26,6 +26,7 @@ tailwind.config = {
                 'header-text': 'var(--color-header-text)',
                 'panel-fill': 'rgb(var(--color-panel-fill))',
                 'panel-border': 'rgb(var(--color-panel-border))',
+                'panel-header': 'rgb(var(--color-panel-header-bg))',
                 'audit-body': 'rgb(var(--color-audit-body))',
                 'surface-container': 'rgb(var(--color-surface-container-bg))',
                 'surface-container-border': 'rgb(var(--color-surface-container-border))',
