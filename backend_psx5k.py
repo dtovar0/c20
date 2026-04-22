@@ -154,7 +154,7 @@ def main():
                 
                 ####### INICIO SCRIPT #########
                 # Importar y ejecutar función validada desde archivo externo
-                from s5k_cmd import s5k_cmd
+                from psx5k_cmd import s5k_cmd
                 
                 # Mapear tipos de llamada para el script
                 type_map = {
