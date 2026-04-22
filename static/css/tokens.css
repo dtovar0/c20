@@ -66,10 +66,10 @@ html, body {
   /* Notification Module Tokens */
   --color-ntf-editor-bg: 2 6 23;        /* Slate-950 */
   --color-ntf-preview-card: 15 23 42;   /* Slate-900 */
-  --color-ntf-text-editor: 56 189 248;  /* Sky-400 */
-  --color-ntf-text-subject: 125 211 252; /* Sky-300 */
+  --color-ntf-text-editor: 0 0 0;       /* Black en Light Mode */
+  --color-ntf-text-subject: 0 0 0;      /* Black en Light Mode */
   --color-ntf-border: 59 130 246 / 0.2;
-  --color-status-active: 59 130 246;    /* BLUE en Light Mode */
+  --color-status-active: 0 0 0;         /* Black en Light Mode */
   --color-ntf-panel-bg: 241 245 249;   /* LIGHT GRAY en Light Mode */
 }
 
@@ -104,6 +104,11 @@ html, body {
     --color-label-text: 148 163 184;
     --color-audit-body: 15 23 42;
     --color-audit-body-alpha: 0.3;
+
+    /* Notification Dark Overrides */
+    --color-ntf-text-editor: 56 189 248;  /* Sky-400 */
+    --color-ntf-text-subject: 125 211 252; /* Sky-300 */
+    --color-status-active: 16 185 129;  /* EMERALD en Dark Mode */
   }
 }
 
@@ -130,4 +135,8 @@ html.dark {
     --color-tab-bar-bg: 15 22 36;
     --color-tab-inactive-bg: 71 85 105 / 0.25;
     --color-tab-inactive-text: 226 232 240;
+
+    /* Notification Dark Overrides */
+    --color-ntf-text-editor: 56 189 248;
+    --color-ntf-text-subject: 125 211 252;
 }
