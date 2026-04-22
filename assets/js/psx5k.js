@@ -57,7 +57,8 @@ function renderNexusTable() {
     pageData.forEach(row => {
         // Mapping backend states to frontend badges
         const statusBadge = row.estado === 'Ejecutando' ? 'badge-running' : 
-                          row.estado === 'Terminada' ? 'badge-finished' : 'badge-pending';
+                          row.estado === 'Terminada' ? 'badge-finished' : 
+                          row.estado === 'Programada' ? 'badge-scheduled' : 'badge-pending';
         
         const opBadge = row.accion === 'add' ? 'badge-op-add' : 'badge-op-delete';
         const opLabel = row.accion === 'add' ? 'AGREGAR' : 'BORRAR';

@@ -584,9 +584,15 @@ input[name="db_engine"]:checked + label .w-5.h-5 .bg-primary {
 
 /* Estados */
 .badge-pending {
-    background-color: rgba(245, 158, 11, 0.1);
-    color: #f59e0b;
-    border-color: rgba(245, 158, 11, 0.2);
+    background-color: rgba(148, 163, 184, 0.1);
+    color: #94a3b8;
+    border-color: rgba(148, 163, 184, 0.2);
+}
+
+.badge-scheduled {
+    background-color: rgba(139, 92, 246, 0.1);
+    color: #a78bfa;
+    border-color: rgba(139, 92, 246, 0.2);
 }
 
 .badge-running {
