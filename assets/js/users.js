@@ -127,7 +127,7 @@ function initUsersDataTable() {
         dom: 'rt',
         language: {
             zeroRecords: "No se encontraron usuarios",
-            info: "Mostrando _START_-_END_ de _TOTAL_ registros reales"
+            info: "Mostrando _START_-_END_ de _TOTAL_ registros"
         },
         drawCallback: function(settings) {
             updateUsersPagination(settings);
@@ -196,7 +196,7 @@ function updateUsersPagination(settings) {
     const btnPrev = document.getElementById('prevUsersPage');
     const btnNext = document.getElementById('nextUsersPage');
 
-    if (infoEl) infoEl.innerText = `Mostrando ${info.recordsDisplay > 0 ? info.start + 1 : 0}-${info.end} de ${info.recordsDisplay} registros reales`;
+    if (infoEl) infoEl.innerText = `Mostrando ${info.recordsDisplay > 0 ? info.start + 1 : 0}-${info.end} de ${info.recordsDisplay} registros`;
     
     if (btnPrev) btnPrev.disabled = info.page === 0;
     if (btnNext) btnNext.disabled = info.page >= info.pages - 1;
@@ -214,10 +214,6 @@ function renderGhostRows(settings, columns) {
     tbody.find('.dataTables_empty').closest('tr').remove();
 
     const rowsOnPage = info.end - info.start;
-    
-    // Disable ghost rows if we already have real data
-    if (rowsOnPage > 0) return;
-    
     // STRICT LIMIT: Always target 10 rows to match pagination exactly
     const targetTotal = 10;
     const ghostCount = targetTotal - rowsOnPage;

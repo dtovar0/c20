@@ -11,8 +11,8 @@
 {% block content %}
 <div id="authWrapper" class="w-full h-full flex flex-col animate-fade-in relative">
     <!-- Luxury Tabs Navigation -->
-    <div class="bg-tab-bar p-1.5 rounded-2xl mb-6 inline-flex border border-panel-border transition-all duration-300">
-        <div class="flex items-center gap-1">
+    <div class="relative backdrop-blur-lg transition-all duration-300 mb-2">
+        <div class="flex items-center p-2 gap-2">
             <!-- Local Users Tab (Active) -->
             <button onclick="switchTab('usuario')" id="tab-trigger-usuario" 
                 class="tab-trigger w-60 relative py-3.5 flex items-center justify-center gap-3 rounded-xl text-[10px] font-black uppercase tracking-[0.25em] transition-all duration-300 z-10 text-tab-active-text bg-tab-active shadow-xl shadow-tab-active/20 active:scale-95">
@@ -58,11 +58,11 @@
 
             <!-- PANEL BODY -->
             <main class="flex-grow px-4 pt-2 pb-1 flex flex-col overflow-hidden">
-                <div class="flex items-center justify-between mb-6 gap-6">
+                <div class="flex items-center justify-between mb-4 gap-2">
                     <div class="relative flex-grow max-w-md group">
+                        <svg class="w-4 h-4 absolute left-5 top-1/2 -translate-y-1/2 text-label/60 transition-all group-focus-within:text-primary group-focus-within:scale-110 z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         <input type="text" id="userSearch" placeholder="Buscar usuarios locales..." 
                             class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3 text-sm font-bold text-input outline-none transition-all focus:border-input-focus focus:ring-4 focus:ring-primary/10 placeholder:opacity-60">
-                        <svg class="w-4 h-4 absolute left-5 top-1/2 -translate-y-1/2 text-label/60 transition-all group-focus-within:text-primary group-focus-within:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></svg>
                     </div>
 
                     <div class="flex items-center gap-3">
