@@ -375,3 +375,54 @@ html:not(.dark) .modal-footer {
     max-height: 20px !important;
     stroke-width: 1.75 !important;
 }
+
+/* === TEMPLATE EDITOR COMPONENTS === */
+.chip-premium {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    font-size: 9px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-label);
+    opacity: 0.8;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+
+.chip-premium:hover {
+    background: rgba(99, 102, 241, 0.12);
+    border-color: rgba(99, 102, 241, 0.3);
+    color: rgb(var(--color-primary));
+    opacity: 1;
+    transform: translateY(-1.5px);
+    box-shadow: 0 4px 12px rgba(var(--color-primary), 0.1);
+}
+
+.chip-premium:active {
+    transform: scale(0.95) translateY(0);
+}
+
+#templateEditor::selection {
+    background: rgba(99, 102, 241, 0.3);
+    color: white;
+}
+
+/* Custom Scrollbar for Code Area */
+#templateEditor::-webkit-scrollbar {
+    width: 6px;
+}
+
+#templateEditor::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+#templateEditor::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.1);
+}

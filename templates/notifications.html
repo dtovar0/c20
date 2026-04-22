@@ -171,50 +171,207 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
-                    <button onclick="if(validateNexusForm('tab-panel-template')) showToast('Plantilla Actualizada', 'success')" class="nexus-btn-save">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
-                        Guardar
+                    <div class="h-8 w-px bg-panel-border mx-2"></div>
+                    <button onclick="resetTemplateToDefault()" class="px-4 py-2 text-[8px] font-black uppercase tracking-widest text-label/40 hover:text-primary transition-all">Restaurar Default</button>
+                    <button onclick="saveTemplate()" class="bg-primary hover:bg-primary-hover px-6 py-2 rounded-xl flex items-center gap-2.5 shadow-lg shadow-primary/20 active:scale-95 transition-all group">
+                        <svg class="w-3.5 h-3.5 text-white/90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                        <span class="text-[9px] font-black uppercase tracking-widest text-white">Guardar</span>
                     </button>
                 </div>
             </header>
-            <main class="flex-grow p-6 overflow-y-auto custom-scrollbar">
-                <div class="grid grid-cols-2 gap-6 h-full">
-                    <!-- Editor Panel -->
-                    <div class="bg-panel-fill border-2 border-dashed border-panel-border rounded-3xl p-8 flex flex-col">
-                        <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-4 px-1">Cuerpo del Mensaje</label>
-                        <textarea class="flex-grow w-full bg-input-bg border-2 border-panel-border rounded-2xl p-6 text-sm font-bold text-input outline-none transition-all focus:border-input-focus resize-none custom-scrollbar"
-                                  placeholder="Escribe la plantilla del mensaje... Usa variables como {user}, {event}, {time}">⚡ NEXUS ALERT
-Event: {event}
-User: {user}
-Time: {time}
-IP: {ip}</textarea>
-                        
-                        <div class="mt-6 grid grid-cols-3 gap-2">
-                             <button class="py-2 bg-surface-container border border-panel-border rounded-lg text-[8px] font-black uppercase text-label/40 hover:text-primary hover:border-primary transition-all">{user}</button>
-                             <button class="py-2 bg-surface-container border border-panel-border rounded-lg text-[8px] font-black uppercase text-label/40 hover:text-primary hover:border-primary transition-all">{event}</button>
-                             <button class="py-2 bg-surface-container border border-panel-border rounded-lg text-[8px] font-black uppercase text-label/40 hover:text-primary hover:border-primary transition-all">{time}</button>
+
+            <main class="flex-grow p-6 overflow-hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-[1fr_2fr_2fr] gap-6 h-full max-h-full">
+                    <!-- Column 1: Template Presets (20%) -->
+                    <div class="flex flex-col h-full min-h-0 overflow-hidden gap-4">
+                        <div class="flex flex-col flex-grow bg-slate-950/20 border-2 border-dashed border-panel-border rounded-[1.5rem] relative overflow-hidden">
+                            <div class="flex-grow overflow-y-auto custom-scrollbar p-5">
+                                <p class="text-[9px] font-black text-primary uppercase tracking-[0.25em] mb-4 italic">Librería de Plantillas</p>
+                                <div class="space-y-2">
+                                    <button onclick="loadTemplate('test')" class="chip-premium w-full justify-start py-3 group !border-primary/10">
+                                        <div class="w-6 h-6 rounded-lg bg-primary/10 flex items-center justify-center text-[10px] group-hover:bg-primary/20 transition-all">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                                        </div>
+                                        <span class="text-[10px] tracking-widest font-black uppercase ml-2">Test</span>
+                                    </button>
+                                    <button onclick="loadTemplate('inicio')" class="chip-premium w-full justify-start py-3 group">
+                                        <div class="w-6 h-6 rounded-lg bg-emerald-500/10 flex items-center justify-center text-[10px] group-hover:bg-emerald-500/20 transition-all text-emerald-500">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path></svg>
+                                        </div>
+                                        <span class="text-[10px] tracking-widest font-black uppercase ml-2">Inicio</span>
+                                    </button>
+                                    <button onclick="loadTemplate('error')" class="chip-premium w-full justify-start py-3 group">
+                                        <div class="w-6 h-6 rounded-lg bg-red-500/10 flex items-center justify-center text-[10px] group-hover:bg-red-500/20 transition-all text-red-500">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        </div>
+                                        <span class="text-[10px] tracking-widest font-black uppercase ml-2">Error</span>
+                                    </button>
+                                    <button onclick="loadTemplate('guardado')" class="chip-premium w-full justify-start py-3 group">
+                                        <div class="w-6 h-6 rounded-lg bg-amber-500/10 flex items-center justify-center text-[10px] group-hover:bg-amber-500/20 transition-all text-amber-500">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                                        </div>
+                                        <span class="text-[10px] tracking-widest font-black uppercase ml-2">Guardado</span>
+                                    </button>
+                                    <button onclick="loadTemplate('terminado')" class="chip-premium w-full justify-start py-3 group">
+                                        <div class="w-6 h-6 rounded-lg bg-blue-500/10 flex items-center justify-center text-[10px] group-hover:bg-blue-500/20 transition-all text-blue-500">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        </div>
+                                        <span class="text-[10px] tracking-widest font-black uppercase ml-2">Terminado</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer Fijo Col 1 -->
+                        <div class="h-24 p-4 bg-primary/5 border border-panel-border rounded-[1.5rem] flex-shrink-0">
+                            <span class="text-[8px] font-black text-primary uppercase tracking-widest block mb-1 italic">NEXUS_SYSTEM</span>
+                            <p class="text-[9px] text-label/40 font-bold leading-tight uppercase">Matriz de estados pre-configurada para alertas globales.</p>
                         </div>
                     </div>
 
-                    <!-- Live Preview Panel -->
-                    <div class="bg-panel-fill border-2 border-dashed border-panel-border rounded-3xl p-8 flex flex-col">
-                        <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-4 px-1">Vista Previa Real</label>
-                        <div class="flex-grow bg-surface-container rounded-2xl border border-surface-container-border p-6 flex flex-col relative overflow-hidden">
-                             <div class="flex items-center gap-3 mb-6">
-                                <div class="w-6 h-6 rounded-full bg-sky-500"></div>
-                                <span class="text-[10px] font-black text-label uppercase tracking-widest">Bot Nexus Agent</span>
-                             </div>
-                             <div class="bg-panel-fill rounded-xl p-4 border border-panel-border text-[11px] font-bold text-label/80 leading-relaxed font-mono">
-                                <span class="text-primary italic">⚡ NEXUS ALERT</span><br>
-                                Event: <span class="text-green-500">LOGIN_SUCCESS</span><br>
-                                User: DTOVAR<br>
-                                Time: 2026-04-17 18:25:01<br>
-                                IP: 192.168.1.1
-                             </div>
-                             <div class="mt-auto flex justify-between items-center opacity-30">
-                                <span class="text-[8px] font-bold uppercase">v2.0 Stable</span>
-                                <span class="text-[8px] font-bold uppercase">Encrypted</span>
-                             </div>
+                    <!-- Column 2: Nexus Code Editor (40%) -->
+                    <div class="flex flex-col h-full min-h-0 overflow-hidden gap-4">
+                        <div class="flex flex-col flex-grow bg-slate-950/40 border-2 border-dashed border-panel-border rounded-[1.5rem] group focus-within:border-primary/40 transition-all p-0 overflow-hidden min-h-0">
+                            <!-- Header -->
+                            <div class="flex items-center justify-between p-4 border-b border-panel-border/50 bg-black/20 flex-shrink-0">
+                                <label class="text-[10px] font-black text-label uppercase tracking-widest italic opacity-60">Editor de Variables Nexus</label>
+                                <div class="flex items-center gap-4">
+                                    <!-- MODO TOGGLE -->
+                                    <div class="flex items-center gap-2 px-2 py-1 bg-white/5 rounded-xl border border-white/10">
+                                        <span class="text-[7px] font-black uppercase text-label/40 tracking-widest">Contenido:</span>
+                                        <button onclick="toggleEditorMode()" id="editorModeBtn" class="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-primary/20 text-primary hover:bg-primary/30 transition-all border border-primary/20 cursor-pointer">
+                                            <span id="editorModeLabel" class="text-[8px] font-black uppercase tracking-tighter">TEXTO PLANO</span>
+                                        </button>
+                                    </div>
+
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                        <span class="text-[8px] font-black uppercase text-emerald-500 tracking-tighter">Sincronización Activa</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-col flex-grow bg-slate-900/10 overflow-hidden h-full min-h-0">
+                                <!-- SUBJECT EDITOR -->
+                                <div class="relative border-b border-white/10 bg-black/40 group/subject px-4 py-3">
+                                    <div class="flex items-center justify-between mb-1.5">
+                                        <label class="text-[8px] font-black text-primary uppercase tracking-[0.3em] italic opacity-80">Asunto del Mensaje</label>
+                                        <div class="w-1.5 h-1.5 rounded-full bg-primary/40"></div>
+                                    </div>
+                                    <div class="relative">
+                                        <div class="absolute left-0 top-1/2 -translate-y-1/2 w-6 flex items-center justify-center pointer-events-none opacity-20 group-focus-within/subject:opacity-60 transition-opacity">
+                                            <svg class="w-3.5 h-3.5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2v10a2 2 0 002 2z"></path></svg>
+                                        </div>
+                                        <input type="text" id="templateSubject" 
+                                            class="w-full bg-transparent pl-8 pr-4 py-1 text-[11px] font-mono font-bold text-sky-300 outline-none placeholder:text-white/10 uppercase tracking-widest"
+                                            placeholder="ASUNTO DEL MENSAJE..."
+                                            value="⚡ NEXUS ALERTA: {evento}"
+                                            oninput="syncPreview()">
+                                    </div>
+                                </div>
+
+                                <!-- BODY EDITOR -->
+                                <div class="relative flex-grow flex flex-col overflow-hidden min-h-0">
+                                    <div class="px-4 pt-3 flex items-center justify-between mb-1.5 border-t border-white/5 bg-black/20">
+                                        <label class="text-[8px] font-black text-primary uppercase tracking-[0.3em] italic opacity-80">Cuerpo del Mensaje</label>
+                                        <div class="flex gap-1">
+                                            <div class="w-1 h-1 rounded-full bg-sky-400/20"></div>
+                                            <div class="w-1 h-1 rounded-full bg-sky-400/20"></div>
+                                        </div>
+                                    </div>
+                                    <div class="relative flex-grow flex flex-col">
+                                        <!-- Line Numbers simulation -->
+                                        <div class="absolute left-0 top-0 bottom-0 w-10 bg-black/20 border-r border-white/5 flex flex-col items-center pt-5 select-none pointer-events-none">
+                                            <span class="text-[9px] font-mono text-white/10 mb-2">01</span>
+                                            <span class="text-[9px] font-mono text-white/10 mb-2">02</span>
+                                            <span class="text-[9px] font-mono text-white/10 mb-2">03</span>
+                                            <span class="text-[9px] font-mono text-white/10 mb-2">04</span>
+                                            <span class="text-[9px] font-mono text-white/10 mb-2">05</span>
+                                        </div>
+                                        
+                                        <textarea id="templateEditor" 
+                                            class="flex-grow w-full bg-transparent pl-14 pr-6 py-5 text-sm font-mono font-bold text-sky-400/90 outline-none resize-none custom-scrollbar leading-relaxed"
+                                            spellcheck="false"
+                                            oninput="syncPreview()">⚡ ALERTA NEXUS
+Evento: {evento}
+Usuario: {usuario}
+Hora: {hora}
+Estado: CRÍTICO</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer Fijo Col 2 -->
+                        <div class="h-24 p-4 bg-panel-border/5 border border-panel-border rounded-[1.5rem] flex-shrink-0 overflow-hidden">
+                            <p class="text-[8px] font-black text-label/40 uppercase tracking-[0.2em] mb-3 px-1 italic">Atajos Rápidos</p>
+                            <div class="flex flex-wrap gap-2">
+                                <button onclick="insertVariable('{usuario}')" class="chip-premium">👤 {usuario}</button>
+                                <button onclick="insertVariable('{evento}')" class="chip-premium"># {evento}</button>
+                                <button onclick="insertVariable('{hora}')" class="chip-premium">⏰ {hora}</button>
+                                <button onclick="insertVariable('{ip}')" class="chip-premium">🌐 {ip}</button>
+                                <button onclick="insertVariable('{correo}')" class="chip-premium">📧 {correo}</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Column 3: High-Fidelity Visualizer (40%) -->
+                    <div class="flex flex-col h-full min-h-0 overflow-hidden gap-4">
+                        <div class="flex flex-col flex-grow bg-slate-950/40 border-2 border-dashed border-panel-border rounded-[1.5rem] group transition-all p-0 overflow-hidden min-h-0">
+                            <!-- TECHNICAL HEADER -->
+                            <div class="flex items-center justify-between p-4 border-b border-panel-border/50 bg-black/20">
+                                <label class="text-[10px] font-black text-label uppercase tracking-widest italic opacity-60">Visualizador en Tiempo Real</label>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                    <span class="text-[8px] font-black uppercase text-emerald-500 tracking-tighter">Motor de Renderizado Activo</span>
+                                </div>
+                            </div>
+
+                            <!-- PREVIEW CONSOLE AREA -->
+                            <div class="flex-grow flex items-start justify-center bg-slate-900/10 relative overflow-y-auto custom-scrollbar p-10 min-h-0">
+                                 <!-- Fondo de rejilla -->
+                                 <div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: radial-gradient(circle, white 1px, transparent 1px); background-size: 20px 20px;"></div>
+                                 
+                                 <!-- Tarjeta de Notificación Mejorada -->
+                                 <div class="w-full max-w-[480px] bg-slate-900 border border-white/10 rounded-[2.5rem] p-8 shadow-2xl relative z-10 animate-in slide-in-from-top-4 duration-700">
+                                     <!-- ASUNTO PREVIEW -->
+                                     <div class="mb-6 group/prevsub">
+                                         <div class="flex items-center gap-2 mb-2 opacity-30">
+                                             <div class="h-px flex-grow bg-white/20"></div>
+                                             <span class="text-[8px] font-black uppercase tracking-[0.2em]">Asunto</span>
+                                             <div class="h-px flex-grow bg-white/20"></div>
+                                         </div>
+                                         <div id="livePreviewSubject" class="text-sm font-black text-white/90 leading-tight uppercase tracking-tight bg-white/[0.03] p-4 rounded-2xl border border-white/5 group-hover/prevsub:bg-white/[0.05] transition-all">⚡ NEXUS ALERTA: LOGIN_SUCCESS</div>
+                                     </div>
+                                     
+                                     <!-- CUERPO PREVIEW -->
+                                     <div class="group/prevbody">
+                                         <div class="flex items-center gap-2 mb-2 opacity-30">
+                                             <div class="h-px flex-grow bg-white/20"></div>
+                                             <span class="text-[8px] font-black uppercase tracking-[0.2em]">Mensaje</span>
+                                             <div class="h-px flex-grow bg-white/20"></div>
+                                         </div>
+                                         <div id="livePreviewContent" class="bg-black/50 rounded-2xl p-6 border border-white/5 text-[11px] font-bold text-sky-400/90 leading-relaxed font-mono whitespace-pre-wrap min-h-[140px] shadow-inner group-hover/prevbody:border-primary/20 transition-all transition-all">⚡ ALERTA NEXUS
+Evento: INICIO_SESION_EXITOSO
+Usuario: DTOVAR
+Hora: 2026-04-17 18:25:01
+Estado: CRÍTICO</div>
+                                     </div>
+                                     
+                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer Fijo Col 3 -->
+                        <div class="h-24 p-4 bg-emerald-500/5 border border-emerald-500/10 rounded-[1.5rem] flex items-center justify-between flex-shrink-0">
+                            <div class="flex items-center gap-3">
+                                <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                                <span class="text-[9px] font-black text-emerald-500 uppercase tracking-widest italic">Render Engine Active</span>
+                            </div>
+                            <div class="flex gap-2">
+                                <div class="px-3 py-1 bg-white/5 rounded text-[8px] font-mono text-emerald-500/60 uppercase tracking-tighter">FPS: 60</div>
+                                <div class="px-3 py-1 bg-white/5 rounded text-[8px] font-mono text-emerald-500/60 uppercase tracking-tighter">DPI: 300</div>
+                            </div>
                         </div>
                     </div>
                 </div>

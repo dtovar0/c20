@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, jsonify
 from flask_login import login_required
 from app.decorators import admin_required
 from app import db
-from app.modules.notifications.models import SMTPConfig
+from app.modules.notifications.models import SMTPConfig, NotificationTemplate
 from app.modules.notifications.services import send_test_email
 
 notifications_bp = Blueprint("notifications", __name__, url_prefix="/notifications")
@@ -74,4 +74,42 @@ def test_connection():
         return jsonify(result)
         
     except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@notifications_bp.route("/templates/get/<slug>")
+@login_required
+@admin_required
+def get_template(slug):
+    try:
+        template = NotificationTemplate.query.filter_by(slug=slug).first()
+        if not template:
+            return jsonify({"status": "error", "message": "Plantilla no encontrada"}), 404
+        return jsonify({"status": "success", "template": template.to_dict()})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@notifications_bp.route("/templates/save", methods=["POST"])
+@login_required
+@admin_required
+def save_template():
+    try:
+        data = request.get_json()
+        slug = data.get("slug")
+        if not slug:
+            return jsonify({"status": "error", "message": "Identificador de plantilla requerido"}), 400
+            
+        template = NotificationTemplate.query.filter_by(slug=slug).first()
+        if not template:
+            template = NotificationTemplate(slug=slug)
+            db.session.add(template)
+            
+        template.name = data.get("name", slug.capitalize())
+        template.subject = data.get("subject", "")
+        template.body = data.get("body", "")
+        template.is_html = data.get("is_html", False)
+        
+        db.session.commit()
+        return jsonify({"status": "success", "message": f"Plantilla '{slug.upper()}' guardada correctamente"})
+    except Exception as e:
+        db.session.rollback()
         return jsonify({"status": "error", "message": str(e)}), 500

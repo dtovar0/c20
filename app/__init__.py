@@ -61,7 +61,7 @@ def create_app():
     # Sincronizar Modelos (Importar antes de crear tablas)
     from app.modules.settings.models import SystemConfig
     from app.modules.audit.models import AuditLog
-    from app.modules.notifications.models import SMTPConfig
+    from app.modules.notifications.models import SMTPConfig, NotificationTemplate
     from app.modules.auth.models import AuthConfig, User
 
     # Crear tablas automáticamente dentro del contexto de la app
