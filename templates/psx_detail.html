@@ -79,7 +79,7 @@
             <div class="flex flex-col items-end gap-2">
                 <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">ID de Referencia</span>
                 <div class="px-6 py-2 bg-slate-900 border border-white/5 rounded-2xl text-xl font-mono text-white/90">
-                    #{{ task.id|string|zfill(6) }}
+                    #{{ "%06d" | format(task.id) }}
                 </div>
             </div>
         </header>
