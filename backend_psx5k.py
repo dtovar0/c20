@@ -49,7 +49,8 @@ def process_task_data(task):
 
     if task.datos_tipo == 'Archivo':
         # Leer desde el archivo físico generado por la API
-        file_path = os.path.join('/home/dtovar/bayblade/c20/uploads/psx5k', task.datos)
+        base_path = os.getenv('PROJECT_ROOT', os.getcwd())
+        file_path = os.path.join(base_path, 'uploads/psx5k', task.datos)
         if not os.path.exists(file_path):
             print(f"❌ Fragmento no encontrado: {file_path}")
             return []

@@ -108,8 +108,9 @@ def create_task():
                 # Crear un archivo físico para este chunk
                 import uuid
                 chunk_filename = f"chunks/chunk_{uuid.uuid4().hex}.csv"
-                chunk_path = os.path.join('/home/dtovar/bayblade/c20/uploads/psx5k', chunk_filename)
-                
+                project_root = os.getenv('PROJECT_ROOT', os.getcwd())
+                chunk_path = os.path.join(project_root, 'uploads/psx5k', chunk_filename)
+               
                 with open(chunk_path, 'w') as f:
                     f.write("\n".join(chunk))
                 
