@@ -9,3 +9,11 @@ Todo el backend debe estar estructurado en Blueprints dentro de `app/modules/`.
 ### Regla: Estilos Basados en Tokens
 Prohibido el uso de styles inline o selectores CSS arbitrarios fuera de Tailwind y el sistema de tokens.
 ### Impacto: Frontend
+
+## Módulo: Notificaciones
+### Regla: Persistencia de Plantillas
+Las plantillas deben guardarse en la base de datos vinculadas a un slug único. Si no existen, el sistema debe cargar los predeterminados y ofrecer guardarlos.
+### Ejemplo
+Al seleccionar 'Inicio', se busca en la DB; si no está, se carga el default de seguridad y se notifica al usuario.
+### Impacto
+Backend + Base de Datos

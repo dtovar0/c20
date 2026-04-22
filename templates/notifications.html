@@ -187,36 +187,60 @@
                         <div class="flex flex-col flex-grow bg-slate-950/20 border-2 border-dashed border-panel-border rounded-[1.5rem] relative overflow-hidden">
                             <div class="flex-grow overflow-y-auto custom-scrollbar p-5">
                                 <p class="text-[9px] font-black text-primary uppercase tracking-[0.25em] mb-4 italic">Librería de Plantillas</p>
-                                <div class="space-y-2">
-                                    <button onclick="loadTemplate('test')" class="chip-premium w-full justify-start py-3 group !border-primary/10">
-                                        <div class="w-6 h-6 rounded-lg bg-primary/10 flex items-center justify-center text-[10px] group-hover:bg-primary/20 transition-all">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                                <div class="space-y-3">
+                                    <!-- Test Template -->
+                                    <button onclick="loadTemplate('test')" class="w-full flex items-center gap-4 p-4 rounded-2xl bg-slate-900/40 border border-white/5 hover:border-primary/40 hover:bg-primary/5 transition-all group">
+                                        <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                                         </div>
-                                        <span class="text-[10px] tracking-widest font-black uppercase ml-2">Test</span>
+                                        <div class="text-left">
+                                            <p class="text-[10px] font-black uppercase tracking-widest text-white/90">Test System</p>
+                                            <p class="text-[8px] font-bold uppercase tracking-tighter text-label/40 italic">Verificación Core</p>
+                                        </div>
                                     </button>
-                                    <button onclick="loadTemplate('inicio')" class="chip-premium w-full justify-start py-3 group">
-                                        <div class="w-6 h-6 rounded-lg bg-emerald-500/10 flex items-center justify-center text-[10px] group-hover:bg-emerald-500/20 transition-all text-emerald-500">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path></svg>
+
+                                    <!-- Inicio Template -->
+                                    <button onclick="loadTemplate('inicio')" class="w-full flex items-center gap-4 p-4 rounded-2xl bg-slate-900/40 border border-white/5 hover:border-emerald-500/40 hover:bg-emerald-500/5 transition-all group">
+                                        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path></svg>
                                         </div>
-                                        <span class="text-[10px] tracking-widest font-black uppercase ml-2">Inicio</span>
+                                        <div class="text-left">
+                                            <p class="text-[10px] font-black uppercase tracking-widest text-white/90">Alerta Inicio</p>
+                                            <p class="text-[8px] font-bold uppercase tracking-tighter text-label/40 italic">Tratado: Login_Gate</p>
+                                        </div>
                                     </button>
-                                    <button onclick="loadTemplate('error')" class="chip-premium w-full justify-start py-3 group">
-                                        <div class="w-6 h-6 rounded-lg bg-red-500/10 flex items-center justify-center text-[10px] group-hover:bg-red-500/20 transition-all text-red-500">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+
+                                    <!-- Error Template -->
+                                    <button onclick="loadTemplate('error')" class="w-full flex items-center gap-4 p-4 rounded-2xl bg-slate-900/40 border border-white/5 hover:border-red-500/40 hover:bg-red-500/5 transition-all group">
+                                        <div class="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center text-red-500 group-hover:scale-110 transition-transform">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                         </div>
-                                        <span class="text-[10px] tracking-widest font-black uppercase ml-2">Error</span>
+                                        <div class="text-left">
+                                            <p class="text-[10px] font-black uppercase tracking-widest text-white/90">Error Crítico</p>
+                                            <p class="text-[8px] font-bold uppercase tracking-tighter text-label/40 italic">Security_Breach</p>
+                                        </div>
                                     </button>
-                                    <button onclick="loadTemplate('guardado')" class="chip-premium w-full justify-start py-3 group">
-                                        <div class="w-6 h-6 rounded-lg bg-amber-500/10 flex items-center justify-center text-[10px] group-hover:bg-amber-500/20 transition-all text-amber-500">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+
+                                    <!-- Guardado Template -->
+                                    <button onclick="loadTemplate('guardado')" class="w-full flex items-center gap-4 p-4 rounded-2xl bg-slate-900/40 border border-white/5 hover:border-amber-500/40 hover:bg-amber-500/5 transition-all group">
+                                        <div class="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
                                         </div>
-                                        <span class="text-[10px] tracking-widest font-black uppercase ml-2">Guardado</span>
+                                        <div class="text-left">
+                                            <p class="text-[10px] font-black uppercase tracking-widest text-white/90">Persistencia</p>
+                                            <p class="text-[8px] font-bold uppercase tracking-tighter text-label/40 italic">DB_Sync_Success</p>
+                                        </div>
                                     </button>
-                                    <button onclick="loadTemplate('terminado')" class="chip-premium w-full justify-start py-3 group">
-                                        <div class="w-6 h-6 rounded-lg bg-blue-500/10 flex items-center justify-center text-[10px] group-hover:bg-blue-500/20 transition-all text-blue-500">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+
+                                    <!-- Terminado Template -->
+                                    <button onclick="loadTemplate('terminado')" class="w-full flex items-center gap-4 p-4 rounded-2xl bg-slate-900/40 border border-white/5 hover:border-blue-500/40 hover:bg-blue-500/5 transition-all group">
+                                        <div class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                         </div>
-                                        <span class="text-[10px] tracking-widest font-black uppercase ml-2">Terminado</span>
+                                        <div class="text-left">
+                                            <p class="text-[10px] font-black uppercase tracking-widest text-white/90">Task Complete</p>
+                                            <p class="text-[8px] font-bold uppercase tracking-tighter text-label/40 italic">Job_Finalizer</p>
+                                        </div>
                                     </button>
                                 </div>
                             </div>
@@ -231,9 +255,9 @@
 
                     <!-- Column 2: Nexus Code Editor (40%) -->
                     <div class="flex flex-col h-full min-h-0 overflow-hidden gap-4">
-                        <div class="flex flex-col flex-grow bg-slate-950/40 border-2 border-dashed border-panel-border rounded-[1.5rem] group focus-within:border-primary/40 transition-all p-0 overflow-hidden min-h-0">
+                        <div class="flex flex-col flex-grow bg-[rgb(var(--color-ntf-panel-bg))] border-2 border-dashed border-panel-border rounded-[1.5rem] group focus-within:border-primary/40 transition-all p-0 overflow-hidden min-h-0 shadow-inner">
                             <!-- Header -->
-                            <div class="flex items-center justify-between p-4 border-b border-panel-border/50 bg-black/20 flex-shrink-0">
+                            <div class="flex items-center justify-between p-4 border-b border-panel-border/50 bg-black/5 flex-shrink-0">
                                 <label class="text-[10px] font-black text-label uppercase tracking-widest italic opacity-60">Editor de Variables Nexus</label>
                                 <div class="flex items-center gap-4">
                                     <!-- MODO TOGGLE -->
@@ -245,8 +269,8 @@
                                     </div>
 
                                     <div class="flex items-center gap-1.5">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                                        <span class="text-[8px] font-black uppercase text-emerald-500 tracking-tighter">Sincronización Activa</span>
+                                        <span class="w-1.5 h-1.5 rounded-full bg-[rgb(var(--color-status-active))] animate-pulse"></span>
+                                        <span class="text-[8px] font-black uppercase text-[rgb(var(--color-status-active))] tracking-tighter">Sincronización Activa</span>
                                     </div>
                                 </div>
                             </div>
@@ -258,12 +282,12 @@
                                         <label class="text-[8px] font-black text-primary uppercase tracking-[0.3em] italic opacity-80">Asunto del Mensaje</label>
                                         <div class="w-1.5 h-1.5 rounded-full bg-primary/40"></div>
                                     </div>
-                                    <div class="relative">
+                                    <div class="relative bg-[rgb(var(--color-ntf-editor-bg))]/40">
                                         <div class="absolute left-0 top-1/2 -translate-y-1/2 w-6 flex items-center justify-center pointer-events-none opacity-20 group-focus-within/subject:opacity-60 transition-opacity">
                                             <svg class="w-3.5 h-3.5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2v10a2 2 0 002 2z"></path></svg>
                                         </div>
                                         <input type="text" id="templateSubject" 
-                                            class="w-full bg-transparent pl-8 pr-4 py-1 text-[11px] font-mono font-bold text-sky-300 outline-none placeholder:text-white/10 uppercase tracking-widest"
+                                            class="w-full bg-transparent pl-8 pr-4 py-1 text-[11px] font-mono font-bold text-[rgb(var(--color-ntf-text-subject))] outline-none placeholder:text-white/10 uppercase tracking-widest"
                                             placeholder="ASUNTO DEL MENSAJE..."
                                             value="⚡ NEXUS ALERTA: {evento}"
                                             oninput="syncPreview()">
@@ -279,18 +303,12 @@
                                             <div class="w-1 h-1 rounded-full bg-sky-400/20"></div>
                                         </div>
                                     </div>
-                                    <div class="relative flex-grow flex flex-col">
-                                        <!-- Line Numbers simulation -->
-                                        <div class="absolute left-0 top-0 bottom-0 w-10 bg-black/20 border-r border-white/5 flex flex-col items-center pt-5 select-none pointer-events-none">
-                                            <span class="text-[9px] font-mono text-white/10 mb-2">01</span>
-                                            <span class="text-[9px] font-mono text-white/10 mb-2">02</span>
-                                            <span class="text-[9px] font-mono text-white/10 mb-2">03</span>
-                                            <span class="text-[9px] font-mono text-white/10 mb-2">04</span>
-                                            <span class="text-[9px] font-mono text-white/10 mb-2">05</span>
-                                        </div>
+                                    <div class="relative flex-grow flex flex-col bg-[rgb(var(--color-ntf-editor-bg))]/60">
+                                        <!-- Línea decorativa izquierda -->
+                                        <div class="absolute left-8 top-6 bottom-6 w-px bg-white/5"></div>
                                         
                                         <textarea id="templateEditor" 
-                                            class="flex-grow w-full bg-transparent pl-14 pr-6 py-5 text-sm font-mono font-bold text-sky-400/90 outline-none resize-none custom-scrollbar leading-relaxed"
+                                            class="flex-grow w-full bg-transparent pl-14 pr-6 py-5 text-sm font-mono font-bold text-[rgb(var(--color-ntf-text-editor))]/90 outline-none resize-none custom-scrollbar leading-relaxed"
                                             spellcheck="false"
                                             oninput="syncPreview()">⚡ ALERTA NEXUS
 Evento: {evento}
@@ -317,13 +335,13 @@ Estado: CRÍTICO</textarea>
 
                     <!-- Column 3: High-Fidelity Visualizer (40%) -->
                     <div class="flex flex-col h-full min-h-0 overflow-hidden gap-4">
-                        <div class="flex flex-col flex-grow bg-slate-950/40 border-2 border-dashed border-panel-border rounded-[1.5rem] group transition-all p-0 overflow-hidden min-h-0">
+                        <div class="flex flex-col flex-grow bg-[rgb(var(--color-ntf-panel-bg))] border-2 border-dashed border-panel-border rounded-[1.5rem] group transition-all p-0 overflow-hidden min-h-0 shadow-inner">
                             <!-- TECHNICAL HEADER -->
-                            <div class="flex items-center justify-between p-4 border-b border-panel-border/50 bg-black/20">
+                            <div class="flex items-center justify-between p-4 border-b border-panel-border/50 bg-black/5 flex-shrink-0">
                                 <label class="text-[10px] font-black text-label uppercase tracking-widest italic opacity-60">Visualizador en Tiempo Real</label>
                                 <div class="flex items-center gap-1.5">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                                    <span class="text-[8px] font-black uppercase text-emerald-500 tracking-tighter">Motor de Renderizado Activo</span>
+                                    <span class="w-1.5 h-1.5 rounded-full bg-[rgb(var(--color-status-active))] animate-pulse"></span>
+                                    <span class="text-[8px] font-black uppercase text-[rgb(var(--color-status-active))] tracking-tighter">Motor de Renderizado Activo</span>
                                 </div>
                             </div>
 
@@ -333,25 +351,24 @@ Estado: CRÍTICO</textarea>
                                  <div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: radial-gradient(circle, white 1px, transparent 1px); background-size: 20px 20px;"></div>
                                  
                                  <!-- Tarjeta de Notificación Mejorada -->
-                                 <div class="w-full max-w-[480px] bg-slate-900 border border-white/10 rounded-[2.5rem] p-8 shadow-2xl relative z-10 animate-in slide-in-from-top-4 duration-700">
+                                 <div class="w-full max-w-[480px] bg-[rgb(var(--color-ntf-preview-card))] border border-white/10 rounded-[2.5rem] p-8 shadow-2xl relative z-10 animate-in slide-in-from-top-4 duration-700">
                                      <!-- ASUNTO PREVIEW -->
                                      <div class="mb-6 group/prevsub">
                                          <div class="flex items-center gap-2 mb-2 opacity-30">
                                              <div class="h-px flex-grow bg-white/20"></div>
                                              <span class="text-[8px] font-black uppercase tracking-[0.2em]">Asunto</span>
-                                             <div class="h-px flex-grow bg-white/20"></div>
+                                             <div class="h-px w-2 bg-white/20"></div>
                                          </div>
-                                         <div id="livePreviewSubject" class="text-sm font-black text-white/90 leading-tight uppercase tracking-tight bg-white/[0.03] p-4 rounded-2xl border border-white/5 group-hover/prevsub:bg-white/[0.05] transition-all">⚡ NEXUS ALERTA: LOGIN_SUCCESS</div>
+                                         <div id="livePreviewSubject" class="text-sm font-black text-[rgb(var(--color-ntf-text-subject))] uppercase tracking-tight line-clamp-1 group-hover/prevsub:text-white transition-colors duration-500">⚡ NEXUS ALERTA: CONEXIÓN_EXITOSA</div>
                                      </div>
                                      
                                      <!-- CUERPO PREVIEW -->
                                      <div class="group/prevbody">
                                          <div class="flex items-center gap-2 mb-2 opacity-30">
-                                             <div class="h-px flex-grow bg-white/20"></div>
                                              <span class="text-[8px] font-black uppercase tracking-[0.2em]">Mensaje</span>
                                              <div class="h-px flex-grow bg-white/20"></div>
                                          </div>
-                                         <div id="livePreviewContent" class="bg-black/50 rounded-2xl p-6 border border-white/5 text-[11px] font-bold text-sky-400/90 leading-relaxed font-mono whitespace-pre-wrap min-h-[140px] shadow-inner group-hover/prevbody:border-primary/20 transition-all transition-all">⚡ ALERTA NEXUS
+                                         <div id="livePreviewContent" class="bg-black/50 rounded-2xl p-6 border border-white/5 text-[11px] font-bold text-[rgb(var(--color-ntf-text-editor))]/90 leading-relaxed font-mono whitespace-pre-wrap min-h-[140px] shadow-inner group-hover/prevbody:border-primary/20 transition-all transition-all">⚡ ALERTA NEXUS
 Evento: INICIO_SESION_EXITOSO
 Usuario: DTOVAR
 Hora: 2026-04-17 18:25:01

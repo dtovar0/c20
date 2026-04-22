@@ -118,14 +118,18 @@ function syncPreview() {
     let val = editor.value;
     let subject = subjectInput ? subjectInput.value : "";
 
-    // Simulate variable replacement
+    // Simulate variable replacement with slightly dynamic data
     const mockReplacer = (text) => {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const dateStr = now.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
+        
         return text
-            .replace(/{usuario}/g, 'DTOVAR')
-            .replace(/{evento}/g, 'CONEXIÓN_EXITOSA')
-            .replace(/{hora}/g, new Date().toISOString().split('T')[0] + ' ' + new Date().toLocaleTimeString())
-            .replace(/{ip}/g, '192.168.1.1')
-            .replace(/{correo}/g, 'admin@nexus.ai');
+            .replace(/{usuario}/g, 'ADMIN_NEXUS')
+            .replace(/{evento}/g, currentTemplateSlug.toUpperCase() + '_TRIGGERED')
+            .replace(/{hora}/g, `${dateStr} @ ${timeStr}`)
+            .replace(/{ip}/g, '189.210.45.' + Math.floor(Math.random() * 255))
+            .replace(/{correo}/g, 'security-ops@nexus-group.ai');
     };
 
     let mockedText = mockReplacer(val);
@@ -187,7 +191,16 @@ function insertVariable(variable) {
     textarea.focus();
     
     // Sync the preview after insertion
-    syncPreview(textarea.value);
+    syncPreview();
+    
+    // Haptic/Visual feedback
+    showToast(`Variable ${variable} insertada`, 'info');
+}
+
+function copyVariable(variable) {
+    navigator.clipboard.writeText(variable).then(() => {
+        showToast(`Copiado: ${variable}`, 'success');
+    });
 }
 
 function resetTemplateToDefault() {

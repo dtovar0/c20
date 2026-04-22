@@ -12,6 +12,28 @@ notifications_bp = Blueprint("notifications", __name__, url_prefix="/notificatio
 @admin_required
 def index():
     config = SMTPConfig.query.first()
+    
+    # Ensuring default templates exist
+    default_slugs = ['test', 'inicio', 'error', 'guardado', 'terminado']
+    existing_slugs = [t.slug for t in NotificationTemplate.query.filter(NotificationTemplate.slug.in_(default_slugs)).all()]
+    
+    defaults = {
+        'test': {'name': 'Test', 'subject': '🟢 NEXUS: VERIFICACIÓN_SISTEMA', 'body': '⚡ ALERTA DE PRUEBA\nEstado: SISTEMA_OK\nUsuario: {usuario}\nVerificación: EXITOSA', 'is_html': False},
+        'inicio': {'name': 'Inicio', 'subject': '🚀 NEXUS: ARRANQUE_INICIAL_{usuario}', 'body': '🚀 ARRANQUE NEXUS\nOperación: INICIALIZANDO\nUsuario: {usuario}\nHora: {hora}\nBienvenido de vuelta a la matriz.', 'is_html': False},
+        'error': {'name': 'Error', 'subject': '🛑 NEXUS: ALERTA_SEGURIDAD_CRÍTICA', 'body': '🛑 NEXUS CRÍTICO\nError: ACCESO_DENEGADO\nUsuario: {usuario}\nIP: {ip}\nAcción: BLOQUEO_SEGURIDAD', 'is_html': False},
+        'guardado': {'name': 'Guardado', 'subject': '💾 NEXUS: SINCRONIZACIÓN_DATOS', 'body': '💾 SINCRONIZACIÓN NEXUS\nDestino: BASE_DATOS_CORE\nEstado: DATOS_GUARDADOS\nUsuario: {usuario}', 'is_html': False},
+        'terminado': {'name': 'Terminado', 'subject': '✅ NEXUS: PROCESO_FINALIZADO', 'body': '✅ NEXUS COMPLETADO\nProceso: TAREA_FINALIZADA\nEjecutor: {usuario}\nEstado: ARCHIVOS_SINCRONIZADOS', 'is_html': False}
+    }
+    
+    for slug in default_slugs:
+        if slug not in existing_slugs:
+            d = defaults[slug]
+            tmpl = NotificationTemplate(slug=slug, name=d['name'], subject=d['subject'], body=d['body'], is_html=d['is_html'])
+            db.session.add(tmpl)
+    
+    if any(slug not in existing_slugs for slug in default_slugs):
+        db.session.commit()
+
     return render_template("notifications.html", config=config)
 
 @notifications_bp.route("/save", methods=["POST"])

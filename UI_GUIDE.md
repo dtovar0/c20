@@ -44,6 +44,19 @@ Usa clases de Tailwind combinadas con tokens:
 <input class="bg-input-bg border-2 border-panel-border rounded-2xl p-4 transition-all focus:border-primary outline-none">
 ```
 
+### 4. Blueprint Cards (Notifications)
+```html
+<button class="w-full flex items-center gap-4 p-4 rounded-2xl bg-slate-900/40 border border-white/5 hover:border-primary/40 hover:bg-primary/5 transition-all group">
+    <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+        <svg>...</svg>
+    </div>
+    <div class="text-left">
+        <p class="text-[10px] font-black uppercase tracking-widest text-white/90">Título</p>
+        <p class="text-[8px] font-bold uppercase tracking-tighter text-label/40">Subtítulo Técnico</p>
+    </div>
+</button>
+```
+
 ## 🌙 Modo Oscuro
 El soporte es automático mediante la clase `dark` en el elemento `html`. El sistema detecta la preferencia del usuario y la persiste en `localStorage`.
 

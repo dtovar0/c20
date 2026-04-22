@@ -62,11 +62,22 @@ html, body {
   /* Spacing & Curvature */
   --space-1: 4px;
   --radius-base: 12px;
+
+  /* Notification Module Tokens */
+  --color-ntf-editor-bg: 2 6 23;        /* Slate-950 */
+  --color-ntf-preview-card: 15 23 42;   /* Slate-900 */
+  --color-ntf-text-editor: 56 189 248;  /* Sky-400 */
+  --color-ntf-text-subject: 125 211 252; /* Sky-300 */
+  --color-ntf-border: 59 130 246 / 0.2;
+  --color-status-active: 59 130 246;    /* BLUE en Light Mode */
+  --color-ntf-panel-bg: 241 245 249;   /* LIGHT GRAY en Light Mode */
 }
 
 /* Dark Mode Transition */
 @media (prefers-color-scheme: dark) {
   :root {
+    --color-ntf-panel-bg: 2 6 23;      /* SLATE-950 en Dark Mode */
+    --color-status-active: 16 185 129;  /* EMERALD en Dark Mode */
     --color-body-bg: #0f172a;
     --color-body-text: #f1f5f9;
     --color-header-bg: #4338ca;
@@ -98,6 +109,8 @@ html, body {
 
 /* Force Dark Class Support */
 html.dark {
+    --color-ntf-panel-bg: 2 6 23;
+    --color-status-active: 16 185 129;
     --color-body-bg: #0f172a;
     --color-body-text: #f1f5f9;
     --color-header-bg: #4338ca;
