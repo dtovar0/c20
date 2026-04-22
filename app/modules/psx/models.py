@@ -14,10 +14,10 @@ class PSX5KTask(db.Model):
     fecha_fin = db.Column(db.DateTime, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     datos_tipo = db.Column(db.String(50), nullable=True)   # Tipo de datos contenidos
-    datos = db.Column(db.Text, nullable=True)              # Información adicional/Nota (Legacy o metadata)
+    datos = db.Column(db.Text, nullable=True)              # Información adicional/Nota
     
-    # Relación con detalles
-    detalles = db.relationship('PSX5KDetail', backref='task', lazy=True, cascade="all, delete-orphan")
+    # Relación 1:1 con detalles de contadores
+    detalle = db.relationship('PSX5KDetail', backref='task', uselist=False, lazy=True, cascade="all, delete-orphan")
 
     def to_dict(self):
         return {
@@ -32,7 +32,7 @@ class PSX5KTask(db.Model):
             "created_at": self.created_at.isoformat(),
             "datos_tipo": self.datos_tipo,
             "datos": self.datos,
-            "total_items": len(self.detalles)
+            "resumen": self.detalle.to_dict() if self.detalle else {"total": 0, "ok": 0, "fail": 0}
         }
 
 class PSX5KDetail(db.Model):
@@ -40,15 +40,13 @@ class PSX5KDetail(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     task_id = db.Column(db.Integer, db.ForeignKey('psx5k_tasks.id'), nullable=False)
-    item_value = db.Column(db.String(255), nullable=False) # El número, nodo o dato específico
-    item_status = db.Column(db.String(20), default='Pendiente') # Pendiente | Procesado | Error
-    error_msg = db.Column(db.Text, nullable=True)
+    total = db.Column(db.Integer, default=0)
+    ok = db.Column(db.Integer, default=0)
+    fail = db.Column(db.Integer, default=0)
 
     def to_dict(self):
         return {
-            "id": self.id,
-            "task_id": self.task_id,
-            "value": self.item_value,
-            "status": self.item_status,
-            "error": self.error_msg
+            "total": self.total,
+            "ok": self.ok,
+            "fail": self.fail
         }

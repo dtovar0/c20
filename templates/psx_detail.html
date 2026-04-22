@@ -153,39 +153,51 @@
                     </div>
                 </div>
 
-                <!-- Data Column -->
+                <!-- Telemetry Column -->
                 <div class="flex flex-col h-full">
-                    <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-3 block">Items de la Operación ({{ task.detalles|length }})</label>
-                    <div class="flex-grow bg-black/40 border border-white/5 rounded-[1.5rem] p-4 font-mono text-[11px] leading-relaxed overflow-y-auto max-h-[300px] custom-scrollbar">
-                        <table class="w-full text-left">
-                            <thead>
-                                <tr class="text-[8px] uppercase text-slate-500 border-b border-white/5">
-                                    <th class="pb-2">Valor/ID</th>
-                                    <th class="pb-2 text-right">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-white/5">
-                                {% for item in task.detalles %}
-                                <tr class="text-[10px]">
-                                    <td class="py-2 text-sky-300/80">{{ item.item_value }}</td>
-                                    <td class="py-2 text-right">
-                                        <span class="px-2 py-0.5 rounded text-[8px] font-bold uppercase
-                                            {{ 'bg-emerald-500/10 text-emerald-500' if item.item_status == 'Procesado' else 
-                                               'bg-rose-500/10 text-rose-500' if item.item_status == 'Error' else 
-                                               'bg-slate-500/10 text-slate-500' }}">
-                                            {{ item.item_status }}
-                                        </span>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                        {% if not task.detalles %}
-                            <div class="opacity-30 italic p-4 text-center">No hay items vinculados a esta tarea.</div>
-                        {% endif %}
+                    <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-3 block">Telemetría de la Operación</label>
+                    
+                    <div class="space-y-4">
+                        <!-- TOTAL -->
+                        <div class="glass-panel border-white/5 rounded-2xl p-5 flex items-center justify-between">
+                            <div>
+                                <p class="text-[9px] font-black uppercase text-slate-500 tracking-widest mb-1">Total Registros</p>
+                                <p class="text-3xl font-black text-white">{{ task.detalle.total if task.detalle else 0 }}</p>
+                            </div>
+                            <div class="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center text-slate-400">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <!-- OK -->
+                            <div class="bg-emerald-500/5 border border-emerald-500/20 rounded-2xl p-5">
+                                <p class="text-[9px] font-black uppercase text-emerald-500/60 tracking-widest mb-1">Finalizados OK</p>
+                                <p class="text-3xl font-black text-emerald-500">{{ task.detalle.ok if task.detalle else 0 }}</p>
+                            </div>
+                            <!-- FAIL -->
+                            <div class="bg-rose-500/5 border border-rose-500/20 rounded-2xl p-5">
+                                <p class="text-[9px] font-black uppercase text-rose-500/60 tracking-widest mb-1">Errores (Fail)</p>
+                                <p class="text-3xl font-black text-rose-500">{{ task.detalle.fail if task.detalle else 0 }}</p>
+                            </div>
+                        </div>
+
+                        <!-- Progress Bar logic -->
+                        {% set total = task.detalle.total if task.detalle and task.detalle.total > 0 else 1 %}
+                        {% set ok = task.detalle.ok if task.detalle else 0 %}
+                        {% set percent = (ok / total * 100) | round(0) %}
+                        <div class="pt-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-[10px] font-black uppercase text-slate-500 tracking-widest">Tasa de Éxito</span>
+                                <span class="text-[10px] font-black text-emerald-500">{{ percent }}%</span>
+                            </div>
+                            <div class="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                                <div class="h-full bg-emerald-500 transition-all duration-1000 shadow-[0_0_15px_rgba(16,185,129,0.5)]" style="width: {{ percent }}%"></div>
+                            </div>
+                        </div>
                     </div>
                     
-                    <div class="mt-6 p-4 rounded-xl bg-orange-500/10 border border-orange-500/20 flex flex-col gap-2">
+                    <div class="mt-8 p-4 rounded-xl bg-orange-500/10 border border-orange-500/20 flex flex-col gap-2">
                         <div class="flex items-center gap-3">
                             <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                             <span class="text-[10px] font-black text-orange-500 uppercase tracking-widest">Nota de Operación</span>
