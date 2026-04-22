@@ -37,6 +37,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // Initialize Editor Line Numbers
+    if (document.getElementById('templateEditor')) {
+        updateLineNumbers();
+    }
 });
 
 function saveNotifications(containerId) {
@@ -153,6 +158,27 @@ function syncPreview() {
     }
 }
 
+function updateLineNumbers() {
+    const editor = document.getElementById('templateEditor');
+    const gutter = document.getElementById('lineNumbers');
+    if (!editor || !gutter) return;
+
+    const lines = editor.value.split('\n').length;
+    let html = '';
+    for (let i = 1; i <= lines; i++) {
+        html += `<span>${i}</span>`;
+    }
+    gutter.innerHTML = html;
+}
+
+function syncScroll() {
+    const editor = document.getElementById('templateEditor');
+    const gutter = document.getElementById('lineNumbers');
+    if (!editor || !gutter) return;
+
+    gutter.scrollTop = editor.scrollTop;
+}
+
 function toggleEditorMode() {
     const btn = document.getElementById('editorModeBtn');
     const label = document.getElementById('editorModeLabel');
@@ -229,6 +255,7 @@ function loadTemplate(type) {
                 }
                 
                 syncPreview();
+                updateLineNumbers();
                 showToast(`Cargada plantilla: ${type.toUpperCase()} (Base de Datos)`, 'info');
             }
         })
@@ -264,6 +291,7 @@ function loadTemplate(type) {
                 textarea.value = content;
                 subjectInput.value = subject;
                 syncPreview();
+                updateLineNumbers();
                 showToast(`Cargada plantilla predeterminada: ${type.toUpperCase()}`, 'info');
             }
         });

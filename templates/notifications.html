@@ -302,14 +302,20 @@
                                             <div class="w-1 h-1 rounded-full bg-sky-400/20"></div>
                                         </div>
                                     </div>
-                                    <div class="relative flex-grow flex flex-col bg-[rgb(var(--color-ntf-editor-bg))]">
+                                    <div class="relative flex-grow flex flex-col bg-[rgb(var(--color-ntf-editor-bg))] overflow-hidden">
                                         <!-- Línea decorativa izquierda -->
-                                        <div class="absolute left-8 top-6 bottom-6 w-px bg-[rgb(var(--color-ntf-editor-border))]"></div>
+                                        <div class="absolute left-8 top-6 bottom-6 w-px bg-[rgb(var(--color-ntf-editor-border))] z-20"></div>
                                         
+                                        <!-- Line Numbers Gutter -->
+                                        <div id="lineNumbers" class="absolute left-0 top-0 bottom-0 w-8 bg-black/5 flex flex-col items-center py-5 text-[9px] font-mono font-bold text-label/20 select-none overflow-hidden leading-relaxed z-10 pointer-events-none">
+                                            <span>1</span>
+                                        </div>
+
                                         <textarea id="templateEditor" 
-                                            class="flex-grow w-full bg-transparent pl-14 pr-6 py-5 text-sm font-mono font-bold text-[rgb(var(--color-ntf-text-editor))]/90 outline-none resize-none custom-scrollbar leading-relaxed"
-                                            spellcheck="false"
-                                            oninput="syncPreview()">⚡ ALERTA NEXUS
+                                            class="flex-grow w-full bg-transparent pl-12 pr-6 py-5 text-sm font-mono font-bold text-[rgb(var(--color-ntf-text-editor))]/90 outline-none resize-none custom-scrollbar leading-relaxed"
+                                            oninput="syncPreview(); updateLineNumbers()"
+                                            onscroll="syncScroll()"
+                                            spellcheck="false">⚡ ALERTA NEXUS
 Evento: {evento}
 Usuario: {usuario}
 Hora: {hora}
