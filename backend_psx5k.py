@@ -160,11 +160,44 @@ def main():
                     continue
                 
                 ####### INICIO SCRIPT #########
-                # Aquí se ejecutará la lógica de negocio final
+                # Ejecutar la tarea real en el nodo mediante pexpect
+                from app.modules.psx.services import run_psx_task
+                
+                # Mapeo de tipos para el script
+                type_map = {
+                    'Bloqueo (Entrante)': 'call_in',
+                    'Routing Label (Activo)': 'call_inout'
+                }
+                l_type = type_map.get(task.datos_tipo, 'call_in')
+                
+                results = run_psx_task(
+                    line_task=task.tarea, # add/delete
+                    line_number=ani_list,
+                    line_type=l_type,
+                    routing_label=task.routing_label
+                )
+                
+                # Actualizar contadores finales
+                detail.ok = results.get("ok", 0) + results.get("dup", 0) # Consideramos duplicados como éxito o gestión hecha
+                detail.fail = results.get("fail", 0)
+                db.session.commit()
+
+                # Finalizar Tarea
+                task.estado = 'Terminada'
+                task.fecha_fin = datetime.datetime.now()
+                db.session.commit()
                 ####### FIN SCRIPT #########
 
-                # Siguiente paso del flujo (Simulación por ahora)
-                time.sleep(2)
+                # Notificar finalización
+                if admin and admin.email:
+                    send_notification_by_slug(
+                        slug='terminado', 
+                        target_email=admin.email,
+                        context={'usuario': task.usuario, 'hora': task.fecha_fin.strftime('%Y-%m-%d %H:%M:%S')}
+                    )
+
+                # Pequeña pausa entre tareas del bloque
+                time.sleep(1)
 
             print("✅ Bloque de tareas finalizado.")
 
