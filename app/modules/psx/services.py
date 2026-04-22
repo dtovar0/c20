@@ -1,105 +1,82 @@
-import pexpect
-import sys
-import re
-from datetime import datetime
+import os
+import xml.etree.ElementTree as ET
 
-def run_psx_task(line_task, line_number, line_type=None, routing_label=None):
+def extract_records(accion_tipo, datos, upload_folder):
     """
-    Ejecuta comandos en el nodo PSX5K mediante SSH interactivo (pexpect).
-    
-    line_task     = str ('add'/'del')
-    line_number   = list [8147777000, ...]
-    line_type     = str ('call_in'/'call_inout')
-    routing_label = str (opcional)
+    Extrae la lista de números (ANI) desde datos manuales o archivos.
     """
-    
-    EXPECT = ['Password:', '\r\n>', 'PSXMASTER>']
-    
-    # Acumuladores de estado
-    stats = {
-        "total": 0,
-        "ok": 0,
-        "dup": 0,
-        "fail": 0,
-        "logs": []
-    }
-
-    try:
-        # 1. Establecer Conexión SSH
-        cmd = pexpect.spawn('ssh -o StrictHostKeyChecking=no -p 8122 admin@10.133.39.5', timeout=30, encoding='utf-8')
-        # cmd.logfile = sys.stdout # Activar para depuración en consola del backend
-        cmd.setecho(False)
-        cmd.delaybeforesend = 0.8
-        
-        # Flujo de Login
-        idx = cmd.expect(EXPECT)
-        if idx == 0: # Password:
-            cmd.sendline('M4rc4t3l#2012')
-            cmd.expect(EXPECT)
-            
-        # Entrar a la instancia PSXMASTER
-        cmd.sendline('s t i PSXMASTER')
-        cmd.expect(EXPECT)
-        
-        # 2. Procesar Números (ANI)
-        for number in line_number:
-            stats["total"] += 1
-            try:
-                if line_task == 'add':
-                    # Verificar existencia previa
-                    cmd.sendline(f'show subscriber Subscriber_Id {number} Country_Id 52')
-                    cmd.expect(EXPECT)
-                    result = cmd.before
-                    
-                    if 'ERR_REC_NOT_FOUND' in result:
-                        if line_type == 'call_in':
-                            cmd.sendline(f"put subscriber Subscriber_Id {number} Country_Id 52 Orig_Entity_Routing_Profile_Id 911 Is_Destination 1")
-                            cmd.expect(EXPECT)
-                            cmd.sendline(f"put destination National_Id {number} Country_Id 52 Custom_Script_Id BLOCKING Is_Subscriber 1")
-                            cmd.expect(EXPECT)
-                            stats["ok"] += 1
-                            stats["logs"].append(f"[OK] {number} - call_in")
-                            
-                        elif line_type == 'call_inout':
-                            cmd.sendline(f"put subscriber Subscriber_Id {number} Country_Id 52 Orig_Entity_Routing_Profile_Id 911 Is_Destination 1")
-                            cmd.expect(EXPECT)
-                            cmd.sendline(f"put destination National_Id {number} Country_Id 52 Custom_Script_Id \"\" Element_Attributes 0x20 Routing_Label_Id {routing_label} Is_Subscriber 1")
-                            cmd.expect(EXPECT)
-                            
-                            # Validar si el routing_label era válido
-                            if 'is not present in table "routing_label"' in cmd.before:
-                                # Rollback si falló el label
-                                cmd.sendline(f'delete subscriber Subscriber_Id {number} Country_Id 52')
-                                cmd.expect(EXPECT)
-                                cmd.sendline(f'delete destination National_Id {number} Country_Id 52')
-                                cmd.expect(EXPECT)
-                                stats["fail"] += 1
-                                stats["logs"].append(f"[FAIL] {number} - Routing Label Inválido")
-                            else:
-                                stats["ok"] += 1
-                                stats["logs"].append(f"[OK] {number} - call_inout")
+    records = []
+    if accion_tipo == 'Manual':
+        raw_data = datos or ""
+        items = raw_data.replace(';', '\n').replace(',', '\n').split('\n')
+        for item in items:
+            item = item.strip()
+            if not item: continue
+            if '-' in item:
+                try:
+                    parts = item.split('-')
+                    start = int(parts[0].strip())
+                    end = int(parts[1].strip())
+                    if start <= end:
+                        records.extend([str(x) for x in range(start, end + 1)])
                     else:
-                        stats["dup"] += 1
-                        stats["logs"].append(f"[DUP] {number} - Ya existe")
-
-                elif line_task == 'del':
-                    cmd.sendline(f'delete subscriber Subscriber_Id {number} Country_Id 52')
-                    cmd.expect(EXPECT)
-                    cmd.sendline(f'delete destination National_Id {number} Country_Id 52')
-                    cmd.expect(EXPECT)
-                    stats["ok"] += 1
-                    stats["logs"].append(f"[DEL] {number}")
-
-            except Exception as e:
-                stats["fail"] += 1
-                stats["logs"].append(f"[ERROR] {number}: {str(e)}")
-
-        # 3. Cerrar Sesión
-        cmd.sendline('exit')
-        cmd.expect(pexpect.EOF)
+                        records.extend([str(x) for x in range(end, start + 1)])
+                except:
+                    pass
+            else:
+                records.append(item)
+    
+    elif accion_tipo == 'Archivo':
+        file_path = os.path.join(upload_folder, datos)
+        if not os.path.exists(file_path):
+            # Reintentar con ruta absoluta si es necesario
+            alt_path = os.path.join('/home/dtovar/bayblade/c20/uploads/psx5k', datos)
+            if os.path.exists(alt_path):
+                file_path = alt_path
+            else:
+                return []
         
-    except Exception as e:
-        stats["fail"] = stats["total"] - stats["ok"] - stats["dup"]
-        stats["logs"].append(f"CRITICAL ERROR: {str(e)}")
+        ext = datos.split('.')[-1].lower()
+        
+        try:
+            if ext == 'xml':
+                tree = ET.parse(file_path)
+                root = tree.getroot()
+                for ani_tag in root.findall('.//ANI'):
+                    if ani_tag.text:
+                        records.append(ani_tag.text.strip())
+                if not records:
+                    for elem in root.iter():
+                        if elem.tag.upper() == 'ANI' and elem.text:
+                            records.append(elem.text.strip())
+            
+            elif ext in ['xlsx', 'xls', 'csv']:
+                import pandas as pd
+                if ext == 'csv':
+                    df = pd.read_csv(file_path, header=None)
+                else:
+                    df = pd.read_excel(file_path, header=None)
+                
+                # Tomar la primera columna y convertir a string, removiendo .0 si son floats
+                if not df.empty:
+                    first_col = df.iloc[:, 0].dropna()
+                    for val in first_col:
+                        clean_val = str(val).split('.')[0].strip()
+                        if clean_val.isdigit():
+                            records.append(clean_val)
+            else:
+                # Fallback para archivos de texto plano
+                with open(file_path, 'r') as f:
+                    records = [line.strip() for line in f if line.strip() and line.strip().isdigit()]
+        except Exception as e:
+            print(f"⚠️ Error procesando archivo {datos}: {e}")
+            pass
+                
+    # Eliminar duplicados manteniendo orden inicial aprox
+    seen = set()
+    return [x for x in records if not (x in seen or seen.add(x))]
 
-    return stats
+def chunk_list(lst, n):
+    """Divide una lista en trozos de tamaño n."""
+    for i in range(0, len(lst), n):
+        yield lst[i:i + n]

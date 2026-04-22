@@ -3,6 +3,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from app import db
 from app.modules.auth.models import User, AuthConfig
 from app.modules.auth.services import validate_ldap_connection
+from app.modules.audit.services import add_audit_log
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
@@ -15,13 +16,27 @@ def login():
         username = request.form.get("username")
         password = request.form.get("password")
         
+        # 1. Intentar Autenticación LDAP primero
+        from app.modules.auth.services import authenticate_user_ldap
+        ldap_result = authenticate_user_ldap(username, password)
+        
+        if ldap_result.get("status") == "success":
+            user = ldap_result["user"]
+            login_user(user)
+            add_audit_log("login usuario", status="success", detail=f"Usuario {username} ha iniciado sesión vía LDAP")
+            return redirect(url_for('core.index'))
+            
+        # 2. Fallback a Autenticación Local (si LDAP falla o no está configurado)
         user = User.query.filter_by(username=username).first()
         
         if user and user.check_password(password):
             login_user(user)
+            add_audit_log("login usuario", status="success", detail=f"Usuario {username} ha iniciado sesión localmente")
             return redirect(url_for('core.index'))
         
-        flash("Credenciales inválidas", "error")
+        # Si ambos fallan
+        error_msg = ldap_result.get("message") if ldap_result.get("status") == "error" else "Credenciales inválidas"
+        flash(f"Error de autenticación: {error_msg}", "error")
         return redirect(url_for('auth.login'))
 
     return render_template("login.html")
@@ -29,7 +44,9 @@ def login():
 @auth_bp.route("/logout")
 @login_required
 def logout():
+    username = current_user.username
     logout_user()
+    add_audit_log("logout usuario", status="info", user_override=username)
     return render_template("logout.html")
 
 @auth_bp.route("/")
@@ -120,6 +137,8 @@ def create_user():
         
         db.session.add(new_user)
         db.session.commit()
+        
+        add_audit_log("usuario creado", status="success", detail=f"Se creó el usuario: {data['username']}")
         
         return jsonify({"status": "success", "message": "Usuario creado"})
     except Exception as e:

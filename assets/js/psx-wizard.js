@@ -26,6 +26,7 @@ function closeWizard() {
 function resetWizardForm() {
     document.querySelectorAll('#psxWizardModal input, #psxWizardModal textarea').forEach(el => {
         el.value = '';
+        if (el.type === 'checkbox') el.checked = false;
         el.style.borderColor = 'var(--nx-border)';
     });
 
@@ -34,6 +35,9 @@ function resetWizardForm() {
 
     const toggle = document.getElementById('dataEntryToggle');
     if (toggle) toggle.checked = false;
+
+    const forceToggle = document.getElementById('psxForceToggle');
+    if (forceToggle) forceToggle.checked = false;
 
     // Reset Op Buttons
     document.querySelectorAll('.op-select-btn').forEach(btn => {
@@ -292,6 +296,8 @@ async function finalizeWizard() {
             const createResult = await createRes.json();
             if (createResult.status !== 'success') throw new Error(createResult.message);
 
+            const numTasks = createResult.task_ids ? createResult.task_ids.length : 1;
+
             // ÉXITO FINAL
             clearInterval(interval);
             if (progressBar) progressBar.style.width = '100%';
@@ -299,8 +305,10 @@ async function finalizeWizard() {
             
             setTimeout(() => {
                 progressModal.classList.add('opacity-0', 'pointer-events-none');
-                if (typeof showToast === 'function') showToast('Tarea iniciada correctamente', 'success');
-                if (typeof renderNexusTable === 'function') renderNexusTable();
+                if (typeof showToast === 'function') {
+                    showToast(`Se han creado ${numTasks} tareas correctamente`, 'success');
+                }
+                if (typeof fetchPSXData === 'function') fetchPSXData();
                 
                 setTimeout(() => {
                     if (progressBar) progressBar.style.width = '0%';
@@ -476,6 +484,9 @@ function resetScheduleWizardForm() {
         el.style.borderColor = 'var(--panel-border)';
         if (el.type === 'checkbox') el.checked = false;
     });
+    
+    const scheduleForceToggle = document.getElementById('schedulePsxForceToggle');
+    if (scheduleForceToggle) scheduleForceToggle.checked = false;
 
     const select = document.getElementById('scheduleClientModeSelect');
     if (select) select.value = 'calls_only';
@@ -719,14 +730,18 @@ async function finalizeScheduleWizard() {
             const result = await res.json();
             if (result.status !== 'success') throw new Error(result.message);
 
+            const numTasks = result.task_ids ? result.task_ids.length : 1;
+
             clearInterval(interval);
             if (progressBar) progressBar.style.width = '100%';
             if (statusText) statusText.innerText = 'TAREA PROGRAMADA';
             
             setTimeout(() => {
                 progressModal.classList.add('opacity-0', 'pointer-events-none');
-                if (typeof showToast === 'function') showToast('Tarea programada con éxito', 'success');
-                if (typeof renderNexusTable === 'function') renderNexusTable();
+                if (typeof showToast === 'function') {
+                    showToast(`Se han programado ${numTasks} tareas con éxito`, 'success');
+                }
+                if (typeof fetchPSXData === 'function') fetchPSXData();
             }, 1000);
 
         } catch (error) {

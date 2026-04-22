@@ -6,8 +6,8 @@ html, body {
 }
 
 :root {
-  /* Core Palette (Indigo Theme) */
-  --color-primary: 59 130 246;    /* #6366f1 - Indigo */
+  /* Core Palette (Cyber Blue Theme) */
+  --color-primary: 0 149 255;     /* Vibrant Cyber Blue */
   --color-secondary: 100 116 139; /* #64748b - Slate */
   --color-accent: 139 92 246;     /* #8b5cf6 - Violet */
   --color-success: 16 185 129;    /* #10b981 - Emerald */

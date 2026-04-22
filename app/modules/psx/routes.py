@@ -73,39 +73,78 @@ def get_stats():
 @login_required
 def create_task():
     """
-    Crea una nueva tarea PSX5K en la base de datos
+    Crea nuevas tareas PSX5K. 
+    Aplica Auto-Chunking de 200 registros tanto a Manual como a Archivos.
     """
+    from .services import extract_records, chunk_list
+    from app.modules.audit.services import add_audit_log
+    
     data = request.json
     try:
-        new_task = PSX5KTask(
-            usuario=current_user.username,
-            tarea=data.get('tarea'),
-            estado=data.get('estado', 'Pendiente'),
-            accion_tipo=data.get('accion_tipo'),
-            routing_label=data.get('routing_label'),
-            datos_tipo=data.get('datos_tipo'),
-            datos=data.get('datos'),
-            force=data.get('force', False),
-            fecha_inicio=datetime.datetime.now() if data.get('estado') == 'Ejecutando' else None
-        )
-        db.session.add(new_task)
-        db.session.flush() # Para obtener el ID
+        raw_tarea = data.get('tarea') # add / delete
+        raw_accion = data.get('datos_tipo') if raw_tarea != 'delete' else 'delete' 
+        raw_origen = data.get('accion_tipo') # Archivo / Manual
         
-        # Crear detalle inicial (contadores en 0)
-        new_detail = PSX5KDetail(
-            id=new_task.id,
-            total=data.get('total_items', 0),
-            ok=0,
-            fail=0
+        # 1. Extraer TODOS los registros del origen (sea archivo o manual)
+        all_records = extract_records(
+            raw_origen, 
+            data.get('datos'), 
+            '/home/dtovar/bayblade/c20/uploads/psx5k'
         )
-        db.session.add(new_detail)
+        
+        if not all_records:
+            return jsonify({"status": "error", "message": "No se encontraron registros válidos para procesar"}), 400
+            
+        # 2. Aplicar DIVISION (Auto-Chunking) cada 200 registros
+        chunks = list(chunk_list(all_records, 200))
+        total_chunks = len(chunks)
+        
+        created_ids = []
+        base_name = data.get('tarea_name') or f"Tarea_{raw_tarea}"
+
+        for i, chunk in enumerate(chunks):
+            # --- LÓGICA DE PERSISTENCIA SEGÚN ORIGEN ---
+            if raw_origen == 'Archivo':
+                # Crear un archivo físico para este chunk
+                import uuid
+                chunk_filename = f"chunks/chunk_{uuid.uuid4().hex}.csv"
+                chunk_path = os.path.join('/home/dtovar/bayblade/c20/uploads/psx5k', chunk_filename)
+                
+                with open(chunk_path, 'w') as f:
+                    f.write("\n".join(chunk))
+                
+                task_data_value = chunk_filename
+            else:
+                task_data_value = ",".join(chunk)
+            
+            new_task = PSX5KTask(
+                usuario=current_user.username,
+                tarea=raw_tarea, # 'add' o 'delete' únicamente
+                accion_tipo=raw_accion, 
+                datos_tipo=raw_origen, 
+                routing_label=data.get('routing_label'),
+                datos=task_data_value, 
+                force=data.get('force', False)
+            )
+            db.session.add(new_task)
+            db.session.flush()
+            
+            # Registro individual en auditoría
+            add_audit_log("tarea creada", status="info", detail=f"ID: {new_task.id} | {raw_origen} | Parte {i+1}/{total_chunks}")
+            
+            new_detail = PSX5KDetail(id=new_task.id, total=len(chunk), ok=0, fail=0)
+            db.session.add(new_detail)
+            created_ids.append(new_task.id)
+            
         db.session.commit()
+        add_audit_log("tarea creada", status="info", detail=f"{raw_origen} chunked - {total_chunks} partes")
         
         return jsonify({
             "status": "success",
-            "message": "Tarea creada correctamente",
-            "task_id": new_task.id
+            "message": f"Se han generado {total_chunks} mini-tareas correctamente",
+            "task_ids": created_ids
         }), 201
+        
     except Exception as e:
         db.session.rollback()
         return jsonify({"status": "error", "message": str(e)}), 500

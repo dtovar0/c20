@@ -33,41 +33,70 @@ function renderNexusTable() {
 
     // 1. Render Real Data Rows
     pageData.forEach(row => {
+        // Map status to visual styles
+        const statusColors = {
+            'success': 'text-emerald-400',
+            'error': 'text-rose-400',
+            'warning': 'text-amber-400',
+            'info': 'text-primary'
+        };
+
+        const colorClass = statusColors[row.status] || statusColors['info'];
+
+        // Map action type to visual styles
+        const actionColors = {
+            'tarea creada': 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+            'tarea terminada': 'bg-violet-500/10 text-violet-400 border-violet-500/20',
+            'tarea iniciada': 'bg-primary/10 text-primary border-primary/20',
+            'LOGIN': 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
+            'LOGOUT': 'bg-slate-500/10 text-slate-400 border-slate-500/20',
+            'SET_IDENTITY': 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+        };
+
+        const actionClass = actionColors[row.action] || 'bg-primary/5 text-primary/70 border-primary/20';
+
         html += `
             <tr class="group hover:bg-primary/5 transition-all duration-300">
-                <td class="px-5 py-3 text-[11px] font-black text-primary/80 bg-surface-container/30 border-y border-l border-panel-border rounded-l-2xl group-hover:border-primary/30 transition-colors">
-                    ${row.id || 'N/A'}
+                <td class="px-5 py-0 h-[52px] text-[10px] font-black text-primary/60 bg-surface-container/30 border-y border-l border-panel-border rounded-l-2xl group-hover:border-primary/30 transition-colors">
+                    #${String(row.id).padStart(5, '0')}
                 </td>
-                <td class="px-5 py-3 text-xs font-bold text-text bg-surface-container/30 border-y border-panel-border group-hover:border-primary/30 transition-colors">
-                    ${row.user || 'N/A'}
+                <td class="px-5 py-0 h-[52px] text-xs font-bold text-label/80 bg-surface-container/30 border-y border-panel-border group-hover:border-primary/30 transition-colors">
+                    ${row.user || 'SYSTEM'}
                 </td>
-                <td class="px-5 py-3 bg-surface-container/30 border-y border-panel-border group-hover:border-primary/30 transition-colors">
-                    <div class="badge-nexus bg-primary/10 text-primary border-primary/20 font-black">${row.action || 'N/A'}</div>
+                <td class="px-5 py-0 h-[52px] bg-surface-container/30 border-y border-panel-border group-hover:border-primary/30 transition-colors">
+                    <div class="inline-flex px-3 py-1 text-[9px] font-black tracking-widest uppercase border rounded-lg ${actionClass}">
+                        ${row.action}
+                    </div>
                 </td>
-                <td class="px-5 py-3 text-[10px] font-mono font-bold text-label/60 bg-surface-container/30 border-y border-panel-border group-hover:border-primary/30 transition-colors">
-                    ${row.time || 'N/A'}
+                <td class="px-5 py-0 h-[52px] text-center bg-surface-container/30 border-y border-panel-border group-hover:border-primary/30 transition-colors">
+                    <span class="text-[9px] font-black tracking-widest uppercase ${colorClass}">${row.status}</span>
                 </td>
-                <td class="px-5 py-3 bg-surface-container/30 rounded-r-2xl border-y border-r border-panel-border text-center group-hover:border-primary/30 transition-colors">
-                    <button class="p-2 hover:bg-primary/10 text-primary/40 hover:text-primary rounded-xl transition-all active:scale-90" title="Ver Detalles">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    </button>
+                <td class="px-5 py-0 h-[52px] bg-surface-container/30 border-y border-panel-border group-hover:border-primary/30 transition-colors">
+                    <div class="text-[10px] font-bold text-label/60 line-clamp-1 max-w-[300px]" title="${row.detail || ''}">
+                        ${row.detail || '-'}
+                    </div>
+                </td>
+                <td class="px-5 py-0 h-[52px] text-[10px] font-mono font-bold text-label/60 bg-surface-container/30 rounded-r-2xl border-y border-r border-panel-border group-hover:border-primary/30 transition-colors">
+                    ${row.time}
                 </td>
             </tr>
         `;
     });
 
-    // 2. Ghost Row Complementation (5 Columns)
+    // 2. Ghost Row Complementation (6 Columns)
     const ghostRowsCount = tableRecordsLimit - pageData.length;
     for (let i = 0; i < ghostRowsCount; i++) {
         html += `
             <tr class="animate-pulse pointer-events-none select-none opacity-40">
-                <td class="px-5 py-3 bg-surface-container/5 border-y border-l border-panel-border/10 rounded-l-2xl">
-                    <div class="h-2 w-12 bg-label/10 rounded-full"></div>
+                <td class="px-5 py-0 h-[52px] bg-surface-container/5 border-y border-l border-panel-border/10 rounded-l-2xl">
+                    <div class="h-2 w-10 bg-label/10 rounded-full mx-auto"></div>
                 </td>
-                <td class="px-5 py-3 bg-surface-container/5 border-y border-panel-border/10" colspan="3">
+                <td class="px-5 py-0 h-[52px] bg-surface-container/5 border-y border-panel-border/10" colspan="4">
                     <div class="h-2 w-full bg-label/5 rounded-full"></div>
                 </td>
-                <td class="px-5 py-3 bg-surface-container/5 border-y border-r border-panel-border/10 rounded-r-2xl"></td>
+                <td class="px-5 py-0 h-[52px] bg-surface-container/5 border-y border-r border-panel-border/10 rounded-r-2xl">
+                    <div class="h-2 w-full bg-label/5 rounded-full"></div>
+                </td>
             </tr>
         `;
     }
@@ -96,11 +125,29 @@ function updatePaginationUI() {
 }
 
 /**
+ * FETCH DATA FROM BACKEND
+ */
+async function fetchAuditData() {
+    try {
+        const response = await fetch('/audit/api/list');
+        const result = await response.json();
+        
+        if (result.status === 'success') {
+            auditData = result.logs;
+            filteredData = [...auditData];
+            renderNexusTable();
+        }
+    } catch (error) {
+        console.error('Error fetching Audit data:', error);
+        if (typeof showToast === 'function') showToast('Error cargando auditoría', 'error');
+    }
+}
+
+/**
  * INITIALIZATION
  */
 document.addEventListener('DOMContentLoaded', () => {
-    auditData = [...mockAuditData];
-    filteredData = [...auditData];
+    fetchAuditData();
 
     // Search Integration
     const searchInput = document.getElementById('auditSearch');
@@ -118,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Actions Listeners
     const refreshBtn = document.getElementById('refreshAudit');
     if (refreshBtn) {
-        refreshBtn.addEventListener('click', () => renderNexusTable());
+        refreshBtn.addEventListener('click', () => fetchAuditData());
     }
 
     const prevBtn = document.getElementById('prevPage');

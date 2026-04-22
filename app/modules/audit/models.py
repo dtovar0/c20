@@ -14,6 +14,7 @@ class AuditLog(db.Model):
 
     def to_dict(self):
         return {
+            "id": self.id,
             "time": self.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
             "user": self.user,
             "action": self.action,

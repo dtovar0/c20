@@ -6,7 +6,7 @@ class PSX5KTask(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     usuario = db.Column(db.String(100), nullable=False)
-    tarea = db.Column(db.String(20), nullable=False)
+    tarea = db.Column(db.String(200), nullable=False)
     estado = db.Column(db.String(20), default='Programada')
     accion_tipo = db.Column(db.String(20), nullable=True)
     routing_label = db.Column(db.String(100), nullable=True)
@@ -54,4 +54,28 @@ class PSX5KDetail(db.Model):
             "ok": self.ok,
             "fail": self.fail,
             "force_ok": self.force_ok
+        }
+
+class PSX5KHistory(db.Model):
+    __tablename__ = 'psx5k_history'
+    
+    id = db.Column(db.Integer, primary_key=True) # ID único del registro histórico
+    task_id = db.Column(db.Integer, nullable=False) # ID de la tarea que procesó el número
+    usuario = db.Column(db.String(100), nullable=False)
+    numero = db.Column(db.String(20), nullable=False)
+    routing_label = db.Column(db.String(100), nullable=True)
+    accion = db.Column(db.String(50), nullable=False)
+    estado = db.Column(db.String(20), nullable=False) # OK, FAIL, DUP, etc.
+    fecha = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "task_id": self.task_id,
+            "usuario": self.usuario,
+            "numero": self.numero,
+            "routing_label": self.routing_label,
+            "accion": self.accion,
+            "estado": self.estado,
+            "fecha": self.fecha.isoformat() if self.fecha else None
         }

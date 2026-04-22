@@ -42,6 +42,13 @@ def create_app():
     login_manager.login_message = "Por favor, inicie sesión para acceder."
     login_manager.login_message_category = "info"
 
+    # Configuración de Redis
+    from app.utils.redis_client import registry as redis_registry
+    redis_registry.host = os.getenv('REDIS_HOST', 'localhost')
+    redis_registry.port = int(os.getenv('REDIS_PORT', 6379))
+    redis_registry.password = os.getenv('REDIS_PASS', None)
+    redis_registry.connect() # Intento de conexión inicial
+
     @login_manager.user_loader
     def load_user(user_id):
         from app.modules.auth.models import User
@@ -69,7 +76,7 @@ def create_app():
     from app.modules.audit.models import AuditLog
     from app.modules.notifications.models import SMTPConfig, NotificationTemplate
     from app.modules.auth.models import AuthConfig, User
-    from app.modules.psx.models import PSX5KTask, PSX5KDetail
+    from app.modules.psx.models import PSX5KTask, PSX5KDetail, PSX5KHistory
 
     # Crear tablas automáticamente dentro del contexto de la app
     with app.app_context():

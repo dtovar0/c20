@@ -5,9 +5,10 @@ import datetime
 import signal
 import xml.etree.ElementTree as ET
 from app import create_app, db
-from app.modules.psx.models import PSX5KTask, PSX5KDetail
+from app.modules.psx.models import PSX5KTask, PSX5KDetail, PSX5KHistory
 from app.modules.notifications.services import send_notification_by_slug
 from app.modules.auth.models import User
+from app.modules.audit.services import add_audit_log
 
 # Configuración Global
 LOCK_FILE = "/tmp/psx5k_processor.lock"
@@ -39,54 +40,31 @@ def handle_stale_lock(app):
 
 def process_task_data(task):
     """
-    Procesa el origen de datos (Manual o Archivo) y retorna la lista de registros (ANI).
+    Retorna la lista de números. 
+    Si es Archivo: Lee el fragmento físico (.csv).
+    Si es Manual:  Lee los registros desde la columna 'datos'.
     """
-    records = []
-    if task.accion_tipo == 'Manual':
-        print(f"📝 Procesando entrada MANUAL para Tarea {task.id}")
-        raw_data = task.datos or ""
-        items = raw_data.replace(';', '\n').replace(',', '\n').split('\n')
-        for item in items:
-            item = item.strip()
-            if not item: continue
-            if '-' in item:
-                try:
-                    parts = item.split('-')
-                    start = int(parts[0].strip())
-                    end = int(parts[1].strip())
-                    if start <= end:
-                        records.extend([str(x) for x in range(start, end + 1)])
-                    else:
-                        records.extend([str(x) for x in range(end, start + 1)])
-                except Exception as e:
-                    print(f"⚠️ Error procesando rango '{item}': {e}")
-            else:
-                records.append(item)
-    elif task.accion_tipo == 'Archivo':
-        print(f"📁 Procesando ARCHIVO para Tarea {task.id}")
-        file_path = os.path.join('uploads/psx', task.datos)
-        if not os.path.exists(file_path):
-            print(f"❌ Archivo no encontrado: {file_path}")
-            return []
-        try:
-            tree = ET.parse(file_path)
-            root = tree.getroot()
-            for ani_tag in root.findall('.//ANI'):
-                if ani_tag.text:
-                    records.append(ani_tag.text.strip())
-            if not records:
-                for elem in root.iter():
-                    if elem.tag.upper() == 'ANI' and elem.text:
-                        records.append(elem.text.strip())
-        except Exception as e:
-            print(f"⚠️ Error procesando XML '{task.datos}': {e}")
-            try:
-                with open(file_path, 'r') as f:
-                    records = [line.strip() for line in f if line.strip()]
-            except:
-                pass
-    return list(set(records))
+    if not task.datos:
+        return []
 
+    if task.datos_tipo == 'Archivo':
+        # Leer desde el archivo físico generado por la API
+        file_path = os.path.join('/home/dtovar/bayblade/c20/uploads/psx5k', task.datos)
+        if not os.path.exists(file_path):
+            print(f"❌ Fragmento no encontrado: {file_path}")
+            return []
+        
+        try:
+            with open(file_path, 'r') as f:
+                return [line.strip() for line in f if line.strip()]
+        except Exception as e:
+            print(f"⚠️ Error leyendo fragmento {task.datos}: {e}")
+            return []
+    else:
+        # Procesar entrada manual (CSV en base de datos)
+        print(f"⚙️ Procesando bloque Manual para Tarea {task.id}")
+        return [x.strip() for x in task.datos.split(',') if x.strip()]
+ 
 def main():
     """
     Motor de procesamiento PSX5K (Backend Service)
@@ -131,6 +109,8 @@ def main():
                         target_email=admin.email,
                         context={'usuario': task.usuario, 'hora': task.fecha_inicio.strftime('%Y-%m-%d %H:%M:%S')}
                     )
+                
+                add_audit_log("tarea iniciada", status="info", detail=f"ID: {task.id} - {task.tarea}", user_override=task.usuario)
 
                 # --- PROCESAMIENTO DE DATOS ---
                 ani_list = process_task_data(task)
@@ -156,12 +136,8 @@ def main():
                 # Importar y ejecutar función validada desde archivo externo
                 from psx5k_cmd import psx5k_cmd
                 
-                # Mapear tipos de llamada para el script
-                type_map = {
-                    'Bloqueo (Entrante)': 'call_in',
-                    'Routing Label (Activo)': 'call_inout'
-                }
-                l_type = type_map.get(task.datos_tipo, 'call_in')
+                # NUEVO MAPEO: accion_tipo trae directamente: both, calls_only, delete
+                l_type = task.accion_tipo
                 
                 results = psx5k_cmd(
                     line_task=task.tarea, 
@@ -177,10 +153,36 @@ def main():
                 detail.force_ok = results.get("force_ok", 0)
                 db.session.commit()
 
+                # --- GUARDAR HISTORIAL DETALLADO ---
+                print(f"📖 Guardando historial detallado para {len(results.get('logs', []))} registros...")
+                for log_entry in results.get('logs', []):
+                    # El formato del log es "[STATUS] Numero - Detalles"
+                    try:
+                        parts = log_entry.split(' ', 2)
+                        status_tag = parts[0].strip('[]')
+                        number = parts[1]
+                        
+                        history_entry = PSX5KHistory(
+                            task_id=task.id,
+                            usuario=task.usuario,
+                            numero=number,
+                            routing_label=task.routing_label,
+                            accion=task.tarea,
+                            estado=status_tag,
+                            fecha=datetime.datetime.now()
+                        )
+                        db.session.add(history_entry)
+                    except Exception as he:
+                        print(f"⚠️ Error al guardar historial para {log_entry}: {he}")
+                
+                db.session.commit()
+
                 # Marcar como finalizada
                 task.estado = 'Terminada'
                 task.fecha_fin = datetime.datetime.now()
                 db.session.commit()
+                
+                add_audit_log("tarea terminada", status="success", detail=f"ID: {task.id} - OK: {detail.ok}, Fail: {detail.fail}", user_override=task.usuario)
                 ####### FIN SCRIPT #########
 
                 # Notificar finalización

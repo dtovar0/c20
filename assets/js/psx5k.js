@@ -4,7 +4,7 @@
  */
 
 // Global Configuration
-const tableRecordsLimit = 8;
+const tableRecordsLimit = 7;
 let psxData = [];
 let filteredData = [];
 let currentPage = 1;
@@ -15,27 +15,30 @@ let currentPage = 1;
 const mockPsxData = [];
 
 /**
- * GENERA UNA BARRA DE PROGRESO TERMINAL (Mainframe Style)
+ * GENERA UNA GRÁFICA DE SEGMENTOS REAL (Basada en psx5k_details)
  */
-function generateSegmentedBars() {
-    const totalSegments = 15;
-    const filledSegments = Math.floor(Math.random() * 8) + 5; // Simulación de carga
-    let barsHtml = '';
-    
-    for (let i = 0; i < totalSegments; i++) {
-        const isFilled = i < filledSegments;
-        const color = isFilled ? 'rgb(var(--color-primary))' : 'rgb(var(--color-panel-border))';
-        const opacity = isFilled ? '1' : '0.2';
-        barsHtml += `<rect x="${i * 6}" y="0" width="4" height="12" rx="0.5" fill="${color}" fill-opacity="${opacity}" />`;
+function generateTaskGraphic(resumen) {
+    if (!resumen || resumen.total === 0) {
+        return `<div class="h-1.5 w-24 bg-panel-border/20 rounded-full"></div>`;
     }
 
+    const okPct = (resumen.ok / resumen.total) * 100;
+    const failPct = (resumen.fail / resumen.total) * 100;
+    const forcePct = (resumen.force_ok / resumen.total) * 100;
+    const pendingPct = Math.max(0, 100 - (okPct + failPct + forcePct));
+
     return `
-        <div class="flex items-center justify-center font-mono text-label/40 gap-1 select-none">
-            <span class="text-xs">[</span>
-            <svg class="w-[90px] h-3" viewBox="0 0 90 12">
-                ${barsHtml}
-            </svg>
-            <span class="text-xs">]</span>
+        <div class="flex flex-col gap-1 w-full max-w-[120px] mx-auto">
+            <div class="h-2 w-full bg-panel-border/20 rounded-full overflow-hidden flex shadow-inner">
+                <div class="h-full bg-primary transition-all duration-500" style="width: ${okPct}%" title="OK: ${resumen.ok}"></div>
+                <div class="h-full bg-rose-500 transition-all duration-500" style="width: ${failPct}%" title="FAIL: ${resumen.fail}"></div>
+                <div class="h-full bg-violet-500 transition-all duration-500" style="width: ${forcePct}%" title="FORCED: ${resumen.force_ok}"></div>
+                <div class="h-full bg-transparent" style="width: ${pendingPct}%"></div>
+            </div>
+            <div class="flex justify-between items-center px-0.5">
+                <span class="text-[8px] font-black text-primary/60">${Math.round(okPct + failPct + forcePct)}%</span>
+                <span class="text-[8px] font-bold text-label/30">${resumen.ok + resumen.fail + resumen.force_ok}/${resumen.total}</span>
+            </div>
         </div>
     `;
 }
@@ -82,10 +85,10 @@ function renderNexusTable() {
                     <div class="flex items-center h-full">${row.fecha_fin ? row.fecha_fin.replace('T', ' ') : '-'}</div>
                 </td>
                 <td class="px-5 py-0 h-[56px] text-[10px] font-black uppercase text-label/40 bg-surface-container/30 border-y border-panel-border group-hover:border-primary/30 transition-colors">
-                    <div class="flex items-center h-full tracking-[0.1em] border border-panel-border/30 px-3 py-1.5 rounded-xl bg-surface-container/50">${row.accion_tipo || 'MANUAL'}</div>
+                    <div class="flex items-center h-full tracking-[0.1em]">${row.datos_tipo || 'MANUAL'}</div>
                 </td>
                 <td class="px-5 py-0 h-[56px] bg-surface-container/30 border-y border-panel-border group-hover:border-primary/30 transition-colors text-center">
-                    <div class="flex items-center justify-center h-full">${generateSegmentedBars()}</div>
+                    <div class="flex items-center justify-center h-full">${generateTaskGraphic(row.resumen)}</div>
                 </td>
                 <td class="px-5 py-0 h-[56px] bg-surface-container/30 rounded-r-2xl border-y border-r border-panel-border text-center group-hover:border-primary/30 transition-colors">
                     <div class="flex items-center justify-center h-full">

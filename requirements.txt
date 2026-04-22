@@ -9,3 +9,8 @@ Flask-Mail
 psycopg2-binary
 Flask-Login==0.6.3
 pexpect
+openpyxl
+xlrd
+pandas
+redis
+gunicorn

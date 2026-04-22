@@ -624,15 +624,31 @@ input[name="db_engine"]:checked + label .w-5.h-5 .bg-primary {
     border-color: rgba(16, 185, 129, 0.2);
 }
 
-/* Operaciones */
+/* Operaciones (Premium Cyberpunk) */
 .badge-op-add {
-    background-color: rgba(139, 92, 246, 0.1);
-    color: #a78bfa;
-    border-color: rgba(139, 92, 246, 0.2);
+    background-color: rgba(16, 185, 129, 0.08);
+    color: #34d399;
+    border-color: rgba(16, 185, 129, 0.25);
+    box-shadow: 0 0 15px -5px rgba(16, 185, 129, 0.2);
+}
+
+.badge-op-add::before {
+    content: '+';
+    font-size: 11px;
+    font-weight: 900;
+    margin-right: 2px;
 }
 
 .badge-op-delete {
-    background-color: rgba(244, 63, 94, 0.1);
+    background-color: rgba(244, 63, 94, 0.08);
     color: #fb7185;
-    border-color: rgba(244, 63, 94, 0.2);
+    border-color: rgba(244, 63, 94, 0.25);
+    box-shadow: 0 0 15px -5px rgba(244, 63, 94, 0.2);
+}
+
+.badge-op-delete::before {
+    content: '×';
+    font-size: 14px;
+    font-weight: 900;
+    margin-right: 2px;
 }
