@@ -1,7 +1,30 @@
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from app.modules.notifications.models import SMTPConfig, NotificationTemplate
+from app.modules.notifications.models import SMTPConfig, NotificationTemplate, InAppNotification
+
+def add_in_app_notification(type, title, message, user_id=None):
+    """
+    Creates a persistent in-app notification.
+    type: success, error, warning, info
+    user_id: ID of the user (NULL for global)
+    """
+    from app import db
+    try:
+        notif = InAppNotification(
+            type=type,
+            title=title,
+            message=message,
+            user_id=user_id
+        )
+        db.session.add(notif)
+        db.session.commit()
+        return True
+    except Exception as e:
+        print(f"Error adding notification: {e}")
+        db.session.rollback()
+        return False
+
 
 def send_test_email(server, port, encryption, user, password, sender_name, sender_email, target_email):
     """

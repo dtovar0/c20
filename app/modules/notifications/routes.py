@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, request, jsonify
-from flask_login import login_required
+from flask_login import login_required, current_user
 from app.decorators import admin_required
 from app import db
-from app.modules.notifications.models import SMTPConfig, NotificationTemplate
+from app.modules.notifications.models import SMTPConfig, NotificationTemplate, InAppNotification
 from app.modules.notifications.services import send_test_email
 
 notifications_bp = Blueprint("notifications", __name__, url_prefix="/notifications")
@@ -135,3 +135,78 @@ def save_template():
     except Exception as e:
         db.session.rollback()
         return jsonify({"status": "error", "message": str(e)}), 500
+
+@notifications_bp.route("/api/active")
+@login_required
+def get_active_notifications():
+    try:
+        from datetime import timedelta
+        # SILENT MAINTENANCE: Auto-clean old records
+        # 1. Delete READ notifications older than 4 days
+        four_days_ago = datetime.utcnow() - timedelta(days=4)
+        InAppNotification.query.filter(
+            InAppNotification.is_read == True,
+            InAppNotification.created_at < four_days_ago
+        ).delete()
+        
+        # 2. Delete ALL notifications older than 7 days
+        week_ago = datetime.utcnow() - timedelta(days=7)
+        InAppNotification.query.filter(
+            InAppNotification.created_at < week_ago
+        ).delete()
+        
+        db.session.commit()
+
+        # Hybrid fetch: Global (null) OR specific to user
+        notifications = InAppNotification.query.filter(
+            (InAppNotification.user_id == None) | (InAppNotification.user_id == current_user.id)
+        ).order_by(InAppNotification.created_at.desc()).limit(15).all()
+        
+        return jsonify({
+            "status": "success", 
+            "notifications": [n.to_dict() for n in notifications],
+            "unread_count": sum(1 for n in notifications if not n.is_read)
+        })
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@notifications_bp.route("/api/mark-read", methods=["POST"])
+@login_required
+def mark_read():
+    try:
+        data = request.get_json()
+        notif_id = data.get("id")
+        
+        if notif_id:
+            # Mark a specific one
+            notif = InAppNotification.query.get(notif_id)
+            if notif and (notif.user_id == None or notif.user_id == current_user.id):
+                notif.is_read = True
+        else:
+            # Mark all as read for this user
+            InAppNotification.query.filter(
+                (InAppNotification.user_id == None) | (InAppNotification.user_id == current_user.id)
+            ).update({InAppNotification.is_read: True}, synchronize_session=False)
+
+        db.session.commit()
+        return jsonify({"status": "success"})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@notifications_bp.route("/api/delete-all", methods=["DELETE"])
+@login_required
+def delete_all():
+    try:
+        # Delete only notifications relevant to this user (Global or Personal)
+        InAppNotification.query.filter(
+            (InAppNotification.user_id == None) | (InAppNotification.user_id == current_user.id)
+        ).delete(synchronize_session=False)
+        
+        db.session.commit()
+        return jsonify({"status": "success"})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+

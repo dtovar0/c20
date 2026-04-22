@@ -46,3 +46,34 @@ class NotificationTemplate(db.Model):
             "is_html": self.is_html,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None
         }
+
+class InAppNotification(db.Model):
+    __tablename__ = 'in_app_notifications'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True) # NULL means global
+    type = db.Column(db.String(20), default='info') # success, error, warning, info
+    title = db.Column(db.String(100), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+    is_read = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "type": self.type,
+            "title": self.title,
+            "message": self.message,
+            "is_read": self.is_read,
+            "time": self.human_time(),
+            "timestamp": self.created_at.isoformat()
+        }
+    
+    def human_time(self):
+        now = datetime.utcnow()
+        diff = now - self.created_at
+        if diff.days > 0: return f"Hace {diff.days} d"
+        if diff.seconds > 3600: return f"Hace {diff.seconds // 3600} h"
+        if diff.seconds > 60: return f"Hace {diff.seconds // 60} m"
+        return "Ahora"
+

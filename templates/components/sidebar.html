@@ -59,7 +59,13 @@
                 <span class="sidebar-text text-base whitespace-nowrap">PSX5K</span>
             </a>
 
-
+            <a href="{{ url_for('audit.index') }}" title="Historial" 
+               class="nav-item {% if request.endpoint == 'audit.index' %}nav-item-active{% endif %} gap-4 px-3 py-3 text-secondary hover:text-primary hover:bg-surface-container rounded-base transition-all group">
+                <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span class="sidebar-text text-base whitespace-nowrap">
+                    {{ 'Auditoría' if current_user.role == 'administrador' else 'Mi Historial' }}
+                </span>
+            </a>
 
             <!-- Administrators Section -->
             {% if current_user.role == 'administrador' %}
@@ -77,16 +83,10 @@
                 <span class="sidebar-text text-base whitespace-nowrap">Autenticación</span>
             </a>
 
-            <a href="{{ url_for('notifications.index') }}" title="Notificiación" 
+            <a href="{{ url_for('notifications.index') }}" title="Notificación" 
                class="nav-item {% if request.endpoint == 'notifications.index' %}nav-item-active{% endif %} gap-4 px-3 py-3 text-secondary hover:text-primary hover:bg-surface-container rounded-base transition-all group">
                 <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                 <span class="sidebar-text text-base whitespace-nowrap">Notificación</span>
-            </a>
-
-            <a href="{{ url_for('audit.index') }}" title="Auditoría" 
-               class="nav-item {% if request.endpoint == 'audit.index' %}nav-item-active{% endif %} gap-4 px-3 py-3 text-secondary hover:text-primary hover:bg-surface-container rounded-base transition-all group">
-                <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                <span class="sidebar-text text-base whitespace-nowrap">Auditoría</span>
             </a>
 
             <p class="text-[10px] font-bold text-label/60 uppercase tracking-widest px-3 mb-2 mt-6 sidebar-text">Personalización</p>
@@ -96,6 +96,7 @@
                 <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17l.354-.354"></path></svg>
                 <span class="sidebar-text text-base whitespace-nowrap">Diseño</span>
             </a>
+
             {% endif %}
         </nav>
 

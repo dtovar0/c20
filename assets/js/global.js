@@ -413,7 +413,162 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!notificationDropdown.contains(e.target) && !notificationBtn.contains(e.target)) {
                 notificationDropdown.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
             }
+                // --- DYNAMIC NOTIFICATION SYSTEM ---
+        let allNotifications = [];
+        let activeFilter = 'all';
+        
+        async function fetchNotifications() {
+            try {
+                const response = await fetch('/notifications/api/active');
+                if (!response.ok) return;
+                const data = await response.json();
+                if (data.status === 'success') {
+                    allNotifications = data.notifications;
+                    renderNotifications(allNotifications, data.unread_count);
+                }
+            } catch (error) {
+                console.error('Notification fetch error:', error);
+            }
+        }
+
+        function renderNotifications(notifications, unreadCount) {
+            const list = document.getElementById('notificationList');
+            const badge = document.getElementById('notificationBadge');
+            if (!list) return;
+
+            // Update Badge (Always show total unread of ALL)
+            if (unreadCount > 0) {
+                badge.classList.remove('hidden');
+                badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+                badge.style.opacity = '1';
+                badge.style.transform = 'scale(1)';
+            } else {
+                badge.style.opacity = '0';
+                badge.style.transform = 'scale(0)';
+                setTimeout(() => badge.classList.add('hidden'), 300);
+            }
+
+            // Filter logic
+            const filtered = activeFilter === 'all' 
+                ? notifications 
+                : notifications.filter(n => n.type === activeFilter || (activeFilter === 'warning' && n.type === 'system')); 
+                // Note: warning/system mapping depends on how you label them, 
+                // but let's stick to strict type match for now:
+            
+            const displayList = activeFilter === 'all' ? notifications : notifications.filter(n => n.type === activeFilter);
+
+            if (displayList.length === 0) {
+                list.innerHTML = `
+                    <div class="p-8 text-center opacity-40">
+                        <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
+                        <p class="text-[10px] font-black uppercase tracking-widest italic">Sin avisos en esta categoría</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const icons = {
+                success: '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>',
+                error: '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>',
+                warning: '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>',
+                info: '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>',
+                system: '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>'
+            };
+
+            const colors = {
+                success: 'bg-emerald-500/10 text-emerald-500',
+                error: 'bg-rose-500/10 text-rose-500',
+                warning: 'bg-amber-500/10 text-amber-500',
+                info: 'bg-sky-500/10 text-sky-500',
+                system: 'bg-primary/10 text-primary'
+            };
+
+            list.innerHTML = displayList.map(n => `
+                <div class="p-4 border-b border-panel-border/50 hover:bg-surface-container/40 cursor-pointer transition-colors group relative ${n.is_read ? 'opacity-60' : ''}" 
+                     onclick="markAsRead(${n.id}, event)">
+                    <div class="flex gap-3">
+                        <div class="w-8 h-8 rounded-lg ${colors[n.type] || colors.info} flex-shrink-0 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            ${icons[n.type] || icons.info}
+                        </div>
+                        <div class="flex-grow">
+                            <p class="text-xs font-bold text-text mb-0.5 line-clamp-1 italic">${n.title}</p>
+                            <p class="text-[10px] text-label/60 leading-tight line-clamp-2">${n.message}</p>
+                            <span class="text-[9px] font-bold opacity-40 mt-1 block">${n.time}</span>
+                        </div>
+                        ${!n.is_read ? '<div class="w-1.5 h-1.5 rounded-full bg-primary mt-1 flex-shrink-0 shadow-lg shadow-primary/20"></div>' : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Filter Click Handling
+        document.querySelectorAll('.notif-filter').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                activeFilter = btn.dataset.filter;
+                
+                // Update UI of buttons
+                document.querySelectorAll('.notif-filter').forEach(b => {
+                    b.classList.remove('active', 'bg-primary', 'text-white');
+                    b.classList.add('opacity-40');
+                });
+                btn.classList.add('active', 'bg-primary', 'text-white');
+                btn.classList.remove('opacity-40');
+
+                renderNotifications(allNotifications, 0); // unreadCount doesn't matter for filter re-render
+            });
         });
+
+        // Global exposing for onclick
+        window.markAsRead = async (id, event) => {
+            if (event) event.stopPropagation();
+            try {
+                const response = await fetch('/notifications/api/mark-read', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+                if (response.ok) fetchNotifications();
+            } catch (error) {
+                console.error('Error marking as read:', error);
+            }
+        };
+
+        window.markAllAsRead = async () => {
+            try {
+                const response = await fetch('/notifications/api/mark-read', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({}) // all
+                });
+                if (response.ok) {
+                    showToast('Todas marcadas como leídas', 'success');
+                    fetchNotifications();
+                }
+            } catch (error) {
+                console.error('Error marking all as read:', error);
+            }
+        };
+
+        window.deleteAllNotifications = async () => {
+            if (!confirm('¿Estás seguro de que quieres borrar TODAS las notificaciones?')) return;
+            
+            try {
+                const response = await fetch('/notifications/api/delete-all', {
+                    method: 'DELETE'
+                });
+                if (response.ok) {
+                    showToast('Bandeja de entrada vaciada', 'info');
+                    fetchNotifications();
+                }
+            } catch (error) {
+                console.error('Error deleting all:', error);
+            }
+        };
+
+        // Initial fetch and set interval
+        fetchNotifications();
+        setInterval(fetchNotifications, 60000); // 1 minute polling
     }
 });
 

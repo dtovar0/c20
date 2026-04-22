@@ -78,35 +78,24 @@
                         <!-- Notification Dropdown -->
                         <div id="notificationDropdown" class="absolute right-0 top-full mt-2 w-80 bg-panel-fill/95 backdrop-blur-xl border border-panel-border rounded-2xl shadow-2xl opacity-0 translate-y-4 pointer-events-none transition-all duration-300 z-50 overflow-hidden">
                             <div class="p-4 border-b border-panel-border flex justify-between items-center bg-surface-container/30">
-                                <h3 class="text-[10px] font-black text-label uppercase tracking-widest">Notificaciones</h3>
-                                <button class="text-[9px] font-bold text-primary hover:underline uppercase tracking-tighter">Marcar todo</button>
-                            </div>
-                            <div class="max-h-[360px] overflow-y-auto custom-scrollbar" id="notificationList">
-                                <!-- Notificación Mock 1 -->
-                                <div class="p-4 border-b border-panel-border/50 hover:bg-surface-container/40 cursor-pointer transition-colors group">
-                                    <div class="flex gap-3">
-                                        <div class="w-8 h-8 rounded-lg bg-primary/10 flex-shrink-0 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                                        </div>
-                                        <div class="flex-grow">
-                                            <p class="text-xs font-bold text-text mb-0.5 line-clamp-1 italic">Sistema Actualizado</p>
-                                            <p class="text-[10px] text-label/60 leading-tight">La base de datos se ha sincronizado correctamente con el nuevo esquema.</p>
-                                            <span class="text-[9px] font-bold text-primary/40 mt-1 block">Hace 5 min</span>
-                                        </div>
-                                    </div>
+                                <h3 class="text-[10px] font-black text-label uppercase tracking-widest text-primary/80">Notificaciones</h3>
+                                <div class="flex items-center gap-3">
+                                    <button onclick="markAllAsRead()" class="text-[9px] font-black text-primary hover:underline uppercase tracking-tighter">Marcar todo</button>
+                                    <div class="w-1 h-1 rounded-full bg-panel-border"></div>
+                                    <button onclick="deleteAllNotifications()" class="text-[9px] font-black text-rose-500/60 hover:text-rose-500 hover:underline uppercase tracking-tighter">Borrar todo</button>
                                 </div>
-                                <!-- Notificación Mock 2 -->
-                                <div class="p-4 border-b border-panel-border/50 hover:bg-surface-container/40 cursor-pointer transition-colors group">
-                                    <div class="flex gap-3">
-                                        <div class="w-8 h-8 rounded-lg bg-orange-500/10 flex-shrink-0 flex items-center justify-center text-orange-500 group-hover:scale-110 transition-transform">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                                        </div>
-                                        <div class="flex-grow">
-                                            <p class="text-xs font-bold text-text mb-0.5 line-clamp-1 italic">Intento de Acceso</p>
-                                            <p class="text-[10px] text-label/60 leading-tight">Se detectó un intento de inicio de sesión desde una nueva IP.</p>
-                                            <span class="text-[9px] font-bold text-orange-500/40 mt-1 block">Hace 1 h</span>
-                                        </div>
-                                    </div>
+                            </div>
+                            <!-- Filter Pills -->
+                            <div class="px-4 py-2 bg-surface-container/10 border-b border-panel-border flex gap-2 overflow-x-auto custom-scrollbar no-scrollbar">
+                                <button data-filter="all" class="notif-filter active px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter transition-all">Todos</button>
+                                <button data-filter="warning" class="notif-filter px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter transition-all opacity-40 hover:opacity-100">Seguridad</button>
+                                <button data-filter="info" class="notif-filter px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter transition-all opacity-40 hover:opacity-100">Sistema</button>
+                                <button data-filter="success" class="notif-filter px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter transition-all opacity-40 hover:opacity-100">Éxito</button>
+                            </div>
+                            <div id="notificationList" class="max-h-[320px] overflow-y-auto custom-scrollbar">
+                                <div class="p-8 text-center opacity-40">
+                                    <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
+                                    <p class="text-[10px] font-black uppercase tracking-widest">Sin notificaciones</p>
                                 </div>
                             </div>
                             <a href="#" class="p-3 bg-surface-container/30 border-t border-panel-border text-center block text-[10px] font-black text-label uppercase tracking-widest hover:text-primary transition-colors">Ver todas las alertas</a>
