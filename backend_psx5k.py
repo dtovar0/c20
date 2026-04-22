@@ -6,7 +6,11 @@ import signal
 from app import create_app, db
 from app.modules.psx.models import PSX5KTask, PSX5KDetail
 
+from app.modules.notifications.services import send_notification_by_slug
+from app.modules.auth.models import User
+
 LOCK_FILE = "psx5k_processor.lock"
+MAX_LOCK_AGE_MINUTES = 60
 
 def cleanup_lock():
     """Elimina el archivo lock al salir"""
@@ -14,14 +18,38 @@ def cleanup_lock():
         os.remove(LOCK_FILE)
         print("🔓 Lock file eliminado. Proceso finalizado.")
 
+def handle_stale_lock(app):
+    """Maneja el caso de un lock antiguo (>60 min)"""
+    mtime = os.path.getmtime(LOCK_FILE)
+    age_minutes = (time.time() - mtime) / 60
+    
+    if age_minutes > MAX_LOCK_AGE_MINUTES:
+        print(f"🛑 LOCK EXPIRADO ({int(age_minutes)} min). Enviando notificación de error.")
+        with app.app_context():
+            admin = User.query.filter_by(role='administrador').first()
+            if admin and admin.email:
+                send_notification_by_slug(
+                    slug='error', 
+                    target_email=admin.email,
+                    context={'usuario': 'SYSTEM_BACKEND', 'ip': 'LOCAL_WORKER', 'error': 'STALE_LOCK_TIMEOUT'}
+                )
+        return True # Indica que es stale
+    return False
+
 def main():
     """
     Motor de procesamiento PSX5K (Backend Service)
     """
+    app = create_app()
+
     # 1. Verificar/Generar LOCK
     if os.path.exists(LOCK_FILE):
-        print(f"⚠️ Proceso ya en ejecución o lock existente ({LOCK_FILE}). Abortando.")
-        return
+        if not handle_stale_lock(app):
+            print(f"⚠️ Proceso ya en ejecución o lock activo ({LOCK_FILE}). Abortando.")
+            return
+        else:
+            # Si el lock es stale, lo eliminamos para permitir ejecución
+            os.remove(LOCK_FILE)
 
     try:
         # Crear lock

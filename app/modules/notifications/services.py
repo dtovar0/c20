@@ -1,13 +1,13 @@
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from app.modules.notifications.models import SMTPConfig, NotificationTemplate
 
 def send_test_email(server, port, encryption, user, password, sender_name, sender_email, target_email):
     """
     Sends a test email to verify SMTP configuration.
     """
     try:
-        # Create message
         msg = MIMEMultipart()
         msg['From'] = f"{sender_name} <{sender_email}>"
         msg['To'] = target_email
@@ -23,15 +23,11 @@ def send_test_email(server, port, encryption, user, password, sender_name, sende
                     <p><b>Servidor:</b> {server}:{port}</p>
                     <p><b>Cifrado:</b> {encryption.upper()}</p>
                 </div>
-                <p style="font-size: 11px; color: #64748b; margin-top: 20px;">
-                    Este es un correo automático generado por Nexus Premium. Por favor no responda.
-                </p>
             </body>
         </html>
         """
         msg.attach(MIMEText(body, 'html'))
 
-        # Connect and Send
         if encryption == 'ssl':
             smtp = smtplib.SMTP_SSL(server, port, timeout=10)
         else:
@@ -44,8 +40,49 @@ def send_test_email(server, port, encryption, user, password, sender_name, sende
 
         smtp.send_message(msg)
         smtp.quit()
-        
         return {"status": "success", "message": "Correo de prueba enviado correctamente"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+def send_notification_by_slug(slug, target_email, context=None):
+    """
+    Sends a pre-defined notification template using the global SMTP configuration.
+    """
+    from app import db
+    try:
+        config = SMTPConfig.query.first()
+        template = NotificationTemplate.query.filter_by(slug=slug).first()
+        if not config or not template:
+            return {"status": "error", "message": "Missing SMTP config or Template"}
+
+        # Prepare content
+        body = template.body
+        subject = template.subject
+        if context:
+            for key, val in context.items():
+                body = body.replace(f"{{{key}}}", str(val))
+                subject = subject.replace(f"{{{key}}}", str(val))
+
+        msg = MIMEMultipart()
+        msg['From'] = f"{config.sender_name} <{config.sender_email}>"
+        msg['To'] = target_email
+        msg['Subject'] = subject
+        msg.attach(MIMEText(body, 'html' if template.is_html else 'plain'))
+
+        # Connection
+        if config.encryption == 'ssl':
+            smtp = smtplib.SMTP_SSL(config.server, config.port, timeout=10)
+        else:
+            smtp = smtplib.SMTP(config.server, config.port, timeout=10)
+            if config.encryption == 'starttls':
+                smtp.starttls()
+
+        if config.auth_enabled and config.user and config.password:
+            smtp.login(config.user, config.password)
+
+        smtp.send_message(msg)
+        smtp.quit()
+        return {"status": "success", "message": f"Notificación '{slug}' enviada"}
 
     except Exception as e:
         return {"status": "error", "message": str(e)}
