@@ -203,15 +203,6 @@ function copyVariable(variable) {
     });
 }
 
-function resetTemplateToDefault() {
-    const textarea = document.getElementById('templateEditor');
-    if (!textarea) return;
-
-    const defaultTemplate = `⚡ NEXUS ALERT\nEvent: {event}\nUser: {user}\nTime: {time}\nStatus: CRITICAL`;
-    textarea.value = defaultTemplate;
-    syncPreview(defaultTemplate);
-    showToast('Plantilla restaurada', 'info');
-}
 
 function loadTemplate(type) {
     currentTemplateSlug = type;
