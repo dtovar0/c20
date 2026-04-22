@@ -10,6 +10,18 @@ psx_bp = Blueprint('psx', __name__, url_prefix='/api/psx')
 UPLOAD_FOLDER = '/home/dtovar/bayblade/c20/uploads/psx5k'
 ALLOWED_EXTENSIONS = {'xml', 'csv', 'xls', 'xlsx'}
 
+@psx_bp.route('/list')
+@login_required
+def list_tasks():
+    """
+    Lista de tareas PSX5K para la tabla principal
+    """
+    tasks = PSX5K.query.order_by(PSX5K.created_at.desc()).all()
+    return jsonify({
+        "status": "success",
+        "tasks": [t.to_dict() for t in tasks]
+    })
+
 @psx_bp.route('/detail/<int:task_id>')
 @login_required
 def task_detail(task_id):

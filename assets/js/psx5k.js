@@ -55,41 +55,42 @@ function renderNexusTable() {
 
     // 1. Render Real Data Rows
     pageData.forEach(row => {
-        const statusBadge = row.estado === 'running' ? 'badge-running' : 
-                          row.estado === 'finished' ? 'badge-finished' : 'badge-pending';
-        const opBadge = row.operacion === 'add' ? 'badge-op-add' : 'badge-op-delete';
-        const opLabel = row.operacion === 'add' ? 'AGREGAR' : 'BORRAR';
-        const statusLabel = row.estado === 'running' ? 'EJECUTANDO' : 
-                           row.estado === 'finished' ? 'TERMINADO' : 'PENDIENTE';
+        // Mapping backend states to frontend badges
+        const statusBadge = row.estado === 'Ejecutando' ? 'badge-running' : 
+                          row.estado === 'Terminada' ? 'badge-finished' : 'badge-pending';
+        
+        const opBadge = row.accion === 'add' ? 'badge-op-add' : 'badge-op-delete';
+        const opLabel = row.accion === 'add' ? 'AGREGAR' : 'BORRAR';
+        const statusLabel = row.estado.toUpperCase();
 
         html += `
             <tr class="group hover:bg-primary/5 transition-all duration-300">
                 <td class="px-5 py-0 h-[56px] text-[11px] font-black text-primary/80 bg-surface-container/30 border-y border-l border-panel-border rounded-l-2xl group-hover:border-primary/30 transition-colors">
-                    <div class="flex items-center h-full">${row.id || 'N/A'}</div>
+                    <div class="flex items-center h-full">#${String(row.id).padStart(5, '0')}</div>
                 </td>
                 <td class="px-5 py-0 h-[56px] bg-surface-container/30 border-y border-panel-border group-hover:border-primary/30 transition-colors">
-                    <div class="flex items-center h-full"><div class="badge-nexus ${opBadge}">${row.action || opLabel}</div></div>
+                    <div class="flex items-center h-full"><div class="badge-nexus ${opBadge}">${opLabel}</div></div>
                 </td>
                 <td class="px-5 py-0 h-[56px] bg-surface-container/30 border-y border-panel-border group-hover:border-primary/30 transition-colors">
                     <div class="flex items-center h-full"><div class="badge-nexus ${statusBadge}">${statusLabel}</div></div>
                 </td>
                 <td class="px-5 py-0 h-[56px] text-[10px] font-mono font-bold text-label/60 bg-surface-container/30 border-y border-panel-border group-hover:border-primary/30 transition-colors">
-                    <div class="flex items-center h-full">${row.inicio || row.time}</div>
+                    <div class="flex items-center h-full text-primary/70">${row.fecha_inicio ? row.fecha_inicio.replace('T', ' ') : 'PENDIENTE'}</div>
                 </td>
                 <td class="px-5 py-0 h-[56px] text-[10px] font-mono font-bold text-label/60 bg-surface-container/30 border-y border-panel-border group-hover:border-primary/30 transition-colors">
-                    <div class="flex items-center h-full">${row.fin || '-'}</div>
+                    <div class="flex items-center h-full">${row.fecha_fin ? row.fecha_fin.replace('T', ' ') : '-'}</div>
                 </td>
                 <td class="px-5 py-0 h-[56px] text-[10px] font-black uppercase text-label/60 bg-surface-container/30 border-y border-panel-border group-hover:border-primary/30 transition-colors">
-                    <div class="flex items-center h-full">${row.resultado || row.status}</div>
+                    <div class="flex items-center h-full tracking-tighter">${row.usuario}</div>
                 </td>
                 <td class="px-5 py-0 h-[56px] bg-surface-container/30 border-y border-panel-border group-hover:border-primary/30 transition-colors text-center">
                     <div class="flex items-center justify-center h-full">${generateSegmentedBars()}</div>
                 </td>
                 <td class="px-5 py-0 h-[56px] bg-surface-container/30 rounded-r-2xl border-y border-r border-panel-border text-center group-hover:border-primary/30 transition-colors">
                     <div class="flex items-center justify-center h-full">
-                        <button class="p-2 hover:bg-primary/10 text-primary/40 hover:text-primary rounded-xl transition-all active:scale-90" title="Ver Detalles">
+                        <a href="/api/psx/detail/${row.id}" target="_blank" class="p-2 hover:bg-primary/10 text-primary/40 hover:text-primary rounded-xl transition-all active:scale-90" title="Ver Detalles">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        </button>
+                        </a>
                     </div>
                 </td>
             </tr>
@@ -135,6 +136,24 @@ function renderNexusTable() {
 }
 
 /**
+ * FETCH DATA FROM BACKEND
+ */
+async function fetchPSXData() {
+    try {
+        const response = await fetch('/api/psx/list');
+        const result = await response.json();
+        
+        if (result.status === 'success') {
+            psxData = result.tasks;
+            filteredData = [...psxData];
+            renderNexusTable();
+        }
+    } catch (error) {
+        console.error('Error fetching PSX data:', error);
+    }
+}
+
+/**
  * Pagination Controls UI Sync
  */
 function updatePaginationUI() {
@@ -157,8 +176,7 @@ function updatePaginationUI() {
  * INITIALIZATION
  */
 document.addEventListener('DOMContentLoaded', () => {
-    psxData = [...mockPsxData];
-    filteredData = [...psxData];
+    fetchPSXData(); // Load real data on start
 
     // Search Integration
     const searchInput = document.getElementById('auditSearch');
@@ -176,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Actions Listeners
     const refreshBtn = document.getElementById('refreshAudit');
     if (refreshBtn) {
-        refreshBtn.addEventListener('click', () => renderNexusTable());
+        refreshBtn.addEventListener('click', () => fetchPSXData());
     }
 
     const prevBtn = document.getElementById('prevPage');
