@@ -48,8 +48,8 @@ def authenticate_user_ldap(username, password):
         # Aquí usaremos el atributo configurado (ej: sAMAccountName={username})
         user_filter = f"({config.ldap_user_attr}={username})"
         
-        # 3. Conexión de búsqueda (usando el usuario de servicio configurado)
-        with Connection(server, user=config.ldap_user, password=config.ldap_pass, auto_bind=True) as conn:
+        # 3. Conexión de búsqueda (Desactivamos auto_referrals para evitar el error de AD)
+        with Connection(server, user=config.ldap_user, password=config.ldap_pass, auto_bind=True, auto_referrals=False) as conn:
             conn.search(config.ldap_base_dn, user_filter, attributes=['mail', 'displayName', 'cn', 'memberOf'])
             
             if not conn.entries:
@@ -150,7 +150,7 @@ def validate_ldap_connection(host, port, use_ssl=False, bind_dn=None, bind_pass=
             connect_timeout=5
         )
 
-        with Connection(server, user=bind_dn, password=bind_pass, auto_bind=True) as conn:
+        with Connection(server, user=bind_dn, password=bind_pass, auto_bind=True, auto_referrals=False) as conn:
             return {
                 "status": "success",
                 "message": "Conexión establecida correctamente",
