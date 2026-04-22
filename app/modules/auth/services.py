@@ -18,9 +18,13 @@ def authenticate_user_ldap(username, password):
         if config.ldap_ssl:
             tls_config = Tls(validate=ssl.CERT_NONE, version=ssl.PROTOCOL_TLSv1_2)
 
+        # Sanitizar host y puerto
+        host = config.ldap_host.strip()
+        port = int(config.ldap_port) if config.ldap_port else 389
+
         server = Server(
-            config.ldap_host, 
-            port=int(config.ldap_port), 
+            host, 
+            port=port, 
             use_ssl=config.ldap_ssl, 
             tls=tls_config,
             connect_timeout=5
