@@ -53,7 +53,11 @@ def authenticate_user_ldap(username, password):
         with Connection(server, user=config.ldap_user, password=config.ldap_pass, auto_bind=True, auto_referrals=False) as conn:
             conn.search(config.ldap_base_dn, user_filter, attributes=['mail', 'displayName', 'cn', 'memberOf', 'sAMAccountName'])
             
+            ldap_logger.debug(f"Búsqueda finalizada. Entradas encontradas: {len(conn.entries)}")
+
             if not conn.entries:
+                ldap_logger.warning(f"USUARIO NO ENCONTRADO en LDAP con el filtro proporcionado.")
+                # ... (resto del código igual)
                 # PROTOCOLO DE PURGA: Si el LDAP está arriba pero el usuario no existe, lo borramos localmente
                 local_user = User.query.filter_by(username=username).first()
                 if local_user:

@@ -15,29 +15,33 @@ def login():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
+        auth_type = request.form.get("auth_type", "directory")
         
-        # 1. Intentar Autenticación LDAP primero
-        from app.modules.auth.services import authenticate_user_ldap
-        ldap_result = authenticate_user_ldap(username, password)
-        
-        if ldap_result.get("status") == "success":
-            user = ldap_result["user"]
-            login_user(user)
-            add_audit_log("login usuario", status="success", detail=f"Usuario {username} ha iniciado sesión vía LDAP")
-            return redirect(url_for('core.index'))
+        # --- MODO DIRECTORIO (LDAP) ---
+        if auth_type == "directory":
+            from app.modules.auth.services import authenticate_user_ldap
+            ldap_result = authenticate_user_ldap(username, password)
             
-        # 2. Fallback a Autenticación Local (si LDAP falla o no está configurado)
-        user = User.query.filter_by(username=username).first()
-        
-        if user and user.check_password(password):
-            login_user(user)
-            add_audit_log("login usuario", status="success", detail=f"Usuario {username} ha iniciado sesión localmente")
-            return redirect(url_for('core.index'))
-        
-        # Si ambos fallan
-        error_msg = ldap_result.get("message") if ldap_result.get("status") == "error" else "Credenciales inválidas"
-        flash(f"Error de autenticación: {error_msg}", "error")
-        return redirect(url_for('auth.login'))
+            if ldap_result.get("status") == "success":
+                user = ldap_result["user"]
+                login_user(user)
+                add_audit_log("login usuario", status="success", detail=f"Usuario {username} ha iniciado sesión vía DIRECTORIO")
+                return redirect(url_for('core.index'))
+            else:
+                flash(f"Error de Directorio: {ldap_result.get('message')}", "error")
+                return redirect(url_for('auth.login'))
+            
+        # --- MODO LOCAL ---
+        else:
+            user = User.query.filter_by(username=username).first()
+            
+            if user and user.check_password(password):
+                login_user(user)
+                add_audit_log("login usuario", status="success", detail=f"Usuario {username} ha iniciado sesión LOCALMENTE")
+                return redirect(url_for('core.index'))
+            
+            flash("Credenciales locales incorrectas", "error")
+            return redirect(url_for('auth.login'))
 
     return render_template("login.html")
 
