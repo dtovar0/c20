@@ -64,13 +64,16 @@ html, body {
   --radius-base: 12px;
 
   /* Notification Module Tokens */
-  --color-ntf-editor-bg: 2 6 23;        /* Slate-950 */
-  --color-ntf-preview-card: 15 23 42;   /* Slate-900 */
-  --color-ntf-text-editor: 0 0 0;       /* Black en Light Mode */
-  --color-ntf-text-subject: 0 0 0;      /* Black en Light Mode */
-  --color-ntf-border: 59 130 246 / 0.2;
-  --color-status-active: 0 0 0;         /* Black en Light Mode */
-  --color-ntf-panel-bg: 241 245 249;   /* LIGHT GRAY en Light Mode */
+  --color-ntf-panel-bg: 248 250 252;     /* Fondo de sección en Light */
+  --color-ntf-card-bg: 255 255 255;      /* Cartas de librería */
+  --color-ntf-card-border: 226 232 240;
+  --color-ntf-editor-bg: 255 255 255;    /* Fondo del editor */
+  --color-ntf-editor-border: 226 232 240;
+  --color-ntf-preview-card: 255 255 255; /* Tarjeta de previsualización */
+  --color-ntf-text-editor: 15 23 42;     /* Indigo profundo en Light */
+  --color-ntf-text-subject: 59 130 246;  /* Azul primario vibrante */
+  --color-ntf-border: 59 130 246 / 0.1;
+  --color-status-active: 59 130 246;
 }
 
 /* Dark Mode Transition */
@@ -106,9 +109,15 @@ html, body {
     --color-audit-body-alpha: 0.3;
 
     /* Notification Dark Overrides */
+    --color-ntf-panel-bg: 2 6 23;
+    --color-ntf-card-bg: 30 41 59 / 0.4;
+    --color-ntf-card-border: 255 255 255 / 0.05;
+    --color-ntf-editor-bg: 15 23 42;
+    --color-ntf-editor-border: 255 255 255 / 0.05;
+    --color-ntf-preview-card: 15 23 42;
     --color-ntf-text-editor: 56 189 248;  /* Sky-400 */
     --color-ntf-text-subject: 125 211 252; /* Sky-300 */
-    --color-status-active: 16 185 129;  /* EMERALD en Dark Mode */
+    --color-status-active: 16 185 129;
   }
 }
 
