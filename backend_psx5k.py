@@ -9,7 +9,8 @@ from app.modules.psx.models import PSX5KTask, PSX5KDetail
 from app.modules.notifications.services import send_notification_by_slug
 from app.modules.auth.models import User
 
-LOCK_FILE = "psx5k_processor.lock"
+# Configuración Global
+LOCK_FILE = "/tmp/psx5k_processor.lock"
 MAX_LOCK_AGE_MINUTES = 60
 
 def cleanup_lock():
@@ -41,16 +42,13 @@ def process_task_data(task):
     Procesa el origen de datos (Manual o Archivo) y retorna la lista de registros (ANI).
     """
     records = []
-    
     if task.accion_tipo == 'Manual':
         print(f"📝 Procesando entrada MANUAL para Tarea {task.id}")
         raw_data = task.datos or ""
         items = raw_data.replace(';', '\n').replace(',', '\n').split('\n')
-        
         for item in items:
             item = item.strip()
             if not item: continue
-            
             if '-' in item:
                 try:
                     parts = item.split('-')
@@ -64,22 +62,18 @@ def process_task_data(task):
                     print(f"⚠️ Error procesando rango '{item}': {e}")
             else:
                 records.append(item)
-    
     elif task.accion_tipo == 'Archivo':
         print(f"📁 Procesando ARCHIVO para Tarea {task.id}")
         file_path = os.path.join('uploads/psx', task.datos)
-        
         if not os.path.exists(file_path):
             print(f"❌ Archivo no encontrado: {file_path}")
             return []
-
         try:
             tree = ET.parse(file_path)
             root = tree.getroot()
             for ani_tag in root.findall('.//ANI'):
                 if ani_tag.text:
                     records.append(ani_tag.text.strip())
-            
             if not records:
                 for elem in root.iter():
                     if elem.tag.upper() == 'ANI' and elem.text:
@@ -91,7 +85,6 @@ def process_task_data(task):
                     records = [line.strip() for line in f if line.strip()]
             except:
                 pass
-
     return list(set(records))
 
 def main():
@@ -160,29 +153,30 @@ def main():
                     continue
                 
                 ####### INICIO SCRIPT #########
-                # Ejecutar la tarea real en el nodo mediante pexpect
-                from app.modules.psx.services import run_psx_task
+                # Importar y ejecutar función validada desde archivo externo
+                from s5k_cmd import s5k_cmd
                 
-                # Mapeo de tipos para el script
+                # Mapear tipos de llamada para el script
                 type_map = {
                     'Bloqueo (Entrante)': 'call_in',
                     'Routing Label (Activo)': 'call_inout'
                 }
                 l_type = type_map.get(task.datos_tipo, 'call_in')
                 
-                results = run_psx_task(
-                    line_task=task.tarea, # add/delete
+                results = s5k_cmd(
+                    line_task=task.tarea, 
                     line_number=ani_list,
                     line_type=l_type,
-                    routing_label=task.routing_label
+                    routing_label=task.routing_label,
+                    force=task.force
                 )
                 
-                # Actualizar contadores finales
-                detail.ok = results.get("ok", 0) + results.get("dup", 0) # Consideramos duplicados como éxito o gestión hecha
+                # Persistir resultados en DB
+                detail.ok = results.get("ok", 0) + results.get("dup", 0)
                 detail.fail = results.get("fail", 0)
                 db.session.commit()
 
-                # Finalizar Tarea
+                # Marcar como finalizada
                 task.estado = 'Terminada'
                 task.fecha_fin = datetime.datetime.now()
                 db.session.commit()
@@ -196,7 +190,6 @@ def main():
                         context={'usuario': task.usuario, 'hora': task.fecha_fin.strftime('%Y-%m-%d %H:%M:%S')}
                     )
 
-                # Pequeña pausa entre tareas del bloque
                 time.sleep(1)
 
             print("✅ Bloque de tareas finalizado.")
