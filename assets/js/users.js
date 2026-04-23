@@ -74,17 +74,17 @@ function initUsersDataTable() {
                 }
             },
             { 
-                data: 'name', 
+                data: 'nombre', 
                 width: 'auto',
                 render: (data) => `
                     <div class="flex items-center gap-3 overflow-hidden">
                         <div class="w-8 h-8 rounded-full bg-primary/10 flex-shrink-0 flex items-center justify-center text-[10px] font-black text-primary border border-primary/20">
-                            ${data.charAt(0).toUpperCase()}
+                            ${(data || '?').charAt(0).toUpperCase()}
                         </div>
-                        <span class="text-[11px] font-black text-label uppercase tracking-tighter truncate">${data}</span>
+                        <span class="text-[11px] font-black text-label uppercase tracking-tighter truncate">${data || '-'}</span>
                     </div>`
             },
-            { data: 'nombre', width: '220px', render: (data) => `<div class="flex items-center h-full text-[10px] font-mono text-label/40 truncate">${data}</div>` },
+            { data: 'name', width: '220px', render: (data) => `<div class="flex items-center h-full text-[10px] font-mono text-label/40 truncate">${data}</div>` },
             { 
                 data: 'source', 
                 width: '100px',
