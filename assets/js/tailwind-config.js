@@ -21,7 +21,7 @@ tailwind.config = {
                 // Surfaces & Backgrounds
                 'body-bg': 'var(--color-body-bg)',
                 'body-text': 'var(--color-body-text)',
-                'header-bg': 'var(--color-header-bg)',
+                'header': 'var(--color-header-bg)',
                 'header-text': 'var(--color-header-text)',
                 'panel-fill': 'rgb(var(--color-panel-fill))',
                 'panel-border': 'rgb(var(--color-panel-border))',

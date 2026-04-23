@@ -315,3 +315,47 @@ function importSystemConfig(input) {
         });
     });
 }
+/**
+ * INITIALIZE DROP ZONE LOGIC
+ */
+document.addEventListener('DOMContentLoaded', () => {
+    const dropZone = document.getElementById('import-drop-zone');
+    const fileInput = document.getElementById('importFile');
+
+    if (dropZone && fileInput) {
+        // Prevent default drag behaviors
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            }, false);
+        });
+
+        // Highlight drop zone when item is dragged over it
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => {
+                dropZone.classList.add('border-violet-500', 'bg-violet-500/10', 'scale-[1.02]');
+                dropZone.classList.remove('border-panel-border', 'bg-surface-container/20');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => {
+                dropZone.classList.remove('border-violet-500', 'bg-violet-500/10', 'scale-[1.02]');
+                dropZone.classList.add('border-panel-border', 'bg-surface-container/20');
+            }, false);
+        });
+
+        // Handle dropped files
+        dropZone.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            
+            if (files.length > 0) {
+                // Manually trigger the input change logic
+                fileInput.files = files;
+                importSystemConfig(fileInput);
+            }
+        }, false);
+    }
+});

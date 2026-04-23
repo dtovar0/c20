@@ -8,8 +8,10 @@
     // Immediate Theme Apply
     if (storedTheme === 'dark' || (!storedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
         html.classList.add('dark');
+        html.classList.remove('light');
     } else {
         html.classList.remove('dark');
+        html.classList.add('light');
     }
 
     // Immediate Sidebar State Apply (Global Class)
@@ -72,8 +74,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const themeToggle = document.getElementById('themeToggle');
     if (themeToggle) {
         themeToggle.addEventListener('click', () => {
-            html.classList.toggle('dark');
-            localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+            const isDark = html.classList.toggle('dark');
+            html.classList.toggle('light', !isDark);
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
         });
     }
 

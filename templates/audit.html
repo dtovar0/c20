@@ -4,27 +4,36 @@
 
 {% block breadcrumbs %}
 <span class="text-secondary">Nexus</span>
-<svg class="w-4 h-4 text-label/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+<svg class="w-4 h-4 text-label/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+</svg>
 <span class="text-primary">Auditoría</span>
 {% endblock %}
 
 {% block content %}
 <div id="auditWrapper" class="w-full h-full flex flex-col relative">
-    
+
     <!-- PANEL AREA -->
     <div class="flex-grow flex flex-col overflow-hidden">
-        
+
         <!-- Standard Nexus Table View -->
-        <div id="tab-panel-audit" class="tab-panel tab-panel-content flex-grow flex flex-col animate-in fade-in slide-in-from-bottom-2 duration-500 rounded-2xl overflow-hidden border border-panel-border shadow-2xl shadow-primary/5 mb-2">
+        <div id="tab-panel-audit"
+            class="tab-panel tab-panel-content flex-grow flex flex-col animate-in fade-in slide-in-from-bottom-2 duration-500 rounded-2xl overflow-hidden border border-panel-border shadow-2xl shadow-primary/5 mb-2">
             <!-- PANEL HEADER -->
             <header class="bg-panel-header border-b border-panel-border px-6 py-4 flex items-center justify-between">
                 <div class="flex items-center gap-4">
                     <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
+                        </svg>
                     </div>
                     <div>
-                        <h2 class="text-xl font-black tracking-tighter text-primary uppercase italic leading-none">Registro de Auditoría</h2>
-                        <p class="text-[9px] text-primary/60 font-bold tracking-widest uppercase mt-0.5">Status: Gestión de Datos / Trazabilidad</p>
+                        <h2 class="text-xl font-black tracking-tighter text-primary uppercase italic leading-none">
+                            Registro de Auditoría</h2>
+                        <p class="text-[9px] text-primary/60 font-bold tracking-widest uppercase mt-0.5">Gestión de
+                            Datos / Trazabilidad</p>
                     </div>
                 </div>
             </header>
@@ -33,13 +42,22 @@
             <main class="flex-grow px-4 pt-2 pb-1 overflow-hidden flex flex-col">
                 <div class="mb-4 flex justify-between items-center gap-2">
                     <div class="relative group flex-grow max-w-md">
-                        <svg class="w-4 h-4 absolute left-5 top-1/2 -translate-y-1/2 text-label/60 group-focus-within:text-primary transition-colors z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        <input type="text" id="auditSearch" placeholder="Filtrar eventos de auditoría..." 
-                               class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3 text-sm font-bold text-input outline-none focus:border-input-focus focus:ring-4 focus:ring-primary/10 transition-all placeholder:text-label/50">
+                        <svg class="w-4 h-4 absolute left-5 top-1/2 -translate-y-1/2 text-label/60 group-focus-within:text-primary transition-colors z-10"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        <input type="text" id="auditSearch" placeholder="Filtrar eventos de auditoría..."
+                            class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3 text-sm font-bold text-input outline-none focus:border-input-focus focus:ring-4 focus:ring-primary/10 transition-all placeholder:text-label/50">
                     </div>
-                    <button id="refreshAudit" 
-                            class="h-12 px-6 rounded-2xl bg-primary text-white font-black text-[10px] uppercase tracking-widest flex items-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/20 group">
-                        <svg class="w-5 h-5 group-hover:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    <button id="refreshAudit"
+                        class="h-12 px-6 rounded-2xl bg-primary text-white font-black text-[10px] uppercase tracking-widest flex items-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/20 group">
+                        <svg class="w-5 h-5 group-hover:rotate-180 transition-transform duration-500" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                            </path>
+                        </svg>
                         <span>Refrescar</span>
                     </button>
                 </div>
@@ -47,12 +65,17 @@
                     <table class="w-full h-full text-left table-fixed">
                         <thead class="sticky top-0 z-20">
                             <tr class="text-[9px] font-black text-white uppercase tracking-[0.2em]">
-                                <th class="px-5 py-4 bg-slate-900/50 rounded-l-2xl border-y border-l border-panel-border text-center">ID</th>
+                                <th
+                                    class="px-5 py-4 bg-slate-900/50 rounded-l-2xl border-y border-l border-panel-border text-center">
+                                    ID</th>
                                 <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Usuario</th>
                                 <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Acción</th>
-                                <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border text-center">ESTATUS</th>
+                                <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border text-center">ESTATUS
+                                </th>
                                 <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Detalle</th>
-                                <th class="px-5 py-4 bg-slate-900/50 rounded-r-2xl border-y border-r border-panel-border">Fecha</th>
+                                <th
+                                    class="px-5 py-4 bg-slate-900/50 rounded-r-2xl border-y border-r border-panel-border">
+                                    Fecha</th>
                             </tr>
                         </thead>
                         <tbody id="auditTableBody">

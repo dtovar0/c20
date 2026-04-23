@@ -43,14 +43,14 @@
         <!-- Tab Panel: General -->
         <div id="tab-panel-general" class="tab-panel tab-panel-content flex-grow flex flex-col animate-in fade-in slide-in-from-bottom-2 duration-500 rounded-2xl overflow-hidden border border-panel-border shadow-2xl shadow-primary/5 mb-2">
             <!-- PANEL HEADER -->
-            <header class="bg-header border-b border-panel-border px-6 py-4 flex items-center justify-between">
+            <header class="bg-panel-header border-b border-panel-border px-6 py-4 flex items-center justify-between">
                 <div class="flex items-center gap-4">
                     <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
                     </div>
                     <div>
                         <h2 class="text-xl font-black tracking-tighter text-primary uppercase italic leading-none">Control de Sistema</h2>
-                        <p class="text-[9px] text-primary/60 font-bold tracking-widest uppercase mt-0.5">Status: Gestión / Estructura</p>
+                        <p class="text-[9px] text-primary/60 font-bold tracking-widest uppercase mt-0.5">Gestión / Estructura</p>
                     </div>
                 </div>
 
@@ -215,14 +215,14 @@
 
         <div id="tab-panel-database" class="tab-panel tab-panel-content hidden flex-grow flex flex-col animate-in fade-in duration-500 rounded-2xl overflow-hidden border border-panel-border shadow-2xl shadow-primary/5 mb-2">
             <!-- PANEL HEADER -->
-            <header class="bg-panel-fill border-b border-panel-border px-6 py-4 flex items-center justify-between">
+            <header class="bg-panel-header border-b border-panel-border px-6 py-4 flex items-center justify-between">
                 <div class="flex items-center gap-4">
                     <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
                     </div>
                     <div>
                         <h2 class="text-xl font-black tracking-tighter text-primary uppercase italic leading-none">Control de Estructura</h2>
-                        <p class="text-[9px] text-primary/60 font-bold tracking-widest uppercase mt-0.5">Status: Sincronización / Base de Datos</p>
+                        <p class="text-[9px] text-primary/60 font-bold tracking-widest uppercase mt-0.5">Sincronización / Base de Datos</p>
                     </div>
                 </div>
                 
@@ -234,7 +234,7 @@
                 </div>
             </header>
 
-            <main class="flex-grow bg-header p-6 overflow-y-auto custom-scrollbar">
+            <main class="flex-grow p-8 overflow-y-auto custom-scrollbar">
                 <div class="flex flex-col gap-6 h-full">
                     <!-- DB Selection Controls -->
                     <div class="bg-panel-fill border-2 border-dashed border-panel-border rounded-3xl p-6">
@@ -353,19 +353,19 @@
 
         <div id="tab-panel-backups" class="tab-panel tab-panel-content hidden flex-grow flex flex-col animate-in fade-in duration-500 rounded-2xl overflow-hidden border border-panel-border shadow-2xl shadow-primary/5 mb-2">
             <!-- PANEL HEADER -->
-            <header class="bg-header border-b border-panel-border px-6 py-4 flex items-center justify-between">
+            <header class="bg-panel-header border-b border-panel-border px-6 py-4 flex items-center justify-between">
                 <div class="flex items-center gap-4">
                     <div class="w-10 h-10 rounded-xl bg-violet-600/20 flex items-center justify-center text-violet-500">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
                     </div>
                     <div>
                         <h2 class="text-xl font-black tracking-tighter text-primary uppercase italic leading-none">Gestión de Respaldos</h2>
-                        <p class="text-[9px] text-primary/60 font-bold tracking-widest uppercase mt-0.5">Status: Portabilidad / Soberanía de Datos</p>
+                        <p class="text-[9px] text-primary/60 font-bold tracking-widest uppercase mt-0.5">Portabilidad / Restauracion</p>
                     </div>
                 </div>
             </header>
 
-            <main class="flex-grow p-10 overflow-y-auto custom-scrollbar bg-slate-900/10">
+            <main class="flex-grow p-8 overflow-y-auto custom-scrollbar">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto h-full">
                     
                     <!-- Export Card -->
@@ -390,28 +390,29 @@
                         <h3 class="text-lg font-black text-white uppercase tracking-widest mb-3">Importar Configuración</h3>
                         <p class="text-[11px] text-label/60 font-medium leading-relaxed max-w-[280px] mb-8">Carga un archivo de respaldo previo para restaurar instantáneamente toda la infraestructura del portal.</p>
                         
-                        <div class="w-full relative">
-                            <input type="file" id="importFile" accept=".zip" class="absolute inset-0 opacity-0 cursor-pointer z-10" onchange="importSystemConfig(this)">
-                            <button class="w-full h-14 bg-violet-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.25em] shadow-xl shadow-border/20 hover:opacity-90 transition-all active:scale-95 flex items-center justify-center gap-3">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                                Cargar Archivo
-                            </button>
+                        <!-- Drop Zone Container -->
+                        <div id="import-drop-zone" class="w-full p-8 border-2 border-dashed border-panel-border rounded-[32px] bg-surface-container/20 group hover:border-violet-500/50 hover:bg-violet-500/5 transition-all duration-300 relative cursor-pointer">
+                            <input type="file" id="importFile" accept=".zip" class="absolute inset-0 opacity-0 cursor-pointer z-20" onchange="importSystemConfig(this)">
+                            
+                            <div class="flex flex-col items-center justify-center gap-4 py-4 pointer-events-none">
+                                <div class="w-14 h-14 rounded-[20px] bg-violet-500/10 flex items-center justify-center text-violet-500 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
+                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                                </div>
+                                <div class="text-center">
+                                    <p class="text-[10px] font-black uppercase tracking-[0.25em] text-label mb-1">Arrastra tu respaldo aquí</p>
+                                    <p class="text-[8px] font-bold uppercase tracking-widest text-label/40">O haz clic para explorar (.zip)</p>
+                                </div>
+                            </div>
+
+                            <!-- Success Overlay (Hidden) -->
+                            <div id="drop-success-overlay" class="absolute inset-0 bg-violet-600 rounded-[30px] hidden items-center justify-center animate-in fade-in zoom-in duration-300 z-30">
+                                <svg class="w-10 h-10 text-white animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
                         </div>
                     </div>
 
                 </div>
 
-                <div class="mt-12 max-w-5xl mx-auto">
-                    <div class="bg-indigo-500/5 border border-indigo-500/20 rounded-2xl p-6 flex items-start gap-4">
-                        <div class="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-400 flex-shrink-0">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        </div>
-                        <div>
-                            <h4 class="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">Nota de Seguridad</h4>
-                            <p class="text-[11px] text-label/50 leading-relaxed font-bold">El archivo de respaldo contiene información sensible encriptada. La importación de un respaldo sobrescribirá las tablas correspondientes con la versión del archivo cargado. Se recomienda realizar un respaldo manual antes de cualquier restauración.</p>
-                        </div>
-                    </div>
-                </div>
             </main>
         </div>
 
@@ -427,7 +428,7 @@
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
             </div>
             <div>
-                <h3 class="text-lg font-black text-white uppercase tracking-tighter italic">Confirmar Restauración</h3>
+                <h3 class="text-lg font-black text-rose-600 dark:text-rose-500 uppercase tracking-tighter italic">Confirmar Restauración</h3>
                 <p class="text-[9px] text-rose-500/60 font-black tracking-widest uppercase mt-0.5">Operación de Sobrescritura Detectada</p>
             </div>
         </header>

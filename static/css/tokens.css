@@ -18,7 +18,7 @@ html, body {
  * ╚══════════════════════════════════════════════════════════════╝
 */
 
-:root {
+:root, html.light {
   /* ─────────────────────────────────────────────
      PALETA BASE — Referencia tonal global
      Basada en el modelo HSL con rotación armónica
@@ -158,7 +158,7 @@ html, body {
    Cada nivel de superficie +8% luminosidad relativa.
 ══════════════════════════════════════════════════════════════ */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not(.light) {
     --color-body-bg: #060d1f;
     --color-body-text: #e2e8f4;
 
