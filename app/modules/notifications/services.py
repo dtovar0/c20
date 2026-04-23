@@ -57,6 +57,10 @@ def send_test_email(server, port, encryption, user, password, sender_name, sende
             smtp = smtplib.SMTP(server, port, timeout=10)
             if encryption == 'starttls':
                 smtp.starttls()
+                
+        import os
+        if os.getenv('DEBUG_SMTP') == 'true':
+            smtp.set_debuglevel(1)
 
         if user and password:
             smtp.login(user, password)
@@ -99,6 +103,10 @@ def send_notification_by_slug(slug, target_email, context=None):
             smtp = smtplib.SMTP(config.server, config.port, timeout=10)
             if config.encryption == 'starttls':
                 smtp.starttls()
+
+        import os
+        if os.getenv('DEBUG_SMTP') == 'true':
+            smtp.set_debuglevel(1)
 
         if config.auth_enabled and config.user and config.password:
             smtp.login(config.user, config.password)

@@ -1,6 +1,16 @@
 import ssl
 import json
+import os
+import logging
 from ldap3 import Server, Connection, ALL, Tls
+from ldap3.utils.log import set_library_log_detail_level, EXTENDED
+
+if os.getenv('DEBUG_LDAP') == 'true':
+    set_library_log_detail_level(EXTENDED)
+    ldap3_logger = logging.getLogger('ldap3')
+    ldap3_logger.setLevel(logging.DEBUG)
+    if not ldap3_logger.handlers:
+        ldap3_logger.addHandler(logging.StreamHandler())
 
 def authenticate_user_ldap(username, password):
     """
