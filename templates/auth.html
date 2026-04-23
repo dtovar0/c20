@@ -132,10 +132,10 @@
 
             <!-- PANEL BODY (CORRECTED LAYOUT) -->
             <main class="flex-grow px-4 pt-4 pb-4 flex flex-col overflow-hidden">
-                <div class="flex-grow bg-surface-container/20 rounded-2xl border border-panel-border overflow-y-auto custom-scrollbar p-8">
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-7xl mx-auto">
+                <div class="flex-grow flex flex-col overflow-y-auto custom-scrollbar p-8">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full flex-grow">
                         <!-- Column A (Auth Configuration) -->
-                        <div class="space-y-8">
+                        <div class="bg-panel-fill border-2 border-dashed border-panel-border rounded-3xl p-8 flex flex-col space-y-8">
                             <div class="pb-4 border-b border-panel-border/30 mb-2">
                                 <label class="block text-[11px] font-black text-primary uppercase tracking-[0.25em] italic">Conectividad de Directorio</label>
                             </div>
@@ -173,7 +173,7 @@
                         </div>
 
                         <!-- Column B (LDAP Credentials & Mapping) -->
-                        <div class="space-y-8">
+                        <div class="bg-panel-fill border-2 border-dashed border-panel-border rounded-3xl p-8 flex flex-col space-y-8">
                             <div class="pb-4 border-b border-panel-border/30 mb-2">
                                 <label class="block text-[11px] font-black text-primary uppercase tracking-[0.25em] italic">Identidad de Acceso (Bind)</label>
                             </div>
@@ -195,7 +195,7 @@
                                     </div>
                                 </div>
 
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div class="space-y-6">
                                     <div class="group">
                                         <label class="block text-[9px] font-black text-label/60 uppercase tracking-[0.2em] mb-2 px-1">Base DN (LDAP Path)</label>
                                         <div class="relative group">
@@ -251,16 +251,16 @@
                 </div>
             </header>
             
-            <main class="flex-grow p-8 overflow-y-auto custom-scrollbar">
-                <div class="max-w-5xl mx-auto">
+            <main class="flex-grow px-8 pt-4 pb-8 overflow-y-auto custom-scrollbar">
+                <div class="bg-panel-fill border-2 border-dashed border-panel-border rounded-3xl p-8 flex flex-col w-full h-full min-h-[300px]">
                     <!-- Direct Mapping Area -->
                     <div id="mappingList" class="space-y-4">
                         <!-- Dynamic rows will appear here -->
                     </div>
 
                     <!-- Simplified Empty State -->
-                    <div id="mappingEmptyState" class="hidden py-32 text-center border-2 border-dashed border-panel-border rounded-3xl">
-                        <div class="w-16 h-16 bg-label/5 rounded-2xl flex items-center justify-center mx-auto mb-6 opacity-20">
+                    <div id="mappingEmptyState" class="hidden flex flex-grow flex-col items-center justify-center text-center py-20">
+                        <div class="w-16 h-16 bg-label/5 rounded-2xl flex items-center justify-center mx-auto mb-6 opacity-40">
                             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 01-2-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                         </div>
                         <p class="text-[10px] font-black uppercase tracking-[0.3em] text-label/30 italic">No hay registros definidos. Presione "+ Añadir Mapeo" en la cabecera para comenzar.</p>
