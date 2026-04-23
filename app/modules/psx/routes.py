@@ -303,3 +303,25 @@ def reprocess_duplicates(task_id):
         "message": f"Tarea #{new_task.id} creada correctamente (Version {version})",
         "task_id": new_task.id
     }), 201
+
+@psx_bp.route('/history/search')
+@login_required
+def search_history():
+    """
+    Búsqueda profunda en la tabla de historial (psx5k_history)
+    """
+    query_str = request.args.get('q', '').strip()
+    if not query_str:
+        return jsonify({"status": "success", "results": []})
+    
+    # Búsqueda por número, etiqueta o estado
+    results = PSX5KHistory.query.filter(
+        (PSX5KHistory.numero.like(f'%{query_str}%')) |
+        (PSX5KHistory.routing_label.like(f'%{query_str}%')) |
+        (PSX5KHistory.estado.like(f'%{query_str}%'))
+    ).order_by(PSX5KHistory.fecha.desc()).limit(100).all()
+    
+    return jsonify({
+        "status": "success",
+        "results": [r.to_dict() for r in results]
+    })

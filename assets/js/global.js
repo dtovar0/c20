@@ -77,25 +77,62 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 4. Global System Search Dispatcher
-    // This allows the top bar search to control any active DataTables instance
+    // 4. Global System Search Dispatcher - Deep History Mode
     const systemSearch = document.getElementById('systemSearch');
-    if (systemSearch) {
-        systemSearch.addEventListener('input', function() {
-            const val = this.value;
-            
-            // 1. Try our registered instance first
-            if (window.activeNexusTable) {
-                window.activeNexusTable.search(val).draw();
-            } 
-            // 2. Fallback: Search in ANY active DataTable on the page
-            else if ($.fn.dataTable) {
-                const tables = $.fn.dataTable.tables({ visible: true, api: true });
-                if (tables.length > 0) {
-                    tables.search(val).draw();
-                }
+    const deepSearchBtn = document.getElementById('deepHistorySearchBtn');
+
+    if (systemSearch && deepSearchBtn) {
+        deepSearchBtn.addEventListener('click', async () => {
+            const query = systemSearch.value.trim();
+            if (!query) {
+                showToast('Ingresa un término para buscar en historial', 'info');
+                return;
             }
-        });
+
+            // UI Feedback
+            deepSearchBtn.classList.add('animate-pulse', 'text-primary');
+            document.getElementById('searchQueryDisplay').textContent = `Resultados para: "${query}"`;
+                
+                try {
+                    const response = await fetch(`/api/psx/history/search?q=${encodeURIComponent(query)}`);
+                    const data = await response.json();
+                    
+                    const tbody = document.getElementById('globalSearchResultsBody');
+                    const noResults = document.getElementById('noHistoryResults');
+                    
+                    if (data.status === 'success' && data.results.length > 0) {
+                        noResults.classList.add('hidden');
+                        tbody.innerHTML = data.results.map(r => `
+                            <tr class="hover:bg-primary/5 transition-colors group">
+                                <td class="px-6 py-4 text-[11px] font-bold text-label/60">${new Date(r.fecha).toLocaleString()}</td>
+                                <td class="px-6 py-4 text-xs font-black text-primary">${r.numero}</td>
+                                <td class="px-6 py-4 text-[10px] font-bold text-label uppercase tracking-tighter">#${r.task_id}</td>
+                                <td class="px-6 py-4 text-[10px] font-bold text-label/80">${r.routing_label || '-'}</td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase
+                                        ${r.estado === 'OK' ? 'bg-emerald-500/10 text-emerald-500' : 
+                                          r.estado === 'FAIL' ? 'bg-rose-500/10 text-rose-500' : 
+                                          r.estado === 'DUP' ? 'bg-amber-500/10 text-amber-500' : 
+                                          'bg-slate-500/10 text-slate-500'}">
+                                        ${r.estado}
+                                    </span>
+                                </td>
+                            </tr>
+                        `).join('');
+                        openModal('globalSearchModal');
+                    } else {
+                        tbody.innerHTML = '';
+                        noResults.classList.remove('hidden');
+                        openModal('globalSearchModal');
+                    }
+                } catch (error) {
+                    console.error('History Search Error:', error);
+                    showToast('Error al buscar en el historial', 'error');
+                } finally {
+                    deepSearchBtn.classList.remove('animate-pulse', 'text-primary');
+                }
+            });
+        }
 
         // Clear search on focus loss if empty
         systemSearch.addEventListener('blur', function() {

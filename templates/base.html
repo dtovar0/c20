@@ -64,6 +64,10 @@
                     <div class="hidden sm:flex items-center bg-input-bg px-5 py-3 rounded-2xl gap-3 border border-panel-border focus-within:border-input-focus transition-all shadow-sm group">
                         <svg class="w-4 h-4 text-label/60 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         <input type="text" id="systemSearch" placeholder="Buscar en el sistema..." class="bg-transparent border-none focus:ring-0 text-input text-sm font-bold w-64 outline-none placeholder:text-label/60">
+                        <!-- History Action Button -->
+                        <button id="deepHistorySearchBtn" class="p-1 hover:bg-primary/20 text-label/40 hover:text-primary rounded-lg transition-all group/btn" title="Búsqueda Profunda en Historial PSX5K">
+                            <svg class="w-5 h-5 group-hover/btn:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5-5 5M6 7l5 5-5 5"></path></svg>
+                        </button>
                     </div>
 
                     <!-- Notifications -->
@@ -109,6 +113,54 @@
                     </button>
                 </div>
             </header>
+
+            <!-- Global Search Results Modal (History PSX5K) -->
+            <div id="globalSearchModal" class="nexus-modal hidden fixed inset-0 z-[100] items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+                <div class="nexus-modal-content w-full max-w-4xl bg-panel-fill border border-panel-border rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300">
+                    <!-- Header -->
+                    <div class="p-6 border-b border-panel-border flex items-center justify-between bg-surface-container/30">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary shadow-lg shadow-primary/10">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-black text-primary uppercase itaic leading-none tracking-tighter">Búsqueda en Historial PSX5K</h3>
+                                <p id="searchQueryDisplay" class="text-[10px] text-label/60 font-bold uppercase tracking-widest mt-1">Resultados para: "..."</p>
+                            </div>
+                        </div>
+                        <button onclick="closeModal('globalSearchModal')" class="p-2 hover:bg-surface-container rounded-xl transition-all group">
+                            <svg class="w-6 h-6 text-label group-hover:text-rose-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="max-h-[60vh] overflow-y-auto custom-scrollbar p-0">
+                        <table class="w-full text-left border-collapse">
+                            <thead class="sticky top-0 bg-panel-fill/95 backdrop-blur-md z-10">
+                                <tr class="text-[10px] font-black text-primary/60 uppercase tracking-widest border-b border-panel-border">
+                                    <th class="px-6 py-4">Fecha</th>
+                                    <th class="px-6 py-4">Número</th>
+                                    <th class="px-6 py-4">Tarea ID</th>
+                                    <th class="px-6 py-4">Routing</th>
+                                    <th class="px-6 py-4 text-center">Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="globalSearchResultsBody" class="divide-y divide-panel-border/50">
+                                <!-- Results injected here -->
+                            </tbody>
+                        </table>
+                        <div id="noHistoryResults" class="hidden p-20 text-center opacity-40">
+                             <svg class="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 9.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                             <p class="text-sm font-black uppercase tracking-widest">No se encontraron registros en el historial</p>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="p-4 bg-surface-container/20 border-t border-panel-border flex justify-end">
+                        <button onclick="closeModal('globalSearchModal')" class="px-6 py-2.5 bg-panel-border hover:bg-surface-container text-label text-xs font-black rounded-xl uppercase tracking-widest transition-all">Cerrar</button>
+                    </div>
+                </div>
+            </div>
             
             <!-- Main Content -->
             <main class="flex-grow overflow-y-auto custom-scrollbar pt-4 px-6 pb-6">

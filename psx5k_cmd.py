@@ -41,6 +41,15 @@ def test_connectivity():
     except Exception as e:
         return False, str(e)
 
+class StreamLog:
+    def __init__(self):
+        self.content = ""
+    def write(self, s):
+        self.content += s
+        sys.stdout.write(s)
+    def flush(self):
+        sys.stdout.flush()
+
 def psx5k_cmd(line_task, line_number, line_type=None, routing_label=None, force=False):
     """
     Función de ejecución para nodo PSX5K (Standalone para validación).
@@ -56,7 +65,7 @@ def psx5k_cmd(line_task, line_number, line_type=None, routing_label=None, force=
     PSX_IP = os.getenv('PSX_IP')
     PSX_USER = os.getenv('PSX_USER')
     PSX_PASS = os.getenv('PSX_PASS')
-    PSX_PORT = os.getenv('PSX_PORT', '22') # El puerto puede tener default standard si no se define
+    PSX_PORT = os.getenv('PSX_PORT', '22')
 
     if not all([PSX_IP, PSX_USER, PSX_PASS]):
         raise EnvironmentError("Faltan configuraciones críticas de PSX en el archivo .env (PSX_IP, PSX_USER, PSX_PASS)")
@@ -70,24 +79,29 @@ def psx5k_cmd(line_task, line_number, line_type=None, routing_label=None, force=
         "dup": 0,
         "force_ok": 0,
         "fail": 0,
-        "logs": []
+        "logs": [],
+        "full_flow": ""
     }
+
+    stream = StreamLog()
 
     try:
         print(f"🚀 Conectando a PSX ({PSX_IP}) para tarea: {line_task.upper()} (Force: {force})...")
         
         # 1. Establecer Conexión SSH
         cmd = pexpect.spawn(f'ssh -o StrictHostKeyChecking=no -p {PSX_PORT} {PSX_USER}@{PSX_IP}', timeout=30, encoding='utf-8')
-        cmd.logfile = sys.stdout 
         cmd.setecho(False)
         cmd.delaybeforesend = 0.8
         
-        # Flujo de Login
+        # Flujo de Login (Sin loggear para proteger credenciales)
         idx = cmd.expect(EXPECT)
         if idx == 0: # Password:
             cmd.sendline(PSX_PASS)
             cmd.expect(EXPECT)
             
+        # ACTIVAR LOG después del login exitoso
+        cmd.logfile = stream
+
         # Entrar a la instancia PSXMASTER
         cmd.sendline('s t i PSXMASTER')
         cmd.expect(EXPECT)
@@ -164,4 +178,5 @@ def psx5k_cmd(line_task, line_number, line_type=None, routing_label=None, force=
         stats["logs"].append(f"CRITICAL ERROR: {str(e)}")
         print(f"\n❌ Error Crítico: {str(e)}")
 
+    stats["full_flow"] = stream.content
     return stats

@@ -95,3 +95,30 @@ class PSX5KHistory(db.Model):
     accion = db.Column(db.String(50))
     estado = db.Column(db.String(50))
     fecha = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "task_id": self.task_id,
+            "usuario": self.usuario,
+            "numero": self.numero,
+            "routing_label": self.routing_label,
+            "accion": self.accion,
+        }
+
+class PSX5KCommandLog(db.Model):
+    """
+    LOG DE COMANDOS (FULL FLOW): Almacena la interacción cruda de pexpect.
+    """
+    __tablename__ = 'psx5k_command_logs'
+    id = db.Column(db.Integer, primary_key=True)
+    task_id = db.Column(db.Integer, db.ForeignKey('psx5k_tasks.id'), nullable=False)
+    raw_log = db.Column(db.Text)
+    fecha = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "task_id": self.task_id,
+            "raw_log": self.raw_log,
+            "fecha": self.fecha.isoformat() if self.fecha else None
+        }

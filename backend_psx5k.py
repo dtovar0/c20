@@ -4,7 +4,7 @@ import time
 import datetime
 import signal
 from app import create_app, db
-from app.modules.psx.models import PSX5KTask, PSX5KDetail, PSX5KHistory
+from app.modules.psx.models import PSX5KTask, PSX5KDetail, PSX5KHistory, PSX5KCommandLog
 from app.modules.notifications.services import send_notification_by_slug
 from app.modules.auth.models import User
 from app.modules.audit.services import add_audit_log
@@ -230,6 +230,13 @@ def main():
                         ))
                     except: pass
                 
+                # Guardar el flujo completo de comandos
+                if results.get("full_flow"):
+                    db.session.add(PSX5KCommandLog(
+                        task_id=task.id,
+                        raw_log=results["full_flow"]
+                    ))
+
                 # Finalizar y limpiar datos para ahorrar espacio
                 task.estado = 'Terminada'
                 task.fecha_fin = datetime.datetime.now()
