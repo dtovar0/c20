@@ -892,3 +892,73 @@ input[name="db_engine"]:checked + label .w-5.h-5 .bg-primary {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: rgb(var(--color-primary));
 }
+
+/* MODULE: PSX5K TERMINAL */
+#auditTableBody td:first-child {
+    cursor: pointer;
+}
+#auditTableBody tr {
+    transition: background-color 0.15s ease;
+}
+#auditTableBody tr:hover {
+    background-color: rgba(var(--color-primary), 0.02);
+}
+#auditTableBody tr.nexus-row-selected {
+    background-color: transparent !important;
+}
+#auditTableBody tr.nexus-row-selected td {
+    background-color: transparent !important;
+}
+.nx-label-strip {
+    color: rgb(var(--color-label-text));
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 10px;
+}
+
+/* MODULE: PSX5K UTILS & MODALS */
+:root {
+    --nx-primary: rgb(var(--color-primary));
+    --nx-border: rgb(var(--color-panel-border));
+}
+.nx-modal-glass {
+    background-color: rgb(var(--color-panel-fill));
+    border: 2px solid var(--nx-border);
+}
+.nx-btn-base {
+    height: 48px;
+    min-width: 160px;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    border-radius: 16px;
+    font-size: 10px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    border: none;
+}
+.nx-btn-primary { 
+    background-color: var(--nx-primary); 
+    color: white;
+    box-shadow: 0 4px 12px rgba(var(--color-primary), 0.2);
+}
+.nx-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(var(--color-primary), 0.3); }
+.nx-btn-primary:active { transform: translateY(0); }
+
+.nx-btn-back { 
+    background-color: rgb(var(--color-tab-inactive-bg)); 
+    color: rgb(var(--color-tab-inactive-text));
+}
+.nx-btn-back:hover { opacity: 0.8; }
+
+.nx-input-field {
+    background-color: rgb(var(--color-input-bg));
+    border: 2px solid var(--nx-border);
+    color: var(--color-body-text);
+}

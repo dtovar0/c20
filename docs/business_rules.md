@@ -1,27 +1,25 @@
-# Business Rules - Multi-Agent System
+# 📚 MOTOR DE REGLAS DE NEGOCIO - NEXUS
 
-## Módulo: Core
-### Regla: Arquitectura Modular
-Todo el backend debe estar estructurado en Blueprints dentro de `app/modules/`.
-### Impacto: Backend
+## Módulo: PSX5K Terminal
 
-## Módulo: UI/UX
-### Regla: Estilos Basados en Tokens
-Prohibido el uso de styles inline o selectores CSS arbitrarios fuera de Tailwind y el sistema de tokens.
-### Impacto: Frontend
+### Regla: Selección de Precisión
+La selección de registros en la tabla PSX5K debe realizarse exclusivamente a través de la primera columna (checkbox). El clic en el resto de la fila no debe activar la selección para evitar errores operativos durante la visualización de datos de tareas.
 
-## Módulo: Notificaciones
-### Regla: Persistencia de Plantillas
-Las plantillas deben guardarse en la base de datos vinculadas a un slug único. Si no existen, el sistema debe cargar los predeterminados y ofrecer guardarlos.
 ### Ejemplo
-Al seleccionar 'Inicio', se busca en la DB; si no está, se carga el default de seguridad y se notifica al usuario.
-### Impacto
-Backend + Base de Datos
+El usuario hace clic en el Ticket #1234 para copiarlo; la fila no se selecciona. El usuario hace clic en el checkbox; la fila se marca y se habilitan las acciones de modificación.
 
-## Módulo: PSX5K
-### Regla: Registro de Operaciones
-Todas las acciones de agregado/eliminado de tareas en el terminal PSX5K deben quedar registradas con su estado (Ejecutando, Programada, Terminada) y marcas de tiempo precisas para trazabilidad del proceso.
-### Ejemplo
-Al programar una eliminación de lote, se crea un registro con estado 'Programada'. Al finalizar, el motor actualiza a 'Terminada' y estampa la 'Fecha Fin'.
 ### Impacto
-Operación PSX5K
+Sistema de gestión de tareas PSX5K.
+
+---
+
+## Módulo: Autenticación / Usuarios
+
+### Regla: Simetría de Acciones
+Todos los botones de acción principal en las tablas administrativas (Modificar, Eliminar, Añadir) deben mantener un ancho fijo de 180px para garantizar un ritmo visual constante y profesional.
+
+### Ejemplo
+El botón "Añadir" tiene el mismo largo físico que "Modificar", independientemente de la longitud del texto.
+
+### Impacto
+Interfaz de administración de usuarios y roles.
