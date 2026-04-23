@@ -98,6 +98,9 @@ function initAuditDataTable() {
             renderGhostRows(settings, 6);
         }
     });
+
+    // Register globally for top bar search
+    window.activeNexusTable = auditDataTable;
 }
 
 /**

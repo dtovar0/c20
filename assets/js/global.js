@@ -76,7 +76,38 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
         });
     }
+
+    // 4. Global System Search Dispatcher
+    // This allows the top bar search to control any active DataTables instance
+    const systemSearch = document.getElementById('systemSearch');
+    if (systemSearch) {
+        systemSearch.addEventListener('input', function() {
+            const val = this.value;
+            
+            // 1. Try our registered instance first
+            if (window.activeNexusTable) {
+                window.activeNexusTable.search(val).draw();
+            } 
+            // 2. Fallback: Search in ANY active DataTable on the page
+            else if ($.fn.dataTable) {
+                const tables = $.fn.dataTable.tables({ visible: true, api: true });
+                if (tables.length > 0) {
+                    tables.search(val).draw();
+                }
+            }
+        });
+
+        // Clear search on focus loss if empty
+        systemSearch.addEventListener('blur', function() {
+            if (this.value === '' && window.activeNexusTable) {
+                window.activeNexusTable.search('').draw();
+            }
+        });
+    }
 });
+
+// Registry for the active table instance
+window.activeNexusTable = null;
 
 /**
  * PREMIUM TOAST SYSTEM

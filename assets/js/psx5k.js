@@ -172,6 +172,9 @@ function initPSXDataTable() {
             renderGhostRows(settings, visibleCols);
         }
     });
+
+    // Register globally for top bar search
+    window.activeNexusTable = psxDataTable;
 }
 
 

@@ -148,6 +148,9 @@ function initUsersDataTable() {
             });
         }
     });
+
+    // Register globally for top bar search
+    window.activeNexusTable = usersDataTable;
 }
 
 function toggleUserSelection(userId, rowEl) {
