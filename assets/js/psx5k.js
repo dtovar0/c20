@@ -74,22 +74,42 @@ function initPSXDataTable() {
     psxDataTable = tableEl.DataTable({
         ajax: {
             url: '/api/psx/list',
-            dataSrc: 'tasks'
+            dataSrc: (json) => {
+                // Toggling Usuario column visibility based on admin status
+                const isAdmin = json.is_admin || false;
+                const api = tableEl.DataTable();
+                if (api) {
+                    api.column(4).visible(isAdmin);
+                }
+                return json.tasks;
+            }
         },
         columns: [
-            { data: 'id', width: '70px', render: (data) => `<div class="flex items-center h-full text-[11px] font-black text-primary/80">#${String(data).padStart(5, '0')}</div>` },
+            { 
+                data: 'id', 
+                width: '100px', 
+                render: (data, type, row) => `
+                    <div class="flex flex-col justify-center h-full gap-0.5">
+                        <span class="text-[11px] font-black text-primary/80 leading-none">#${String(data).padStart(5, '0')}</span>
+                        <span class="text-[8px] font-bold text-label/30 uppercase tracking-tighter">Job: #${row.job_id}</span>
+                    </div>` 
+            },
             { 
                 data: 'tarea', 
-                width: '120px',
-                render: (data) => {
+                width: '140px',
+                render: (data, type, row) => {
                     const opBadge = data === 'add' ? 'badge-op-add' : 'badge-op-delete';
                     const opLabel = data === 'add' ? 'AGREGAR' : 'BORRAR';
-                    return `<div class="flex items-center h-full"><div class="badge-nexus ${opBadge}">${opLabel}</div></div>`;
+                    return `
+                        <div class="flex flex-col justify-center h-full gap-1">
+                            <div class="badge-nexus ${opBadge} w-fit">${opLabel}</div>
+                            <span class="text-[9px] font-black text-label/40 uppercase tracking-widest pl-1">Parte ${row.chunk_index}/${row.chunk_total}</span>
+                        </div>`;
                 }
             },
             { 
                 data: 'estado', 
-                width: '140px',
+                width: '130px',
                 render: (data) => {
                     const statusBadge = data === 'Ejecutando' ? 'badge-running' : 
                                       data === 'Terminada' ? 'badge-finished' : 
@@ -97,9 +117,25 @@ function initPSXDataTable() {
                     return `<div class="flex items-center h-full"><div class="badge-nexus ${statusBadge}">${data.toUpperCase()}</div></div>`;
                 }
             },
-            { data: 'fecha_inicio', width: '160px', render: (data) => `<div class="flex items-center h-full text-[10px] font-mono font-bold text-primary/70">${data ? data.replace('T', ' ') : 'PENDIENTE'}</div>` },
-            { data: 'fecha_fin', width: '160px', render: (data) => `<div class="flex items-center h-full text-[10px] font-mono font-bold text-label/60">${data ? data.replace('T', ' ') : '-'}</div>` },
-            { data: 'datos_tipo', width: '120px', render: (data) => `<div class="flex items-center h-full text-[10px] font-black uppercase text-label/40 tracking-[0.1em]">${data || 'MANUAL'}</div>` },
+            { 
+                data: 'fecha_inicio', 
+                width: '150px', 
+                render: (data) => `<div class="flex items-center h-full text-[10px] font-mono font-bold text-primary/70">${data ? data.replace('T', ' ').split('.')[0] : 'PENDIENTE'}</div>` 
+            },
+            { 
+                data: 'usuario', 
+                width: '100px', 
+                visible: false, // Default hidden, shown via ajax dataSrc if admin
+                render: (data) => `<div class="flex items-center h-full text-[10px] font-black text-label/50 uppercase tracking-wider">${data}</div>` 
+            },
+            { 
+                data: 'archivo_origen', 
+                width: '180px', 
+                render: (data) => `
+                    <div class="flex items-center h-full text-[10px] font-bold text-label/40 truncate max-w-[170px]" title="${data}">
+                        ${data && data.length > 25 ? '...' + data.slice(-22) : (data || 'MANUAL')}
+                    </div>` 
+            },
             { data: 'resumen', width: '120px', orderable: false, render: (data) => `<div class="flex items-center justify-center h-full min-w-0 overflow-hidden">${generateTaskGraphic(data)}</div>` },
             { 
                 data: 'id', 
@@ -123,7 +159,10 @@ function initPSXDataTable() {
         },
         drawCallback: function(settings) {
             updatePaginationUI(settings);
-            renderGhostRows(settings, 8); // 8 columns for PSX
+            // Count visible columns for correct ghost row rendering
+            const api = new $.fn.dataTable.Api(settings);
+            const visibleCols = api.columns(':visible').count();
+            renderGhostRows(settings, visibleCols);
         }
     });
 }

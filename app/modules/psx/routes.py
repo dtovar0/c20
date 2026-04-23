@@ -16,12 +16,23 @@ ALLOWED_EXTENSIONS = {'xml', 'csv', 'xls', 'xlsx'}
 @login_required
 def list_tasks():
     """
-    Lista de tareas PSX5K para la tabla principal
+    Lista de tareas PSX5K para la tabla principal.
+    Filtrado por usuario si no es administrador.
     """
-    tasks = PSX5KTask.query.order_by(PSX5KTask.created_at.desc()).all()
+    from .models import PSX5KJob
+    query = PSX5KTask.query.join(PSX5KJob)
+    
+    # 1. Filtro de Seguridad: No-admins solo ven sus propias tareas
+    is_admin = current_user.role == 'administrador'
+    if not is_admin:
+        query = query.filter(PSX5KJob.usuario == current_user.username)
+        
+    tasks = query.order_by(PSX5KJob.created_at.desc(), PSX5KTask.id.desc()).all()
+    
     return jsonify({
         "status": "success",
-        "tasks": [t.to_dict() for t in tasks]
+        "tasks": [t.to_dict() for t in tasks],
+        "is_admin": is_admin
     })
 
 @psx_bp.route('/detail/<int:task_id>')
@@ -42,21 +53,28 @@ def get_stats():
     """
     try:
         username = current_user.username
+        from .models import PSX5KJob
         
-        # 1. Total de tareas del usuario
-        total_tareas = PSX5KTask.query.filter_by(usuario=username).count()
+        # 1. Total de tareas del usuario (Fragmentos)
+        total_tareas = PSX5KTask.query.join(PSX5KJob).filter(PSX5KJob.usuario == username).count()
         
         # 2. Tareas Pendientes (Programada o Pendiente)
-        pendientes = PSX5KTask.query.filter(
-            PSX5KTask.usuario == username,
+        pendientes = PSX5KTask.query.join(PSX5KJob).filter(
+            PSX5KJob.usuario == username,
             PSX5KTask.estado.in_(['Programada', 'Pendiente'])
         ).count()
         
         # 3. Tareas Programadas (Estado Pendiente según solicitud del usuario)
-        programadas = PSX5KTask.query.filter_by(usuario=username, estado='Pendiente').count()
+        programadas = PSX5KTask.query.join(PSX5KJob).filter(
+            PSX5KJob.usuario == username,
+            PSX5KTask.estado == 'Pendiente'
+        ).count()
         
         # 4. Tarea Activa (La más reciente con estado Ejecutando)
-        activa = PSX5KTask.query.filter_by(usuario=username, estado='Ejecutando').order_by(PSX5KTask.created_at.desc()).first()
+        activa = PSX5KTask.query.join(PSX5KJob).filter(
+            PSX5KJob.usuario == username, 
+            PSX5KTask.estado == 'Ejecutando'
+        ).order_by(PSX5KJob.created_at.desc()).first()
         
         return jsonify({
             "status": "success",

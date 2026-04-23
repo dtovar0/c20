@@ -115,9 +115,9 @@
                         {{ "Lote Multi-Parte" if task.chunk_total > 1 else "Operación Unitaria" }}
                     </h1>
                 </div>
-                <div class="flex flex-col items-end gap-2">
+                    <div class="flex flex-col items-end gap-2">
                     <div class="flex items-center gap-2">
-                        {% if task.archivo_origen and task.archivo_origen.startswith('RETRY_TASK_') %}
+                        {% if task.job.archivo_origen and task.job.archivo_origen.startswith('RETRY_TASK_') %}
                         <span class="px-3 py-1 bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-[8px] font-black uppercase tracking-[0.2em] rounded-lg">Complementaria</span>
                         {% else %}
                         <span class="px-3 py-1 bg-white/5 border border-white/10 text-slate-500 text-[8px] font-black uppercase tracking-[0.2em] rounded-lg">Convencional</span>
@@ -160,10 +160,10 @@
                                 <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-3 block">Operador Responsable</label>
                                 <div class="flex items-center gap-4">
                                     <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-sky-500 to-indigo-600 flex items-center justify-center text-2xl font-black text-white shadow-lg shadow-sky-500/20">
-                                        {{ task.usuario[0]|upper }}
+                                        {{ task.job.usuario[0]|upper }}
                                     </div>
                                     <div>
-                                        <p class="text-xl font-bold text-white tracking-tight">{{ task.usuario }}</p>
+                                        <p class="text-xl font-bold text-white tracking-tight">{{ task.job.usuario }}</p>
                                         <p class="text-[10px] font-bold text-sky-400/60 uppercase tracking-widest leading-none mt-1">Identity Verified</p>
                                     </div>
                                 </div>
@@ -175,7 +175,7 @@
                                     <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-3 block">Acción Operativa</label>
                                     <div class="flex">
                                         <span class="status-badge px-4 py-1.5 text-xs font-black bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
-                                            ● {{ 'Baja (Delete)' if task.tarea == 'delete' else 'Alta (Add)' }}
+                                            ● {{ 'Baja (Delete)' if task.job.tarea == 'delete' else 'Alta (Add)' }}
                                         </span>
                                     </div>
                                 </section>
@@ -194,9 +194,9 @@
                                 <div class="flex justify-between items-center">
                                     <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Origen de Datos</span>
                                     <div class="flex flex-col items-end">
-                                        <span class="text-[11px] font-black text-orange-500/90 uppercase tracking-tight">{{ task.archivo_origen or 'Carga Directa' }}</span>
-                                        {% if task.archivo_origen and task.archivo_origen.startswith('RETRY_TASK_') %}
-                                        <a href="/api/psx/detail/{{ task.archivo_origen.split('_')[2] }}" class="text-[8px] font-bold text-sky-400 hover:text-white underline mt-1 tracking-widest">VER TAREA PADRE #{{ task.archivo_origen.split('_')[2] }}</a>
+                                        <span class="text-[11px] font-black text-orange-500/90 uppercase tracking-tight">{{ task.job.archivo_origen or 'Carga Directa' }}</span>
+                                        {% if task.job.archivo_origen and task.job.archivo_origen.startswith('RETRY_TASK_') %}
+                                        <a href="/api/psx/detail/{{ task.job.archivo_origen.split('_')[2] }}" class="text-[8px] font-bold text-sky-400 hover:text-white underline mt-1 tracking-widest">VER TAREA PADRE #{{ task.job.archivo_origen.split('_')[2] }}</a>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -234,7 +234,7 @@
                                         <p class="text-2xl font-black text-emerald-500 tabular-nums">{{ task.resumen.ok }}</p>
                                     </div>
                                     
-                                    {% if task.force %}
+                                    {% if task.job.force %}
                                     <div class="bg-sky-500/5 border border-sky-500/10 rounded-2xl p-4 text-center">
                                         <p class="text-[8px] font-black text-sky-500/60 uppercase mb-1">Force</p>
                                         <p class="text-2xl font-black text-sky-500 tabular-nums">{{ task.resumen.force_ok }}</p>
