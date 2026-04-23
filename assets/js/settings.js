@@ -229,3 +229,89 @@ function saveSettings(containerId) {
         showToast('Error de Conexión', 'error');
     });
 }
+
+/**
+ * EXPORT SYSTEM CONFIGURATION
+ * Generates a master ZIP package for full portal restoration.
+ */
+function exportSystemConfig() {
+    showToast('Generando paquete maestro...', 'info');
+    
+    fetch('/settings/export')
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.blob();
+        })
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            const dateStr = new Date().toISOString().split('T')[0];
+            
+            a.href = url;
+            a.download = `nexus_backup_${dateStr}.zip`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            
+            showToast('Respaldo ZIP generado con éxito', 'success');
+        })
+        .catch(error => {
+            console.error('Export error:', error);
+            showToast('Error de conexión al exportar', 'error');
+        });
+}
+
+/**
+ * IMPORT SYSTEM CONFIGURATION
+ * Uploads and applies a master ZIP package.
+ */
+function importSystemConfig(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    // 1. Validation: MUST BE ZIP
+    if (!file.name.toLowerCase().endsWith('.zip')) {
+        showToast('Archivo Inválido: Solo se permiten paquetes .zip', 'error');
+        input.value = '';
+        return;
+    }
+
+    // 2. Open Luxury Confirmation Modal
+    openModal('confirmImportModal');
+
+    // 3. Setup Action Listener
+    const confirmBtn = document.getElementById('confirmBtnAction');
+    
+    // Use a fresh cloned button to clear previous listeners (prevent accumulation)
+    const newConfirmBtn = confirmBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+
+    newConfirmBtn.addEventListener('click', () => {
+        closeModal('confirmImportModal');
+        showToast('Procesando paquete ZIP...', 'info');
+        
+        const formData = new FormData();
+        formData.append('file', file);
+
+        fetch('/settings/import', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.status === 'success') {
+                showToast(result.message, 'success', true);
+                setTimeout(() => window.location.reload(), 2000);
+            } else {
+                showToast('Error: ' + result.message, 'error');
+            }
+            input.value = '';
+        })
+        .catch(error => {
+            console.error('Import error:', error);
+            showToast('Error crítico al procesar el ZIP', 'error');
+            input.value = '';
+        });
+    });
+}
