@@ -25,12 +25,40 @@ def migrate_db():
             except Exception as e:
                 print(f"ℹ️ Columna email no encontrada o ya eliminada: {e}")
 
-            # 3. Agregar columna nombre
+            # 3. Agregar columna nombre si no existe
             try:
                 conn.execute(text("ALTER TABLE users ADD COLUMN nombre VARCHAR(100) DEFAULT NULL;"))
                 print("✅ Columna nombre agregada.")
             except Exception as e:
-                print(f"ℹ️ Columna nombre ya existía o error: {e}")
+                print(f"ℹ️ Columna nombre ya existía (ignorando): {e}")
+
+            # 4. Expandir username de 50 a 120 (para soportar correos LDAP largos)
+            try:
+                conn.execute(text("ALTER TABLE users MODIFY username VARCHAR(120) NOT NULL;"))
+                print("✅ Columna username expandida a VARCHAR(120).")
+            except Exception as e:
+                print(f"❌ Error al expandir username: {e}")
+
+            # 5. Desbloquear el candado NOT NULL de password_hash (esencial para LDAP shadow users)
+            try:
+                conn.execute(text("ALTER TABLE users MODIFY COLUMN password_hash VARCHAR(255) NULL;"))
+                print("✅ Columna password_hash desprotegida (permite ahora claves foráneas vacías).")
+            except Exception as e:
+                print(f"❌ Error al desbloquear candado de password_hash: {e}")
+
+            # 6. Reordenamiento visual estético
+            try:
+                conn.execute(text("ALTER TABLE users MODIFY COLUMN nombre VARCHAR(100) DEFAULT NULL AFTER username;"))
+                print("✅ Columna nombre movida estéticamente después de username.")
+            except Exception as e:
+                print(f"ℹ️ Error u omisión al reordenar nombre: {e}")
+
+            try:
+                conn.execute(text("ALTER TABLE users MODIFY COLUMN auth_source VARCHAR(10) DEFAULT 'local' AFTER password_hash;"))
+                print("✅ Columna auth_source movida estéticamente antes de role.")
+            except Exception as e:
+                print(f"ℹ️ Error u omisión al reordenar auth_source: {e}")
 
 if __name__ == '__main__':
+    print("🚀 Iniciando Consolidación de Migración V2.6 para Producción...")
     migrate_db()
