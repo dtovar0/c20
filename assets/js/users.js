@@ -115,7 +115,7 @@ function initUsersDataTable() {
             }
         ],
         autoWidth: false,
-        pageLength: 10,
+        pageLength: 8,
         pagingType: 'simple',
         order: [[1, 'asc']], // Sort by Name by default to avoid arrow on checkbox column
         layout: {
@@ -126,21 +126,10 @@ function initUsersDataTable() {
         },
         language: {
             zeroRecords: "No se encontraron usuarios",
-            info: "Mostrando _START_-_END_ de _TOTAL_ registros"
-        },
-        renderer: {
-            pagingButton: function (settings, button, content, active, disabled) {
-                if (button === 'previous') {
-                    return $('<button/>').addClass('p-2 bg-surface-container border border-surface-container-border rounded-lg text-label hover:border-primary disabled:opacity-30 disabled:pointer-events-none transition-all active:scale-90')
-                        .append('<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>')
-                        .prop('disabled', disabled);
-                }
-                if (button === 'next') {
-                    return $('<button/>').addClass('p-2 bg-surface-container border border-surface-container-border rounded-lg text-label hover:border-primary disabled:opacity-30 disabled:pointer-events-none transition-all active:scale-90')
-                        .append('<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>')
-                        .prop('disabled', disabled);
-                }
-                return null;
+            info: "Mostrando _START_-_END_ de _TOTAL_ registros",
+            paginate: {
+                previous: '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>',
+                next: '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>'
             }
         },
         drawCallback: function(settings) {
@@ -214,8 +203,8 @@ function renderGhostRows(settings, columns) {
     tbody.find('.dataTables_empty').closest('tr').remove();
 
     const rowsOnPage = info.end - info.start;
-    // STRICT LIMIT: Always target 10 rows to match pagination exactly
-    const targetTotal = 10;
+    // STRICT LIMIT: Always target 8 rows to match pagination exactly
+    const targetTotal = 8;
     const ghostCount = targetTotal - rowsOnPage;
 
     if (ghostCount <= 0) return;
@@ -224,15 +213,15 @@ function renderGhostRows(settings, columns) {
     for (let i = 0; i < ghostCount; i++) {
         ghostHtml += `
             <tr class="animate-pulse pointer-events-none select-none opacity-40">
-                <td class="bg-surface-container/5 border-y border-l border-panel-border/10 rounded-l-2xl h-[52px]">
+                <td class="bg-surface-container/5 border-y border-l border-panel-border/10 rounded-l-2xl">
                     <div class="h-4 w-4 bg-label/10 rounded mx-auto"></div>
                 </td>
                 ${Array(columns - 2).fill(0).map(() => `
-                    <td class="bg-surface-container/5 border-y border-panel-border/10 h-[52px]">
+                    <td class="bg-surface-container/5 border-y border-panel-border/10">
                         <div class="h-1 w-full bg-label/5 rounded-full"></div>
                     </td>
                 `).join('')}
-                <td class="bg-surface-container/5 border-y border-r border-panel-border/10 rounded-r-2xl h-[52px]">
+                <td class="bg-surface-container/5 border-y border-r border-panel-border/10 rounded-r-2xl">
                     <div class="h-1 w-full bg-label/5 rounded-full"></div>
                 </td>
             </tr>

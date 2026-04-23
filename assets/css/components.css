@@ -68,34 +68,62 @@
     gap: 6px;
 }
 
-.dt-paging-button {
+.dt-container .dt-paging .dt-paging-button {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
-    padding: 8px;
-    border-radius: 8px;
-    background: rgb(var(--color-surface-container-bg));
-    border: 1px solid rgb(var(--color-surface-container-border));
-    color: rgb(var(--color-label-text));
+    width: 32px !important;
+    height: 32px !important;
+    padding: 0 !important;
+    border-radius: 10px !important;
+    background: rgb(var(--color-surface-container-bg)) !important;
+    border: 1px solid rgb(var(--color-surface-container-border)) !important;
+    color: rgb(var(--color-label-text)) !important;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    margin: 0 2px;
 }
 
-.dt-paging-button:hover:not(.disabled) {
-    border-color: rgb(var(--color-primary));
-    color: rgb(var(--color-primary));
+.dt-container .dt-paging .dt-paging-button svg {
+    width: 16px !important;
+    height: 16px !important;
+    stroke: rgb(var(--color-label-text)) !important;
+    stroke-width: 2.5px;
+    transition: all 0.25s ease;
 }
 
-.dt-paging-button:active:not(.disabled) {
+.dt-container .dt-paging .dt-paging-button:hover:not(.disabled) {
+    background: rgb(var(--color-surface-container-bg)) !important;
+    border-color: rgb(var(--color-primary)) !important;
+    color: rgb(var(--color-primary)) !important;
+    box-shadow: 0 4px 12px rgb(var(--color-primary) / 0.12);
+}
+
+.dt-container .dt-paging .dt-paging-button:hover:not(.disabled) svg {
+    stroke: rgb(var(--color-primary)) !important;
+    transform: scale(1.1);
+}
+
+.dt-container .dt-paging .dt-paging-button:active:not(.disabled) {
     transform: scale(0.9);
+    background: rgb(var(--color-panel-header-bg)) !important;
 }
 
-.dt-paging-button.disabled {
-    opacity: 0.3;
-    cursor: default;
-    pointer-events: none;
+.dt-container .dt-paging .dt-paging-button.current {
+    background: rgb(var(--color-primary)) !important;
+    color: white !important;
+    border-color: rgb(var(--color-primary)) !important;
+}
+
+.dt-container .dt-paging .dt-paging-button.current svg {
+    stroke: white !important;
+}
+
+.dt-container .dt-paging .dt-paging-button.disabled {
+    opacity: 0.15;
+    cursor: not-allowed;
+    filter: grayscale(1);
 }
 
 table.dataTable {
