@@ -92,10 +92,6 @@ def create_app():
         except Exception as e:
             print(f"❌ Error al sincronizar base de datos: {e}")
 
-    # Servir archivos de /assets
-    @app.route('/assets/<path:filename>')
-    def serve_assets(filename):
-        return send_from_directory(os.path.join(app.root_path, '../assets'), filename)
 
     # Inyectar configuración global en todas las vistas
     @app.context_processor

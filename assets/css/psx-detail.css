@@ -1,0 +1,86 @@
+/* PSX DETAIL MODULE - ARCHITECTURAL COMPLIANCE */
+:root {
+    --cyber-blue: #0ea5e9;
+    --cyber-violet: #8b5cf6;
+    --cyber-emerald: #10b981;
+}
+
+html, body {
+    height: 100vh;
+    overflow: hidden !important;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: linear-gradient(135deg, #020617 0%, #0f172a 100%);
+    color: #f1f5f9;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.scroll-container {
+    height: 100vh;
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 3rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.scroll-container::-webkit-scrollbar {
+    display: none;
+}
+
+.glass-panel {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.cyber-grid {
+    mask-image: radial-gradient(circle at center, black, transparent 80%);
+    background-image: linear-gradient(rgba(14, 165, 233, 0.05) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(14, 165, 233, 0.05) 1px, transparent 1px);
+    background-size: 30px 30px;
+}
+
+.gradient-text {
+    background: linear-gradient(to right, var(--cyber-blue), var(--cyber-violet));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 99px;
+    font-size: 10px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.status-ejecutando { background: rgba(14, 165, 233, 0.1); color: var(--cyber-blue); }
+.status-programada { background: rgba(139, 92, 246, 0.1); color: var(--cyber-violet); }
+.status-terminada { background: rgba(16, 185, 129, 0.1); color: var(--cyber-emerald); }
+
+/* Tabs Animations */
+.tab-pane {
+    display: none;
+}
+.tab-pane.active {
+    display: block;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

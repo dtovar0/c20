@@ -9,55 +9,68 @@ auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('core.index'))
-        
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
-        auth_type = request.form.get("auth_type", "directory")
-        
-        # --- MODO DIRECTORIO (LDAP) ---
-        if auth_type == "directory":
-            from app.modules.auth.services import authenticate_user_ldap
-            ldap_result = authenticate_user_ldap(username, password)
+    try:
+        if current_user.is_authenticated:
+            return redirect(url_for('core.index'))
             
-            if ldap_result.get("status") == "success":
-                user = ldap_result["user"]
-                login_user(user)
-                add_audit_log("login usuario", status="success", detail=f"Usuario {username} ha iniciado sesión vía DIRECTORIO")
-                return redirect(url_for('core.index'))
+        if request.method == "POST":
+            username = request.form.get("username")
+            password = request.form.get("password")
+            auth_type = request.form.get("auth_type", "directory")
+            
+            # --- MODO DIRECTORIO (LDAP) ---
+            if auth_type == "directory":
+                from app.modules.auth.services import authenticate_user_ldap
+                ldap_result = authenticate_user_ldap(username, password)
+                
+                if ldap_result.get("status") == "success":
+                    user = ldap_result["user"]
+                    login_user(user)
+                    add_audit_log("login usuario", status="success", detail=f"Usuario {username} ha iniciado sesión vía DIRECTORIO")
+                    return redirect(url_for('core.index'))
+                else:
+                    flash(f"Error de Directorio: {ldap_result.get('message')}", "error")
+                    return redirect(url_for('auth.login'))
+                
+            # --- MODO LOCAL ---
             else:
-                flash(f"Error de Directorio: {ldap_result.get('message')}", "error")
+                user = User.query.filter_by(username=username).first()
+                
+                if user and user.check_password(password):
+                    login_user(user)
+                    add_audit_log("login usuario", status="success", detail=f"Usuario {username} ha iniciado sesión LOCALMENTE")
+                    return redirect(url_for('core.index'))
+                
+                flash("Credenciales locales incorrectas", "error")
                 return redirect(url_for('auth.login'))
-            
-        # --- MODO LOCAL ---
-        else:
-            user = User.query.filter_by(username=username).first()
-            
-            if user and user.check_password(password):
-                login_user(user)
-                add_audit_log("login usuario", status="success", detail=f"Usuario {username} ha iniciado sesión LOCALMENTE")
-                return redirect(url_for('core.index'))
-            
-            flash("Credenciales locales incorrectas", "error")
-            return redirect(url_for('auth.login'))
 
-    return render_template("login.html")
+        return render_template("login.html")
+    except Exception as e:
+        current_app.logger.error(f"Error en login: {e}")
+        flash("Error inesperado en el servicio de autenticación", "error")
+        return redirect(url_for('auth.login'))
 
 @auth_bp.route("/logout")
 @login_required
 def logout():
-    username = current_user.username
-    logout_user()
-    add_audit_log("logout usuario", status="info", user_override=username)
-    return render_template("logout.html")
+    try:
+        username = current_user.username
+        logout_user()
+        add_audit_log("logout usuario", status="info", user_override=username)
+        return render_template("logout.html")
+    except Exception as e:
+        current_app.logger.error(f"Error en logout: {e}")
+        return redirect(url_for('auth.login'))
 
 @auth_bp.route("/")
 @login_required
 def index():
-    config = AuthConfig.query.first()
-    return render_template("auth.html", config=config)
+    try:
+        config = AuthConfig.query.first()
+        return render_template("auth.html", config=config)
+    except Exception as e:
+        current_app.logger.error(f"Error en auth.index: {e}")
+        return render_template("auth.html", config=None)
 
 @auth_bp.route("/save", methods=["POST"])
 def save():
