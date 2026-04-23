@@ -12,9 +12,8 @@ tailwind.config = {
                 primary: 'rgb(var(--color-primary))',
                 secondary: 'rgb(var(--color-secondary))',
                 accent: 'rgb(var(--color-accent))',
-                'accent-a': 'rgb(var(--color-accent-a))',
-                'accent-b': 'rgb(var(--color-accent-b))',
-                'accent-c': 'rgb(var(--color-accent-c))',
+                'accent-sky': 'rgb(var(--color-accent-sky))',
+                'accent-violet': 'rgb(var(--color-accent-violet))',
                 'peach': 'rgb(var(--color-accent-peach))',
                 'violet': 'rgb(var(--color-accent-violet))',
                 'sky': 'rgb(var(--color-accent-sky))',
@@ -58,7 +57,7 @@ tailwind.config = {
                 'bi-muted': 'rgb(var(--color-bi-text-muted))',
                 'kpi-highlight': 'rgb(var(--color-kpi-highlight))',
                 
-                success: '#22c55e',
+                success: 'rgb(var(--color-success))',  /* unified: Emerald-600 #059669 */
                 warning: '#f59e0b',
                 error: '#ef4444',
                 info: '#3b82f6'

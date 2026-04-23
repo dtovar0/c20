@@ -135,6 +135,20 @@ html, body {
   --space-1: 4px;
   --radius-base: 10px;
   --radius-panel: 14px;
+
+  /* ─────────────────────────────────────────────
+     ESCALA TIPOGRÁFICA — Sistema armónico 8pt
+     Basado en proporción 1.25 (Major Third)
+  ───────────────────────────────────────────── */
+  --text-2xs:  10px;   /* badges, superscripts — usar con font-weight ≥ 700 */
+  --text-xs:   12px;   /* labels de tabla, meta info */
+  --text-sm:   13px;   /* body small, nav items */
+  --text-base: 15px;   /* body normal */
+  --text-md:   17px;   /* subtítulos de sección */
+  --text-lg:   20px;   /* titulos de panel */
+  --text-xl:   24px;   /* headings principales */
+  --text-2xl:  30px;   /* KPI values */
+  --text-3xl:  36px;   /* hero numbers */
 }
 
 
@@ -153,11 +167,11 @@ html, body {
     --color-panel-header-bg: 37 99 235 / 0.15; /* Azul primario profundo traslúcido en Dark Mode */
 
     --color-panel-fill: 13 27 62;
-    --color-panel-border: 37 99 235 / 0.18;
+    --color-panel-border: 37 99 235 / 0.32;     /* ↑ 0.18→0.32: bordes perceptibles */
     --color-panel-shadow: 0 0 0 / 0;
 
     --color-surface-container-bg: 17 35 80;
-    --color-surface-container-border: 37 99 235 / 0.15;
+    --color-surface-container-border: 37 99 235 / 0.22;
 
     --color-audit-body: 10 20 48;
     --color-audit-body-alpha: 0.4;
@@ -171,7 +185,7 @@ html, body {
     --color-bi-text-main: 226 232 244;
     --color-bi-text-muted: 148 163 184;
 
-    --color-input-bg: 10 20 48;
+    --color-input-bg: 20 42 94;              /* ↑ capa elevada sobre panel, no inferior */
     --color-input-text: #e2e8f4;
     --color-input-border: 37 99 235 / 0.25;
     --color-label-text: 147 197 253;
@@ -202,11 +216,11 @@ html.dark {
   --color-panel-header-bg: 37 99 235 / 0.15;
 
   --color-panel-fill: 13 27 62;
-  --color-panel-border: 37 99 235 / 0.18;
+  --color-panel-border: 37 99 235 / 0.32;
   --color-panel-shadow: 0 0 0 / 0;
 
   --color-surface-container-bg: 17 35 80;
-  --color-surface-container-border: 37 99 235 / 0.15;
+  --color-surface-container-border: 37 99 235 / 0.22;
 
   --color-audit-body: 10 20 48;
   --color-audit-body-alpha: 0.4;
@@ -220,7 +234,7 @@ html.dark {
   --color-bi-text-main: 226 232 244;
   --color-bi-text-muted: 148 163 184;
 
-  --color-input-bg: 10 20 48;
+  --color-input-bg: 20 42 94;
   --color-input-text: #e2e8f4;
   --color-input-border: 37 99 235 / 0.25;
   --color-label-text: 147 197 253;
