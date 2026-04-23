@@ -4,6 +4,7 @@ import os
 import logging
 from ldap3 import Server, Connection, ALL, Tls
 from ldap3.utils.log import set_library_log_detail_level, EXTENDED
+from datetime import datetime
 
 if os.getenv('DEBUG_LDAP') == 'true':
     set_library_log_detail_level(EXTENDED)
