@@ -143,7 +143,7 @@ def list_users():
     if search:
         query = query.filter(
             (User.username.ilike(f'%{search}%')) | 
-            (User.email.ilike(f'%{search}%')) | 
+            (User.nombre.ilike(f'%{search}%')) | 
             (User.role.ilike(f'%{search}%')) |
             (User.auth_source.ilike(f'%{search}%'))
         )
@@ -157,7 +157,7 @@ def list_users():
         user_list.append({
             "id": u.id,
             "name": u.username,
-            "email": u.email,
+            "nombre": u.nombre,
             "role": u.role,
             "source": u.auth_source or 'local',
             "status": status
@@ -179,7 +179,7 @@ def create_user():
             
         new_user = User(
             username=data['username'],
-            email=data['email'],
+            nombre=data.get('nombre', ''),
             role=data['role'],
             is_active=True
         )
@@ -225,7 +225,7 @@ def update_user():
             return jsonify({"status": "error", "message": "Usuario no encontrado"}), 404
             
         if "username" in data: user.username = data["username"]
-        if "email" in data: user.email = data["email"]
+        if "nombre" in data: user.nombre = data["nombre"]
         if "role" in data: user.role = data["role"]
         
         if "password" in data and data["password"]:

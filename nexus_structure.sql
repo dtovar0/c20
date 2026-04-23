@@ -253,7 +253,7 @@ DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` int NOT NULL AUTO_INCREMENT,
   `username` varchar(50) NOT NULL,
-  `email` varchar(120) DEFAULT NULL,
+  `nombre` varchar(100) DEFAULT NULL,
   `password_hash` varchar(255) DEFAULT NULL,
   `role` varchar(20) DEFAULT NULL,
   `auth_source` varchar(10) DEFAULT 'local',
@@ -262,7 +262,6 @@ CREATE TABLE `users` (
   `created_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
-  UNIQUE KEY `email` (`email`),
   KEY `auth_source` (`auth_source`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;

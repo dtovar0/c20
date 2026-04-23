@@ -35,10 +35,10 @@ def monitor():
                     
                     with app.app_context():
                         admin = User.query.filter_by(role='administrador').first()
-                        if admin and admin.email:
+                        if admin and admin.username:
                             send_notification_by_slug(
                                 slug='error', 
-                                target_email=admin.email,
+                                target_email=admin.username,
                                 context={
                                     'usuario': 'SYSTEM_WATCHDOG', 
                                     'ip': os.getenv('PSX_IP', 'DESCONOCIDA'), 

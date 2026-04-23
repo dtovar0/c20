@@ -7,8 +7,8 @@ class User(db.Model, UserMixin):
     __tablename__ = 'users'
     
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50), unique=True, nullable=False)
-    email = db.Column(db.String(100), unique=True, nullable=True) # Permitir nulo inicialmente
+    username = db.Column(db.String(120), unique=True, nullable=False)
+    nombre = db.Column(db.String(100), nullable=True) # Nombre visible del usuario
     password_hash = db.Column(db.String(255), nullable=True) # Nulo para usuarios LDAP
     role = db.Column(db.String(20), default='usuario') # administrador, usuario
     auth_source = db.Column(db.String(10), default='local') # local, ldap

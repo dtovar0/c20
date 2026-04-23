@@ -72,70 +72,78 @@ def authenticate_user_ldap(username, password):
             
             # 4. Validar contraseña intentando un nuevo Bind con las credenciales del usuario
             try:
-                with Connection(server, user=user_dn, password=password, auto_bind=True):
-                    # Login Exitoso en LDAP -> Sincronizar Localmente
-                    
-                    # MAPEADO SOLICITADO: Username -> cn, Email -> mail
-                    ldap_cn = str(user_entry.cn) if 'cn' in user_entry else username
-                    email = str(user_entry.mail) if 'mail' in user_entry else f"{username}@local.nexus"
-                    
-                    local_user = User.query.filter_by(username=ldap_cn).first()
-                    
-                    if not local_user:
-                        # Crear Usuario Sombra
-                        local_user = User(
-                            username=ldap_cn,
-                            email=email,
-                            role='usuario', # Por defecto usuario
-                            auth_source='ldap',
-                            is_active=True
-                        )
-                        # Clave local deshabilitada
-                        local_user.password_hash = None
-                        db.session.add(local_user)
-                        from app.modules.audit.services import add_audit_log
-                        add_audit_log("usuario creado", status="success", detail=f"Sincronía LDAP: Shadow user '{ldap_cn}' generado (Origen: cn)")
-                    else:
-                        # Actualizar datos
-                        local_user.username = ldap_cn
-                        local_user.email = email
-                        local_user.auth_source = 'ldap'
-                        # No pisar is_active aquí por si un admin lo apagó intencionalmente
-                    
-                    # Actualizar telemetría de sesión
-                    local_user.last_login_at = datetime.utcnow()
-                    
-                    # Lógica de Mapeo de Roles Avanzado (JSON + Legacy Fallback)
-                    new_role = 'usuario' # Default
-                    member_of = [str(g).lower() for g in user_entry.memberOf] if 'memberOf' in user_entry else []
-
-                    # 1. Intentar Mapeo Dinámico (JSON)
-                    if config.ldap_role_mappings:
-                        import json
-                        try:
-                            mappings = json.loads(config.ldap_role_mappings)
-                            for mapping in mappings:
-                                m_group = mapping.get('group', '').strip().lower()
-                                m_role = mapping.get('role', 'usuario')
-                                if any(m_group in group for group in member_of):
-                                    new_role = m_role
-                                    break
-                        except Exception as e:
-                            print(f"Error parsing role mappings: {e}")
-
-                    # 2. Fallback a Legacy
-                    if new_role == 'usuario' and config.ldap_group_admin:
-                        legacy_groups = [g.strip().lower() for g in config.ldap_group_admin.split(',')]
-                        if any(any(lg in group for lg in legacy_groups) for group in member_of):
-                            new_role = 'administrador'
-                    
-                    local_user.role = new_role
-                    
-                    db.session.commit()
-                    return {"status": "success", "user": local_user}
-
+                conn_bind = Connection(server, user=user_dn, password=password, auto_bind=True)
+                conn_bind.unbind()
             except Exception as bind_err:
                 return {"status": "error", "message": "Contraseña LDAP incorrecta"}
+                
+            # Login Exitoso en LDAP -> Sincronizar Localmente
+            try:
+                # Extraer valores limpios (.value)
+                # Ojo: Mapeo Invertido solicitado (nombre -> cn, username -> mail)
+                nombre = str(user_entry.cn.value) if 'cn' in user_entry and user_entry.cn else username
+                ldap_username = str(user_entry.mail.value) if 'mail' in user_entry and user_entry.mail else username
+                
+                local_user = User.query.filter_by(username=ldap_username).first()
+                if not local_user:
+                    local_user = User.query.filter_by(username=username).first()
+                
+                if not local_user:
+                    local_user = User(
+                        username=ldap_username,
+                        nombre=nombre,
+                        role='usuario',
+                        auth_source='ldap',
+                        is_active=True
+                    )
+                    # Clave local deshabilitada
+                    local_user.password_hash = None
+                    db.session.add(local_user)
+                    from app.modules.audit.services import add_audit_log
+                    add_audit_log("usuario creado", status="success", detail=f"Sincronía LDAP: Shadow user '{ldap_username}' generado (Origen: mail)")
+                else:
+                    local_user.username = ldap_username
+                    local_user.nombre = nombre
+                    local_user.auth_source = 'ldap'
+                
+                # Actualizar telemetría de sesión
+                local_user.last_login_at = datetime.utcnow()
+                
+                # Lógica de Mapeo de Roles Avanzado (JSON + Legacy Fallback)
+                new_role = 'usuario' # Default
+                member_of = [str(g).lower() for g in user_entry.memberOf] if 'memberOf' in user_entry else []
+
+                # 1. Intentar Mapeo Dinámico (JSON)
+                if config.ldap_role_mappings:
+                    import json
+                    try:
+                        mappings = json.loads(config.ldap_role_mappings)
+                        for mapping in mappings:
+                            m_group = mapping.get('group', '').strip().lower()
+                            m_role = mapping.get('role', 'usuario')
+                            if any(m_group in group for group in member_of):
+                                new_role = m_role
+                                break
+                    except Exception as e:
+                        print(f"Error parsing role mappings: {e}")
+
+                # 2. Fallback a Legacy
+                if new_role == 'usuario' and config.ldap_group_admin:
+                    legacy_groups = [g.strip().lower() for g in config.ldap_group_admin.split(',')]
+                    if any(any(lg in group for lg in legacy_groups) for group in member_of):
+                        new_role = 'administrador'
+                
+                local_user.role = new_role
+                
+                db.session.commit()
+                return {"status": "success", "user": local_user}
+
+            except Exception as sync_err:
+                db.session.rollback()
+                print(f"ERROR LDAP DB SYNC: {sync_err}")
+                from flask import current_app
+                current_app.logger.error(f"ERROR LDAP DB SYNC: {sync_err}")
+                return {"status": "error", "message": f"Fallo al registrar/actualizar usuario en base de datos: {str(sync_err)}"}
 
     except Exception as e:
         return {"status": "error", "message": f"Error LDAP: {str(e)}"}

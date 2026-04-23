@@ -37,7 +37,7 @@ def export_config():
                 "users": [
                     {
                         "username": u.username,
-                        "email": u.email,
+                        "nombre": u.nombre,
                         "password_hash": u.password_hash,
                         "role": u.role,
                         "auth_source": u.auth_source,
@@ -147,7 +147,7 @@ def import_config():
             if not exists:
                 user = User(
                     username=u_data['username'],
-                    email=u_data.get('email'),
+                    nombre=u_data.get('nombre'),
                     password_hash=u_data.get('password_hash'),
                     role=u_data.get('role', 'usuario'),
                     auth_source='local',
