@@ -72,7 +72,7 @@ function initUsersDataTable() {
             { 
                 data: 'id', 
                 orderable: false,
-                width: '50px',
+                width: '60px',
                 render: (data, type, row) => {
                     const isSelected = selectedUsers.has(row.id);
                     return `<div class="flex items-center h-full justify-center">
