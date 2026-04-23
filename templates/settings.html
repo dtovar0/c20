@@ -75,7 +75,7 @@
                                 <svg class="w-5 h-5 absolute left-5 top-1/2 -translate-y-1/2 text-label/40 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
                                 <input type="text" 
                                        id="portal-name-input"
-                                       value="{{ config.portal_name if config else 'Nexus Core AI' }}" 
+                                       value="{{ sys_config.portal_name if sys_config else 'Nexus Core AI' }}" 
                                        class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-14 pr-6 py-4 text-sm font-bold text-input outline-none transition-all focus:border-input-focus focus:ring-4 focus:ring-primary/10 placeholder:text-label/40"
                                        placeholder="Introduce el nombre del portal...">
                             </div>
@@ -84,7 +84,7 @@
                         <!-- Action Group: Identidad Visual -->
                         <div class="group">
                             <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-3 px-1">Identidad Visual</label>
-                            {% set is_image = config.portal_identity_type == 'image' if config else false %}
+                            {% set is_image = sys_config.portal_identity_type == 'image' if sys_config else false %}
                             <div class="flex gap-4">
                                 <button id="btn-toggle-icon" onclick="toggleIdentityMode('icon')" 
                                     class="flex-grow py-4 {% if not is_image %}bg-button-bg text-button-text shadow-lg shadow-button-bg/20{% else %}bg-panel-fill border-2 border-button-bg/20 text-label{% endif %} rounded-2xl text-xs font-black uppercase tracking-widest hover:opacity-90 transition-all active:scale-95 flex items-center justify-center gap-2">
@@ -106,12 +106,12 @@
                                 <!-- BG Color Picker -->
                                 <div class="bg-input-bg p-4 rounded-2xl border border-panel-border flex flex-col items-center">
                                     <span class="text-[9px] font-bold text-primary/60 uppercase mb-3">Fondo</span>
-                                    <input type="color" id="portal-bg-color" value="{{ config.bg_color if config else '#0f172a' }}" class="w-full h-10 rounded-lg cursor-pointer bg-transparent border-none">
+                                    <input type="color" id="portal-bg-color" value="{{ sys_config.bg_color if sys_config else '#0f172a' }}" class="w-full h-10 rounded-lg cursor-pointer bg-transparent border-none">
                                 </div>
                                 <!-- Text Color Picker -->
                                 <div class="bg-input-bg p-4 rounded-2xl border border-panel-border flex flex-col items-center">
                                     <span class="text-[9px] font-bold text-primary/60 uppercase mb-3">Texto</span>
-                                    <input type="color" id="portal-text-color" value="{{ config.text_color if config else '#ffffff' }}" class="w-full h-10 rounded-lg cursor-pointer bg-transparent border-none">
+                                    <input type="color" id="portal-text-color" value="{{ sys_config.text_color if sys_config else '#ffffff' }}" class="w-full h-10 rounded-lg cursor-pointer bg-transparent border-none">
                                 </div>
                             </div>
                         </div>
@@ -125,13 +125,13 @@
                         <div class="flex-grow min-h-0 bg-surface-container rounded-[24px] border border-surface-container-border flex flex-col items-center justify-center p-4 shadow-xl shadow-primary/5 relative overflow-hidden">
                             <div class="w-28 h-28 bg-input rounded-[28px] shadow-xl flex items-center justify-center relative z-10 group transition-transform hover:scale-105 border border-panel-border overflow-hidden">
                                 <div id="preview-portal-icon" 
-                                     style="{% if config %}background-color: {{ config.bg_color }}; color: {{ config.text_color }};{% endif %}"
+                                     style="{% if sys_config %}background-color: {{ sys_config.bg_color }}; color: {{ sys_config.text_color }};{% endif %}"
                                      class="w-full h-full bg-primary flex items-center justify-center text-white shadow-lg shadow-primary/30 transition-all overflow-hidden [&>svg]:w-11 [&>svg]:h-11 [&>img]:w-full [&>img]:h-full [&>img]:object-cover">
-                                    {% if config and config.portal_icon %}
-                                        {% if config.portal_identity_type == 'image' %}
-                                            <img src="{{ config.portal_icon }}" class="w-full h-full object-cover">
+                                    {% if sys_config and sys_config.portal_icon %}
+                                        {% if sys_config.portal_identity_type == 'image' %}
+                                            <img src="{{ sys_config.portal_icon }}" class="w-full h-full object-cover">
                                         {% else %}
-                                            {{ config.portal_icon | safe }}
+                                            {{ sys_config.portal_icon | safe }}
                                         {% endif %}
                                     {% else %}
                                         <svg fill="currentColor" viewBox="0 0 24 24">
@@ -142,7 +142,7 @@
                             </div>
                             
                             <p id="preview-portal-name" class="mt-4 text-label text-[10px] font-black text-center max-w-[180px] leading-tight uppercase tracking-[0.25em] transition-all">
-                                {{ config.portal_name if config else 'Nexus Core AI' }}
+                                {{ sys_config.portal_name if sys_config else 'Nexus Core AI' }}
                             </p>
                         </div>
 
