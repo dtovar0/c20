@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, render_template
 from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename
 from app import db
-from .models import PSX5KTask, PSX5KDetail
+from .models import PSX5KTask, PSX5KDetail, PSX5KHistory
 import os
 import datetime
 
@@ -31,7 +31,8 @@ def task_detail(task_id):
     Vista independiente para el detalle de una tarea PSX5K
     """
     task = PSX5KTask.query.get_or_404(task_id)
-    return render_template('psx_detail.html', task=task)
+    history = PSX5KHistory.query.filter_by(task_id=task_id).order_by(PSX5KHistory.fecha.desc()).all()
+    return render_template('psx_detail.html', task=task, history=history)
 
 @psx_bp.route('/stats')
 @login_required
@@ -99,46 +100,42 @@ def create_task():
         chunks = list(chunk_list(all_records, 200))
         total_chunks = len(chunks)
         
-        created_ids = []
-        base_name = data.get('tarea_name') or f"Tarea_{raw_tarea}"
+        # --- NUEVA LÓGICA: CREAR JOB MAESTRO ---
+        from .models import PSX5KJob
+        new_job = PSX5KJob(
+            usuario=current_user.username,
+            tarea=raw_tarea,
+            accion_tipo=raw_accion,
+            datos_tipo=raw_origen,
+            routing_label=data.get('routing_label'),
+            archivo_origen=data.get('datos') if raw_origen == 'Archivo' else 'Ingreso Manual',
+            force=data.get('force', False)
+        )
+        db.session.add(new_job)
+        db.session.flush() # Para obtener el new_job.id
 
+        created_ids = []
         for i, chunk in enumerate(chunks):
-            # --- LÓGICA DE PERSISTENCIA SEGÚN ORIGEN ---
-            if raw_origen == 'Archivo':
-                # Crear un archivo físico para este chunk
-                import uuid
-                chunk_filename = f"chunks/chunk_{uuid.uuid4().hex}.csv"
-                project_root = os.getenv('PROJECT_ROOT', os.getcwd())
-                chunk_path = os.path.join(project_root, 'uploads/psx5k', chunk_filename)
-               
-                with open(chunk_path, 'w') as f:
-                    f.write("\n".join(chunk))
-                
-                task_data_value = chunk_filename
-            else:
-                task_data_value = ",".join(chunk)
+            task_data_value = ",".join(chunk)
             
             new_task = PSX5KTask(
-                usuario=current_user.username,
-                tarea=raw_tarea, # 'add' o 'delete' únicamente
-                accion_tipo=raw_accion, 
-                datos_tipo=raw_origen, 
-                routing_label=data.get('routing_label'),
-                datos=task_data_value, 
-                force=data.get('force', False)
+                job_id=new_job.id, # Vínculo al maestro
+                chunk_index=i + 1,
+                chunk_total=total_chunks,
+                datos=task_data_value
             )
             db.session.add(new_task)
             db.session.flush()
             
             # Registro individual en auditoría
-            add_audit_log("tarea creada", status="info", detail=f"ID: {new_task.id} | {raw_origen} | Parte {i+1}/{total_chunks}")
+            add_audit_log("tarea creada", status="info", detail=f"Job: {new_job.id} | Task: {new_task.id} | Parte {i+1}/{total_chunks}")
             
             new_detail = PSX5KDetail(id=new_task.id, total=len(chunk), ok=0, fail=0)
             db.session.add(new_detail)
             created_ids.append(new_task.id)
             
         db.session.commit()
-        add_audit_log("tarea creada", status="info", detail=f"{raw_origen} chunked - {total_chunks} partes")
+        add_audit_log("tarea creada - batch", status="info", detail=f"Origen: {raw_origen} | {total_chunks} fragmentos (DB-stored)")
         
         return jsonify({
             "status": "success",
@@ -191,4 +188,100 @@ def upload_file():
     
     return jsonify({"status": "error", "message": "Extensión no permitida (Solo CSV, XLS, XLSX, XML)"}), 400
 
+@psx_bp.route('/check-connectivity')
+@login_required
+def check_psx_connectivity():
+    """
+    Endpoint para verificar la conectividad con el nodo PSX5K
+    """
+    from psx5k_cmd import test_connectivity
+    ok, message = test_connectivity()
+    
+    if ok:
+        return jsonify({"status": "success", "message": message})
+    else:
+        return jsonify({"status": "error", "message": message}), 500
 
+
+@psx_bp.route('/download_duplicates/<int:task_id>')
+@login_required
+def download_duplicates(task_id):
+    """
+    Genera y descarga un CSV con los números marcados como DUP
+    """
+    from flask import Response
+    
+    history = PSX5KHistory.query.filter_by(task_id=task_id, estado='DUP').all()
+    if not history:
+        return jsonify({"status": "error", "message": "No hay registros duplicados en esta tarea"}), 404
+        
+    csv_content = "numero,routing_label,fecha\n"
+    for item in history:
+        csv_content += f"{item.numero},{item.routing_label or ''},{item.fecha}\n"
+        
+    return Response(
+        csv_content,
+        mimetype="text/csv",
+        headers={"Content-disposition": f"attachment; filename=duplicates_task_{task_id}.csv"}
+    )
+
+@psx_bp.route('/reprocess_duplicates/<int:task_id>', methods=['POST'])
+@login_required
+def reprocess_duplicates(task_id):
+    """
+    Crea una nueva tarea basada en los registros duplicados de una tarea previa.
+    Limitado a máximo 2 reintentos por tarea origen.
+    """
+    from app.modules.audit.services import add_audit_log
+    
+    parent_task = PSX5KTask.query.get_or_404(task_id)
+    
+    # 1. Validar si esta tarea ya generó un reintento (Uso el nuevo campo parent_id)
+    has_retry = PSX5KTask.query.filter_by(parent_id=task_id).first()
+    
+    if has_retry:
+        return jsonify({
+            "status": "error", 
+            "message": f"Acción bloqueada: La tarea #{task_id} ya cuenta con una tarea complementaria asociada (ID: #{has_retry.id})."
+        }), 400
+
+    # 2. Obtener los duplicados
+    duplicates = PSX5KHistory.query.filter_by(task_id=task_id, estado='DUP').all()
+    if not duplicates:
+        return jsonify({"status": "error", "message": "No se encontraron registros duplicados para procesar."}), 400
+
+    # 3. Crear la nueva tarea clónica
+    ani_list = [d.numero for d in duplicates]
+    task_data_value = ",".join(ani_list)
+    version = retry_count + 1
+    
+    new_task = PSX5KTask(
+        usuario=current_user.username,
+        tarea=parent_task.tarea,
+        accion_tipo=parent_task.accion_tipo,
+        datos_tipo="Manual",
+        routing_label=parent_task.routing_label,
+        datos=task_data_value,
+        archivo_origen=f"RETRY_TASK_{task_id}_V{version}",
+        chunk_index=1,
+        chunk_total=1,
+        force=True,
+        parent_id=task_id,
+        tipo='retry'
+    )
+    
+    db.session.add(new_task)
+    db.session.flush()
+
+    new_detail = PSX5KDetail(id=new_task.id, total=len(ani_list), ok=0, fail=0)
+    db.session.add(new_detail)
+    
+    add_audit_log("tarea duplicados - reintento", status="info", detail=f"Target: #{new_task.id} | Parent: #{task_id} | Registros: {len(ani_list)}")
+    
+    db.session.commit()
+    
+    return jsonify({
+        "status": "success",
+        "message": f"Tarea #{new_task.id} creada correctamente (Version {version})",
+        "task_id": new_task.id
+    }), 201

@@ -59,24 +59,28 @@ def handle_stale_tasks(app):
             add_audit_log("tarea terminada", status="error", detail=f"Timeout: {task.id} - Superó 60 min", user_override="SYSTEM")
 
 def process_task_data(task):
-    """Retorna la lista de números desde archivo o manual"""
+    """Retorna la lista de números desde archivo o datos directos en DB"""
     if not task.datos: return []
     
-    base_path = os.getenv('PROJECT_ROOT', os.getcwd())
+    # Si detectamos comas, es probable que sean datos directos en DB (formato chunk nuevo)
+    if ',' in task.datos:
+        return [x.strip() for x in task.datos.split(',') if x.strip()]
     
-    if task.datos_tipo == 'Archivo':
-        file_path = os.path.join(base_path, 'uploads/psx5k', task.datos)
-        if not os.path.exists(file_path):
-            print(f"❌ Fragmento no encontrado: {file_path}")
-            return []
+    # Si no hay comas, comprobamos si es un archivo físico (formato legacy o archivo único)
+    base_path = os.getenv('PROJECT_ROOT', os.getcwd())
+    file_path = os.path.join(base_path, 'uploads/psx5k', task.datos)
+    
+    if os.path.exists(file_path):
         try:
             with open(file_path, 'r') as f:
+                # Soporte para CSV básico o TXT por líneas
                 return [line.strip() for line in f if line.strip()]
         except Exception as e:
-            print(f"⚠️ Error leyendo fragmento {task.datos}: {e}")
+            print(f"⚠️ Error leyendo archivo físico {task.datos}: {e}")
             return []
-    else:
-        return [x.strip() for x in task.datos.split(',') if x.strip()]
+    
+    # Fallback: intentar tratarlo como un solo número o una lista mal formateada
+    return [task.datos.strip()]
 
 def main():
     """Motor de procesamiento persistente (Daemon)"""
@@ -100,6 +104,9 @@ def main():
     # Limpieza inicial
     handle_stale_tasks(app)
 
+    last_health_check = datetime.datetime.now()
+    HEALTH_CHECK_INTERVAL = 3600 # 1 hora si está idle
+
     while True:
         try:
             # Monitorear tareas colgadas en cada ciclo
@@ -111,11 +118,56 @@ def main():
                     PSX5KTask.estado.in_(['Pendiente', 'Programada'])
                 ).order_by(PSX5KTask.created_at.asc()).first()
 
+                # --- LÓGICA DE MONITOREO INTEGRADA ---
+                now = datetime.datetime.now()
+                should_check = False
+                
+                if task:
+                    # Si hay tarea, validamos conectividad antes de empezar
+                    should_check = True
+                elif (now - last_health_check).total_seconds() > HEALTH_CHECK_INTERVAL:
+                    # Si está idle, validamos cada hora
+                    should_check = True
+                    last_health_check = now
+
+                if should_check:
+                    from psx5k_cmd import test_connectivity
+                    ok, msg = test_connectivity()
+                    if not ok:
+                        print(f"🚨 [WATCHDOG] Fallo de conectividad detectado: {msg}")
+                        
+                        # 1. Auditoría
+                        add_audit_log("error conectividad", status="error", detail=f"PSX: {msg}", user_override="SYSTEM_WORKER")
+                        
+                        # 2. Notificación In-App (Campana)
+                        from app.modules.notifications.services import add_in_app_notification
+                        add_in_app_notification(
+                            type='error',
+                            title='Fallo de Conexión PSX',
+                            message=f'No se pudo establecer conexión con el nodo PSX: {msg}'
+                        )
+
+                        # 3. Notificación por Correo
+                        admin = User.query.filter_by(role='administrador').first()
+                        if admin and admin.email:
+                            send_notification_by_slug(
+                                slug='error', 
+                                target_email=admin.email,
+                                context={'usuario': 'SYSTEM_WORKER', 'ip': os.getenv('PSX_IP', 'PSX_NODE'), 'error': f'CONECTIVIDAD FALLIDA: {msg}'}
+                            )
+                        
+                        if task:
+                            # Si había una tarea, la dejamos en pendiente para reintento y saltamos este ciclo
+                            print("⏳ Pospone tarea por falta de conectividad.")
+                            time.sleep(60)
+                            continue
+                # ------------------------------------
+
                 if not task:
                     time.sleep(SLEEP_IDLE)
                     continue
 
-                print(f"🎯 Procesando Tarea ID {task.id}: {task.tarea}")
+                print(f"🎯 Procesando Tarea ID {task.id}: {task.job.tarea}")
                 
                 # Marcar inicio
                 task.estado = 'Ejecutando'
@@ -126,9 +178,9 @@ def main():
                 admin = User.query.filter_by(role='administrador').first()
                 if admin and admin.email:
                     send_notification_by_slug(slug='inicio', target_email=admin.email, 
-                                            context={'usuario': task.usuario, 'hora': task.fecha_inicio.strftime('%H:%M:%S')})
+                                            context={'usuario': task.job.usuario, 'hora': task.fecha_inicio.strftime('%H:%M:%S')})
                 
-                add_audit_log("tarea iniciada", status="info", detail=f"ID: {task.id} - {task.tarea}", user_override=task.usuario)
+                add_audit_log("tarea iniciada", status="info", detail=f"ID: {task.id} - {task.job.tarea}", user_override=task.job.usuario)
 
                 # Procesar datos
                 ani_list = process_task_data(task)
@@ -139,30 +191,31 @@ def main():
                     print(f"⚠️ Tarea {task.id} abortada: No se encontraron registros válidos.")
                     task.estado = 'Error'
                     db.session.commit()
-                    add_audit_log("tarea terminada", status="error", detail=f"ID: {task.id} - Abortada: Sin registros válidos", user_override=task.usuario)
+                    add_audit_log("tarea terminada", status="error", detail=f"ID: {task.id} - Abortada: Sin registros válidos", user_override=task.job.usuario)
                     continue
 
                 # Ejecutar comando PSX
                 try:
                     from psx5k_cmd import psx5k_cmd
                     results = psx5k_cmd(
-                        line_task=task.tarea, 
+                        line_task=task.job.tarea, 
                         line_number=ani_list,
-                        line_type=task.accion_tipo,
-                        routing_label=task.routing_label,
-                        force=task.force
+                        line_type=task.job.accion_tipo,
+                        routing_label=task.job.routing_label,
+                        force=task.job.force
                     )
                 except Exception as task_err:
                     print(f"❌ Error ejecutando Tarea ID {task.id}: {task_err}")
                     task.estado = 'Error'
                     db.session.commit()
-                    add_audit_log("tarea terminada", status="error", detail=f"ID: {task.id} - Fallo Técnico: {str(task_err)[:100]}", user_override=task.usuario)
+                    add_audit_log("tarea terminada", status="error", detail=f"ID: {task.id} - Fallo Técnico: {str(task_err)[:100]}", user_override=task.job.usuario)
                     continue
                
-                # Resultados
-                detail.ok = results.get("ok", 0) + results.get("dup", 0)
+                # Resultados Detallados
+                detail.ok = results.get("ok", 0)
                 detail.fail = results.get("fail", 0)
                 detail.force_ok = results.get("force_ok", 0)
+                detail.dup = results.get("dup", 0)
                 
                 # Historial detallado
                 for log_entry in results.get('logs', []):
@@ -171,22 +224,23 @@ def main():
                         status_tag = parts[0].strip('[]')
                         number = parts[1]
                         db.session.add(PSX5KHistory(
-                            task_id=task.id, usuario=task.usuario,
-                            numero=number, routing_label=task.routing_label,
-                            accion=task.tarea, estado=status_tag, fecha=datetime.datetime.now()
+                            task_id=task.id, usuario=task.job.usuario,
+                            numero=number, routing_label=task.job.routing_label,
+                            accion=task.job.tarea, estado=status_tag, fecha=datetime.datetime.now()
                         ))
                     except: pass
                 
-                # Finalizar
+                # Finalizar y limpiar datos para ahorrar espacio
                 task.estado = 'Terminada'
                 task.fecha_fin = datetime.datetime.now()
+                task.datos = None  # Liberar espacio: ya está en psx5k_history
                 db.session.commit()
                 
-                add_audit_log("tarea terminada", status="success", detail=f"ID: {task.id} | OK: {detail.ok} | FAIL: {detail.fail}", user_override=task.usuario)
+                add_audit_log("tarea terminada", status="success", detail=f"ID: {task.id} | OK: {detail.ok} | FAIL: {detail.fail}", user_override=task.job.usuario)
 
                 if admin and admin.email:
                     send_notification_by_slug(slug='terminado', target_email=admin.email, 
-                                            context={'usuario': task.usuario, 'hora': task.fecha_fin.strftime('%H:%M:%S')})
+                                            context={'usuario': task.job.usuario, 'hora': task.fecha_fin.strftime('%H:%M:%S')})
 
             time.sleep(SLEEP_BETWEEN)
 

@@ -3,6 +3,43 @@ import sys
 import re
 import os
 import datetime
+from dotenv import load_dotenv
+
+# Cargar variables de entorno
+load_dotenv()
+
+def test_connectivity():
+    """
+    Verifica si el servidor PSX responde a SSH.
+    Retorna (True, message) o (False, error).
+    """
+    PSX_IP = os.getenv('PSX_IP')
+    PSX_USER = os.getenv('PSX_USER')
+    PSX_PASS = os.getenv('PSX_PASS')
+    PSX_PORT = os.getenv('PSX_PORT', '22')
+
+    if not all([PSX_IP, PSX_USER, PSX_PASS]):
+        return False, "Faltan credenciales en .env"
+
+    try:
+        cmd = pexpect.spawn(f'ssh -o StrictHostKeyChecking=no -p {PSX_PORT} {PSX_USER}@{PSX_IP}', timeout=10, encoding='utf-8')
+        idx = cmd.expect(['Password:', pexpect.EOF, pexpect.TIMEOUT])
+        
+        if idx == 0: # Password:
+            cmd.sendline(PSX_PASS)
+            idx2 = cmd.expect(['\r\n>', 'Permission denied', pexpect.TIMEOUT])
+            if idx2 == 0:
+                cmd.sendline('exit')
+                return True, "Conexión exitosa"
+            else:
+                return False, "Error de autenticación o timeout en password"
+        elif idx == 1:
+            return False, "Conexión rechazada o cerrada por el host"
+        else:
+            return False, "Timeout al intentar conectar"
+            
+    except Exception as e:
+        return False, str(e)
 
 def psx5k_cmd(line_task, line_number, line_type=None, routing_label=None, force=False):
     """
@@ -15,6 +52,15 @@ def psx5k_cmd(line_task, line_number, line_type=None, routing_label=None, force=
     force         = bool (True para sobreescribir registros existentes)
     """
     
+    # Obtener credenciales del entorno (Obligatorios en .env)
+    PSX_IP = os.getenv('PSX_IP')
+    PSX_USER = os.getenv('PSX_USER')
+    PSX_PASS = os.getenv('PSX_PASS')
+    PSX_PORT = os.getenv('PSX_PORT', '22') # El puerto puede tener default standard si no se define
+
+    if not all([PSX_IP, PSX_USER, PSX_PASS]):
+        raise EnvironmentError("Faltan configuraciones críticas de PSX en el archivo .env (PSX_IP, PSX_USER, PSX_PASS)")
+
     EXPECT = ['Password:', '\r\n>', 'PSXMASTER>']
     
     # Acumuladores de estado para reporte
@@ -28,10 +74,10 @@ def psx5k_cmd(line_task, line_number, line_type=None, routing_label=None, force=
     }
 
     try:
-        print(f"🚀 Conectando a PSX (10.133.39.5) para tarea: {line_task.upper()} (Force: {force})...")
+        print(f"🚀 Conectando a PSX ({PSX_IP}) para tarea: {line_task.upper()} (Force: {force})...")
         
         # 1. Establecer Conexión SSH
-        cmd = pexpect.spawn('ssh -o StrictHostKeyChecking=no -p 8122 admin@10.133.39.5', timeout=30, encoding='utf-8')
+        cmd = pexpect.spawn(f'ssh -o StrictHostKeyChecking=no -p {PSX_PORT} {PSX_USER}@{PSX_IP}', timeout=30, encoding='utf-8')
         cmd.logfile = sys.stdout 
         cmd.setecho(False)
         cmd.delaybeforesend = 0.8
@@ -39,7 +85,7 @@ def psx5k_cmd(line_task, line_number, line_type=None, routing_label=None, force=
         # Flujo de Login
         idx = cmd.expect(EXPECT)
         if idx == 0: # Password:
-            cmd.sendline('M4rc4t3l#2012')
+            cmd.sendline(PSX_PASS)
             cmd.expect(EXPECT)
             
         # Entrar a la instancia PSXMASTER
