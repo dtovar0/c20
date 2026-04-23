@@ -25,6 +25,11 @@ def login():
                 
                 if ldap_result.get("status") == "success":
                     user = ldap_result["user"]
+                    
+                    if not getattr(user, 'is_active', True):
+                        flash("Tu cuenta ha sido deshabilitada por el administrador", "error")
+                        return redirect(url_for('auth.login'))
+                        
                     login_user(user)
                     add_audit_log("login usuario", status="success", detail=f"Usuario {username} ha iniciado sesión vía DIRECTORIO")
                     return redirect(url_for('core.index'))
@@ -37,6 +42,10 @@ def login():
                 user = User.query.filter_by(username=username).first()
                 
                 if user and user.check_password(password):
+                    if not getattr(user, 'is_active', True):
+                        flash("Tu cuenta ha sido deshabilitada por el administrador", "error")
+                        return redirect(url_for('auth.login'))
+                        
                     # Actualizar telemetría de sesión
                     from datetime import datetime
                     user.last_login_at = datetime.utcnow()

@@ -10,6 +10,10 @@ if os.getenv('DEBUG_LDAP') == 'true':
     ldap3_logger = logging.getLogger('ldap3')
     ldap3_logger.setLevel(logging.DEBUG)
     if not ldap3_logger.handlers:
+        os.makedirs(os.path.join(os.getcwd(), 'logs'), exist_ok=True)
+        fh = logging.FileHandler(os.path.join(os.getcwd(), 'logs', 'ldap_debug.log'))
+        fh.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+        ldap3_logger.addHandler(fh)
         ldap3_logger.addHandler(logging.StreamHandler())
 
 def authenticate_user_ldap(username, password):
@@ -83,7 +87,8 @@ def authenticate_user_ldap(username, password):
                             username=ldap_cn,
                             email=email,
                             role='usuario', # Por defecto usuario
-                            auth_source='ldap'
+                            auth_source='ldap',
+                            is_active=True
                         )
                         # Clave local deshabilitada
                         local_user.password_hash = None
@@ -95,6 +100,7 @@ def authenticate_user_ldap(username, password):
                         local_user.username = ldap_cn
                         local_user.email = email
                         local_user.auth_source = 'ldap'
+                        # No pisar is_active aquí por si un admin lo apagó intencionalmente
                     
                     # Actualizar telemetría de sesión
                     local_user.last_login_at = datetime.utcnow()
