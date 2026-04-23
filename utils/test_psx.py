@@ -71,7 +71,7 @@ def test_psx_connection():
     print_step("Verificando autenticación SSH con Pexpect")
     try:
         cmd_str = f'ssh -o StrictHostKeyChecking=no -p {PSX_PORT} {PSX_USER}@{PSX_IP}'
-        cmd = pexpect.spawn(cmd_str, timeout=10, encoding='utf-8')
+        cmd = pexpect.spawn(cmd_str, timeout=10, encoding='utf-8', codec_errors='replace')
         
         idx = cmd.expect(['Password:', '[Pp]assword:', pexpect.EOF, pexpect.TIMEOUT])
         

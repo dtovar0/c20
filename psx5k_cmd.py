@@ -22,7 +22,7 @@ def test_connectivity():
         return False, "Faltan credenciales en .env"
 
     try:
-        cmd = pexpect.spawn(f'ssh -o StrictHostKeyChecking=no -p {PSX_PORT} {PSX_USER}@{PSX_IP}', timeout=10, encoding='utf-8')
+        cmd = pexpect.spawn(f'ssh -o StrictHostKeyChecking=no -p {PSX_PORT} {PSX_USER}@{PSX_IP}', timeout=10, encoding='utf-8', codec_errors='replace')
         idx = cmd.expect(['Password:', pexpect.EOF, pexpect.TIMEOUT])
         
         if idx == 0: # Password:
@@ -89,7 +89,7 @@ def psx5k_cmd(line_task, line_number, line_type=None, routing_label=None, force=
         print(f"🚀 Conectando a PSX ({PSX_IP}) para tarea: {line_task.upper()} (Force: {force})...")
         
         # 1. Establecer Conexión SSH
-        cmd = pexpect.spawn(f'ssh -o StrictHostKeyChecking=no -p {PSX_PORT} {PSX_USER}@{PSX_IP}', timeout=30, encoding='utf-8')
+        cmd = pexpect.spawn(f'ssh -o StrictHostKeyChecking=no -p {PSX_PORT} {PSX_USER}@{PSX_IP}', timeout=30, encoding='utf-8', codec_errors='replace')
         cmd.setecho(False)
         cmd.delaybeforesend = 0.8
         
