@@ -66,16 +66,30 @@ function initPSXDataTable() {
         ajax: {
             url: '/api/psx/list',
             dataSrc: (json) => {
-                // Toggling Usuario column visibility based on admin status
                 const isAdmin = json.is_admin || false;
                 const api = tableEl.DataTable();
-                if (api) {
-                    api.column(5).visible(isAdmin);
-                }
+                if (api) { api.column(6).visible(isAdmin); } // Index shifted by 1
                 return json.tasks;
             }
         },
+        select: {
+            style: 'single', // Cambiado a single para el wizard de modificación
+            selector: 'td:first-child'
+        },
         columns: [
+            {
+                data: null,
+                defaultContent: '',
+                orderable: false,
+                className: 'select-checkbox-cell',
+                width: '40px',
+                render: () => `
+                    <div class="flex items-center justify-center h-full">
+                        <div class="w-5 h-5 rounded-lg border-2 border-panel-border bg-black/20 flex items-center justify-center transition-all group-hover:border-primary">
+                            <div class="w-2.5 h-2.5 rounded-sm bg-primary opacity-0 check-indicator transition-all"></div>
+                        </div>
+                    </div>`
+            },
             { 
                 data: 'id', 
                 width: '100px', 
@@ -118,21 +132,16 @@ function initPSXDataTable() {
             },
             { 
                 data: 'archivo_origen', 
-                width: '180px', 
-                render: (data) => `
-                    <div class="flex items-center h-full text-[10px] font-bold text-label/40 truncate max-w-[170px]" title="${data}">
-                        ${data && data.length > 25 ? '...' + data.slice(-22) : (data || 'MANUAL')}
-                    </div>` 
-            },
-            { 
-                data: 'chunk_index',
-                width: '100px',
+                width: '280px', 
                 render: (data, type, row) => `
-                    <div class="flex items-center h-full">
-                        <span class="px-3 py-1 bg-label/5 rounded-lg text-[9px] font-black text-label/40 uppercase tracking-widest border border-panel-border/20">
-                            ${row.chunk_index} / ${row.chunk_total}
+                    <div class="flex items-center h-full gap-3">
+                        <span class="text-[10px] font-bold text-label/60 truncate max-w-[180px]" title="${data}">
+                            ${data && data.length > 25 ? '...' + data.slice(-22) : (data || 'MANUAL')}
                         </span>
-                    </div>`
+                        <span class="px-2 py-0.5 rounded-md bg-white/[0.07] border border-white/10 text-[8px] font-black text-label/60 uppercase tracking-tighter whitespace-nowrap shadow-sm shadow-black/20">
+                            ${row.chunk_index}/${row.chunk_total}
+                        </span>
+                    </div>` 
             },
             { data: 'resumen', width: '120px', orderable: false, render: (data) => `<div class="flex items-center justify-center h-full min-w-0 overflow-hidden">${generateTaskGraphic(data)}</div>` },
             { 
@@ -150,7 +159,7 @@ function initPSXDataTable() {
         autoWidth: false,
         pageLength: 10,
         pagingType: 'simple',
-        order: [[0, 'desc']],
+        order: [[1, 'desc']], // Ordered by ID now (index 1)
         layout: {
             topStart: null,
             topEnd: null,
@@ -166,14 +175,31 @@ function initPSXDataTable() {
             }
         },
         drawCallback: function(settings) {
-            // Count visible columns for correct ghost row rendering
             const api = new $.fn.dataTable.Api(settings);
             const visibleCols = api.columns(':visible').count();
             renderGhostRows(settings, visibleCols);
         }
     });
 
-    // Register globally for top bar search
+    // Lógica de Selección y Botón Modificar
+    psxDataTable.on('select deselect', function() {
+        const count = psxDataTable.rows({ selected: true }).count();
+        const modifyBtn = $('#modifyTaskBtn');
+        
+        if (count === 1) {
+            modifyBtn.removeClass('opacity-30 pointer-events-none');
+            // Update click handler to retrieve the ID
+            const data = psxDataTable.rows({ selected: true }).data()[0];
+            modifyBtn.off('click').on('click', () => {
+                if (typeof openModifyModal === 'function') openModifyModal(data.id);
+            });
+        } else {
+            modifyBtn.addClass('opacity-30 pointer-events-none');
+            modifyBtn.off('click');
+        }
+    });
+
+    // Register globally
     window.activeNexusTable = psxDataTable;
 }
 

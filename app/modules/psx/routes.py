@@ -325,3 +325,90 @@ def search_history():
         "status": "success",
         "results": [r.to_dict() for r in results]
     })
+@psx_bp.route('/job/update/<int:job_id>', methods=['PATCH', 'POST'])
+@login_required
+def update_or_reprocess_job(job_id):
+    """
+    Actualiza un Job existente o crea uno nuevo si ya finalizó.
+    """
+    from .models import PSX5KJob, PSX5KTask, PSX5KDetail
+    from app.modules.audit.services import add_audit_log
+    
+    job = PSX5KJob.query.get_or_404(job_id)
+    data = request.json
+    action = data.get('action') # 'modify' or 'cancel'
+    
+    # Determinar si editamos o clonamos
+    # Si alguna tarea está en 'Ejecutando', bloqueamos
+    active_tasks = PSX5KTask.query.filter(PSX5KTask.job_id == job_id, PSX5KTask.estado == 'Ejecutando').count()
+    if active_tasks > 0:
+        return jsonify({"status": "error", "message": "No se puede modificar un Job con fragmentos en ejecución."}), 400
+
+    # Estado global del job (basado en sus tareas)
+    finished = all(t.estado in ['Terminada', 'Cancelada', 'Error'] for t in job.tasks)
+    
+    try:
+        if action == 'cancel':
+            # Acción de Cancelación (Solo para tareas no terminadas)
+            updated_count = 0
+            for t in job.tasks:
+                if t.estado in ['Pendiente', 'Programada']:
+                    t.estado = 'Cancelada'
+                    updated_count += 1
+            db.session.commit()
+            add_audit_log("tarea cancelada", status="warning", detail=f"Job ID: {job_id} cancelado por usuario.")
+            return jsonify({"status": "success", "message": f"Se han cancelado {updated_count} fragmentos."})
+
+        # Si el job ya terminó/canceló y se pide modificar -> CLONAMOS (REPROCESO)
+        if finished:
+            new_job = PSX5KJob(
+                usuario=current_user.username,
+                tarea=data.get('tarea', job.tarea),
+                accion_tipo=data.get('accion_tipo', job.accion_tipo),
+                datos_tipo=job.datos_tipo,
+                routing_label=data.get('routing_label', job.routing_label),
+                archivo_origen=f"REPROCESO_FROM_{job_id}",
+                force=data.get('force', job.force)
+            )
+            db.session.add(new_job)
+            db.session.flush()
+            
+            # Clonar tareas
+            for old_task in job.tasks:
+                new_task = PSX5KTask(
+                    job_id=new_job.id,
+                    chunk_index=old_task.chunk_index,
+                    chunk_total=old_task.chunk_total,
+                    datos=old_task.datos, # Aquí deberíamos tener los datos originales si no se borraron
+                    estado='Pendiente' if not data.get('is_scheduled') else 'Programada',
+                    fecha_inicio=data.get('scheduled_time') if data.get('is_scheduled') else None
+                )
+                db.session.add(new_task)
+                db.session.flush()
+                db.session.add(PSX5KDetail(id=new_task.id, total=0)) # El total se recalcula al iniciar
+            
+            db.session.commit()
+            add_audit_log("tarea reprogramada", status="info", detail=f"Nuevo Job ID: {new_job.id} basado en {job_id}")
+            return jsonify({"status": "success", "message": "Nueva tarea creada satisfactoriamente.", "new_job_id": new_job.id})
+
+        else:
+            # UPDATE In-place
+            old_label = job.routing_label
+            job.tarea = data.get('tarea', job.tarea)
+            job.accion_tipo = data.get('accion_tipo', job.accion_tipo)
+            job.routing_label = data.get('routing_label', job.routing_label)
+            job.force = data.get('force', job.force)
+            
+            # Actualizar estado y tiempos de las tareas asociadas
+            for t in job.tasks:
+                if t.estado in ['Pendiente', 'Programada', 'Cancelada']:
+                    t.estado = 'Pendiente' if not data.get('is_scheduled') else 'Programada'
+                    t.fecha_inicio = data.get('scheduled_time') if data.get('is_scheduled') else None
+            
+            db.session.commit()
+            add_audit_log("tarea modificada", status="info", detail=f"Job ID: {job_id} actualizado. Label: {old_label} -> {job.routing_label}")
+            return jsonify({"status": "success", "message": "Tarea actualizada correctamente."})
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"status": "error", "message": str(e)}), 500

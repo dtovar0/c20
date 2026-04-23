@@ -66,6 +66,21 @@
         letter-spacing: 0.1em;
         font-size: 10px;
     }
+
+    /* Column Selection Styles */
+    tr.selected .select-checkbox-cell .check-indicator {
+        opacity: 1 !important;
+        transform: scale(1);
+    }
+    tr.selected .select-checkbox-cell div > div {
+        border-color: var(--nx-primary);
+        background-color: rgba(var(--color-primary), 0.1);
+    }
+    
+    /* Row transition when selected */
+    #auditTableBody tr.selected {
+        background-color: rgba(var(--color-primary), 0.03) !important;
+    }
 </style>
 
 <div id="auditWrapper" class="w-full h-full p-0 overflow-hidden">
@@ -93,30 +108,36 @@
                                class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3 text-sm font-bold text-input outline-none focus:border-input-focus focus:ring-4 focus:ring-primary/10 transition-all placeholder:text-label/50">
                     </div>
                     <div class="flex items-center gap-3">
-                        <button id="scheduleTaskBtn" class="h-12 w-[220px] rounded-2xl bg-tab-inactive border border-panel-border text-tab-inactive-text font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 hover:border-primary hover:text-primary transition-all active:scale-95 shadow-lg shadow-black/5">
+                        <button id="modifyTaskBtn" class="h-12 px-6 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-500 font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-amber-500 hover:text-white transition-all opacity-30 pointer-events-none shadow-lg shadow-black/5">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                            <span>Modificar</span>
+                        </button>
+                        <button id="scheduleTaskBtn" class="h-12 px-6 rounded-2xl bg-tab-inactive border border-panel-border text-tab-inactive-text font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 hover:border-primary hover:text-primary transition-all active:scale-95 shadow-lg shadow-black/5">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             <span>Programar Tarea</span>
                         </button>
-                        <button id="refreshAudit" class="h-12 w-[220px] rounded-2xl bg-primary text-white font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/20">
+                        <button id="refreshAudit" class="h-12 px-6 rounded-2xl bg-primary text-white font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/20">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                             <span>Tarea Nueva</span>
                         </button>
                     </div>
                 </div>
                 <div class="overflow-x-auto overflow-y-hidden custom-scrollbar flex-grow pr-1">
-                    <table class="w-full h-full text-left table-fixed">
+                    <table class="w-full h-full text-left table-fixed border-separate border-spacing-y-1.5">
                         <thead class="sticky top-0 z-20">
                             <tr class="text-[9px] font-black text-white uppercase tracking-[0.2em]">
-                                <th class="px-5 py-4 bg-slate-900/50 rounded-l-2xl border-y border-l border-panel-border text-center">Ticket #</th>
+                                <th class="w-12 px-2 py-4 bg-slate-900/50 rounded-l-2xl border-y border-l border-panel-border text-center"></th>
+                                <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border text-center">Ticket #</th>
                                 <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Acción</th>
                                 <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Estado</th>
                                 <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Inicio</th>
                                 <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Fin</th>
                                 <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Usuario</th>
-                                <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Origen</th>
-                                <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Parte</th>
+                                <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Origen / Segmento</th>
                                 <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border text-center">Gráfica</th>
-                                <th class="px-5 py-4 bg-slate-900/50 rounded-r-2xl border-y border-r border-panel-border text-center">Detalles</th>
+                                <th class="px-5 py-4 bg-slate-900/50 rounded-r-2xl border-y border-r border-panel-border text-center">
+                                    <svg class="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                </th>
                             </tr>
                         </thead>
                         <tbody id="auditTableBody"></tbody>
@@ -448,6 +469,131 @@
         </footer>
     </div>
 </div>
+    </div>
+</div>
+
+<!-- MODAL: MODIFICAR TAREA (WIZARD DINÁMICO) -->
+<div id="modifyTaskModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+    <div class="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onclick="closeModifyModal()"></div>
+    <div class="w-full max-w-xl nx-modal-glass rounded-[32px] shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300">
+        <header class="px-8 py-6 border-b border-panel-border flex items-center justify-between bg-header/50">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-500">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-black tracking-tighter text-body-text uppercase italic leading-none">Gestión de Tarea PSX5K</h3>
+                    <p class="text-[9px] text-amber-500/60 font-bold tracking-widest uppercase mt-1">Ticket #<span id="modifyTicketNum">---</span> / Paso <span id="modifyStepNum">1</span> de 5</p>
+                </div>
+            </div>
+            <button onclick="closeModifyModal()" class="p-2 text-label/40 hover:text-label transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+        </header>
+
+        <div class="h-1 w-full bg-panel-border relative"><div id="modifyStepProgress" class="absolute inset-y-0 left-0 bg-amber-500 transition-all duration-500" style="width: 20%;"></div></div>
+        
+        <div class="p-8 h-[500px] flex flex-col relative overflow-hidden">
+            <!-- STEP 1: DECISION -->
+            <div id="modifyStep1" class="modify-step-content w-full flex-1 flex flex-col items-center justify-center animate-in fade-in zoom-in-95">
+                <h4 class="nx-label-strip mb-8 text-amber-500/80 text-center">Seleccione Acción Crítica</h4>
+                <div class="grid grid-cols-2 gap-4 w-full">
+                    <button type="button" id="btnActionCancel" onclick="selectModifyAction('cancel')" class="p-8 rounded-3xl border-2 border-panel-border bg-surface-container/30 flex flex-col items-center gap-4 hover:border-rose-500 hover:bg-rose-500/5 transition-all group disabled:opacity-30 disabled:pointer-events-none">
+                        <div class="w-16 h-16 rounded-2xl bg-panel-border/30 group-hover:bg-rose-500/20 flex items-center justify-center">
+                            <svg class="w-8 h-8 group-hover:text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </div>
+                        <span class="text-xs font-black uppercase tracking-widest group-hover:text-rose-500">Cancelar Tarea</span>
+                    </button>
+                    <button type="button" id="btnActionModify" onclick="selectModifyAction('modify')" class="p-8 rounded-3xl border-2 border-panel-border bg-surface-container/30 flex flex-col items-center gap-4 hover:border-primary hover:bg-primary/5 transition-all group">
+                        <div class="w-16 h-16 rounded-2xl bg-panel-border/30 group-hover:bg-primary/20 flex items-center justify-center">
+                            <svg class="w-8 h-8 group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        </div>
+                        <span id="modifyActionText" class="text-xs font-black uppercase tracking-widest group-hover:text-primary">Modificar Parámetros</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 2: TASK TYPE -->
+            <div id="modifyStep2" class="modify-step-content w-full hidden animate-in slide-in-from-right-4">
+                 <h4 class="nx-label-strip mb-6 text-primary/80">Paso 2: Tipo de Operación</h4>
+                 <div class="space-y-4">
+                    <button onclick="setModifyTaskType('add')" id="modTypeAdd" class="w-full p-6 rounded-2xl border-2 border-panel-border bg-surface-container/20 flex items-center gap-4 hover:border-primary transition-all group">
+                        <div class="w-10 h-10 rounded-xl bg-panel-border/30 group-hover:bg-primary/20 flex items-center justify-center text-primary"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg></div>
+                        <span class="text-xs font-black uppercase tracking-widest">Añadir registros</span>
+                    </button>
+                    <button onclick="setModifyTaskType('delete')" id="modTypeDel" class="w-full p-6 rounded-2xl border-2 border-panel-border bg-surface-container/20 flex items-center gap-4 hover:border-rose-500 transition-all group">
+                        <div class="w-10 h-10 rounded-xl bg-panel-border/30 group-hover:bg-rose-500/20 flex items-center justify-center text-rose-500"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></div>
+                        <span class="text-xs font-black uppercase tracking-widest">Eliminar registros</span>
+                    </button>
+                 </div>
+            </div>
+
+            <!-- STEP 3: TIMING & CALENDAR -->
+            <div id="modifyStep3" class="modify-step-content w-full hidden animate-in slide-in-from-right-4">
+                <h4 class="nx-label-strip mb-6 text-primary/80">Paso 3: Programación</h4>
+                <div class="space-y-6">
+                    <div class="flex items-center bg-surface-container/30 p-1 rounded-2xl border border-panel-border">
+                        <button onclick="setModifyTiming('now')" id="modTimingNow" class="flex-1 py-3 text-[10px] font-black uppercase rounded-xl transition-all">Ejecutar Ahora</button>
+                        <button onclick="setModifyTiming('schedule')" id="modTimingLate" class="flex-1 py-3 text-[10px] font-black uppercase rounded-xl transition-all">Programar</button>
+                    </div>
+                    
+                    <div id="modCalendarContainer" class="hidden space-y-4 animate-in fade-in duration-300">
+                        <div class="bg-surface-container/50 border-2 border-panel-border rounded-2xl p-4">
+                            <input type="date" id="modDateInput" class="w-full bg-transparent border-none text-sm font-bold text-primary outline-none">
+                        </div>
+                        <input type="time" id="modTimeInput" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl px-5 py-3 text-sm font-bold text-input text-center outline-none">
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 4: PARAMS -->
+            <div id="modifyStep4" class="modify-step-content w-full hidden animate-in slide-in-from-right-4">
+                <h4 class="nx-label-strip mb-6 text-primary/80">Paso 4: Parámetros del Job</h4>
+                <div class="space-y-6">
+                    <div>
+                        <label class="nx-label-strip mb-2 block opacity-40">Routing Label</label>
+                        <input type="text" id="modRoutingInput" placeholder="N/A" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl px-5 py-4 text-sm font-bold text-input outline-none">
+                    </div>
+                    <div class="flex items-center justify-between p-4 bg-rose-500/5 border border-rose-500/20 rounded-2xl">
+                        <span class="text-[10px] font-black text-rose-500 uppercase">Forzar Operación</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="modForceToggle" class="sr-only peer">
+                            <div class="w-11 h-6 bg-panel-border rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-rose-500"></div>
+                        </label>
+                    </div>
+                    <div class="p-4 bg-slate-900/40 border border-panel-border rounded-2xl opacity-40">
+                         <span class="text-[10px] font-black uppercase block mb-1">Fuente de datos (Protegida)</span>
+                         <span id="modSourceDisplay" class="text-xs font-bold truncate block">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 5: FINAL CONFIRMATION -->
+            <div id="modifyStep5" class="modify-step-content w-full hidden animate-in slide-in-from-right-4 text-center">
+                 <div class="w-16 h-16 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500 mx-auto mb-4">
+                     <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                 </div>
+                 <h4 id="modFinalTitle" class="text-lg font-black text-body-text uppercase italic px-10">Confirmar Cambios</h4>
+                 <p id="modFinalDesc" class="text-xs font-bold text-label/40 mt-2 px-12">Se aplicarán los nuevos parámetros a todos los fragmentos pendientes del Job.</p>
+                 
+                 <div class="mt-8 bg-surface-container/40 p-6 rounded-3xl border border-panel-border text-left space-y-3">
+                     <div class="flex justify-between text-[10px] font-black uppercase"><span class="opacity-40">Acción:</span> <span id="summaryModAction" class="text-primary">--</span></div>
+                     <div class="flex justify-between text-[10px] font-black uppercase"><span class="opacity-40">Programación:</span> <span id="summaryModTime">--</span></div>
+                     <div class="flex justify-between text-[10px] font-black uppercase"><span class="opacity-40">Label:</span> <span id="summaryModLabel">--</span></div>
+                 </div>
+            </div>
+        </div>
+
+        <footer class="px-8 py-6 border-t border-panel-border bg-header/50 flex items-center">
+            <div class="flex-1 flex justify-start">
+                <button onclick="changeModifyStep(-1)" id="modPrevBtn" class="nx-btn-base nx-btn-back">Atrás</button>
+            </div>
+            <div class="flex-1 flex justify-end">
+                <button onclick="changeModifyStep(1)" id="modNextBtn" class="nx-btn-base nx-btn-primary">Siguiente Paso</button>
+                <button onclick="confirmModifyAction()" id="modSubmitBtn" class="nx-btn-base nx-btn-primary hidden">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                    <span>Confirmar</span>
+                </button>
+            </div>
+        </footer>
     </div>
 </div>
 
