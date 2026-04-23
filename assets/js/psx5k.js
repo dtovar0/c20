@@ -72,23 +72,16 @@ function initPSXDataTable() {
                 return json.tasks;
             }
         },
-        select: {
-            style: 'single', // Cambiado a single para el wizard de modificación
-            selector: 'td:first-child'
-        },
         columns: [
             {
                 data: null,
                 defaultContent: '',
                 orderable: false,
-                className: 'select-checkbox-cell',
+                className: 'select-checkbox-cell nexus-check-trigger',
                 width: '40px',
-                render: () => `
-                    <div class="flex items-center justify-center h-full">
-                        <div class="w-5 h-5 rounded-lg border-2 border-panel-border bg-black/20 flex items-center justify-center transition-all group-hover:border-primary">
-                            <div class="w-2.5 h-2.5 rounded-sm bg-primary opacity-0 check-indicator transition-all"></div>
-                        </div>
-                    </div>`
+                render: () => `<div class="flex items-center justify-center h-full">
+                                <input type="checkbox" class="nexus-checkbox pointer-events-none">
+                               </div>`
             },
             { 
                 data: 'id', 
@@ -159,7 +152,7 @@ function initPSXDataTable() {
         autoWidth: false,
         pageLength: 10,
         pagingType: 'simple',
-        order: [[1, 'desc']], // Ordered by ID now (index 1)
+        order: [[1, 'desc']], 
         layout: {
             topStart: null,
             topEnd: null,
@@ -181,15 +174,28 @@ function initPSXDataTable() {
         }
     });
 
-    // Lógica de Selección y Botón Modificar
-    psxDataTable.on('select deselect', function() {
-        const count = psxDataTable.rows({ selected: true }).count();
+    // LÓGICA DE SELECCIÓN CUSTOM (Manual - Solo Checkbox)
+    tableEl.on('click', '.nexus-check-trigger', function(e) {
+        e.stopPropagation();
+        const tr = $(this).closest('tr');
+        const checkbox = tr.find('.nexus-checkbox');
         const modifyBtn = $('#modifyTaskBtn');
-        
-        if (count === 1) {
+
+        if (tr.hasClass('nexus-row-selected')) {
+            tr.removeClass('nexus-row-selected');
+            checkbox.prop('checked', false);
+        } else {
+            // Deseleccionar otros (Lógica de selección única)
+            tableEl.find('tr.nexus-row-selected').removeClass('nexus-row-selected').find('.nexus-checkbox').prop('checked', false);
+            tr.addClass('nexus-row-selected');
+            checkbox.prop('checked', true);
+        }
+
+        // Actualizar botón Modificar
+        const hasSelection = tr.hasClass('nexus-row-selected'); 
+        if (hasSelection) {
             modifyBtn.removeClass('opacity-30 pointer-events-none');
-            // Update click handler to retrieve the ID
-            const data = psxDataTable.rows({ selected: true }).data()[0];
+            const data = psxDataTable.row(tr).data();
             modifyBtn.off('click').on('click', () => {
                 if (typeof openModifyModal === 'function') openModifyModal(data.id);
             });
@@ -199,7 +205,6 @@ function initPSXDataTable() {
         }
     });
 
-    // Register globally
     window.activeNexusTable = psxDataTable;
 }
 

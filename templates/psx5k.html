@@ -77,9 +77,22 @@
         background-color: rgba(var(--color-primary), 0.1);
     }
     
-    /* Row transition when selected */
-    #auditTableBody tr.selected {
-        background-color: rgba(var(--color-primary), 0.03) !important;
+    /* Row selection aesthetics (1:1 with Users Module) */
+    #auditTableBody td:first-child {
+        cursor: pointer;
+    }
+    #auditTableBody tr {
+        transition: background-color 0.15s ease;
+    }
+    #auditTableBody tr:hover {
+        background-color: rgba(var(--color-primary), 0.02);
+    }
+    /* Neutral Row Selection - NO AZUL */
+    #auditTableBody tr.nexus-row-selected {
+        background-color: transparent !important;
+    }
+    #auditTableBody tr.nexus-row-selected td {
+        background-color: transparent !important;
     }
 </style>
 
@@ -108,15 +121,15 @@
                                class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3 text-sm font-bold text-input outline-none focus:border-input-focus focus:ring-4 focus:ring-primary/10 transition-all placeholder:text-label/50">
                     </div>
                     <div class="flex items-center gap-3">
-                        <button id="modifyTaskBtn" class="h-12 px-6 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-500 font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-amber-500 hover:text-white transition-all opacity-30 pointer-events-none shadow-lg shadow-black/5">
+                        <button id="modifyTaskBtn" class="h-12 w-[220px] rounded-2xl bg-label/10 text-label/60 border border-panel-border font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 hover:border-primary hover:text-primary transition-all opacity-30 pointer-events-none shadow-lg shadow-black/5">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                             <span>Modificar</span>
                         </button>
-                        <button id="scheduleTaskBtn" class="h-12 px-6 rounded-2xl bg-tab-inactive border border-panel-border text-tab-inactive-text font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 hover:border-primary hover:text-primary transition-all active:scale-95 shadow-lg shadow-black/5">
+                        <button id="scheduleTaskBtn" class="h-12 w-[220px] rounded-2xl bg-tab-inactive border border-panel-border text-tab-inactive-text font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 hover:border-primary hover:text-primary transition-all active:scale-95 shadow-lg shadow-black/5">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             <span>Programar Tarea</span>
                         </button>
-                        <button id="refreshAudit" class="h-12 px-6 rounded-2xl bg-primary text-white font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/20">
+                        <button id="refreshAudit" class="h-12 w-[220px] rounded-2xl bg-primary text-white font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/20">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                             <span>Tarea Nueva</span>
                         </button>
@@ -126,7 +139,7 @@
                     <table class="w-full h-full text-left table-fixed border-separate border-spacing-y-1.5">
                         <thead class="sticky top-0 z-20">
                             <tr class="text-[9px] font-black text-white uppercase tracking-[0.2em]">
-                                <th class="w-12 px-2 py-4 bg-slate-900/50 rounded-l-2xl border-y border-l border-panel-border text-center"></th>
+                                <th class="w-[40px] px-5 py-4 bg-slate-900/50 rounded-l-2xl border-y border-l border-panel-border"></th>
                                 <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border text-center">Ticket #</th>
                                 <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Acción</th>
                                 <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Estado</th>
