@@ -11,7 +11,9 @@
     <link rel="stylesheet" href="{{ url_for('core.serve_assets', filename='css/global.css') }}">
     <link rel="stylesheet" href="{{ url_for('core.serve_assets', filename='css/components.css') }}">
 </head>
-<body class="h-full flex flex-col items-center justify-center p-6">
+<body class="h-full flex flex-col items-center justify-center p-6 overflow-hidden auth-body text-text"
+      data-brand-bg="{{ sys_config.bg_color if sys_config else '' }}" 
+      data-brand-text="{{ sys_config.text_color if sys_config else '' }}">
     
     <div class="fixed inset-0 pointer-events-none">
         <div class="absolute inset-0 bg-gradient-to-tr from-primary/10 via-transparent to-transparent"></div>

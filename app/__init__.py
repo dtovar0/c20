@@ -104,8 +104,11 @@ def create_app():
         from app.modules.settings.models import SystemConfig
         try:
             config = SystemConfig.query.first()
+            if not config:
+                print("DEBUG CONTEXT_PROCESSOR: config is None")
             return dict(sys_config=config)
-        except:
+        except Exception as e:
+            print(f"DEBUG CONTEXT_PROCESSOR ERROR: {e}")
             return dict(sys_config=None)
 
     return app
