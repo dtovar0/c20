@@ -351,5 +351,5 @@
      data-config-exists="{% if config %}true{% else %}false{% endif %}"
      data-identity-type="{{ config.portal_identity_type if config else 'icon' }}"
      data-portal-icon-path="{{ config.portal_icon if config and config.portal_identity_type == 'icon' else '' }}"></div>
-<script src="{{ url_for('serve_assets', filename='js/settings.js') }}"></script>
+<script src="{{ url_for('core.serve_assets', filename='js/settings.js') }}"></script>
 {% endblock %}

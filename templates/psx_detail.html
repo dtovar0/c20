@@ -6,8 +6,8 @@
     <title>Nexus Premium | Detalle de Operación PSX5K</title>
     
     <!-- Design Tokens & Module Styles -->
-    <link rel="stylesheet" href="/assets/css/main.css">
-    <link rel="stylesheet" href="/assets/css/psx-detail.css">
+    <link rel="stylesheet" href="{{ url_for('core.serve_assets', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('core.serve_assets', filename='css/psx-detail.css') }}">
     <link rel="stylesheet" href="/static/css/tokens.css">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -333,6 +333,6 @@
         </div>
     </div>
 
-    <script src="/assets/js/psx-detail.js"></script>
+    <script src="{{ url_for('core.serve_assets', filename='js/psx-detail.js') }}"></script>
 </body>
 </html>

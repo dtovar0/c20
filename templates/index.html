@@ -236,6 +236,6 @@
             </div>
 
 <!-- Dashboard Logic Assets -->
-<script src="/assets/js/dashboard.js"></script>
-<script src="{{ url_for('serve_assets', filename='js/dashboard_1.js') }}"></script>
+<script src="{{ url_for('core.serve_assets', filename='js/dashboard.js') }}"></script>
+<script src="{{ url_for('core.serve_assets', filename='js/dashboard_1.js') }}"></script>
 {% endblock %}

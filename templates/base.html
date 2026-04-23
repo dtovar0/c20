@@ -14,17 +14,17 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-    <script src="{{ url_for('serve_assets', filename='js/global.js') }}"></script>
+    <script src="{{ url_for('core.serve_assets', filename='js/global.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
     <!-- Styles -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="{{ url_for('serve_assets', filename='js/tailwind-config.js') }}"></script>
+    <script src="{{ url_for('core.serve_assets', filename='js/tailwind-config.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/tokens.css') }}?v={{ range(1000, 9999) | random }}">
-    <link rel="stylesheet" href="{{ url_for('serve_assets', filename='css/global.css') }}?v={{ range(1000, 9999) | random }}">
-    <link rel="stylesheet" href="{{ url_for('serve_assets', filename='css/main.css') }}?v={{ range(1000, 9999) | random }}">
-    <link rel="stylesheet" href="{{ url_for('serve_assets', filename='css/components.css') }}?v={{ range(1000, 9999) | random }}">
+    <link rel="stylesheet" href="{{ url_for('core.serve_assets', filename='css/global.css') }}?v={{ range(1000, 9999) | random }}">
+    <link rel="stylesheet" href="{{ url_for('core.serve_assets', filename='css/main.css') }}?v={{ range(1000, 9999) | random }}">
+    <link rel="stylesheet" href="{{ url_for('core.serve_assets', filename='css/components.css') }}?v={{ range(1000, 9999) | random }}">
     
     <!-- jQuery & DataTables -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
