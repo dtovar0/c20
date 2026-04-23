@@ -27,7 +27,8 @@
         <!-- Navigation -->
         <nav class="flex-grow space-y-1 overflow-x-hidden px-4">
             <p class="text-[10px] font-bold text-label/60 uppercase tracking-widest px-3 mb-2 sidebar-text">Inicio</p>
-            
+            <hr class="sidebar-divider">
+
             {% if current_user.role == 'administrador' %}
             <!-- Dashboard Usuario (Admin view) -->
             <a href="{{ url_for('core.index') }}" title="Dashboard Usuario" 
@@ -52,6 +53,7 @@
             {% endif %}
 
             <p class="text-[10px] font-bold text-label/60 uppercase tracking-widest px-3 mb-2 mt-6 sidebar-text">Operaciones</p>
+            <hr class="sidebar-divider">
 
             <a href="{{ url_for('core.psx5k') }}" title="PSX5K" 
                class="nav-item {% if request.endpoint == 'core.psx5k' %}nav-item-active{% endif %} gap-4 px-3 py-3 text-secondary hover:text-primary hover:bg-surface-container rounded-base transition-all group">
@@ -70,6 +72,7 @@
             <!-- Administrators Section -->
             {% if current_user.role == 'administrador' %}
             <p class="text-[10px] font-bold text-label/60 uppercase tracking-widest px-3 mb-2 mt-6 sidebar-text">Configuración</p>
+            <hr class="sidebar-divider">
             
             <a href="{{ url_for('settings.index') }}" title="Ajustes" 
                class="nav-item {% if request.endpoint == 'settings.index' %}nav-item-active{% endif %} gap-4 px-3 py-3 text-secondary hover:text-primary hover:bg-surface-container rounded-base transition-all group">
@@ -90,6 +93,7 @@
             </a>
 
             <p class="text-[10px] font-bold text-label/60 uppercase tracking-widest px-3 mb-2 mt-6 sidebar-text">Personalización</p>
+            <hr class="sidebar-divider">
             
             <a href="{{ url_for('design.index') }}" title="Diseño" 
                class="nav-item {% if request.endpoint == 'design.index' %}nav-item-active{% endif %} gap-4 px-3 py-3 text-secondary hover:text-primary hover:bg-surface-container rounded-base transition-all group">

@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
         sidebar.classList.remove('w-64', 'min-w-64');
         sidebar.classList.add('w-16', 'min-w-16', 'is-collapsed');
         document.querySelectorAll('.sidebar-text').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('.sidebar-divider').forEach(el => el.classList.remove('hidden'));
     }
 
     // Dynamic Brand Color Injection (Sync with DB)
@@ -51,6 +52,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 sidebar.classList.toggle('is-collapsed');
                 
                 document.querySelectorAll('.sidebar-text').forEach(el => {
+                    el.classList.toggle('hidden');
+                });
+                document.querySelectorAll('.sidebar-divider').forEach(el => {
                     el.classList.toggle('hidden');
                 });
 
