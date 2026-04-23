@@ -30,6 +30,7 @@ def login():
                         flash("Tu cuenta ha sido deshabilitada por el administrador", "error")
                         return redirect(url_for('auth.login'))
                         
+                    print(f"✅ LOGUEANDO USUARIO LDAP: {user.username} - ID EN DB: {user.id}")
                     login_user(user)
                     add_audit_log("login usuario", status="success", detail=f"Usuario {username} ha iniciado sesión vía DIRECTORIO")
                     return redirect(url_for('core.index'))

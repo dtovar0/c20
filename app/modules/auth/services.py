@@ -137,6 +137,14 @@ def authenticate_user_ldap(username, password):
                 local_user.role = new_role
                 
                 db.session.commit()
+                
+                # REASEGURO CONTRA 'None' EN FLASK-LOGIN
+                if not local_user.id:
+                    # En caso extremo de que un rollback lo haya desadjuntado temporalmente
+                    db.session.add(local_user)
+                    db.session.commit()
+                    db.session.refresh(local_user)
+
                 return {"status": "success", "user": local_user}
 
             except Exception as sync_err:
