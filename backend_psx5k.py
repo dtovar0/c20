@@ -58,6 +58,43 @@ def handle_stale_tasks(app):
                 )
             add_audit_log("tarea terminada", status="error", detail=f"Timeout: {task.id} - Superó 60 min", user_override="SYSTEM")
 
+def handle_user_hygiene(app):
+    """Ejecuta la purga de usuarios inactivos y notifica resultados"""
+    with app.app_context():
+        try:
+            from app.modules.auth.services import purge_inactive_users
+            from app.modules.notifications.services import send_notification_by_slug, add_in_app_notification
+            
+            print("🧹 [HYGIENE] Ejecutando rutina de limpieza de usuarios...")
+            result = purge_inactive_users(days=30)
+            
+            if result.get("status") == "success" and result.get("purged_count", 0) > 0:
+                count = result["purged_count"]
+                names = ", ".join(result["purged_names"])
+                print(f"✨ [HYGIENE] Limpieza completada: {count} usuarios eliminados ({names})")
+                
+                # 1. Notificación Campana
+                add_in_app_notification(
+                    type='warning',
+                    title='Limpieza de Usuarios Inactivos',
+                    message=f'Se han eliminado automáticamente {count} cuentas tras 30 días de inactividad: {names}'
+                )
+                
+                # 2. Notificación Email
+                admin = User.query.filter_by(role='administrador').first()
+                if admin and admin.email:
+                    send_notification_by_slug(
+                        slug='info', 
+                        target_email=admin.email,
+                        context={
+                            'usuario': 'SYSTEM_WORKER', 
+                            'ip': 'DAEMON_PROCESS', 
+                            'mensaje': f'PURGA AUTOMÁTICA COMPLETADA: Se eliminaron {count} cuentas de usuario por inactividad prolongada (>30 días). Nombres: {names}'
+                        }
+                    )
+        except Exception as e:
+            print(f"⚠️ [HYGIENE] Error en rutina de limpieza: {e}")
+
 def process_task_data(task):
     """Retorna la lista de números desde archivo o datos directos en DB"""
     if not task.datos: return []
@@ -103,14 +140,24 @@ def main():
     
     # Limpieza inicial
     handle_stale_tasks(app)
+    handle_user_hygiene(app) # Limpieza de inactividad al arrancar
 
     last_health_check = datetime.datetime.now()
+    last_hygiene_check = datetime.datetime.now()
+    
     HEALTH_CHECK_INTERVAL = 3600 # 1 hora si está idle
+    HYGIENE_CHECK_INTERVAL = 86400 # 24 horas para purga de usuarios
 
     while True:
         try:
             # Monitorear tareas colgadas en cada ciclo
             handle_stale_tasks(app)
+            
+            # Monitorear higiene de usuarios cada 24h
+            now = datetime.datetime.now()
+            if (now - last_hygiene_check).total_seconds() > HYGIENE_CHECK_INTERVAL:
+                handle_user_hygiene(app)
+                last_hygiene_check = now
             
             with app.app_context():
                 # Buscar una tarea pendiente

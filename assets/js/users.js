@@ -86,6 +86,18 @@ function initUsersDataTable() {
             },
             { data: 'email', width: '220px', render: (data) => `<div class="flex items-center h-full text-[10px] font-mono text-label/40 truncate">${data}</div>` },
             { 
+                data: 'source', 
+                width: '100px',
+                render: (data) => {
+                    const isLdap = data.toLowerCase() === 'ldap';
+                    const sourceClass = isLdap ? 'bg-primary/10 text-primary border-primary/20' : 'bg-label/5 text-label/40 border-panel-border';
+                    return `
+                        <div class="flex items-center h-full">
+                            <span class="px-2 py-0.5 rounded-lg border text-[8px] font-black uppercase tracking-widest ${sourceClass}">${data}</span>
+                        </div>`;
+                }
+            },
+            { 
                 data: 'role', 
                 width: '140px',
                 render: (data) => {
@@ -134,7 +146,7 @@ function initUsersDataTable() {
         },
         drawCallback: function(settings) {
             updateUserActions();
-            renderGhostRows(settings, 5); // 5 columns for Users
+            renderGhostRows(settings, 6); // 6 columns now
         },
         createdRow: function(row, data) {
             $(row).addClass('transition-colors duration-200 group cursor-pointer');

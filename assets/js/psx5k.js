@@ -36,8 +36,7 @@ function generateTaskGraphic(resumen) {
 
 /**
  * INITIALIZATION
- */
-$(document).ready(function() {
+ */$(document).ready(function() {
     initPSXDataTable();
 
     // Universal Search Integration
@@ -52,6 +51,24 @@ $(document).ready(function() {
         if (psxDataTable) {
             psxDataTable.ajax.reload();
         }
+    });
+
+    // Select All logic for PSX
+    $(document).on('change', '#selectAllPSX', function() {
+        const isChecked = this.checked;
+        if (!psxDataTable) return;
+        const nodes = psxDataTable.rows({ page: 'current' }).nodes().to$();
+        
+        nodes.each(function() {
+            if (isChecked) {
+                $(this).addClass('nexus-row-selected');
+                $(this).find('.nexus-checkbox').prop('checked', true);
+            } else {
+                $(this).removeClass('nexus-row-selected');
+                $(this).find('.nexus-checkbox').prop('checked', false);
+            }
+        });
+        updatePSXActions();
     });
 });
 
@@ -68,7 +85,7 @@ function initPSXDataTable() {
             dataSrc: (json) => {
                 const isAdmin = json.is_admin || false;
                 const api = tableEl.DataTable();
-                if (api) { api.column(6).visible(isAdmin); } // Index shifted by 1
+                if (api) { api.column(5).visible(isAdmin); } // Index shifted due to removal of 'Fin'
                 return json.tasks;
             }
         },
@@ -77,11 +94,13 @@ function initPSXDataTable() {
                 data: null,
                 defaultContent: '',
                 orderable: false,
-                className: 'select-checkbox-cell nexus-check-trigger',
-                width: '40px',
-                render: () => `<div class="flex items-center justify-center h-full">
+                className: 'nexus-check-trigger',
+                width: '60px',
+                render: (data, type, row) => {
+                    return `<div class="flex items-center justify-center h-full">
                                 <input type="checkbox" class="nexus-checkbox pointer-events-none">
-                               </div>`
+                            </div>`;
+                }
             },
             { 
                 data: 'id', 
@@ -102,8 +121,8 @@ function initPSXDataTable() {
                 width: '130px',
                 render: (data) => {
                     const statusBadge = data === 'Ejecutando' ? 'badge-running' : 
-                                      data === 'Terminada' ? 'badge-finished' : 
-                                      data === 'Programada' ? 'badge-scheduled' : 'badge-pending';
+                                       data === 'Terminada' ? 'badge-finished' : 
+                                       data === 'Programada' ? 'badge-scheduled' : 'badge-pending';
                     return `<div class="flex items-center h-full"><div class="badge-nexus ${statusBadge}">${data.toUpperCase()}</div></div>`;
                 }
             },
@@ -113,13 +132,8 @@ function initPSXDataTable() {
                 render: (data) => `<div class="flex items-center h-full text-[10px] font-mono font-bold text-primary/70">${data ? data.replace('T', ' ').split('.')[0].split(' ')[1] || data.replace('T', ' ').split('.')[0] : 'PENDIENTE'}</div>` 
             },
             { 
-                data: 'fecha_fin', 
-                width: '120px', 
-                render: (data) => `<div class="flex items-center h-full text-[10px] font-mono font-bold text-violet-400/70">${data ? data.replace('T', ' ').split('.')[0].split(' ')[1] || data.replace('T', ' ').split('.')[0] : '--:--:--'}</div>` 
-            },
-            { 
                 data: 'usuario', 
-                width: '100px', 
+                width: '180px', 
                 visible: false,
                 render: (data) => `<div class="flex items-center h-full text-[10px] font-black text-label/50 uppercase tracking-wider">${data}</div>` 
             },
@@ -171,6 +185,7 @@ function initPSXDataTable() {
             const api = new $.fn.dataTable.Api(settings);
             const visibleCols = api.columns(':visible').count();
             renderGhostRows(settings, visibleCols);
+            updatePSXActions();
         }
     });
 
@@ -179,7 +194,6 @@ function initPSXDataTable() {
         e.stopPropagation();
         const tr = $(this).closest('tr');
         const checkbox = tr.find('.nexus-checkbox');
-        const modifyBtn = $('#modifyTaskBtn');
 
         if (tr.hasClass('nexus-row-selected')) {
             tr.removeClass('nexus-row-selected');
@@ -191,23 +205,32 @@ function initPSXDataTable() {
             checkbox.prop('checked', true);
         }
 
-        // Actualizar botón Modificar
-        const hasSelection = tr.hasClass('nexus-row-selected'); 
-        if (hasSelection) {
-            modifyBtn.removeClass('opacity-30 pointer-events-none');
-            const data = psxDataTable.row(tr).data();
-            modifyBtn.off('click').on('click', () => {
-                if (typeof openModifyModal === 'function') openModifyModal(data.id);
-            });
-        } else {
-            modifyBtn.addClass('opacity-30 pointer-events-none');
-            modifyBtn.off('click');
-        }
+        // Sync Select All state
+        const totalOnPage = psxDataTable.rows({ page: 'current' }).data().length;
+        const selectedOnPage = psxDataTable.rows({ page: 'current' }).nodes().to$().filter('.nexus-row-selected').length;
+        $('#selectAllPSX').prop('checked', selectedOnPage === totalOnPage && totalOnPage > 0);
+
+        updatePSXActions();
     });
 
     window.activeNexusTable = psxDataTable;
 }
 
+function updatePSXActions() {
+    const tr = $('#auditTableBody tr.nexus-row-selected');
+    const modifyBtn = $('#modifyTaskBtn');
+    
+    if (tr.length === 1) {
+        modifyBtn.removeClass('opacity-30 pointer-events-none');
+        const data = psxDataTable.row(tr).data();
+        modifyBtn.off('click').on('click', () => {
+            if (typeof openModifyModal === 'function') openModifyModal(data.id);
+        });
+    } else {
+        modifyBtn.addClass('opacity-30 pointer-events-none');
+        modifyBtn.off('click');
+    }
+}
 
 /**
  * Renders ghost (skeleton) rows to fill the table container dynamically

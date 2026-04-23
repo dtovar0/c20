@@ -8,11 +8,13 @@ class User(db.Model, UserMixin):
     
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
-    email = db.Column(db.String(100), unique=True, nullable=False)
-    password_hash = db.Column(db.String(255), nullable=False)
+    email = db.Column(db.String(100), unique=True, nullable=True) # Permitir nulo inicialmente
+    password_hash = db.Column(db.String(255), nullable=True) # Nulo para usuarios LDAP
     role = db.Column(db.String(20), default='usuario') # administrador, usuario
+    auth_source = db.Column(db.String(10), default='local') # local, ldap
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    last_login_at = db.Column(db.DateTime, nullable=True)
     
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

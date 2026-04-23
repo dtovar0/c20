@@ -51,9 +51,6 @@
                         <p class="text-[9px] text-primary/60 font-bold tracking-widest uppercase mt-0.5">Status: Gestión Interna / Base de Datos</p>
                     </div>
                 </div>
-
-                <div class="flex items-center gap-3">
-                </div>
             </header>
 
             <!-- PANEL BODY -->
@@ -100,14 +97,13 @@
                                 </th>
                                 <th class="px-4 py-4 bg-slate-900/50 border-y border-panel-border transition-all duration-300">Usuario</th>
                                 <th class="px-4 py-4 bg-slate-900/50 border-y border-panel-border transition-all duration-300">Email</th>
-                                <th class="px-4 py-4 bg-slate-900/50 border-y border-panel-border transition-all duration-300">Rol / Perfil</th>
+                                <th class="px-4 py-4 bg-slate-900/50 border-y border-panel-border transition-all duration-300">Source</th>
+                                <th class="px-4 py-4 bg-slate-900/50 border-y border-panel-border transition-all duration-300">Perfil</th>
                                 <th class="px-6 py-4 bg-slate-900/50 rounded-r-2xl border-y border-r border-panel-border text-right pr-6 transition-all duration-300">Estado</th>
                             </tr>
                         </thead>
                         <tbody id="usersTableBody"></tbody>
                     </table>
-                </div>
-
                 </div>
             </main>
         </div>
@@ -134,83 +130,92 @@
                 </div>
             </header>
 
-            <!-- PANEL BODY -->
-            <main class="flex-grow p-6 overflow-y-auto custom-scrollbar">
-                <div class="grid grid-cols-2 gap-6 h-full">
-                    <!-- Vertical Panel A (Auth Configuration) -->
-                    <div class="tab-panel-inner">
-                        <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-6 px-1 text-center italic">Conectividad de Directorio</label>
-                        
-                        <div class="space-y-6">
-                            <div class="group">
-                                <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-2 px-1">HOST / IP DEL SERVIDOR LDAP</label>
-                                <div class="relative group">
-                                    <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/40 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-                                    <input type="text" id="ldap_host" value="{{ config.ldap_host if config else '' }}" placeholder="ldap.empresa.com" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3 text-sm font-bold text-input outline-none transition-all focus:border-input-focus focus:ring-4 focus:ring-primary/10">
-                                </div>
+            <!-- PANEL BODY (CORRECTED LAYOUT) -->
+            <main class="flex-grow px-4 pt-4 pb-4 flex flex-col overflow-hidden">
+                <div class="flex-grow bg-surface-container/20 rounded-2xl border border-panel-border overflow-y-auto custom-scrollbar p-8">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-7xl mx-auto">
+                        <!-- Column A (Auth Configuration) -->
+                        <div class="space-y-8">
+                            <div class="pb-4 border-b border-panel-border/30 mb-2">
+                                <label class="block text-[11px] font-black text-primary uppercase tracking-[0.25em] italic">Conectividad de Directorio</label>
                             </div>
-
-                            <div class="grid grid-cols-2 gap-4">
+                            
+                            <div class="space-y-6">
                                 <div class="group">
-                                    <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-2 px-1">PUERTO</label>
+                                    <label class="block text-[9px] font-black text-label/60 uppercase tracking-[0.2em] mb-2 px-1">Host / IP del Servidor LDAP</label>
                                     <div class="relative group">
-                                        <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/40 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path></svg>
-                                        <input type="text" id="ldap_port" value="{{ config.ldap_port if config else '389' }}" placeholder="389" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3 text-sm font-bold text-input outline-none transition-all focus:border-input-focus focus:ring-4 focus:ring-primary/10">
+                                        <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/40 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                                        <input type="text" id="ldap_host" value="{{ config.ldap_host if config else '' }}" placeholder="ldap.empresa.com" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3.5 text-sm font-bold text-input outline-none transition-all focus:border-input-focus focus:ring-4 focus:ring-primary/10">
                                     </div>
                                 </div>
 
-                                <div class="group">
-                                    <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-2 px-1">Seguridad (SSL/TLS)</label>
-                                    <div class="flex items-center justify-between bg-input-bg px-5 py-3 border-2 border-panel-border rounded-2xl h-[52px]">
-                                        <span class="text-[9px] text-primary/60 font-bold uppercase tracking-widest">Activo</span>
-                                        <label class="relative inline-flex items-center cursor-pointer">
-                                            <input type="checkbox" id="ldap_ssl" {{ 'checked' if config and config.ldap_ssl else '' }} class="sr-only peer">
-                                            <div class="w-10 h-5 bg-panel-border rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
-                                        </label>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                    <div class="group">
+                                        <label class="block text-[9px] font-black text-label/60 uppercase tracking-[0.2em] mb-2 px-1">Puerto de Servicio</label>
+                                        <div class="relative group">
+                                            <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/40 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path></svg>
+                                            <input type="text" id="ldap_port" value="{{ config.ldap_port if config else '389' }}" placeholder="389" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3.5 text-sm font-bold text-input outline-none transition-all focus:border-input-focus focus:ring-4 focus:ring-primary/10">
+                                        </div>
+                                    </div>
+
+                                    <div class="group">
+                                        <label class="block text-[9px] font-black text-label/60 uppercase tracking-[0.2em] mb-2 px-1">Seguridad (SSL/TLS)</label>
+                                        <div class="flex items-center justify-between bg-input-bg px-5 py-3.5 border-2 border-panel-border rounded-2xl h-[58px]">
+                                            <span class="text-[9px] text-primary/60 font-bold uppercase tracking-widest italic">Cifrado Activo</span>
+                                            <label class="relative inline-flex items-center cursor-pointer">
+                                                <input type="checkbox" id="ldap_ssl" {{ 'checked' if config and config.ldap_ssl else '' }} class="sr-only peer">
+                                                <div class="w-10 h-5 bg-panel-border rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <!-- Vertical Panel B (LDAP Credentials & Mapping) -->
-                    <div class="tab-panel-inner">
-                        <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-6 px-1 text-center italic">Identidad de Acceso (Bind)</label>
-                        
-                        <div class="space-y-6 flex-grow">
-                            <div class="group">
-                                <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-2 px-1">USUARIO BIND (DN COMPLETO)</label>
-                                <div class="relative group">
-                                    <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/40 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                                    <input type="text" id="ldap_user" value="{{ config.ldap_user if config else '' }}" placeholder="cn=admin,dc=ejemplo,dc=com" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3 text-sm font-bold text-input outline-none transition-all focus:border-input-focus focus:ring-4 focus:ring-primary/10">
+
+                        <!-- Column B (LDAP Credentials & Mapping) -->
+                        <div class="space-y-8">
+                            <div class="pb-4 border-b border-panel-border/30 mb-2">
+                                <label class="block text-[11px] font-black text-primary uppercase tracking-[0.25em] italic">Identidad de Acceso (Bind)</label>
+                            </div>
+                            
+                            <div class="space-y-6">
+                                <div class="group">
+                                    <label class="block text-[9px] font-black text-label/60 uppercase tracking-[0.2em] mb-2 px-1">Usuario Bind (DN Completo)</label>
+                                    <div class="relative group">
+                                        <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/40 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                        <input type="text" id="ldap_user" value="{{ config.ldap_user if config else '' }}" placeholder="cn=admin,dc=ejemplo,dc=com" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3.5 text-sm font-bold text-input outline-none transition-all focus:border-input-focus focus:ring-4 focus:ring-primary/10">
+                                    </div>
+                                </div>
+
+                                <div class="group">
+                                    <label class="block text-[9px] font-black text-label/60 uppercase tracking-[0.2em] mb-2 px-1">Contraseña de Bind</label>
+                                    <div class="relative group">
+                                        <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/40 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                        <input type="password" id="ldap_pass" value="{{ config.ldap_pass if config else '' }}" placeholder="********" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-12 py-3.5 text-sm font-bold text-input outline-none transition-all focus:border-input-focus focus:ring-4 focus:ring-primary/10">
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                    <div class="group">
+                                        <label class="block text-[9px] font-black text-label/60 uppercase tracking-[0.2em] mb-2 px-1">Base DN (LDAP Path)</label>
+                                        <div class="relative group">
+                                            <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/40 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
+                                            <input type="text" id="ldap_base_dn" value="{{ config.ldap_base_dn if config else '' }}" placeholder="dc=ejemplo,dc=com" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3.5 text-sm font-bold text-input outline-none transition-all focus:border-input-focus focus:ring-4 focus:ring-primary/10">
+                                        </div>
+                                    </div>
+
+                                    <div class="group">
+                                        <label class="block text-[9px] font-black text-label/60 uppercase tracking-[0.2em] mb-2 px-1">Atributo de Usuario</label>
+                                        <div class="relative group">
+                                            <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/40 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path></svg>
+                                            <input type="text" id="ldap_user_attr" value="{{ config.ldap_user_attr if config else 'sAMAccountName' }}" placeholder="sAMAccountName" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3.5 text-sm font-bold text-input outline-none transition-all focus:border-input-focus focus:ring-4 focus:ring-primary/10">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-
-                            <div class="group">
-                                <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-2 px-1">CONTRASEÑA BIND</label>
-                                <div class="relative group">
-                                    <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/40 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                                    <input type="password" id="ldap_pass" value="{{ config.ldap_pass if config else '' }}" placeholder="********" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-12 py-3 text-sm font-bold text-input outline-none transition-all focus:border-input-focus focus:ring-4 focus:ring-primary/10">
-                                </div>
-                            </div>
-
-                            <div class="group">
-                                <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-2 px-1">BASE DN (LDAP SEARCH PATH)</label>
-                                <div class="relative group">
-                                    <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/40 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
-                                    <input type="text" id="ldap_base_dn" value="{{ config.ldap_base_dn if config else '' }}" placeholder="dc=ejemplo,dc=com" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3 text-sm font-bold text-input outline-none transition-all focus:border-input-focus focus:ring-4 focus:ring-primary/10">
-                                </div>
-                            </div>
-
-                            <div class="group pb-6 border-b border-panel-border/30">
-                                <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-2 px-1">ATRIBUTO DE USUARIO (MAPPING)</label>
-                                <div class="relative group">
-                                    <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/40 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path></svg>
-                                    <input type="text" id="ldap_user_attr" value="{{ config.ldap_user_attr if config else 'sAMAccountName' }}" placeholder="sAMAccountName, uid, etc." class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3 text-sm font-bold text-input outline-none transition-all focus:border-input-focus focus:ring-4 focus:ring-primary/10">
-                                </div>
-                            </div>
-
-                            <div class="mt-8">
-                                <button onclick="testLdapConnection()" class="w-full h-14 bg-button-bg text-button-text rounded-2xl text-[10px] font-black uppercase tracking-[0.28em] shadow-xl shadow-button-bg/20 hover:opacity-90 transition-all active:scale-95 flex items-center justify-center gap-3">
+                            
+                            <div class="pt-8">
+                                <button onclick="testLdapConnection()" class="w-full h-14 bg-primary/10 text-primary border border-primary/20 rounded-2xl text-[10px] font-black uppercase tracking-[0.25em] shadow-xl shadow-primary/5 hover:bg-primary hover:text-white transition-all active:scale-95 flex items-center justify-center gap-3">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                                     Probar Conexión LDAP
                                 </button>
@@ -256,7 +261,7 @@
                     <!-- Simplified Empty State -->
                     <div id="mappingEmptyState" class="hidden py-32 text-center border-2 border-dashed border-panel-border rounded-3xl">
                         <div class="w-16 h-16 bg-label/5 rounded-2xl flex items-center justify-center mx-auto mb-6 opacity-20">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 01-2-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                         </div>
                         <p class="text-[10px] font-black uppercase tracking-[0.3em] text-label/30 italic">No hay registros definidos. Presione "+ Añadir Mapeo" en la cabecera para comenzar.</p>
                     </div>

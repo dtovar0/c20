@@ -9,11 +9,14 @@ SET FOREIGN_KEY_CHECKS = 0;
 CREATE TABLE IF NOT EXISTS `users` (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
     `username` VARCHAR(80) UNIQUE NOT NULL,
-    `password_hash` VARCHAR(255),
-    `email` VARCHAR(120),
+    `password_hash` VARCHAR(255) NULL,
+    `email` VARCHAR(120) NULL,
     `role` VARCHAR(20) DEFAULT 'operador',
+    `auth_source` VARCHAR(10) DEFAULT 'local',
     `is_active` BOOLEAN DEFAULT TRUE,
-    INDEX (`username`)
+    `last_login_at` DATETIME NULL,
+    INDEX (`username`),
+    INDEX (`auth_source`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `auth_config` (

@@ -37,6 +37,11 @@ def login():
                 user = User.query.filter_by(username=username).first()
                 
                 if user and user.check_password(password):
+                    # Actualizar telemetría de sesión
+                    from datetime import datetime
+                    user.last_login_at = datetime.utcnow()
+                    db.session.commit()
+                    
                     login_user(user)
                     add_audit_log("login usuario", status="success", detail=f"Usuario {username} ha iniciado sesión LOCALMENTE")
                     return redirect(url_for('core.index'))
@@ -46,9 +51,26 @@ def login():
 
         return render_template("login.html")
     except Exception as e:
+        from flask import current_app
         current_app.logger.error(f"Error en login: {e}")
         flash("Error inesperado en el servicio de autenticación", "error")
         return redirect(url_for('auth.login'))
+
+@auth_bp.route("/users/purge", methods=["POST"])
+@login_required
+def purge_users():
+    """
+    Ruta administrativa para ejecutar la limpieza de inactividad.
+    """
+    if current_user.role != 'administrador':
+        return jsonify({"status": "error", "message": "Acceso denegado"}), 403
+        
+    try:
+        from app.modules.auth.services import purge_inactive_users
+        result = purge_inactive_users(days=30)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 @auth_bp.route("/logout")
 @login_required
@@ -113,7 +135,8 @@ def list_users():
         query = query.filter(
             (User.username.ilike(f'%{search}%')) | 
             (User.email.ilike(f'%{search}%')) | 
-            (User.role.ilike(f'%{search}%'))
+            (User.role.ilike(f'%{search}%')) |
+            (User.auth_source.ilike(f'%{search}%'))
         )
     
     users = query.all()
@@ -121,13 +144,13 @@ def list_users():
     for u in users:
         # Map db state to UI status
         status = 'active' if u.is_active else 'inactive'
-        # Check suspended logic if needed, for now using binary state
         
         user_list.append({
             "id": u.id,
             "name": u.username,
             "email": u.email,
             "role": u.role,
+            "source": u.auth_source or 'local',
             "status": status
         })
         
