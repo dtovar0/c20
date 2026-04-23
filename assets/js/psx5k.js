@@ -53,15 +53,6 @@ $(document).ready(function() {
             psxDataTable.ajax.reload();
         }
     });
-
-    // Custom Pagination Listeners
-    $('#prevPage').on('click', function() {
-        if (psxDataTable) psxDataTable.page('previous').draw('page');
-    });
-
-    $('#nextPage').on('click', function() {
-        if (psxDataTable) psxDataTable.page('next').draw('page');
-    });
 });
 
 /**
@@ -79,7 +70,7 @@ function initPSXDataTable() {
                 const isAdmin = json.is_admin || false;
                 const api = tableEl.DataTable();
                 if (api) {
-                    api.column(4).visible(isAdmin);
+                    api.column(5).visible(isAdmin);
                 }
                 return json.tasks;
             }
@@ -88,23 +79,15 @@ function initPSXDataTable() {
             { 
                 data: 'id', 
                 width: '100px', 
-                render: (data, type, row) => `
-                    <div class="flex flex-col justify-center h-full gap-0.5">
-                        <span class="text-[11px] font-black text-primary/80 leading-none">#${String(data).padStart(5, '0')}</span>
-                        <span class="text-[8px] font-bold text-label/30 uppercase tracking-tighter">Job: #${row.job_id}</span>
-                    </div>` 
+                render: (data) => `<div class="flex items-center justify-center h-full text-[11px] font-black text-primary/80">#${String(data).padStart(5, '0')}</div>` 
             },
             { 
                 data: 'tarea', 
-                width: '140px',
-                render: (data, type, row) => {
+                width: '120px',
+                render: (data) => {
                     const opBadge = data === 'add' ? 'badge-op-add' : 'badge-op-delete';
                     const opLabel = data === 'add' ? 'AGREGAR' : 'BORRAR';
-                    return `
-                        <div class="flex flex-col justify-center h-full gap-1">
-                            <div class="badge-nexus ${opBadge} w-fit">${opLabel}</div>
-                            <span class="text-[9px] font-black text-label/40 uppercase tracking-widest pl-1">Parte ${row.chunk_index}/${row.chunk_total}</span>
-                        </div>`;
+                    return `<div class="flex items-center h-full"><div class="badge-nexus ${opBadge} w-fit">${opLabel}</div></div>`;
                 }
             },
             { 
@@ -119,13 +102,18 @@ function initPSXDataTable() {
             },
             { 
                 data: 'fecha_inicio', 
-                width: '150px', 
-                render: (data) => `<div class="flex items-center h-full text-[10px] font-mono font-bold text-primary/70">${data ? data.replace('T', ' ').split('.')[0] : 'PENDIENTE'}</div>` 
+                width: '120px', 
+                render: (data) => `<div class="flex items-center h-full text-[10px] font-mono font-bold text-primary/70">${data ? data.replace('T', ' ').split('.')[0].split(' ')[1] || data.replace('T', ' ').split('.')[0] : 'PENDIENTE'}</div>` 
+            },
+            { 
+                data: 'fecha_fin', 
+                width: '120px', 
+                render: (data) => `<div class="flex items-center h-full text-[10px] font-mono font-bold text-violet-400/70">${data ? data.replace('T', ' ').split('.')[0].split(' ')[1] || data.replace('T', ' ').split('.')[0] : '--:--:--'}</div>` 
             },
             { 
                 data: 'usuario', 
                 width: '100px', 
-                visible: false, // Default hidden, shown via ajax dataSrc if admin
+                visible: false,
                 render: (data) => `<div class="flex items-center h-full text-[10px] font-black text-label/50 uppercase tracking-wider">${data}</div>` 
             },
             { 
@@ -135,6 +123,16 @@ function initPSXDataTable() {
                     <div class="flex items-center h-full text-[10px] font-bold text-label/40 truncate max-w-[170px]" title="${data}">
                         ${data && data.length > 25 ? '...' + data.slice(-22) : (data || 'MANUAL')}
                     </div>` 
+            },
+            { 
+                data: 'chunk_index',
+                width: '100px',
+                render: (data, type, row) => `
+                    <div class="flex items-center h-full">
+                        <span class="px-3 py-1 bg-label/5 rounded-lg text-[9px] font-black text-label/40 uppercase tracking-widest border border-panel-border/20">
+                            ${row.chunk_index} / ${row.chunk_total}
+                        </span>
+                    </div>`
             },
             { data: 'resumen', width: '120px', orderable: false, render: (data) => `<div class="flex items-center justify-center h-full min-w-0 overflow-hidden">${generateTaskGraphic(data)}</div>` },
             { 
@@ -151,14 +149,34 @@ function initPSXDataTable() {
         ],
         autoWidth: false,
         pageLength: 10,
+        pagingType: 'simple',
         order: [[0, 'desc']],
-        dom: 'rt',
+        layout: {
+            topStart: null,
+            topEnd: null,
+            bottomStart: 'info',
+            bottomEnd: 'paging'
+        },
         language: {
             zeroRecords: "No se encontraron tareas",
             info: "Mostrando _START_-_END_ de _TOTAL_ registros"
         },
+        renderer: {
+            pagingButton: function (settings, button, content, active, disabled) {
+                if (button === 'previous') {
+                    return $('<button/>').addClass('p-2 bg-surface-container border border-surface-container-border rounded-lg text-label hover:border-primary disabled:opacity-30 disabled:pointer-events-none transition-all active:scale-90')
+                        .append('<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>')
+                        .prop('disabled', disabled);
+                }
+                if (button === 'next') {
+                    return $('<button/>').addClass('p-2 bg-surface-container border border-surface-container-border rounded-lg text-label hover:border-primary disabled:opacity-30 disabled:pointer-events-none transition-all active:scale-90')
+                        .append('<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>')
+                        .prop('disabled', disabled);
+                }
+                return null;
+            }
+        },
         drawCallback: function(settings) {
-            updatePaginationUI(settings);
             // Count visible columns for correct ghost row rendering
             const api = new $.fn.dataTable.Api(settings);
             const visibleCols = api.columns(':visible').count();
@@ -167,21 +185,6 @@ function initPSXDataTable() {
     });
 }
 
-function updatePaginationUI(settings) {
-    const api = new $.fn.dataTable.Api(settings);
-    const info = api.page.info();
-    
-    const infoEl = document.getElementById('paginationInfo');
-    const prevBtn = document.getElementById('prevPage');
-    const nextBtn = document.getElementById('nextPage');
-
-    if (infoEl) {
-        infoEl.innerText = `Mostrando ${info.recordsDisplay > 0 ? info.start + 1 : 0}-${info.end} de ${info.recordsDisplay} registros`;
-    }
-
-    if (prevBtn) prevBtn.disabled = info.page === 0;
-    if (nextBtn) nextBtn.disabled = info.page >= info.pages - 1;
-}
 
 /**
  * Renders ghost (skeleton) rows to fill the table container dynamically

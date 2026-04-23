@@ -46,14 +46,7 @@ $(document).ready(function() {
         updateUserActions();
     });
 
-    // Custom Pagination Listeners
-    $('#prevUsersPage').on('click', function() {
-        if (usersDataTable) usersDataTable.page('previous').draw('page');
-    });
-
-    $('#nextUsersPage').on('click', function() {
-        if (usersDataTable) usersDataTable.page('next').draw('page');
-    });
+    updateUserActions();
 });
 
 /**
@@ -123,14 +116,34 @@ function initUsersDataTable() {
         ],
         autoWidth: false,
         pageLength: 10,
+        pagingType: 'simple',
         order: [[1, 'asc']], // Sort by Name by default to avoid arrow on checkbox column
-        dom: 'rt',
+        layout: {
+            topStart: null,
+            topEnd: null,
+            bottomStart: 'info',
+            bottomEnd: 'paging'
+        },
         language: {
             zeroRecords: "No se encontraron usuarios",
             info: "Mostrando _START_-_END_ de _TOTAL_ registros"
         },
+        renderer: {
+            pagingButton: function (settings, button, content, active, disabled) {
+                if (button === 'previous') {
+                    return $('<button/>').addClass('p-2 bg-surface-container border border-surface-container-border rounded-lg text-label hover:border-primary disabled:opacity-30 disabled:pointer-events-none transition-all active:scale-90')
+                        .append('<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>')
+                        .prop('disabled', disabled);
+                }
+                if (button === 'next') {
+                    return $('<button/>').addClass('p-2 bg-surface-container border border-surface-container-border rounded-lg text-label hover:border-primary disabled:opacity-30 disabled:pointer-events-none transition-all active:scale-90')
+                        .append('<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>')
+                        .prop('disabled', disabled);
+                }
+                return null;
+            }
+        },
         drawCallback: function(settings) {
-            updateUsersPagination(settings);
             updateUserActions();
             renderGhostRows(settings, 5); // 5 columns for Users
         },
@@ -188,19 +201,6 @@ function updateUserActions() {
     btnDelete.disabled = (count < 1);
 }
 
-function updateUsersPagination(settings) {
-    const api = new $.fn.dataTable.Api(settings);
-    const info = api.page.info();
-    
-    const infoEl = document.getElementById('usersPaginationInfo');
-    const btnPrev = document.getElementById('prevUsersPage');
-    const btnNext = document.getElementById('nextUsersPage');
-
-    if (infoEl) infoEl.innerText = `Mostrando ${info.recordsDisplay > 0 ? info.start + 1 : 0}-${info.end} de ${info.recordsDisplay} registros`;
-    
-    if (btnPrev) btnPrev.disabled = info.page === 0;
-    if (btnNext) btnNext.disabled = info.page >= info.pages - 1;
-}
 
 /**
  * Renders ghost (skeleton) rows to fill the table container dynamically

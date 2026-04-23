@@ -43,8 +43,8 @@
                         <span>Refrescar</span>
                     </button>
                 </div>
-                <div class="overflow-x-auto overflow-y-hidden custom-scrollbar flex-grow pr-1">
-                    <table class="w-full text-left table-fixed">
+                <div class="overflow-x-auto overflow-y-hidden flex-grow min-h-0 pr-1">
+                    <table class="w-full h-full text-left table-fixed">
                         <thead class="sticky top-0 z-20">
                             <tr class="text-[9px] font-black text-white uppercase tracking-[0.2em]">
                                 <th class="px-5 py-4 bg-slate-900/50 rounded-l-2xl border-y border-l border-panel-border text-center">ID</th>
@@ -59,18 +59,6 @@
                             <!-- Injected by audit.js (10 rows fixed) -->
                         </tbody>
                     </table>
-                </div>
-
-                <div class="py-1 mt-auto flex items-center justify-between px-2">
-                    <p class="text-[10px] font-bold text-label/40 uppercase tracking-widest" id="paginationInfo">Cargando registros...</p>
-                    <div class="flex gap-2">
-                        <button id="prevPage" class="p-2 bg-surface-container border border-surface-container-border rounded-lg text-label hover:border-primary disabled:opacity-30 transition-all active:scale-90">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                        </button>
-                        <button id="nextPage" class="p-2 bg-surface-container border border-surface-container-border rounded-lg text-label hover:border-primary disabled:opacity-30 transition-all active:scale-90">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                        </button>
-                    </div>
                 </div>
             </main>
         </div>

@@ -1,5 +1,20 @@
-#auditTableBody tr {
-    height: 1px; /* Hack para que las filas se expandan equitativamente ocupando el 100% */
+/* Symmetric adaptive rows: all rows share the available height equally */
+#tab-panel-audit table thead tr,
+#tab-panel-usuario table thead tr,
+#auditTableBody tr,
+#usersTableBody tr {
+    height: 1px !important; /* Browser distributes table height evenly across all rows */
+}
+
+#tab-panel-audit table thead th,
+#tab-panel-usuario table thead th {
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+}
+
+#auditTableBody td,
+#usersTableBody td {
+    height: auto !important;
 }
 
 /* === NEXUS DATATABLES INTEGRATION === */
@@ -9,8 +24,78 @@
     height: 100%;
 }
 
-.dt-layout-row {
-    display: none !important; /* Ocultamos los controles por defecto para usar los de Nexus */
+.dt-layout-row.dt-layout-table {
+    flex-grow: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.dt-layout-row.dt-layout-table > .dt-layout-cell {
+    height: 100%;
+}
+
+/* Hide all non-table DataTables UI rows by default */
+.dt-layout-row:not(.dt-layout-table) {
+    display: none !important;
+}
+
+/* Show ONLY the row that contains pagination — safe for all tables */
+.dt-layout-row:has(.dt-paging) {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 8px 2px;
+    flex-shrink: 0;
+    gap: 8px;
+}
+
+.dt-layout-row:has(.dt-paging) .dt-layout-cell {
+    flex: none;
+}
+
+.dt-info {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: rgb(var(--color-label-text));
+    opacity: 0.4;
+}
+
+.dt-paging {
+    display: flex;
+    gap: 6px;
+}
+
+.dt-paging-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 8px;
+    border-radius: 8px;
+    background: rgb(var(--color-surface-container-bg));
+    border: 1px solid rgb(var(--color-surface-container-border));
+    color: rgb(var(--color-label-text));
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.dt-paging-button:hover:not(.disabled) {
+    border-color: rgb(var(--color-primary));
+    color: rgb(var(--color-primary));
+}
+
+.dt-paging-button:active:not(.disabled) {
+    transform: scale(0.9);
+}
+
+.dt-paging-button.disabled {
+    opacity: 0.3;
+    cursor: default;
+    pointer-events: none;
 }
 
 table.dataTable {

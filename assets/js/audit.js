@@ -24,22 +24,13 @@ $(document).ready(function() {
             auditDataTable.ajax.reload();
         }
     });
-
-    // Custom Pagination Listeners
-    $('#prevPage').on('click', function() {
-        if (auditDataTable) auditDataTable.page('previous').draw('page');
-    });
-
-    $('#nextPage').on('click', function() {
-        if (auditDataTable) auditDataTable.page('next').draw('page');
-    });
 });
 
 /**
  * Initializes DataTables for Audit
  */
 function initAuditDataTable() {
-    const tableEl = $('table'); // Selector genérico o específico si hay varias
+    const tableEl = $('table');
     if (!tableEl.length) return;
 
     auditDataTable = tableEl.DataTable({
@@ -85,38 +76,28 @@ function initAuditDataTable() {
         ],
         autoWidth: false,
         pageLength: 10,
+        pagingType: 'simple',
         order: [[0, 'desc']],
-        dom: 'rt', // Solamente Table y Processing. La paginación e info se manejan con el footer de Nexus.
+        layout: {
+            topStart: null,
+            topEnd: null,
+            bottomStart: 'info',
+            bottomEnd: 'paging'
+        },
         language: {
             zeroRecords: "No se encontraron registros",
             info: "Mostrando _START_-_END_ de _TOTAL_ registros",
             infoEmpty: "Mostrando 0-0 de 0 registros",
-            infoFiltered: "(filtrado de _MAX_ registros totales)"
+            infoFiltered: "(filtrado de _MAX_ registros totales)",
+            paginate: {
+                previous: '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>',
+                next: '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>'
+            }
         },
         drawCallback: function(settings) {
-            updatePaginationUI(settings);
-            renderGhostRows(settings, 6); // 6 columns for Audit
+            renderGhostRows(settings, 6);
         }
     });
-}
-
-/**
- * Updates the custom Nexus pagination UI with DataTables state
- */
-function updatePaginationUI(settings) {
-    const api = new $.fn.dataTable.Api(settings);
-    const info = api.page.info();
-    
-    const infoEl = document.getElementById('paginationInfo');
-    const prevBtn = document.getElementById('prevPage');
-    const nextBtn = document.getElementById('nextPage');
-
-    if (infoEl) {
-        infoEl.innerText = `Mostrando ${info.start + 1}-${info.end} de ${info.recordsDisplay} registros`;
-    }
-
-    if (prevBtn) prevBtn.disabled = info.page === 0;
-    if (nextBtn) nextBtn.disabled = info.page >= info.pages - 1;
 }
 
 /**
@@ -151,15 +132,15 @@ function renderGhostRows(settings, columns) {
     for (let i = 0; i < ghostCount; i++) {
         ghostHtml += `
             <tr class="animate-pulse pointer-events-none select-none opacity-40">
-                <td class="bg-surface-container/5 border-y border-l border-panel-border/10 rounded-l-2xl h-[52px]">
+                <td class="bg-surface-container/5 border-y border-l border-panel-border/10 rounded-l-2xl">
                     <div class="h-1.5 w-10 bg-label/10 rounded-full mx-auto"></div>
                 </td>
                 ${Array(columns - 2).fill(0).map(() => `
-                    <td class="bg-surface-container/5 border-y border-panel-border/10 h-[52px]">
+                    <td class="bg-surface-container/5 border-y border-panel-border/10">
                         <div class="h-1 w-full bg-label/5 rounded-full"></div>
                     </td>
                 `).join('')}
-                <td class="bg-surface-container/5 border-y border-r border-panel-border/10 rounded-r-2xl h-[52px]">
+                <td class="bg-surface-container/5 border-y border-r border-panel-border/10 rounded-r-2xl">
                     <div class="h-1 w-full bg-label/5 rounded-full"></div>
                 </td>
             </tr>
