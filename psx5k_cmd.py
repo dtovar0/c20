@@ -116,12 +116,17 @@ def psx5k_cmd(line_task, line_number, line_type=None, routing_label=None, force=
             stats["total"] += 1
             try:
                 if line_task == 'add':
-                    # Verificar existencia previa
-                    cmd.sendline(f'show subscriber Subscriber_Id {number} Country_Id 52')
-                    cmd.expect(EXPECT)
-                    result = cmd.before
+                    # Verificar existencia previa (Omitir si force está activo Y PSX_SURE_CHECK es false)
+                    SURE_CHECK = os.getenv('PSX_SURE_CHECK', 'true').lower() == 'true'
                     
-                    found = 'ERR_REC_NOT_FOUND' not in result
+                    if SURE_CHECK or not force:
+                        cmd.sendline(f'show subscriber Subscriber_Id {number} Country_Id 52')
+                        cmd.expect(EXPECT)
+                        result = cmd.before
+                        found = 'ERR_REC_NOT_FOUND' not in result
+                    else:
+                        # En modo force y sin SURE_CHECK, procedemos directo
+                        found = True 
 
                     if not found or force:
                         # Modo Inserción o Sobreescritura Forzada
