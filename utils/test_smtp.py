@@ -20,14 +20,14 @@ def test_smtp():
         print("📧 INICIANDO PRUEBA SMTP")
         print(f"Servidor: {config.server}:{config.port}")
         print(f"Cifrado: {config.encryption}")
-        print(f"Usuario: {config.user}")
-        print(f"Remitente: {config.sender_name} <{config.sender_email}>")
+        print(f"Usuario(Username): {config.username}")
+        print(f"Remitente: {config.sender_name} <{config.username}>")
         print("====================================")
 
         # Destinatario para prueba
         target = input("Ingresa un correo destinatario de prueba (o presiona Enter para usar el usuario SMTP): ")
         if not target.strip():
-            target = config.user
+            target = config.username
 
         print(f"Enviando correo de validación a {target} (puede tardar unos segundos)...")
         
@@ -35,10 +35,9 @@ def test_smtp():
             server=config.server,
             port=config.port,
             encryption=config.encryption,
-            user=config.user,
+            username=config.username,
             password=config.password,
             sender_name=config.sender_name,
-            sender_email=config.sender_email,
             target_email=target
         )
 

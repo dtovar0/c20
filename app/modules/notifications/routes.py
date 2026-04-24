@@ -56,17 +56,16 @@ def save():
         if "port" in data: config.port = data["port"]
         if "encryption" in data: config.encryption = data["encryption"]
         if "auth_enabled" in data: config.auth_enabled = data["auth_enabled"]
-        if "user" in data: config.user = data["user"]
+        if "username" in data: config.username = data["username"]
         if "password" in data: config.password = data["password"]
         if "sender_name" in data: config.sender_name = data["sender_name"]
-        if "sender_email" in data: config.sender_email = data["sender_email"]
         
         db.session.commit()
         return jsonify({"status": "success", "message": "Configuración de Notificaciones Guardada"})
         
     except Exception as e:
         db.session.rollback()
-        return jsonify({"status": "error", "message": str(e)}), 500
+        return jsonify({"status": "error", "message": "Ocurrió un error al guardar la configuración SMTP."}), 500
 
 @notifications_bp.route("/test", methods=["POST"])
 @login_required
@@ -87,17 +86,16 @@ def test_connection():
             server=config.server,
             port=config.port,
             encryption=config.encryption,
-            user=config.user,
+            username=config.username,
             password=config.password,
             sender_name=config.sender_name,
-            sender_email=config.sender_email,
             target_email=target_email
         )
         
         return jsonify(result)
         
     except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
+        return jsonify({"status": "error", "message": "Error interno del sistema durante la prueba SMTP."}), 500
 
 @notifications_bp.route("/templates/get/<slug>")
 @login_required
@@ -109,7 +107,7 @@ def get_template(slug):
             return jsonify({"status": "error", "message": "Plantilla no encontrada"}), 404
         return jsonify({"status": "success", "template": template.to_dict()})
     except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
+        return jsonify({"status": "error", "message": "Fallo al obtener la plantilla de notificación solicitada."}), 500
 
 @notifications_bp.route("/templates/save", methods=["POST"])
 @login_required
@@ -135,7 +133,7 @@ def save_template():
         return jsonify({"status": "success", "message": f"Plantilla '{slug.upper()}' guardada correctamente"})
     except Exception as e:
         db.session.rollback()
-        return jsonify({"status": "error", "message": str(e)}), 500
+        return jsonify({"status": "error", "message": "Error grave al intentar guardar la plantilla."}), 500
 
 @notifications_bp.route("/api/active")
 @login_required
@@ -169,7 +167,7 @@ def get_active_notifications():
             "unread_count": sum(1 for n in notifications if not n.is_read)
         })
     except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
+        return jsonify({"status": "error", "message": "Falló la lectura del estado de las notificaciones."}), 500
 
 @notifications_bp.route("/api/mark-read", methods=["POST"])
 @login_required
@@ -193,7 +191,7 @@ def mark_read():
         return jsonify({"status": "success"})
     except Exception as e:
         db.session.rollback()
-        return jsonify({"status": "error", "message": str(e)}), 500
+        return jsonify({"status": "error", "message": "Error modificando el registro de las notificaciones."}), 500
 
 @notifications_bp.route("/api/delete-all", methods=["DELETE"])
 @login_required
@@ -208,6 +206,6 @@ def delete_all():
         return jsonify({"status": "success"})
     except Exception as e:
         db.session.rollback()
-        return jsonify({"status": "error", "message": str(e)}), 500
+        return jsonify({"status": "error", "message": "Se produjo un fallo al intentar limpiar el registro de notificaciones."}), 500
 
 

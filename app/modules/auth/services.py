@@ -187,7 +187,7 @@ def purge_inactive_users(days=30):
         return {"status": "success", "purged_count": count, "purged_names": purged_names}
     except Exception as e:
         db.session.rollback()
-        return {"status": "error", "message": str(e)}
+        return {"status": "error", "message": "Error al conectar con LDAP."}
 
 def validate_ldap_connection(host, port, use_ssl=False, bind_dn=None, bind_pass=None):
     """

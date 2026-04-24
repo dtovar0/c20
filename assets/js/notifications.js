@@ -53,7 +53,7 @@ function saveNotifications(containerId) {
         encryption: document.querySelector('#tab-panel-config select')?.value,
         auth_enabled: document.getElementById('smtpAuthToggle')?.checked,
         sender_name: document.getElementById('smtpName')?.value,
-        sender_email: document.getElementById('smtpUser')?.value,
+        username: document.getElementById('smtpUser')?.value,
         password: document.getElementById('smtpPass')?.value
     };
 

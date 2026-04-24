@@ -26,13 +26,13 @@ def add_in_app_notification(type, title, message, user_id=None):
         return False
 
 
-def send_test_email(server, port, encryption, user, password, sender_name, sender_email, target_email):
+def send_test_email(server, port, encryption, username, password, sender_name, target_email):
     """
     Sends a test email to verify SMTP configuration.
     """
     try:
         msg = MIMEMultipart()
-        msg['From'] = f"{sender_name} <{sender_email}>"
+        msg['From'] = f"{sender_name} <{username}>"
         msg['To'] = target_email
         msg['Subject'] = "⚡ Nexus Premium - SMTP Verification"
 
@@ -62,14 +62,14 @@ def send_test_email(server, port, encryption, user, password, sender_name, sende
         if os.getenv('DEBUG_SMTP') == 'true':
             smtp.set_debuglevel(1)
 
-        if user and password:
-            smtp.login(user, password)
+        if username and password:
+            smtp.login(username, password)
 
         smtp.send_message(msg)
         smtp.quit()
         return {"status": "success", "message": "Correo de prueba enviado correctamente"}
     except Exception as e:
-        return {"status": "error", "message": str(e)}
+        return {"status": "error", "message": "Error al enviar correo de prueba."}
 
 def send_notification_by_slug(slug, target_email, context=None):
     """
@@ -91,7 +91,7 @@ def send_notification_by_slug(slug, target_email, context=None):
                 subject = subject.replace(f"{{{key}}}", str(val))
 
         msg = MIMEMultipart()
-        msg['From'] = f"{config.sender_name} <{config.sender_email}>"
+        msg['From'] = f"{config.sender_name} <{config.username}>"
         msg['To'] = target_email
         msg['Subject'] = subject
         msg.attach(MIMEText(body, 'html' if template.is_html else 'plain'))
@@ -108,12 +108,12 @@ def send_notification_by_slug(slug, target_email, context=None):
         if os.getenv('DEBUG_SMTP') == 'true':
             smtp.set_debuglevel(1)
 
-        if config.auth_enabled and config.user and config.password:
-            smtp.login(config.user, config.password)
+        if config.auth_enabled and config.username and config.password:
+            smtp.login(config.username, config.password)
 
         smtp.send_message(msg)
         smtp.quit()
         return {"status": "success", "message": f"Notificación '{slug}' enviada"}
 
     except Exception as e:
-        return {"status": "error", "message": str(e)}
+        return {"status": "error", "message": "Error interno enviando notificación."}

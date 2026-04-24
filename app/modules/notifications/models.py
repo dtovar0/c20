@@ -9,10 +9,9 @@ class SMTPConfig(db.Model):
     port = db.Column(db.Integer, default=587)
     encryption = db.Column(db.String(20), default='starttls')
     auth_enabled = db.Column(db.Boolean, default=True)
-    user = db.Column(db.String(100), nullable=True)
+    username = db.Column(db.String(100), nullable=True)
     password = db.Column(db.String(100), nullable=True) # Should be encrypted in production
     sender_name = db.Column(db.String(100), default='Nexus System')
-    sender_email = db.Column(db.String(100), nullable=True)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     def to_dict(self):
@@ -21,9 +20,8 @@ class SMTPConfig(db.Model):
             "port": self.port,
             "encryption": self.encryption,
             "auth_enabled": self.auth_enabled,
-            "user": self.user,
-            "sender_name": self.sender_name,
-            "sender_email": self.sender_email
+            "username": self.username,
+            "sender_name": self.sender_name
         }
 
 class NotificationTemplate(db.Model):

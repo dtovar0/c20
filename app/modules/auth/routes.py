@@ -80,7 +80,7 @@ def purge_users():
         result = purge_inactive_users(days=30)
         return jsonify(result)
     except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
+        return jsonify({"status": "error", "message": "Ocurrió un error al procesar el usuario."}), 500
 
 @auth_bp.route("/logout")
 @login_required
@@ -88,7 +88,7 @@ def logout():
     try:
         username = current_user.username
         logout_user()
-        add_audit_log("logout usuario", status="info", user_override=username)
+        add_audit_log("logout usuario", status="info", user_override=username, detail="Cierre de sesión del sistema exitoso")
         return render_template("logout.html")
     except Exception as e:
         current_app.logger.error(f"Error en logout: {e}")
@@ -133,7 +133,7 @@ def save():
         
     except Exception as e:
         db.session.rollback()
-        return jsonify({"status": "error", "message": str(e)}), 500
+        return jsonify({"status": "error", "message": "Error al actualizar credenciales."}), 500
 
 @auth_bp.route("/users/list")
 @login_required
@@ -194,7 +194,7 @@ def create_user():
         return jsonify({"status": "success", "message": "Usuario creado"})
     except Exception as e:
         db.session.rollback()
-        return jsonify({"status": "error", "message": str(e)}), 500
+        return jsonify({"status": "error", "message": "Error del sistema en el entorno LDAP."}), 500
 
 @auth_bp.route("/users/delete", methods=["POST"])
 @login_required
@@ -212,7 +212,7 @@ def delete_users():
         return jsonify({"status": "success", "message": f"{len(ids)} usuarios eliminados"})
     except Exception as e:
         db.session.rollback()
-        return jsonify({"status": "error", "message": str(e)}), 500
+        return jsonify({"status": "error", "message": "La conexión LDAP ha fallado temporalmente."}), 500
 
 @auth_bp.route("/users/update", methods=["POST"])
 @login_required
@@ -236,7 +236,7 @@ def update_user():
         return jsonify({"status": "success", "message": "Usuario actualizado correctamente"})
     except Exception as e:
         db.session.rollback()
-        return jsonify({"status": "error", "message": str(e)}), 500
+        return jsonify({"status": "error", "message": "Autenticación LDAP falló en el controlador."}), 500
 
 @auth_bp.route("/test_ldap", methods=["POST"])
 @login_required
@@ -257,4 +257,4 @@ def test_ldap():
         return jsonify(result)
         
     except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
+        return jsonify({"status": "error", "message": "Fallo en la sincronización de roles LDAP."}), 500

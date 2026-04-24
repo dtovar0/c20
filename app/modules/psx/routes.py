@@ -172,7 +172,8 @@ def create_task():
         
     except Exception as e:
         db.session.rollback()
-        return jsonify({"status": "error", "message": str(e)}), 500
+        current_app.logger.error(f"Error form tarea PSX: {e}")
+        return jsonify({"status": "error", "message": "Ocurrió un error interno al procesar la tarea. Consulte logs para más detalles."}), 500
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -433,4 +434,5 @@ def update_or_reprocess_job(job_id):
 
     except Exception as e:
         db.session.rollback()
-        return jsonify({"status": "error", "message": str(e)}), 500
+        current_app.logger.error(f"Error procesando Job #{job_id}: {e}")
+        return jsonify({"status": "error", "message": "Error interno al modificar la tarea. Por favor, reintente más tarde."}), 500

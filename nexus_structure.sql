@@ -215,10 +215,9 @@ CREATE TABLE `smtp_config` (
   `port` int DEFAULT NULL,
   `encryption` varchar(20) DEFAULT NULL,
   `auth_enabled` tinyint(1) DEFAULT NULL,
-  `user` varchar(100) DEFAULT NULL,
+  `username` varchar(100) DEFAULT NULL,
   `password` varchar(100) DEFAULT NULL,
   `sender_name` varchar(100) DEFAULT NULL,
-  `sender_email` varchar(100) DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

@@ -74,7 +74,7 @@ def export_config():
             download_name=f"nexus_backup_{date_str}.zip"
         )
     except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
+        return jsonify({"status": "error", "message": "Ocurrió un error al guardar la configuración del sistema."}), 500
 
 @settings_bp.route("/import", methods=["POST"])
 @login_required
@@ -243,4 +243,4 @@ def save():
         
     except Exception as e:
         db.session.rollback()
-        return jsonify({"status": "error", "message": str(e)}), 500
+        return jsonify({"status": "error", "message": "Fallo interno al realizar la purga programada."}), 500
