@@ -13,6 +13,32 @@ Sistema de gestión de tareas PSX5K.
 
 ---
 
+## Módulo: Worker / Procesamiento Asíncrono
+
+### Regla: Limpieza de Tareas Estancadas (Watchdog)
+Cualquier tarea que permanezca en estado "Ejecutando" por más de 60 minutos será marcada automáticamente como "Error" por el worker. Se notificará al administrador sobre este timeout.
+
+### Impacto
+Estabilidad del motor de procesamiento y detección de cuellos de botella técnicos.
+
+---
+
+## Módulo: Seguridad / Higiene
+
+### Regla: Purga de Inactividad
+Las cuentas de usuario que no registren actividad durante un periodo de 30 días naturales serán eliminadas automáticamente del sistema para mantener la integridad y seguridad de la base de datos de identidades.
+
+### Impacto
+Gestión de identidades y cumplimiento de políticas de seguridad.
+
+---
+
+## Módulo: Infraestructura / Conectividad
+
+### Regla: Validación Proactiva de Salud (Healthcheck)
+El sistema debe validar la conectividad con el nodo PSX antes de iniciar cualquier tarea operativa. Si el nodo se encuentra offline, la tarea se pospondrá 60 segundos y se generará una alerta crítica (in-app y email).
+
+
 ## Módulo: Autenticación / Usuarios
 
 ### Regla: Simetría de Acciones

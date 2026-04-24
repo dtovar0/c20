@@ -76,7 +76,7 @@ function generateTaskGraphic(resumen) {
  * Initializes DataTables for PSX5K
  */
 function initPSXDataTable() {
-    const tableEl = $('#auditTableBody').closest('table');
+    const tableEl = $('#psxTasksTable');
     if (!tableEl.length) return;
 
     psxDataTable = tableEl.DataTable({
@@ -84,9 +84,12 @@ function initPSXDataTable() {
             url: '/api/psx/list',
             dataSrc: (json) => {
                 const isAdmin = json.is_admin || false;
-                const api = tableEl.DataTable();
-                if (api) { api.column(5).visible(isAdmin); } // Index shifted due to removal of 'Fin'
-                return json.tasks;
+                if (json.status === 'success') {
+                    const api = tableEl.DataTable();
+                    if (api) { api.column(5).visible(isAdmin); } 
+                    return json.tasks;
+                }
+                return [];
             }
         },
         columns: [

@@ -14,7 +14,7 @@ class PSX5KJob(db.Model):
     datos_tipo = db.Column(db.String(50)) # Archivo / Manual
     routing_label = db.Column(db.String(100))
     archivo_origen = db.Column(db.String(255))
-    run_force = db.Column(db.Boolean, default=False)
+    run_force = db.Column('force', db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.datetime.now)
     
     # Relación con sus fragmentos (chunks)
@@ -59,7 +59,7 @@ class PSX5KTask(db.Model):
             "routing_label": job.routing_label,
             "fecha_inicio": self.fecha_inicio.isoformat() if self.fecha_inicio else None,
             "fecha_fin": self.fecha_fin.isoformat() if self.fecha_fin else None,
-            "created_at": job.created_at.isoformat(),
+            "created_at": job.created_at.isoformat() if job.created_at else None,
             "datos_tipo": job.datos_tipo,
             "archivo_origen": job.archivo_origen,
             "chunk_index": self.chunk_index,
