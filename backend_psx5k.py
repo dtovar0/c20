@@ -246,6 +246,10 @@ def main():
 
                 # Procesar datos
                 ani_list = process_task_data(task)
+                
+                if os.getenv('DEBUG_PSX', 'false').lower() == 'true':
+                    print(f"🔍 DEBUG: [Task:{task.job.tarea}] [ANIs:{len(ani_list)}] [Type:{task.job.datos_tipo}] [Route:{task.job.routing_label}] [Force:{task.job.force}]")
+
                 detail = db.session.get(PSX5KDetail, task.id) or PSX5KDetail(id=task.id)
                 detail.total = len(ani_list)
                 db.session.add(detail)
