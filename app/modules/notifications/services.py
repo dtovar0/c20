@@ -77,6 +77,10 @@ def send_notification_by_slug(slug, target_email, context=None):
     """
     from app import db
     import os
+    from dotenv import load_dotenv
+    
+    # Reload env to catch changes without restart
+    load_dotenv(override=True)
     
     # Global Switch Check
     if os.getenv('ENABLE_NOTIFICATIONS', 'true').lower() != 'true':
