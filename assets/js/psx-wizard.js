@@ -256,7 +256,7 @@ function collectWizardData() {
         if (routingRow) routingRow.style.display = 'grid';
         
         const modeSelect = document.getElementById('clientModeSelect');
-        document.getElementById('summaryMode').innerText = modeSelect ? modeSelect.options[modeSelect.selectedIndex].text : '-';
+        document.getElementById('summaryMode').innerText = (modeSelect && modeSelect.selectedIndex >= 0) ? modeSelect.options[modeSelect.selectedIndex].text : '-';
         
         const routingInput = document.getElementById('routingLabelInput');
         document.getElementById('summaryRouting').innerText = (routingInput && routingInput.value.trim() !== '') ? routingInput.value : 'SIN ETIQUETA';
@@ -971,7 +971,7 @@ function collectScheduleData() {
         if (modeRow) modeRow.style.display = 'grid';
         if (routingRow) routingRow.style.display = 'grid';
         
-        document.getElementById('scheduleSummaryMode').innerText = (modeSelect) ? modeSelect.options[modeSelect.selectedIndex].text : 'N/A';
+        document.getElementById('scheduleSummaryMode').innerText = (modeSelect && modeSelect.selectedIndex >= 0) ? modeSelect.options[modeSelect.selectedIndex].text : 'N/A';
         document.getElementById('scheduleSummaryRouting').innerText = (routingInput && routingInput.value.trim() !== '') ? routingInput.value : 'N/A';
     }
     
