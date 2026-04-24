@@ -137,7 +137,7 @@ table.dataTable thead th {
     background-color: rgba(15, 23, 42, 0.5) !important;
     border: 1px solid rgb(var(--color-panel-border)) !important;
     color: white !important;
-    font-size: 9px !important;
+    font-size: 10px !important;
     font-weight: 900 !important;
     text-transform: uppercase !important;
     letter-spacing: 0.2rem !important;
@@ -390,18 +390,18 @@ thead tr {
 .kpi-road-value {
     font-size: 1.875rem;
     font-weight: 900;
-    color: #ef4444; /* Mantengo rojo para métrica crítica */
+    color: rgb(244, 63, 94); /* Rose-500: métrica crítica */
     letter-spacing: -0.05em;
 }
 
 .kpi-road-goal {
-    background-color: #eef2ff;
+    background-color: rgb(var(--color-surface-container-bg));
     padding: 4px 8px;
     border-radius: 6px;
-    border: 1px solid #e0e7ff;
+    border: 1px solid rgb(var(--color-surface-container-border));
     font-size: 11px;
     font-weight: 700;
-    color: #475569;
+    color: rgb(var(--color-label-text));
 }
 
 .kpi-road-progress-bg {
@@ -449,7 +449,7 @@ thead tr {
 }
 
 .kpi-gauge-header {
-    background-color: #393d74;
+    background-color: rgb(var(--color-accent-violet));
     padding: 0.5rem 0;
     text-align: center;
 }
@@ -479,7 +479,7 @@ thead tr {
 }
 
 .kpi-gauge-label {
-    font-size: 9px;
+    font-size: 10px;
     font-weight: 700;
     color: rgb(var(--color-label-text));
     text-transform: uppercase;
@@ -751,7 +751,7 @@ input[name="db_engine"]:checked + label .w-5.h-5 .bg-primary {
     gap: 0.5rem;
     padding: 0.25rem 0.75rem;
     border-radius: 9999px;
-    font-size: 9px;
+    font-size: 10px;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -1059,11 +1059,11 @@ input[name="db_engine"]:checked + label .w-5.h-5 .bg-primary {
     transform: translateY(0) scale(1);
 }
 
-/* PREMIUM GUIDED TOUR SYSTEM - NEXUS REFINED */
+/* PREMIUM GUIDED TOUR SYSTEM - TOKEN-BASED */
 .nx-tour-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(2, 6, 23, 0.1); /* Ultra transparent */
+    background: rgba(0, 0, 0, 0.15);
     z-index: 10000;
     opacity: 0;
     pointer-events: none;
@@ -1080,8 +1080,8 @@ input[name="db_engine"]:checked + label .w-5.h-5 .bg-primary {
     position: fixed;
     z-index: 10001;
     background: transparent;
-    box-shadow: 0 0 0 9999px rgba(2, 6, 23, 0.1); 
-    border: 3px solid #2563eb;
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.15);
+    border: 3px solid rgb(var(--color-primary));
     border-radius: 16px;
     pointer-events: none;
     transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
@@ -1094,26 +1094,18 @@ input[name="db_engine"]:checked + label .w-5.h-5 .bg-primary {
 
 .nx-tour-step {
     position: absolute;
-    z-index: 10002; 
-    width: 380px;
-    background: rgba(15, 23, 42, 0.4); /* Ultra transparent glass */
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 28px;
-    padding: 30px;
-    color: #f8fafc;
-    box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.4), 
-                0 0 50px rgba(37, 99, 235, 0.1);
+    z-index: 10002;
+    width: 420px;
+    background: rgb(var(--color-panel-fill));
+    border: 2px solid rgb(var(--color-panel-border));
+    border-radius: 24px;
+    padding: 28px;
+    color: var(--color-body-text);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     opacity: 0;
-    transform: translateY(30px) scale(0.95);
-    transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+    transform: translateY(20px) scale(0.97);
+    transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
     pointer-events: none;
-}
-
-.nx-tour-step-header {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    padding-bottom: 20px;
-    margin-bottom: 20px;
 }
 
 .nx-tour-step.active {
@@ -1121,3 +1113,148 @@ input[name="db_engine"]:checked + label .w-5.h-5 .bg-primary {
     transform: translateY(0) scale(1);
     pointer-events: auto;
 }
+
+.nx-tour-step-header {
+    border-bottom: 1px solid rgb(var(--color-panel-border));
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+}
+
+.nx-tour-step-header .nx-tour-type {
+    font-size: 10px;
+    font-weight: 900;
+    color: rgb(var(--color-primary));
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.nx-tour-step-header h3 {
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--color-body-text);
+    font-style: italic;
+    line-height: 1.2;
+    margin: 0;
+}
+
+.nx-tour-content p {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgb(var(--color-label-text));
+    line-height: 1.7;
+}
+
+.nx-tour-content b {
+    color: var(--color-body-text);
+    font-weight: 800;
+}
+
+/* Tour embedded table */
+.nx-tour-table {
+    width: 100%;
+    margin-top: 16px;
+    border: 1px solid rgb(var(--color-panel-border));
+    border-radius: 12px;
+    overflow: hidden;
+    font-size: 11px;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.nx-tour-table thead {
+    background: rgb(var(--color-surface-container-bg));
+}
+
+.nx-tour-table th {
+    padding: 10px 14px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: rgb(var(--color-primary));
+    font-size: 10px;
+    text-align: left;
+    border-bottom: 1px solid rgb(var(--color-panel-border));
+}
+
+.nx-tour-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgb(var(--color-panel-border));
+    color: var(--color-body-text);
+    font-weight: 700;
+}
+
+.nx-tour-table tr:last-child td {
+    border-bottom: none;
+}
+
+.nx-tour-table tr:hover td {
+    background: rgb(var(--color-primary) / 0.04);
+}
+
+/* Tour footer / navigation */
+.nx-tour-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid rgb(var(--color-panel-border));
+}
+
+.nx-tour-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgb(var(--color-panel-border));
+    transition: all 0.3s ease;
+}
+
+.nx-tour-dot.active {
+    background: rgb(var(--color-primary));
+    box-shadow: 0 0 10px rgb(var(--color-primary) / 0.6);
+    transform: scale(1.3);
+}
+
+.nx-tour-btn-next {
+    padding: 10px 24px;
+    background: rgb(var(--color-primary));
+    color: white;
+    font-size: 10px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgb(var(--color-primary) / 0.25);
+    transition: all 0.2s ease;
+}
+
+.nx-tour-btn-next:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgb(var(--color-primary) / 0.3);
+}
+
+.nx-tour-btn-next:active {
+    transform: scale(0.95);
+}
+
+.nx-tour-btn-back {
+    padding: 10px 16px;
+    background: transparent;
+    color: rgb(var(--color-label-text));
+    font-size: 10px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.nx-tour-btn-back:hover {
+    color: var(--color-body-text);
+}
+

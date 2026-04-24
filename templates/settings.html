@@ -50,7 +50,7 @@
                     </div>
                     <div>
                         <h2 class="text-xl font-black tracking-tighter text-primary uppercase italic leading-none">Control de Sistema</h2>
-                        <p class="text-[9px] text-primary/60 font-bold tracking-widest uppercase mt-0.5">Gestión / Estructura</p>
+                        <p class="text-[10px] text-primary/60 font-bold tracking-widest uppercase mt-0.5">Gestión / Estructura</p>
                     </div>
                 </div>
 
@@ -105,12 +105,12 @@
                             <div class="grid grid-cols-2 gap-4">
                                 <!-- BG Color Picker -->
                                 <div class="bg-input-bg p-4 rounded-2xl border border-panel-border flex flex-col items-center">
-                                    <span class="text-[9px] font-bold text-primary/60 uppercase mb-3">Fondo</span>
+                                    <span class="text-[10px] font-bold text-primary/60 uppercase mb-3">Fondo</span>
                                     <input type="color" id="portal-bg-color" value="{{ sys_config.bg_color if sys_config else '#0f172a' }}" class="w-full h-10 rounded-lg cursor-pointer bg-transparent border-none">
                                 </div>
                                 <!-- Text Color Picker -->
                                 <div class="bg-input-bg p-4 rounded-2xl border border-panel-border flex flex-col items-center">
-                                    <span class="text-[9px] font-bold text-primary/60 uppercase mb-3">Texto</span>
+                                    <span class="text-[10px] font-bold text-primary/60 uppercase mb-3">Texto</span>
                                     <input type="color" id="portal-text-color" value="{{ sys_config.text_color if sys_config else '#ffffff' }}" class="w-full h-10 rounded-lg cursor-pointer bg-transparent border-none">
                                 </div>
                             </div>
@@ -203,7 +203,7 @@
                                 <input type="file" id="portal-image-input" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20">
                                 <div class="bg-surface-container border-2 border-dashed border-surface-container-border rounded-2xl h-[120px] flex flex-col items-center justify-center transition-all group-hover:border-primary group-hover:bg-primary/5">
                                     <svg class="w-8 h-8 text-label/40 group-hover:text-primary mb-2 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                    <span class="text-[9px] font-black text-label uppercase tracking-widest group-hover:text-primary transition-colors">Click o arrastra imagen</span>
+                                    <span class="text-[10px] font-black text-label uppercase tracking-widest group-hover:text-primary transition-colors">Click o arrastra imagen</span>
                                 </div>
                             </div>
                         </div>
@@ -222,7 +222,7 @@
                     </div>
                     <div>
                         <h2 class="text-xl font-black tracking-tighter text-primary uppercase italic leading-none">Control de Estructura</h2>
-                        <p class="text-[9px] text-primary/60 font-bold tracking-widest uppercase mt-0.5">Sincronización / Base de Datos</p>
+                        <p class="text-[10px] text-primary/60 font-bold tracking-widest uppercase mt-0.5">Sincronización / Base de Datos</p>
                     </div>
                 </div>
                 
@@ -248,7 +248,7 @@
                                     </div>
                                     <div class="flex-grow">
                                         <span class="block font-black text-label uppercase tracking-tighter text-sm">MySQL / MariaDB</span>
-                                        <span class="block text-[8px] font-bold text-label/40 uppercase tracking-widest mt-0.5 whitespace-nowrap overflow-hidden text-ellipsis">Standard Relation DB</span>
+                                        <span class="block text-[10px] font-bold text-label/40 uppercase tracking-widest mt-0.5 whitespace-nowrap overflow-hidden text-ellipsis">Standard Relation DB</span>
                                     </div>
                                     <div class="w-5 h-5 rounded-full border-2 border-surface-container-border flex items-center justify-center peer-checked:border-primary">
                                         <div class="w-2.5 h-2.5 rounded-full bg-primary scale-0 transition-transform duration-300 peer-checked:scale-100"></div>
@@ -264,7 +264,7 @@
                                     </div>
                                     <div class="flex-grow">
                                         <span class="block font-black text-label uppercase tracking-tighter text-sm">PostgreSQL</span>
-                                        <span class="block text-[8px] font-bold text-label/40 uppercase tracking-widest mt-0.5 whitespace-nowrap overflow-hidden text-ellipsis">Advanced Object-Relational</span>
+                                        <span class="block text-[10px] font-bold text-label/40 uppercase tracking-widest mt-0.5 whitespace-nowrap overflow-hidden text-ellipsis">Advanced Object-Relational</span>
                                     </div>
                                     <div class="w-5 h-5 rounded-full border-2 border-surface-container-border flex items-center justify-center peer-checked:border-primary">
                                         <div class="w-2.5 h-2.5 rounded-full bg-primary scale-0 transition-transform duration-300 peer-checked:scale-100"></div>
@@ -297,7 +297,7 @@
                                 <div class="group">
                                     <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-2 px-1">Cifrado SSL</label>
                                     <div class="flex items-center justify-between bg-input-bg px-5 py-3 border-2 border-panel-border rounded-2xl h-[52px]">
-                                        <span class="text-[9px] text-primary/60 font-bold uppercase tracking-widest">Seguridad Activa</span>
+                                        <span class="text-[10px] text-primary/60 font-bold uppercase tracking-widest">Seguridad Activa</span>
                                         <label class="relative inline-flex items-center cursor-pointer">
                                             <input type="checkbox" class="sr-only peer">
                                             <div class="w-10 h-5 bg-panel-border rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
@@ -360,7 +360,7 @@
                     </div>
                     <div>
                         <h2 class="text-xl font-black tracking-tighter text-primary uppercase italic leading-none">Gestión de Respaldos</h2>
-                        <p class="text-[9px] text-primary/60 font-bold tracking-widest uppercase mt-0.5">Portabilidad / Restauracion</p>
+                        <p class="text-[10px] text-primary/60 font-bold tracking-widest uppercase mt-0.5">Portabilidad / Restauracion</p>
                     </div>
                 </div>
             </header>
@@ -400,7 +400,7 @@
                                 </div>
                                 <div class="text-center">
                                     <p class="text-[10px] font-black uppercase tracking-[0.25em] text-label mb-1">Arrastra tu respaldo aquí</p>
-                                    <p class="text-[8px] font-bold uppercase tracking-widest text-label/40">O haz clic para explorar (.zip)</p>
+                                    <p class="text-[10px] font-bold uppercase tracking-widest text-label/40">O haz clic para explorar (.zip)</p>
                                 </div>
                             </div>
 
@@ -429,7 +429,7 @@
             </div>
             <div>
                 <h3 class="text-lg font-black text-rose-600 dark:text-rose-500 uppercase tracking-tighter italic">Confirmar Restauración</h3>
-                <p class="text-[9px] text-rose-500/60 font-black tracking-widest uppercase mt-0.5">Operación de Sobrescritura Detectada</p>
+                <p class="text-[10px] text-rose-500/60 font-black tracking-widest uppercase mt-0.5">Operación de Sobrescritura Detectada</p>
             </div>
         </header>
 

@@ -93,7 +93,7 @@ function initUsersDataTable() {
                     const sourceClass = isLdap ? 'bg-primary/10 text-primary border-primary/20' : 'bg-label/5 text-label/40 border-panel-border';
                     return `
                         <div class="flex items-center h-full">
-                            <span class="px-2 py-0.5 rounded-lg border text-[8px] font-black uppercase tracking-widest ${sourceClass}">${data}</span>
+                            <span class="px-2 py-0.5 rounded-lg border text-[10px] font-black uppercase tracking-widest ${sourceClass}">${data}</span>
                         </div>`;
                 }
             },
@@ -122,7 +122,7 @@ function initUsersDataTable() {
                         inactive: 'bg-label/10 text-label/40',
                         suspended: 'bg-red-500/10 text-red-500'
                     }[data.toLowerCase()] || 'bg-label/10 text-label/40';
-                    return `<div class="flex items-center justify-end h-full"><span class="px-3 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest ${statusClass}">${data}</span></div>`;
+                    return `<div class="flex items-center justify-end h-full"><span class="px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest ${statusClass}">${data}</span></div>`;
                 }
             }
         ],

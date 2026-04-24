@@ -76,7 +76,7 @@
                             <svg class="w-5 h-5 text-secondary group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                             </svg>
-                            <span id="notificationBadge" class="hidden absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-gradient-to-br from-rose-500 to-pink-600 rounded-full border-2 border-bg shadow-[0_0_10px_rgba(244,63,94,0.4)] flex items-center justify-center text-[9px] font-black text-white transition-all duration-300 group-hover:scale-110 active:scale-90 z-10">0</span>
+                            <span id="notificationBadge" class="hidden absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-gradient-to-br from-rose-500 to-pink-600 rounded-full border-2 border-bg shadow-[0_0_10px_rgba(244,63,94,0.4)] flex items-center justify-center text-[10px] font-black text-white transition-all duration-300 group-hover:scale-110 active:scale-90 z-10">0</span>
                         </button>
 
                         <!-- Notification Dropdown -->
@@ -84,17 +84,17 @@
                             <div class="p-4 border-b border-panel-border flex justify-between items-center bg-surface-container/30">
                                 <h3 class="text-[10px] font-black text-label uppercase tracking-widest text-primary/80">Notificaciones</h3>
                                 <div class="flex items-center gap-3">
-                                    <button onclick="markAllAsRead()" class="text-[9px] font-black text-primary hover:underline uppercase tracking-tighter">Marcar todo</button>
+                                    <button onclick="markAllAsRead()" class="text-[10px] font-black text-primary hover:underline uppercase tracking-tighter">Marcar todo</button>
                                     <div class="w-1 h-1 rounded-full bg-panel-border"></div>
-                                    <button onclick="deleteAllNotifications()" class="text-[9px] font-black text-rose-500/60 hover:text-rose-500 hover:underline uppercase tracking-tighter">Borrar todo</button>
+                                    <button onclick="deleteAllNotifications()" class="text-[10px] font-black text-rose-500/60 hover:text-rose-500 hover:underline uppercase tracking-tighter">Borrar todo</button>
                                 </div>
                             </div>
                             <!-- Filter Pills -->
                             <div class="px-4 py-2 bg-surface-container/10 border-b border-panel-border flex gap-2 overflow-x-auto custom-scrollbar no-scrollbar">
-                                <button data-filter="all" class="notif-filter active px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter transition-all">Todos</button>
-                                <button data-filter="warning" class="notif-filter px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter transition-all opacity-40 hover:opacity-100">Seguridad</button>
-                                <button data-filter="info" class="notif-filter px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter transition-all opacity-40 hover:opacity-100">Sistema</button>
-                                <button data-filter="success" class="notif-filter px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter transition-all opacity-40 hover:opacity-100">Éxito</button>
+                                <button data-filter="all" class="notif-filter active px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter transition-all">Todos</button>
+                                <button data-filter="warning" class="notif-filter px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter transition-all opacity-40 hover:opacity-100">Seguridad</button>
+                                <button data-filter="info" class="notif-filter px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter transition-all opacity-40 hover:opacity-100">Sistema</button>
+                                <button data-filter="success" class="notif-filter px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter transition-all opacity-40 hover:opacity-100">Éxito</button>
                             </div>
                             <div id="notificationList" class="max-h-[320px] overflow-y-auto custom-scrollbar">
                                 <div class="p-8 text-center opacity-40">

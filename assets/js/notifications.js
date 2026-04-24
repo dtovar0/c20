@@ -17,8 +17,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (authStatusText) {
             authStatusText.innerText = isEnabled ? 'Activo' : 'Inactivo';
             authStatusText.className = isEnabled 
-                ? 'text-[9px] text-primary/60 font-bold uppercase tracking-widest' 
-                : 'text-[9px] text-label/40 font-bold uppercase tracking-widest';
+                ? 'text-[10px] text-primary/60 font-bold uppercase tracking-widest' 
+                : 'text-[10px] text-label/40 font-bold uppercase tracking-widest';
         }
     }
 

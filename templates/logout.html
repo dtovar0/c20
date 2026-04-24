@@ -40,17 +40,17 @@
             {{ (sys_config.portal_name if sys_config and sys_config.portal_name else 'NEXUS') }}
             <span class="text-primary">Portal</span>
         </h1>
-        <p class="text-sm text-slate-400 font-medium mb-12">Tu sesión de Nexus ha finalizado correctamente. Has sido desconectado de forma segura de todos los sistemas.</p>
+        <p class="text-sm text-label/60 font-medium mb-12">Tu sesión de Nexus ha finalizado correctamente. Has sido desconectado de forma segura de todos los sistemas.</p>
 
         <!-- Countdown Circle -->
         <div class="relative inline-flex items-center justify-center mb-12">
             <svg class="w-32 h-32 transform -rotate-90">
-                <circle cx="64" cy="64" r="60" stroke="currentColor" stroke-width="4" fill="transparent" class="text-slate-800"></circle>
+                <circle cx="64" cy="64" r="60" stroke="currentColor" stroke-width="4" fill="transparent" class="text-body-text"></circle>
                 <circle id="progress" cx="64" cy="64" r="60" stroke="currentColor" stroke-width="4" fill="transparent" stroke-dasharray="377" stroke-dashoffset="0" class="text-primary progress-ring"></circle>
             </svg>
             <div class="absolute inset-0 flex flex-col items-center justify-center">
                 <span id="countdown" class="text-4xl font-black italic">5</span>
-                <span class="text-[8px] font-black uppercase tracking-widest text-slate-500">Segundos</span>
+                <span class="text-[10px] font-black uppercase tracking-widest text-label">Segundos</span>
             </div>
         </div>
 

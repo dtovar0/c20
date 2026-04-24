@@ -55,19 +55,19 @@ html, body {
      sombras con tinte brand suave
   ───────────────────────────────────────────── */
 
-  --color-body-bg: #f0f6ff;            /* Azul-blanco suave, no estéril */
+  --color-body-bg: #f8fafc;            /* Slate-50: neutro, menos fatiga visual */
   --color-body-text: #0f172a;          /* Slate-950: máximo contraste */
 
   --color-header-bg: #2563eb;          /* Blue-600: coherente con primario */
   --color-header-text: #ffffff;
-  --color-panel-header-bg: 219 234 254; /* Blue-100: Más sólido y vibrante */
+  --color-panel-header-bg: 226 232 240; /* Slate-200: cohesivo con nueva paleta */
 
   --color-panel-fill: 255 255 255;
-  --color-panel-border: 219 234 254;   /* Blue-100: borde con tinte primario */
+  --color-panel-border: 203 213 225;   /* Slate-300: borde perceptible */
   --color-panel-shadow: 37 99 235 / 0.07;
 
-  --color-surface-container-bg: 239 246 255;   /* Blue-50 */
-  --color-surface-container-border: 219 234 254;
+  --color-surface-container-bg: 241 245 249;   /* Slate-100: neutro */
+  --color-surface-container-border: 226 232 240; /* Slate-200: contraste sutil */
 
   --color-audit-body: 241 245 249;
   --color-audit-body-alpha: 0.6;
@@ -85,10 +85,10 @@ html, body {
   /* ─────────────────────────────────────────────
      TABS
   ───────────────────────────────────────────── */
-  --color-tab-bar-bg: 219 234 254;     /* Blue-100 */
+  --color-tab-bar-bg: 226 232 240;     /* Slate-200: cohesión neutra */
   --color-tab-active-bg: var(--color-primary);
   --color-tab-active-text: 255 255 255;
-  --color-tab-inactive-bg: 196 219 254;        /* Blue-200 */
+  --color-tab-inactive-bg: 203 213 225;        /* Slate-300: menos saturado */
   --color-tab-inactive-text: 30 64 175;        /* Blue-800: contraste WCAG AA */
 
 
@@ -107,7 +107,7 @@ html, body {
   ───────────────────────────────────────────── */
   --color-input-bg: 255 255 255;
   --color-input-text: #0f172a;
-  --color-input-border: 196 219 254;   /* Blue-200 */
+  --color-input-border: 203 213 225;   /* Slate-300: consistencia con bordes */
   --color-input-focus: var(--color-primary);
   --color-label-text: 51 65 85;        /* Slate-700: contraste AA */
 
@@ -159,36 +159,36 @@ html, body {
 ══════════════════════════════════════════════════════════════ */
 @media (prefers-color-scheme: dark) {
   :root:not(.light) {
-    --color-body-bg: #060d1f;
-    --color-body-text: #e2e8f4;
+    --color-body-bg: #030712;               /* Gray-950: profundidad real */
+    --color-body-text: #e2e8f0;             /* Slate-200: neutro */
 
     --color-header-bg: #1e3a8a;
-    --color-header-text: #e2e8f4;
-    --color-panel-header-bg: 37 99 235 / 0.15; /* Azul primario profundo traslúcido en Dark Mode */
+    --color-header-text: #e2e8f0;
+    --color-panel-header-bg: 37 99 235 / 0.15;
 
-    --color-panel-fill: 13 27 62;
-    --color-panel-border: 37 99 235 / 0.32;     /* ↑ 0.18→0.32: bordes perceptibles */
+    --color-panel-fill: 15 23 42;           /* Slate-900: estándar industry */
+    --color-panel-border: 51 65 85;         /* Slate-600: sólido y legible */
     --color-panel-shadow: 0 0 0 / 0;
 
-    --color-surface-container-bg: 17 35 80;
-    --color-surface-container-border: 37 99 235 / 0.22;
+    --color-surface-container-bg: 30 41 59; /* Slate-800: mayor separación */
+    --color-surface-container-border: 51 65 85; /* Slate-600: cohesión */
 
-    --color-audit-body: 10 20 48;
+    --color-audit-body: 15 23 42;
     --color-audit-body-alpha: 0.4;
 
-    --color-tab-bar-bg: 10 20 50;
-    --color-tab-inactive-bg: 30 58 138 / 0.3;
-    --color-tab-inactive-text: 147 197 253;
+    --color-tab-bar-bg: 15 23 42;           /* Slate-900: coherente */
+    --color-tab-inactive-bg: 30 41 59;      /* Slate-800: elevación visible */
+    --color-tab-inactive-text: 148 163 184; /* Slate-400: menos saturado */
 
     --color-bi-card-logistics: 100 116 139;
-    --color-bi-ring-bg: 10 20 48;
-    --color-bi-text-main: 226 232 244;
+    --color-bi-ring-bg: 15 23 42;
+    --color-bi-text-main: 226 232 240;
     --color-bi-text-muted: 148 163 184;
 
-    --color-input-bg: 20 42 94;              /* ↑ capa elevada sobre panel, no inferior */
-    --color-input-text: #e2e8f4;
-    --color-input-border: 37 99 235 / 0.25;
-    --color-label-text: 147 197 253;
+    --color-input-bg: 30 41 59;             /* Slate-800: elevación real */
+    --color-input-text: #e2e8f0;
+    --color-input-border: 51 65 85;         /* Slate-600: sólido */
+    --color-label-text: 148 163 184;        /* Slate-400: menos saturado, legible */
 
     --color-ntf-panel-bg: 6 13 31;
     --color-ntf-card-bg: 13 27 62 / 0.5;
@@ -209,45 +209,45 @@ html, body {
    CLASE .dark — Mirror del media query para control JS
 ══════════════════════════════════════════════════════════════ */
 html.dark {
-  --color-body-bg: #060d1f;
-  --color-body-text: #e2e8f4;
+  --color-body-bg: #030712;               /* Gray-950: profundidad real */
+  --color-body-text: #e2e8f0;             /* Slate-200: neutro */
   --color-header-bg: #1e3a8a;
-  --color-header-text: #e2e8f4;
+  --color-header-text: #e2e8f0;
   --color-panel-header-bg: 37 99 235 / 0.15;
 
-  --color-panel-fill: 13 27 62;
-  --color-panel-border: 37 99 235 / 0.32;
+  --color-panel-fill: 15 23 42;           /* Slate-900 */
+  --color-panel-border: 51 65 85;         /* Slate-600: sólido */
   --color-panel-shadow: 0 0 0 / 0;
 
-  --color-surface-container-bg: 17 35 80;
-  --color-surface-container-border: 37 99 235 / 0.22;
+  --color-surface-container-bg: 30 41 59; /* Slate-800 */
+  --color-surface-container-border: 51 65 85;
 
-  --color-audit-body: 10 20 48;
+  --color-audit-body: 15 23 42;
   --color-audit-body-alpha: 0.4;
 
-  --color-tab-bar-bg: 10 20 50;
-  --color-tab-inactive-bg: 30 58 138 / 0.3;
-  --color-tab-inactive-text: 147 197 253;
+  --color-tab-bar-bg: 15 23 42;
+  --color-tab-inactive-bg: 30 41 59;
+  --color-tab-inactive-text: 148 163 184;
 
   --color-bi-card-logistics: 100 116 139;
-  --color-bi-ring-bg: 10 20 48;
-  --color-bi-text-main: 226 232 244;
+  --color-bi-ring-bg: 15 23 42;
+  --color-bi-text-main: 226 232 240;
   --color-bi-text-muted: 148 163 184;
 
-  --color-input-bg: 20 42 94;
-  --color-input-text: #e2e8f4;
-  --color-input-border: 37 99 235 / 0.25;
-  --color-label-text: 147 197 253;
+  --color-input-bg: 30 41 59;             /* Slate-800 */
+  --color-input-text: #e2e8f0;
+  --color-input-border: 51 65 85;
+  --color-label-text: 148 163 184;        /* Slate-400 */
 
-  --color-ntf-panel-bg: 6 13 31;
-  --color-ntf-card-bg: 13 27 62 / 0.5;
+  --color-ntf-panel-bg: 3 7 18;
+  --color-ntf-card-bg: 15 23 42 / 0.5;
   --color-ntf-card-border: 255 255 255 / 0.06;
-  --color-ntf-editor-bg: 10 20 48;
+  --color-ntf-editor-bg: 15 23 42;
   --color-ntf-editor-header-bg: 0 0 0 / 0.35;
   --color-ntf-editor-input-bg: 0 0 0 / 0.2;
   --color-ntf-editor-border: 255 255 255 / 0.06;
-  --color-ntf-preview-card: 10 20 48;
+  --color-ntf-preview-card: 15 23 42;
   --color-ntf-text-editor: 96 165 250;
-  --color-ntf-text-subject: 147 197 253;
+  --color-ntf-text-subject: 148 163 184;
   --color-status-active: 52 211 153;
 }

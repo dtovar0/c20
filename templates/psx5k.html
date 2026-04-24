@@ -23,7 +23,7 @@
                     </div>
                     <div>
                         <h2 class="text-xl font-black tracking-tighter text-primary uppercase italic leading-none">PSX5K Terminal</h2>
-                        <p class="text-[9px] text-primary/60 font-bold tracking-widest uppercase mt-0.5">Gestión Operativa / Trazabilidad</p>
+                        <p class="text-[10px] text-primary/60 font-bold tracking-widest uppercase mt-0.5">Gestión Operativa / Trazabilidad</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-4">
@@ -59,7 +59,7 @@
                 <div class="overflow-x-auto overflow-y-hidden custom-scrollbar flex-grow pr-1">
                     <table id="psxDataTable" class="w-full h-full text-left table-fixed border-separate border-spacing-y-1.5">
                         <thead class="sticky top-0 z-20">
-                            <tr class="text-[9px] font-black text-white uppercase tracking-[0.2em]">
+                            <tr class="text-[10px] font-black text-white uppercase tracking-[0.2em]">
                                 <th class="w-[40px] px-5 py-4 bg-slate-900/50 rounded-l-2xl border-y border-l border-panel-border">
                                     <div class="flex items-center justify-center h-full">
                                         <input type="checkbox" id="selectAllPSX" class="nexus-checkbox">
@@ -95,7 +95,7 @@
                 </div>
                 <div>
                     <h3 class="text-lg font-black tracking-tighter text-body-text uppercase italic leading-none">Configurador PSX5K</h3>
-                    <p class="text-[9px] text-primary/60 font-bold tracking-widest uppercase mt-1">Paso <span id="currentStepNum">1</span> de 3</p>
+                    <p class="text-[10px] text-primary/60 font-bold tracking-widest uppercase mt-1">Paso <span id="currentStepNum">1</span> de 3</p>
                 </div>
             </div>
             <button onclick="closeWizard()" class="p-2 text-label/40 hover:text-label transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
@@ -160,12 +160,12 @@
                     <div class="pt-6 border-t border-panel-border">
                         <label class="nx-label-strip mb-4 block">Fuente de Datos</label>
                         <div class="flex items-center bg-surface-container/30 p-1 rounded-2xl border border-panel-border mb-6">
-                            <span class="text-[9px] font-black flex-1 text-center py-2.5 rounded-xl" id="labelFileMode">Archivo</span>
+                            <span class="text-[10px] font-black flex-1 text-center py-2.5 rounded-xl" id="labelFileMode">Archivo</span>
                             <label class="relative inline-flex items-center cursor-pointer px-2">
                                 <input type="checkbox" id="dataEntryToggle" class="sr-only peer" onchange="toggleDataMethod()">
                                 <div class="w-12 h-6 bg-panel-border rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[10px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                             </label>
-                            <span class="text-[9px] font-black flex-1 text-center py-2.5 rounded-xl opacity-40" id="labelManualMode">Manual</span>
+                            <span class="text-[10px] font-black flex-1 text-center py-2.5 rounded-xl opacity-40" id="labelManualMode">Manual</span>
                         </div>
                         <div id="methodFileUpload">
                             <label class="border-2 border-dashed border-panel-border rounded-[24px] h-40 w-full flex flex-col items-center justify-center gap-3 hover:border-primary hover:bg-primary/5 transition-all cursor-pointer group px-6 text-center">
@@ -192,7 +192,7 @@
                     <div class="text-center mb-6">
                         <div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-primary mx-auto mb-4"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg></div>
                         <h4 class="text-lg font-black text-body-text uppercase italic">Verificación Técnica</h4>
-                        <p class="text-[9px] text-label/40 font-bold uppercase tracking-widest mt-1">Confirmación de parámetros</p>
+                        <p class="text-[10px] text-label/40 font-bold uppercase tracking-widest mt-1">Confirmación de parámetros</p>
                     </div>
                     <div class="bg-surface-container/50 border border-panel-border rounded-[24px] p-6 space-y-4">
                         <div class="grid grid-cols-[140px_1fr] items-center border-b border-panel-border pb-3"><span class="nx-label-strip opacity-40">Operación:</span><span class="text-xs font-bold text-body-text uppercase pl-4" id="summaryTaskType">-</span></div>
@@ -206,7 +206,7 @@
                     <div id="psxForceContainer" class="flex items-center justify-between p-5 bg-rose-500/5 border border-rose-500/20 rounded-[24px] group hover:bg-rose-500/10 transition-all">
                         <div class="flex flex-col gap-1">
                             <span class="text-[10px] font-black text-rose-500 uppercase tracking-widest leading-none">Forzar Operación</span>
-                            <span class="text-[9px] text-label/40 font-bold uppercase tracking-tight mt-0.5">Sobreescribir registros existentes</span>
+                            <span class="text-[10px] text-label/40 font-bold uppercase tracking-tight mt-0.5">Sobreescribir registros existentes</span>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="psxForceToggle" class="sr-only peer">
@@ -241,7 +241,7 @@
                 </div>
                 <div>
                     <h3 class="text-lg font-black tracking-tighter text-body-text uppercase italic leading-none">Programar Tarea PSX5K</h3>
-                    <p class="text-[9px] text-primary/60 font-bold tracking-widest uppercase mt-1">Paso <span id="scheduleStepNum">1</span> de 4</p>
+                    <p class="text-[10px] text-primary/60 font-bold tracking-widest uppercase mt-1">Paso <span id="scheduleStepNum">1</span> de 4</p>
                 </div>
             </div>
             <button onclick="closeScheduleWizard()" class="p-2 text-label/40 hover:text-label transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
@@ -305,12 +305,12 @@
                     <div class="pt-6 border-t border-panel-border">
                         <label class="nx-label-strip mb-4 block">Fuente de Datos</label>
                         <div class="flex items-center bg-surface-container/30 p-1 rounded-2xl border border-panel-border mb-6">
-                            <span class="text-[9px] font-black flex-1 text-center py-2.5 rounded-xl" id="scheduleLabelFileMode">Archivo</span>
+                            <span class="text-[10px] font-black flex-1 text-center py-2.5 rounded-xl" id="scheduleLabelFileMode">Archivo</span>
                             <label class="relative inline-flex items-center cursor-pointer px-2">
                                 <input type="checkbox" id="scheduleDataEntryToggle" class="sr-only peer" onchange="toggleScheduleDataMethod()">
                                 <div class="w-12 h-6 bg-panel-border rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[10px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                             </label>
-                            <span class="text-[9px] font-black flex-1 text-center py-2.5 rounded-xl opacity-40" id="scheduleLabelManualMode">Manual</span>
+                            <span class="text-[10px] font-black flex-1 text-center py-2.5 rounded-xl opacity-40" id="scheduleLabelManualMode">Manual</span>
                         </div>
                         <div id="scheduleMethodFileUpload">
                             <label class="border-2 border-dashed border-panel-border rounded-[24px] h-40 w-full flex flex-col items-center justify-center gap-3 hover:border-primary hover:bg-primary/5 transition-all cursor-pointer group px-6 text-center">
@@ -347,13 +347,13 @@
                         </div>
                         
                         <div class="grid grid-cols-7 gap-1 text-center mb-2">
-                            <span class="text-[8px] font-black text-label/20 uppercase">Do</span>
-                            <span class="text-[8px] font-black text-label/20 uppercase">Lu</span>
-                            <span class="text-[8px] font-black text-label/20 uppercase">Ma</span>
-                            <span class="text-[8px] font-black text-label/20 uppercase">Mi</span>
-                            <span class="text-[8px] font-black text-label/20 uppercase">Ju</span>
-                            <span class="text-[8px] font-black text-label/20 uppercase">Vi</span>
-                            <span class="text-[8px] font-black text-label/20 uppercase">Sa</span>
+                            <span class="text-[10px] font-black text-label/20 uppercase">Do</span>
+                            <span class="text-[10px] font-black text-label/20 uppercase">Lu</span>
+                            <span class="text-[10px] font-black text-label/20 uppercase">Ma</span>
+                            <span class="text-[10px] font-black text-label/20 uppercase">Mi</span>
+                            <span class="text-[10px] font-black text-label/20 uppercase">Ju</span>
+                            <span class="text-[10px] font-black text-label/20 uppercase">Vi</span>
+                            <span class="text-[10px] font-black text-label/20 uppercase">Sa</span>
                         </div>
                         
                         <div id="calendarGrid" class="grid grid-cols-7 gap-1">
@@ -374,7 +374,7 @@
                     <div class="text-center mb-6">
                         <div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-primary mx-auto mb-4"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg></div>
                         <h4 class="text-lg font-black text-body-text uppercase italic">Confirmación Agenda</h4>
-                        <p class="text-[9px] text-label/40 font-bold uppercase tracking-widest mt-1">Verificación de parámetros programados</p>
+                        <p class="text-[10px] text-label/40 font-bold uppercase tracking-widest mt-1">Verificación de parámetros programados</p>
                     </div>
                     <div class="bg-surface-container/50 border border-panel-border rounded-[24px] p-6 space-y-4">
                         <div class="grid grid-cols-[140px_1fr] items-center border-b border-panel-border pb-3"><span class="nx-label-strip opacity-40">Operación:</span><span class="text-xs font-bold text-body-text uppercase pl-4" id="scheduleSummaryTaskType">-</span></div>
@@ -390,7 +390,7 @@
                     <div id="scheduleForceContainer" class="flex items-center justify-between p-5 bg-rose-500/5 border border-rose-500/20 rounded-[24px] group hover:bg-rose-500/10 transition-all">
                         <div class="flex flex-col gap-1">
                             <span class="text-[10px] font-black text-rose-500 uppercase tracking-widest leading-none">Forzar Operación</span>
-                            <span class="text-[9px] text-label/40 font-bold uppercase tracking-tight mt-0.5">Sobreescribir registros existentes</span>
+                            <span class="text-[10px] text-label/40 font-bold uppercase tracking-tight mt-0.5">Sobreescribir registros existentes</span>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="schedulePsxForceToggle" class="sr-only peer">
@@ -423,12 +423,12 @@
     <div class="w-full max-w-xl nx-modal-glass rounded-[32px] shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300">
         <header class="px-8 py-6 border-b border-panel-border flex items-center justify-between bg-header/50">
             <div class="flex items-center gap-4">
-                <div class="w-10 h-10 rounded-xl bg-slate-500/20 flex items-center justify-center text-slate-400">
+                <div class="w-10 h-10 rounded-xl bg-slate-500/20 flex items-center justify-center text-label/60">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                 </div>
                 <div>
                     <h3 class="text-lg font-black tracking-tighter text-body-text uppercase italic leading-none">Modificar tarea PSX5K</h3>
-                    <p class="text-[9px] text-slate-500/60 font-bold tracking-widest uppercase mt-1">Ticket #<span id="modifyTicketNum">---</span> / Paso <span id="modifyStepNum">1</span> de 5</p>
+                    <p class="text-[10px] text-label/60 font-bold tracking-widest uppercase mt-1">Ticket #<span id="modifyTicketNum">---</span> / Paso <span id="modifyStepNum">1</span> de 5</p>
                 </div>
             </div>
             <button onclick="closeModifyModal()" class="p-2 text-label/40 hover:text-label transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
@@ -543,13 +543,13 @@
                             </div>
                             
                             <div class="grid grid-cols-7 gap-1 text-center mb-2">
-                                <span class="text-[8px] font-black text-label/20 uppercase">Do</span>
-                                <span class="text-[8px] font-black text-label/20 uppercase">Lu</span>
-                                <span class="text-[8px] font-black text-label/20 uppercase">Ma</span>
-                                <span class="text-[8px] font-black text-label/20 uppercase">Mi</span>
-                                <span class="text-[8px] font-black text-label/20 uppercase">Ju</span>
-                                <span class="text-[8px] font-black text-label/20 uppercase">Vi</span>
-                                <span class="text-[8px] font-black text-label/20 uppercase">Sa</span>
+                                <span class="text-[10px] font-black text-label/20 uppercase">Do</span>
+                                <span class="text-[10px] font-black text-label/20 uppercase">Lu</span>
+                                <span class="text-[10px] font-black text-label/20 uppercase">Ma</span>
+                                <span class="text-[10px] font-black text-label/20 uppercase">Mi</span>
+                                <span class="text-[10px] font-black text-label/20 uppercase">Ju</span>
+                                <span class="text-[10px] font-black text-label/20 uppercase">Vi</span>
+                                <span class="text-[10px] font-black text-label/20 uppercase">Sa</span>
                             </div>
                             
                             <div id="modCalendarGrid" class="grid grid-cols-7 gap-1"></div>
@@ -593,7 +593,7 @@
 
             <!-- STEP 5: FINAL CONFIRMATION -->
             <div id="modifyStep5" class="modify-step-content w-full hidden animate-in slide-in-from-right-4 text-center">
-                 <div class="w-16 h-16 rounded-full bg-slate-500/10 flex items-center justify-center text-slate-400 mx-auto mb-4">
+                 <div class="w-16 h-16 rounded-full bg-slate-500/10 flex items-center justify-center text-label/60 mx-auto mb-4">
                      <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                  </div>
                  <h4 id="modFinalTitle" class="text-lg font-black text-body-text uppercase italic px-10">Confirmar Cambios</h4>
@@ -639,7 +639,7 @@
             <div id="uploadProgressBar" class="h-full bg-primary transition-all duration-300 shadow-[0_0_15px_rgba(rgb(var(--color-primary)),0.5)]" style="width: 0%;"></div>
         </div>
 
-        <div class="space-y-1.5 text-left bg-black/40 rounded-xl p-4 font-mono text-[9px] text-primary/60 border border-panel-border/30">
+        <div class="space-y-1.5 text-left bg-black/40 rounded-xl p-4 font-mono text-[10px] text-primary/60 border border-panel-border/30">
             <div class="flex gap-2"><span>[OK]</span><span class="text-label/60">Conexión con Nodo establecida</span></div>
             <div id="logValidation" class="flex gap-2 opacity-0"><span>[OK]</span><span class="text-label/60">Integridad de datos validada</span></div>
             <div id="logIndexing" class="flex gap-2 opacity-0"><span>[OK]</span><span class="text-label/60">Registros indexados en DB</span></div>

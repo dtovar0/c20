@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <td class="px-6 py-4 text-[10px] font-bold text-label uppercase tracking-tighter">#${r.task_id}</td>
                             <td class="px-6 py-4 text-[10px] font-bold text-label/80">${r.routing_label || '-'}</td>
                             <td class="px-6 py-4 text-center">
-                                <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase
+                                <span class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase
                                     ${r.estado === 'OK' ? 'bg-emerald-500/10 text-emerald-500' : 
                                       r.estado === 'FAIL' ? 'bg-rose-500/10 text-rose-500' : 
                                       r.estado === 'DUP' ? 'bg-amber-500/10 text-amber-500' : 
@@ -584,7 +584,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="flex-grow">
                             <p class="text-xs font-bold text-text mb-0.5 line-clamp-1 italic">${n.title}</p>
                             <p class="text-[10px] text-label/60 leading-tight line-clamp-2">${n.message}</p>
-                            <span class="text-[9px] font-bold opacity-40 mt-1 block">${n.time}</span>
+                            <span class="text-[10px] font-bold opacity-40 mt-1 block">${n.time}</span>
                         </div>
                         ${!n.is_read ? '<div class="w-1.5 h-1.5 rounded-full bg-primary mt-1 flex-shrink-0 shadow-lg shadow-primary/20"></div>' : ''}
                     </div>

@@ -1,5 +1,5 @@
 /**
- * NEXUS PREMIUM GUIDED TOUR - PSX5K TERMINAL (ICON-RICH V6)
+ * NEXUS PREMIUM GUIDED TOUR - PSX5K TERMINAL (TOKEN-BASED V7)
  */
 class NexusTour {
     constructor(steps) {
@@ -35,7 +35,6 @@ class NexusTour {
     }
 
     start() {
-        // Force enable modify button for tour visibility
         const modBtn = document.getElementById('modifyTaskBtn');
         if (modBtn) modBtn.classList.remove('opacity-30', 'pointer-events-none');
 
@@ -62,7 +61,6 @@ class NexusTour {
     }
 
     end() {
-        // Restore modify button state
         const modBtn = document.getElementById('modifyTaskBtn');
         if (modBtn) modBtn.classList.add('opacity-30', 'pointer-events-none');
 
@@ -85,41 +83,41 @@ class NexusTour {
             this.spotlight.style.width = `${rect.width + (padding * 2)}px`;
             this.spotlight.style.height = `${rect.height + (padding * 2)}px`;
 
+            // Build dots
+            const dots = this.steps.map((_, i) => 
+                `<div class="nx-tour-dot ${i === this.currentStep ? 'active' : ''}"></div>`
+            ).join('');
+
+            // Build table if present
+            let tableHTML = '';
+            if (step.table) {
+                const rows = step.table.map(row => `
+                    <tr>
+                        <td>${row.val}</td>
+                        <td>${row.desc}</td>
+                    </tr>
+                `).join('');
+                tableHTML = `
+                    <table class="nx-tour-table">
+                        <thead><tr><th>Elemento</th><th>Descripción</th></tr></thead>
+                        <tbody>${rows}</tbody>
+                    </table>`;
+            }
+
             this.stepEl.innerHTML = `
                 <div class="nx-tour-step-header">
-                    <span class="text-[10px] font-black text-primary uppercase tracking-[0.3em] block mb-2">${step.type}</span>
-                    <h3 class="text-xl font-black text-white italic leading-tight">${step.title}</h3>
+                    <span class="nx-tour-type">${step.type}</span>
+                    <h3>${step.title}</h3>
                 </div>
-                <div class="py-4 nx-tour-content max-h-[400px] overflow-y-auto custom-scrollbar pr-2">
-                    <p class="text-[13px] text-slate-400 font-bold leading-relaxed mb-4">${step.content}</p>
-                    ${step.table ? `
-                        <div class="mt-4 rounded-xl border border-white/5 overflow-hidden bg-black/20">
-                            <table class="w-full text-[10px] text-left border-separate border-spacing-0">
-                                <thead class="bg-white/5">
-                                    <tr>
-                                        <th class="p-3 font-black uppercase tracking-widest text-primary/80 border-b border-white/5">Elemento</th>
-                                        <th class="p-3 font-black uppercase tracking-widest text-primary/80 border-b border-white/5">Descripción</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${step.table.map(row => `
-                                        <tr class="border-b border-white/5 last:border-0 hover:bg-white/5">
-                                            <td class="p-3 border-b border-white/5">${row.val}</td>
-                                            <td class="p-3 border-b border-white/5 text-slate-300 font-bold">${row.desc}</td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
-                            </table>
-                        </div>
-                    ` : ''}
+                <div class="nx-tour-content">
+                    <p>${step.content}</p>
+                    ${tableHTML}
                 </div>
-                <div class="flex justify-between items-center mt-6 border-t border-white/5 pt-5">
-                    <div class="flex gap-1.5">
-                        ${this.steps.map((_, i) => `<div class="w-2 h-2 rounded-full ${i === this.currentStep ? 'bg-primary shadow-[0_0_10px_rgba(37,99,235,1)] scale-125' : 'bg-white/10'} transition-all duration-300"></div>`).join('')}
-                    </div>
-                    <div class="flex gap-3">
-                        <button class="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors" onclick="window.nexusTour.prev()" ${this.currentStep === 0 ? 'style="display:none"' : ''}>Atrás</button>
-                        <button id="nx-tour-next-btn" class="px-7 py-3 bg-primary text-white text-[11px] font-black uppercase tracking-widest rounded-xl shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all">
+                <div class="nx-tour-footer">
+                    <div style="display:flex;gap:6px;">${dots}</div>
+                    <div style="display:flex;gap:12px;align-items:center;">
+                        <button class="nx-tour-btn-back" onclick="window.nexusTour.prev()" ${this.currentStep === 0 ? 'style="display:none"' : ''}>Atrás</button>
+                        <button class="nx-tour-btn-next" id="nx-tour-next-btn">
                             ${this.currentStep === this.steps.length - 1 ? 'Finalizar' : 'Siguiente'}
                         </button>
                     </div>
@@ -128,13 +126,12 @@ class NexusTour {
 
             this.stepEl.querySelector('#nx-tour-next-btn').onclick = () => this.next();
 
-            const stepWidth = 460; 
-            let stepTop = rect.bottom + 40;
-            let stepLeft = rect.left + (rect.width/2) - (stepWidth/2);
+            const stepWidth = 420;
+            let stepTop = rect.bottom + 30;
+            let stepLeft = rect.left + (rect.width / 2) - (stepWidth / 2);
 
             if (stepLeft < 20) stepLeft = 20;
             if (stepLeft + stepWidth > window.innerWidth - 20) stepLeft = window.innerWidth - stepWidth - 20;
-            
             if (stepTop + 500 > window.innerHeight) {
                 stepTop = Math.max(20, rect.top - 520);
             }
@@ -152,81 +149,85 @@ class NexusTour {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Icons for tables
-    const iconPlus = `<svg class="w-4 h-4 text-primary inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>`;
-    const iconTrash = `<svg class="w-4 h-4 text-rose-500 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>`;
-    const iconIn = `<svg class="w-4 h-4 text-sky-500 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>`;
-    const iconInOut = `<svg class="w-4 h-4 text-indigo-500 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>`;
-    const iconSpinner = `<svg class="w-4 h-4 text-primary animate-spin inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>`;
-    const iconCheck = `<svg class="w-4 h-4 text-emerald-500 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
-    const iconWarning = `<svg class="w-4 h-4 text-rose-500 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>`;
-    const iconClock = `<svg class="w-4 h-4 text-amber-500 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+    // Inline SVG icons for table references
+    const ico = (svg, color) => `<svg class="w-4 h-4 inline-block align-middle mr-1" style="color:${color}" fill="none" stroke="currentColor" viewBox="0 0 24 24">${svg}</svg>`;
+    
+    const svgPlus = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>';
+    const svgTrash = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>';
+    const svgIn = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>';
+    const svgInOut = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>';
+    const svgSpin = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>';
+    const svgCheck = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>';
+    const svgWarn = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>';
+    const svgClock = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>';
+
+    const dot = (color) => `<div style="width:10px;height:10px;border-radius:50%;background:${color};box-shadow:0 0 6px ${color}40;display:inline-block;vertical-align:middle;"></div>`;
 
     window.nexusTour = new NexusTour([
         {
-            type: 'BOTÓN',
+            type: 'Botón',
             target: '#refreshAudit',
             title: 'Tarea Nueva',
-            content: 'Inicia el proceso de creación de tareas. Permite cargar registros masivos de forma manual o mediante archivos CSV/TXT.'
+            content: 'Inicia el proceso de creación de tareas. Permite cargar registros masivos de forma <b>manual</b> o mediante archivos <b>CSV / TXT</b>.'
         },
         {
-            type: 'BOTÓN',
+            type: 'Botón',
             target: '#scheduleTaskBtn',
             title: 'Programar Tarea',
             content: 'Difiere la ejecución de la tarea para una ventana de tiempo específica. Útil para optimización de recursos en el nodo.'
         },
         {
-            type: 'BOTÓN',
+            type: 'Botón',
             target: '#modifyTaskBtn',
             title: 'Modificar Tarea',
             content: 'Edita el <b>Routing Label</b> o el temporizador mientras la tarea aún no ha iniciado su ejecución.'
         },
         {
-            type: 'COLUMNA',
+            type: 'Columna',
             target: '#psxDataTable thead th:nth-child(2)',
             title: 'Master Ticket ID',
-            content: 'Identificador único global para el seguimiento transaccional de un lote de datos procesados.'
+            content: 'Identificador único global del lote de datos. Se usa para auditorías y seguimiento transaccional.'
         },
         {
-            type: 'COLUMNA',
+            type: 'Columna',
             target: '#psxDataTable thead th:nth-child(3)',
-            title: 'Origen del Segmento',
-            content: 'Nombre del archivo fuente o registro manual, acompañado del índice del fragmento procesado.'
+            title: 'Origen / Segmento',
+            content: 'Nombre del archivo fuente o indicador manual, acompañado del índice del fragmento procesado. Ejemplo: <b>data.csv — 2/5</b>.'
         },
         {
-            type: 'COLUMNA',
+            type: 'Columna',
             target: '#psxDataTable thead th:nth-child(4)',
             title: 'Routing Label',
-            content: 'Configuración lógica de destino enviada al PSX. Determina el canal de salida de los datos.'
+            content: 'Etiqueta lógica de destino enviada al PSX. Define el canal de salida de los datos procesados.'
         },
         {
-            type: 'ICONO / COLUMNA',
+            type: 'Columna + Iconos',
             target: '#psxDataTable thead th:nth-child(5)',
             title: 'Métricas de Avance',
-            content: 'Visualización cromática de los estados finales por bloque según la respuesta del Nodo.',
+            content: 'Barra de progreso que muestra los resultados por bloque según la respuesta del nodo.',
             table: [
-                { val: '<div class="w-3 h-3 rounded-full bg-primary shadow-[0_0_5px_rgba(37,99,235,0.5)]"></div>', desc: '<b>OK</b>: Procesamiento exitoso.' },
-                { val: '<div class="w-3 h-3 rounded-full bg-rose-500 shadow-[0_0_5px_rgba(244,63,94,0.5)]"></div>', desc: '<b>FAIL</b>: Error reportado por el nodo.' },
-                { val: '<div class="w-3 h-3 rounded-full bg-violet-500 shadow-[0_0_5px_rgba(139,92,246,0.5)]"></div>', desc: '<b>FORCE</b>: Validación forzada por sistema.' },
-                { val: '<div class="w-3 h-3 rounded-full bg-amber-500 shadow-[0_0_5px_rgba(245,158,11,0.5)]"></div>', desc: '<b>DUP</b>: Registro duplicado ignorado.' }
+                { val: `${dot('#2563eb')} Azul`, desc: '<b>OK</b> — Procesamiento exitoso' },
+                { val: `${dot('#f43f5e')} Rojo`, desc: '<b>FAIL</b> — Error reportado por el nodo' },
+                { val: `${dot('#8b5cf6')} Púrpura`, desc: '<b>FORCE</b> — Validación forzada' },
+                { val: `${dot('#f59e0b')} Ámbar`, desc: '<b>DUP</b> — Registro duplicado ignorado' }
             ]
         },
         {
-            type: 'ICONO / COLUMNA',
+            type: 'Columna + Iconos',
             target: '#psxDataTable thead th:nth-child(6)',
             title: 'Estatus Operativo',
-            content: 'Control de ciclo de vida del proceso desglosado en tres indicadores visuales.',
+            content: 'Tríada de indicadores que resume el ciclo de vida del proceso.',
             table: [
-                { val: 'Operación', desc: `${iconPlus} Alta / ${iconTrash} Baja` },
-                { val: 'Modo', desc: `${iconIn} Call In / ${iconInOut} Call In/Out` },
-                { val: 'Estado', desc: `${iconSpinner} Ejecutando / ${iconCheck} Éxito / ${iconWarning} Error / ${iconClock} En Espera` }
+                { val: 'Operación', desc: `${ico(svgPlus, '#2563eb')} Alta / ${ico(svgTrash, '#f43f5e')} Baja` },
+                { val: 'Modo', desc: `${ico(svgIn, '#0ea5e9')} Call In / ${ico(svgInOut, '#6366f1')} Call In/Out` },
+                { val: 'Estado', desc: `${ico(svgSpin, '#2563eb')} Ejecutando / ${ico(svgCheck, '#10b981')} Éxito / ${ico(svgWarn, '#f43f5e')} Error / ${ico(svgClock, '#f59e0b')} Espera` }
             ]
         },
         {
-            type: 'ICONO / BOTÓN',
+            type: 'Columna + Botón',
             target: '#psxDataTable thead th:nth-child(7)',
             title: 'Auditoría Profunda',
-            content: 'Abre el log detallado. Aquí puedes ver la respuesta <b>(Success/Reject)</b> individual de cada registro enviado.'
+            content: 'Abre el log detallado de la tarea. Permite auditar la respuesta <b>(Success / Reject)</b> individual de cada registro enviado al nodo.'
         }
     ]);
 

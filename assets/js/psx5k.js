@@ -29,8 +29,8 @@ function generateTaskGraphic(resumen) {
                 <div class="h-full bg-transparent" style="width: ${pendingPct}%"></div>
             </div>
             <div class="flex justify-between items-center px-0.5">
-                <span class="text-[8px] font-black text-primary/60">${Math.round(okPct + failPct + forcePct + dupPct)}%</span>
-                <span class="text-[8px] font-bold text-label/30">${resumen.ok + resumen.fail + resumen.force_ok + resumen.dup}/${resumen.total}</span>
+                <span class="text-[10px] font-black text-primary/60">${Math.round(okPct + failPct + forcePct + dupPct)}%</span>
+                <span class="text-[10px] font-bold text-label/30">${resumen.ok + resumen.fail + resumen.force_ok + resumen.dup}/${resumen.total}</span>
             </div>
         </div>
     `;
@@ -117,7 +117,7 @@ function initPSXDataTable() {
                         <span class="text-[10px] font-bold text-label/60 truncate max-w-[180px]" data-nx-tooltip="${data}">
                             ${data && data.length > 25 ? '...' + data.slice(-22) : (data || 'MANUAL')}
                         </span>
-                        <span class="px-2 py-0.5 rounded-md bg-white/[0.07] border border-white/10 text-[8px] font-black text-label/60 uppercase tracking-tighter whitespace-nowrap shadow-sm shadow-black/20">
+                        <span class="px-2 py-0.5 rounded-md bg-white/[0.07] border border-white/10 text-[10px] font-black text-label/60 uppercase tracking-tighter whitespace-nowrap shadow-sm shadow-black/20">
                             ${row.chunk_index}/${row.chunk_total}
                         </span>
                     </div>` 
