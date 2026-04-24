@@ -178,6 +178,23 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // 5. Global Search Keyboard Shortcut (/)
+    document.addEventListener('keydown', (e) => {
+        // Prevent trigger if focused on an input field
+        const isTyping = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable;
+        
+        if (e.key === '/' && !isTyping) {
+            e.preventDefault();
+            const searchInput = document.getElementById('systemSearch');
+            if (searchInput) {
+                searchInput.focus();
+                // feedback effect
+                searchInput.parentElement.classList.add('ring-2', 'ring-primary/40');
+                setTimeout(() => searchInput.parentElement.classList.remove('ring-2', 'ring-primary/40'), 300);
+            }
+        }
+    });
 });
 
 // Registry for the active table instance

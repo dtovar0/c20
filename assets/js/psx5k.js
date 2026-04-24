@@ -115,12 +115,12 @@ function initPSXDataTable() {
             { 
                 data: 'id', 
                 width: '80px', 
-                render: (data) => `<div class="flex items-center justify-center h-full text-[12px] font-black text-primary/80">#${String(data).padStart(5, '0')}</div>` 
+                render: (data) => `<div class="flex items-center justify-start h-full px-2 text-[12px] font-black text-primary/80 tracking-widest">#${String(data).padStart(5, '0')}</div>` 
             },
             { 
                 data: 'usuario', 
-                width: '120px', 
-                render: (data) => `<div class="flex items-center justify-center h-full text-[12px] font-bold text-label/80 uppercase tracking-tighter truncate" data-nx-tooltip="Propietario: ${data}">${data}</div>` 
+                width: '180px', 
+                render: (data) => `<div class="flex items-center justify-start h-full px-2 text-[12px] font-bold text-label/80 uppercase tracking-tighter truncate" data-nx-tooltip="Propietario: ${data}">${data}</div>` 
             },
             { 
                 data: 'archivo_origen', 
@@ -138,12 +138,32 @@ function initPSXDataTable() {
             { 
                 data: 'routing_label', 
                 width: '140px', 
-                render: (data) => `<div class="flex items-center justify-center h-full text-[12px] font-bold text-label/60 uppercase tracking-tight truncate" data-nx-tooltip="${data || 'N/A'}">${data || 'N/A'}</div>` 
+                render: (data) => `<div class="flex items-center justify-start h-full px-2 text-[12px] font-bold text-label/60 uppercase tracking-tight truncate" data-nx-tooltip="${data || 'N/A'}">${data || 'N/A'}</div>` 
             },
-            { data: 'resumen', width: '120px', orderable: false, render: (data) => `<div class="flex items-center justify-center h-full min-w-0 overflow-hidden">${generateTaskGraphic(data)}</div>` },
+            { 
+                data: 'resumen', 
+                width: '120px', 
+                orderable: false, 
+                render: (data, type, row) => {
+                    const state = (row.estado || '').toLowerCase();
+                    if (state === 'programada' || state === 'pendiente') {
+                        return `<div class="flex items-center justify-center gap-1.5 opacity-30 italic py-2">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <span class="text-[11px] font-black uppercase tracking-[0.15em]">En Cola</span>
+                                </div>`;
+                    }
+                    if (state === 'cancelada') {
+                        return `<div class="flex items-center justify-center gap-1.5 opacity-40 text-rose-500/60 py-2">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                    <span class="text-[11px] font-black uppercase tracking-[0.15em]">Descartada</span>
+                                </div>`;
+                    }
+                    return `<div class="flex items-center justify-center h-full min-w-0 overflow-hidden">${generateTaskGraphic(data)}</div>`;
+                } 
+            },
             { 
                 data: null, 
-                width: '150px',
+                width: '120px',
                 orderable: false,
                 render: (data, type, row) => {
                     const isAdd = row.tarea === 'add';
