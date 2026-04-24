@@ -27,7 +27,7 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-4">
-                    <button class="w-10 h-10 rounded-xl bg-slate-900/40 border border-panel-border flex items-center justify-center text-label/40 hover:text-primary hover:border-primary/40 hover:bg-primary/10 transition-all hover:scale-110 active:scale-95 group" data-nx-tooltip="Guía del Sistema PSX5K">
+                    <button id="helpTourBtn" class="w-10 h-10 rounded-xl bg-slate-900/40 border border-panel-border flex items-center justify-center text-label/40 hover:text-primary hover:border-primary/40 hover:bg-primary/10 transition-all hover:scale-110 active:scale-95 group" data-nx-tooltip="Guía del Sistema PSX5K">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </button>
                 </div>
@@ -57,7 +57,7 @@
                     </div>
                 </div>
                 <div class="overflow-x-auto overflow-y-hidden custom-scrollbar flex-grow pr-1">
-                    <table class="w-full h-full text-left table-fixed border-separate border-spacing-y-1.5">
+                    <table id="psxDataTable" class="w-full h-full text-left table-fixed border-separate border-spacing-y-1.5">
                         <thead class="sticky top-0 z-20">
                             <tr class="text-[9px] font-black text-white uppercase tracking-[0.2em]">
                                 <th class="w-[40px] px-5 py-4 bg-slate-900/50 rounded-l-2xl border-y border-l border-panel-border">
@@ -66,9 +66,8 @@
                                     </div>
                                 </th>
                                 <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border text-center">Ticket #</th>
-                                <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Routing</th>
-                                <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Usuario</th>
                                 <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Origen / Segmento</th>
+                                <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border text-center">Routing Label</th>
                                 <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border text-center">Gráfica</th>
                                 <th class="px-5 py-4 bg-slate-900/50 border-y border-panel-border text-center">Estatus</th>
                                 <th class="px-5 py-4 bg-slate-900/50 rounded-r-2xl border-y border-r border-panel-border text-center">
@@ -649,5 +648,6 @@
 </div>
 
 <script src="{{ url_for('core.serve_assets', filename='js/psx5k.js') }}"></script>
-<script src="{{ url_for('core.serve_assets', filename='js/psx-wizard.js') }}"></script>
+<script src="/assets/js/psx-wizard.js"></script>
+<script src="/assets/js/psx-tour.js"></script>
 {% endblock %}

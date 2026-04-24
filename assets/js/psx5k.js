@@ -110,17 +110,6 @@ function initPSXDataTable() {
                 render: (data) => `<div class="flex items-center justify-center h-full text-[11px] font-black text-primary/80">#${String(data).padStart(5, '0')}</div>` 
             },
             { 
-                data: 'routing_label', 
-                width: '140px', 
-                render: (data) => `<div class="flex items-center h-full text-[10px] font-bold text-label/60 uppercase tracking-tight truncate" data-nx-tooltip="${data || 'N/A'}">${data || 'N/A'}</div>` 
-            },
-            { 
-                data: 'usuario', 
-                width: '180px', 
-                visible: false,
-                render: (data) => `<div class="flex items-center h-full text-[10px] font-black text-label/50 uppercase tracking-wider">${data}</div>` 
-            },
-            { 
                 data: 'archivo_origen', 
                 width: '280px', 
                 render: (data, type, row) => `
@@ -133,20 +122,24 @@ function initPSXDataTable() {
                         </span>
                     </div>` 
             },
+            { 
+                data: 'routing_label', 
+                width: '140px', 
+                render: (data) => `<div class="flex items-center justify-center h-full text-[10px] font-bold text-label/60 uppercase tracking-tight truncate" data-nx-tooltip="${data || 'N/A'}">${data || 'N/A'}</div>` 
+            },
             { data: 'resumen', width: '120px', orderable: false, render: (data) => `<div class="flex items-center justify-center h-full min-w-0 overflow-hidden">${generateTaskGraphic(data)}</div>` },
             { 
                 data: null, 
                 width: '150px',
                 orderable: false,
                 render: (data, type, row) => {
-                    // 1. Logic for Action ICON (Add/Delete)
+                    // Logic remains the same...
                     const isAdd = row.tarea === 'add';
                     const actionColor = isAdd ? 'text-primary bg-primary/10 border-primary/20' : 'text-rose-500 bg-rose-500/10 border-rose-500/20';
                     const actionIcon = isAdd 
                         ? `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>`
                         : `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>`;
                     
-                    // 2. Logic for Mode ICON (Call In / Call In-Out)
                     let modeIcon = '';
                     let modeColor = 'text-label/40 bg-label/5 border-panel-border';
                     let modeTitle = row.accion_tipo || 'N/A';
@@ -161,7 +154,6 @@ function initPSXDataTable() {
                         modeIcon = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4"></path></svg>`;
                     }
 
-                    // 3. Logic for Status ICON (Running/Finished/Etc)
                     let statusIcon = '';
                     let statusColor = '';
                     const state = row.estado.toLowerCase();
