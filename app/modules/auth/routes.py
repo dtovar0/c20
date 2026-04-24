@@ -88,7 +88,7 @@ def logout():
     try:
         username = current_user.username
         logout_user()
-        add_audit_log("logout usuario", status="info", user_override=username, detail="Cierre de sesión del sistema exitoso")
+        add_audit_log("logout usuario", status="info", detail=f"Usuario {username} cerró su sesión en el sistema.", user_override=username)
         return render_template("logout.html")
     except Exception as e:
         current_app.logger.error(f"Error en logout: {e}")
