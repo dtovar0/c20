@@ -1,9 +1,30 @@
-/**
- * PSX5K STEP WIZARD CONTROLLER
- * Fixed Visibility & Token Alignment
- */
-
 let currentWizardStep = 1;
+
+/**
+ * Cuenta registros reales expandiendo rangos (1000-1005 = 6)
+ */
+function countRealRecords(text) {
+    if (!text) return 0;
+    const items = text.replace(/;/g, '\n').replace(/,/g, '\n').replace(/ /g, '\n').split('\n');
+    let total = 0;
+    items.forEach(line => {
+        const item = line.trim();
+        if (!item) return;
+        if (item.includes('-')) {
+            const parts = item.split('-');
+            if (parts.length === 2) {
+                const s = parseInt(parts[0].replace(/\D/g, ''));
+                const e = parseInt(parts[1].replace(/\D/g, ''));
+                if (!isNaN(s) && !isNaN(e)) {
+                    total += Math.abs(e - s) + 1;
+                    return;
+                }
+            }
+        }
+        total += 1;
+    });
+    return total;
+}
 
 function openWizard() {
     const modal = document.getElementById('psxWizardModal');
@@ -105,8 +126,8 @@ function validateCurrentStep() {
                 isValid = false;
             } else {
                 // regex: 10 dígitos O 10 dígitos - 10 dígitos
-                const individualPattern = /^\d{10}$/;
-                const rangePattern = /^\d{10}-\d{10}$/;
+                const individualPattern = /^\d{7,15}$/;
+                const rangePattern = /^\d{7,15}-\d{7,15}$/;
                 
                 const allValid = lines.every(line => {
                     const cleanLine = line.trim();
@@ -156,6 +177,11 @@ function updateWizardUI() {
     }
     
     document.getElementById('currentStepNum').innerText = currentWizardStep;
+
+    const forceContainer = document.getElementById('psxForceContainer');
+    if (forceContainer) {
+        forceContainer.style.display = isEliminar ? 'none' : 'flex';
+    }
     
     // Step 2 Logic
     if (currentWizardStep === 2) {
@@ -212,8 +238,9 @@ function collectWizardData() {
     if (isManual) {
         document.getElementById('summaryData').innerText = 'Ingreso Manual';
         document.getElementById('summaryFileLabel').innerText = 'Total registros:';
-        const lines = document.querySelector('#methodManualEntry textarea').value.split('\n').filter(l => l.trim() !== '').length;
-        document.getElementById('summaryFileName').innerText = `${lines} registros`;
+        const val = document.querySelector('#methodManualEntry textarea').value;
+        const total = countRealRecords(val);
+        document.getElementById('summaryFileName').innerText = `${total} registros`;
     } else {
         document.getElementById('summaryData').innerText = 'Archivo (XML/CSV)';
         document.getElementById('summaryFileLabel').innerText = 'Nombre Archivo:';
@@ -242,7 +269,7 @@ async function finalizeWizard() {
         routing_label: isEliminar ? null : routingLabel,
         datos_tipo: isEliminar ? 'N/A' : clientMode,
         datos: isManual ? manualData : (fileInput.files[0] ? fileInput.files[0].name : ''),
-        total_items: isManual ? manualData.split('\n').filter(l => l.trim() !== '').length : 0,
+        total_items: isManual ? countRealRecords(manualData) : 0,
         force: forceTask
     };
 
@@ -567,8 +594,8 @@ function validateScheduleStep() {
                 if (textarea) textarea.style.borderColor = ERROR_COLOR;
                 isValid = false;
             } else {
-                const individualPattern = /^\d{10}$/;
-                const rangePattern = /^\d{10}-\d{10}$/;
+                const individualPattern = /^\d{7,15}$/;
+                const rangePattern = /^\d{7,15}-\d{7,15}$/;
                 const allValid = lines.every(line => individualPattern.test(line.trim()) || rangePattern.test(line.trim()));
 
                 if (!allValid) {
@@ -651,6 +678,11 @@ function updateScheduleUI() {
     const stepNum = document.getElementById('scheduleStepNum');
     if (stepNum) stepNum.innerText = currentScheduleStep;
 
+    const forceContainer = document.getElementById('scheduleForceContainer');
+    if (forceContainer) {
+        forceContainer.style.display = isEliminar ? 'none' : 'flex';
+    }
+
     // Buttons
     const prevBtn = document.getElementById('schedulePrevStepBtn');
     const nextBtn = document.getElementById('scheduleNextStepBtn');
@@ -692,7 +724,7 @@ async function finalizeScheduleWizard() {
         routing_label: isEliminar ? null : routingLabel,
         datos_tipo: isEliminar ? 'N/A' : clientMode,
         datos: isManual ? manualData : (fileInput.files[0] ? fileInput.files[0].name : ''),
-        total_items: isManual ? manualData.split('\n').filter(l => l.trim() !== '').length : 0,
+        total_items: isManual ? countRealRecords(manualData) : 0,
         fecha_inicio: scheduledDateTime.toISOString(),
         force: forceTask
     };
@@ -893,8 +925,8 @@ function collectScheduleData() {
     if (isManual) {
         document.getElementById('scheduleSummaryData').innerText = 'Ingreso Manual';
         const textarea = document.querySelector('#scheduleMethodManualEntry textarea');
-        const lines = textarea ? textarea.value.split('\n').filter(l => l.trim() !== '').length : 0;
-        document.getElementById('scheduleSummaryFileName').innerText = `${lines} registros`;
+        const total = countRealRecords(textarea ? textarea.value : '');
+        document.getElementById('scheduleSummaryFileName').innerText = `${total} registros`;
     } else {
         document.getElementById('scheduleSummaryData').innerText = 'Archivo (XML/CSV)';
         const fileName = document.getElementById('scheduleFileNameDisplay');
