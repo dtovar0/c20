@@ -962,3 +962,71 @@ input[name="db_engine"]:checked + label .w-5.h-5 .bg-primary {
     border: 2px solid var(--nx-border);
     color: var(--color-body-text);
 }
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * COMPONENT: NUMBERED TEXTAREA (NEXUS CODE STYLE)
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+
+.nx-textarea-container {
+    display: flex;
+    font-family: 'Inter', sans-serif;
+    border: 2px solid var(--color-panel-border);
+    border-radius: 20px;
+    background: var(--color-input-bg);
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.nx-textarea-container:focus-within {
+    border-color: var(--color-input-focus);
+    box-shadow: 0 0 0 4px rgba(var(--color-primary), 0.1), inset 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.nx-line-numbers {
+    padding: 1rem 0;
+    min-width: 44px;
+    background: rgba(var(--color-primary), 0.03);
+    border-right: 1px solid var(--color-panel-border);
+    color: var(--color-primary);
+    opacity: 0.35;
+    text-align: center;
+    user-select: none;
+    font-family: 'monospace';
+    font-size: 10px;
+    font-weight: 800;
+    line-height: 1.5;
+    overflow-y: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.nx-numbered-textarea {
+    flex: 1;
+    padding: 1rem;
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    resize: none !important;
+    font-family: 'monospace';
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.5;
+    color: var(--color-input-text) !important;
+    overflow-y: auto;
+    width: 100%;
+}
+
+/* Custom Scrollbar for the textarea to not break alignment */
+.nx-numbered-textarea::-webkit-scrollbar {
+    width: 6px;
+}
+.nx-numbered-textarea::-webkit-scrollbar-track {
+    background: transparent;
+}
+.nx-numbered-textarea::-webkit-scrollbar-thumb {
+    background: var(--color-panel-border);
+    border-radius: 10px;
+}

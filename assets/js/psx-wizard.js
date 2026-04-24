@@ -26,6 +26,35 @@ function countRealRecords(text) {
     return total;
 }
 
+/**
+ * Sincroniza los números de línea basándose en el contenido del textarea
+ */
+function syncLineNumbers(textareaId, lineNumsId) {
+    const textarea = document.getElementById(textareaId);
+    const lineNums = document.getElementById(lineNumsId);
+    if (!textarea || !lineNums) return;
+
+    const lines = textarea.value.split('\n');
+    const count = Math.max(lines.length, 1);
+    
+    let html = '';
+    for (let i = 1; i <= count; i++) {
+        html += `<span>${i}</span>`;
+    }
+    lineNums.innerHTML = html;
+}
+
+/**
+ * Sincroniza el scroll vertical entre el textarea y la columna de números
+ */
+function syncScroll(textareaId, lineNumsId) {
+    const textarea = document.getElementById(textareaId);
+    const lineNums = document.getElementById(lineNumsId);
+    if (!textarea || !lineNums) return;
+
+    lineNums.scrollTop = textarea.scrollTop;
+}
+
 function openWizard() {
     const modal = document.getElementById('psxWizardModal');
     if (modal) {
@@ -85,6 +114,7 @@ function resetWizardForm() {
 
     handleRoutingLabelState();
     toggleDataMethod();
+    syncLineNumbers('wizardManualTextarea', 'wizardLineNums');
 }
 
 function changeStep(delta) {
@@ -118,7 +148,7 @@ function validateCurrentStep() {
 
         const isManual = document.getElementById('dataEntryToggle').checked;
         if (isManual) {
-            const textarea = document.querySelector('#methodManualEntry textarea');
+            const textarea = document.getElementById('wizardManualTextarea');
             const lines = textarea.value.trim().split('\n').filter(l => l.trim() !== '');
             
             if (lines.length === 0) {
@@ -238,7 +268,7 @@ function collectWizardData() {
     if (isManual) {
         document.getElementById('summaryData').innerText = 'Ingreso Manual';
         document.getElementById('summaryFileLabel').innerText = 'Total registros:';
-        const val = document.querySelector('#methodManualEntry textarea').value;
+        const val = document.getElementById('wizardManualTextarea').value;
         const total = countRealRecords(val);
         document.getElementById('summaryFileName').innerText = `${total} registros`;
     } else {
@@ -258,7 +288,7 @@ async function finalizeWizard() {
     const isEliminar = activeBtn && activeBtn.innerText.includes('Eliminar');
     const clientMode = document.getElementById('clientModeSelect').value;
     const routingLabel = document.getElementById('routingLabelInput').value;
-    const manualData = document.querySelector('#methodManualEntry textarea').value;
+    const manualData = document.getElementById('wizardManualTextarea').value;
     const forceTask = document.getElementById('psxForceToggle').checked;
 
     // 1. Preparar Payload Base
@@ -569,6 +599,7 @@ function resetScheduleWizardForm() {
 
     handleScheduleRoutingLabelState();
     toggleScheduleDataMethod();
+    syncLineNumbers('scheduleManualTextarea', 'scheduleLineNums');
 }
 
 function closeScheduleWizard() {
@@ -616,7 +647,7 @@ function validateScheduleStep() {
 
         const isManual = document.getElementById('scheduleDataEntryToggle').checked;
         if (isManual) {
-            const textarea = document.querySelector('#scheduleMethodManualEntry textarea');
+            const textarea = document.getElementById('scheduleManualTextarea');
             const lines = textarea ? textarea.value.trim().split('\n').filter(l => l.trim() !== '') : [];
             
             if (lines.length === 0) {
@@ -738,7 +769,7 @@ async function finalizeScheduleWizard() {
     const routingLabel = document.getElementById('scheduleRoutingLabelInput').value;
     const isManual = document.getElementById('scheduleDataEntryToggle').checked;
     const fileInput = document.getElementById('scheduleFileInput');
-    const manualData = document.querySelector('#scheduleMethodManualEntry textarea').value;
+    const manualData = document.getElementById('scheduleManualTextarea').value;
     const forceTask = document.getElementById('schedulePsxForceToggle').checked;
 
     const timeVal = document.getElementById('scheduleTimeInput').value;
@@ -953,7 +984,7 @@ function collectScheduleData() {
 
     if (isManual) {
         document.getElementById('scheduleSummaryData').innerText = 'Ingreso Manual';
-        const textarea = document.querySelector('#scheduleMethodManualEntry textarea');
+        const textarea = document.getElementById('scheduleManualTextarea');
         const total = countRealRecords(textarea ? textarea.value : '');
         document.getElementById('scheduleSummaryFileName').innerText = `${total} registros`;
     } else {
@@ -1285,7 +1316,7 @@ async function confirmModifyAction() {
         tarea: modifyTaskType,
         routing_label: modRouting ? modRouting.value : null,
         accion_tipo: modifyTaskType === 'delete' ? 'N/A' : (modClientMode ? modClientMode.value : 'call_in'),
-        datos_tipo: 'Manual', // Se mantiene Manual en modificación ya que no se puede cambiar el origen
+        datos_tipo: currentModifyTaskData.datos_tipo, 
         force: modForce ? modForce.checked : false,
         is_scheduled: modifyTiming === 'schedule',
         scheduled_time: schedTime

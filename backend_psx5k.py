@@ -159,7 +159,7 @@ def main():
     last_health_check = datetime.datetime.now()
     last_hygiene_check = datetime.datetime.now()
     
-    HEALTH_CHECK_INTERVAL = 3600 # 1 hora si está idle
+    HEALTH_CHECK_INTERVAL = int(os.getenv('PSX_WATCHDOG_MIN_INTERVAL', 60)) * 60 # Convertir minutos a segundos
     HYGIENE_CHECK_INTERVAL = 86400 # 24 horas para purga de usuarios
 
     while True:
@@ -184,12 +184,13 @@ def main():
                 should_check = False
                 
                 if task:
-                    # Si hay tarea, validamos conectividad antes de empezar
+                    # Siempre validamos conectividad si hay una tarea a procesar
                     should_check = True
-                elif (now - last_health_check).total_seconds() > HEALTH_CHECK_INTERVAL:
-                    # Si está idle, validamos cada hora
-                    should_check = True
-                    last_health_check = now
+                elif os.getenv('PSX_WATCHDOG_IDLE_ENABLED', 'false').lower() == 'true':
+                    # Solo validamos periódicamente si el Watchdog está explícitamente activado en .env
+                    if (now - last_health_check).total_seconds() > HEALTH_CHECK_INTERVAL:
+                        should_check = True
+                        last_health_check = now
 
                 if should_check:
                     from psx5k_cmd import test_connectivity

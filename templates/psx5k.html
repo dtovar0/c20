@@ -173,7 +173,12 @@
                                 <p class="nx-label-strip" id="fileNameDisplay">Cargar Archivo Operativo</p>
                             </label>
                         </div>
-                        <div id="methodManualEntry" class="hidden"><textarea placeholder="individual: 8147777000 &#10;rangos:      8147777000-8147777100" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl h-40 px-5 py-4 text-xs font-bold text-input outline-none resize-none"></textarea></div>
+                        <div id="methodManualEntry" class="hidden">
+                            <div class="nx-textarea-container h-48">
+                                <div class="nx-line-numbers" id="wizardLineNums"><span>1</span></div>
+                                <textarea id="wizardManualTextarea" oninput="syncLineNumbers('wizardManualTextarea', 'wizardLineNums')" onscroll="syncScroll('wizardManualTextarea', 'wizardLineNums')" placeholder="individual: 8147777000 &#10;rangos:      8147777000-8147777100" class="nx-numbered-textarea"></textarea>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -313,7 +318,12 @@
                                 <p class="nx-label-strip" id="scheduleFileNameDisplay">Cargar Archivo Operativo</p>
                             </label>
                         </div>
-                        <div id="scheduleMethodManualEntry" class="hidden"><textarea placeholder="individual: 8147777000 &#10;rangos:      8147777000-8147777100" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl h-40 px-5 py-4 text-xs font-bold text-input outline-none resize-none"></textarea></div>
+                        <div id="scheduleMethodManualEntry" class="hidden">
+                            <div class="nx-textarea-container h-48">
+                                <div class="nx-line-numbers" id="scheduleLineNums"><span>1</span></div>
+                                <textarea id="scheduleManualTextarea" oninput="syncLineNumbers('scheduleManualTextarea', 'scheduleLineNums')" onscroll="syncScroll('scheduleManualTextarea', 'scheduleLineNums')" placeholder="individual: 8147777000 &#10;rangos:      8147777000-8147777100" class="nx-numbered-textarea"></textarea>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

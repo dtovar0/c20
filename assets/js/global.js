@@ -107,8 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     noResults.classList.add('hidden');
                     tbody.innerHTML = data.results.map(r => `
                         <tr class="hover:bg-primary/5 transition-colors group">
-                            <td class="px-6 py-4 text-[11px] font-bold text-label/60">${new Date(r.fecha).toLocaleString()}</td>
-                            <td class="px-6 py-4 text-xs font-black text-primary">${r.numero}</td>
                             <td class="px-6 py-4 text-[10px] font-bold text-label uppercase tracking-tighter">#${r.task_id}</td>
                             <td class="px-6 py-4 text-[10px] font-bold text-label/80">${r.routing_label || '-'}</td>
                             <td class="px-6 py-4 text-center">
@@ -117,9 +115,10 @@ document.addEventListener('DOMContentLoaded', () => {
                                       r.estado === 'FAIL' ? 'bg-rose-500/10 text-rose-500' : 
                                       r.estado === 'DUP' ? 'bg-amber-500/10 text-amber-500' : 
                                       'bg-slate-500/10 text-slate-500'}">
-                                    ${r.estado}
+                                    ${r.estado || 'UNKNOWN'}
                                 </span>
                             </td>
+                            <td class="px-6 py-4 text-[11px] font-bold text-label/60">${r.fecha ? new Date(r.fecha).toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-'}</td>
                         </tr>
                     `).join('');
                     openModal('globalSearchModal');
@@ -140,6 +139,14 @@ document.addEventListener('DOMContentLoaded', () => {
         systemSearch.addEventListener('blur', function() {
             if (this.value === '' && window.activeNexusTable) {
                 window.activeNexusTable.search('').draw();
+            }
+        });
+
+        // Trigger search on Enter key
+        systemSearch.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                deepSearchBtn.click();
             }
         });
     }

@@ -103,6 +103,8 @@ class PSX5KHistory(db.Model):
             "numero": self.numero,
             "routing_label": self.routing_label,
             "accion": self.accion,
+            "estado": self.estado,
+            "fecha": self.fecha.isoformat() if self.fecha else None
         }
 
 class PSX5KCommandLog(db.Model):

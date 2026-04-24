@@ -16,7 +16,8 @@ function generateTaskGraphic(resumen) {
     const okPct = (resumen.ok / resumen.total) * 100;
     const failPct = (resumen.fail / resumen.total) * 100;
     const forcePct = (resumen.force_ok / resumen.total) * 100;
-    const pendingPct = Math.max(0, 100 - (okPct + failPct + forcePct));
+    const dupPct = (resumen.dup / resumen.total) * 100;
+    const pendingPct = Math.max(0, 100 - (okPct + failPct + forcePct + dupPct));
 
     return `
         <div class="flex flex-col gap-1 w-full max-w-[120px] mx-auto">
@@ -24,11 +25,12 @@ function generateTaskGraphic(resumen) {
                 <div class="h-full bg-primary transition-all duration-500" style="width: ${okPct}%" title="OK: ${resumen.ok}"></div>
                 <div class="h-full bg-rose-500 transition-all duration-500" style="width: ${failPct}%" title="FAIL: ${resumen.fail}"></div>
                 <div class="h-full bg-violet-500 transition-all duration-500" style="width: ${forcePct}%" title="FORCED: ${resumen.force_ok}"></div>
+                <div class="h-full bg-amber-500 transition-all duration-500" style="width: ${dupPct}%" title="DUP: ${resumen.dup}"></div>
                 <div class="h-full bg-transparent" style="width: ${pendingPct}%"></div>
             </div>
             <div class="flex justify-between items-center px-0.5">
-                <span class="text-[8px] font-black text-primary/60">${Math.round(okPct + failPct + forcePct)}%</span>
-                <span class="text-[8px] font-bold text-label/30">${resumen.ok + resumen.fail + resumen.force_ok}/${resumen.total}</span>
+                <span class="text-[8px] font-black text-primary/60">${Math.round(okPct + failPct + forcePct + dupPct)}%</span>
+                <span class="text-[8px] font-bold text-label/30">${resumen.ok + resumen.fail + resumen.force_ok + resumen.dup}/${resumen.total}</span>
             </div>
         </div>
     `;

@@ -3,6 +3,7 @@ import sys
 import re
 import os
 import datetime
+import shutil
 from dotenv import load_dotenv
 
 # Cargar variables de entorno
@@ -21,8 +22,12 @@ def test_connectivity():
     if not all([PSX_IP, PSX_USER, PSX_PASS]):
         return False, "Faltan credenciales en .env"
 
+    ssh_path = shutil.which('ssh')
+    if not ssh_path:
+        return False, "Binario 'ssh' no encontrado en el sistema (PATH)."
+
     try:
-        cmd = pexpect.spawn(f'ssh -o StrictHostKeyChecking=no -p {PSX_PORT} {PSX_USER}@{PSX_IP}', timeout=10, encoding='utf-8', codec_errors='replace')
+        cmd = pexpect.spawn(f'{ssh_path} -o StrictHostKeyChecking=no -p {PSX_PORT} {PSX_USER}@{PSX_IP}', timeout=10, encoding='utf-8', codec_errors='replace')
         idx = cmd.expect(['Password:', pexpect.EOF, pexpect.TIMEOUT])
         
         if idx == 0: # Password:
@@ -91,8 +96,12 @@ def psx5k_cmd(line_task, line_number, line_type=None, routing_label=None, force=
     try:
         print(f"🚀 Conectando a PSX ({PSX_IP}) para tarea: {line_task.upper()} (Force: {force})...")
         
+        ssh_path = shutil.which('ssh')
+        if not ssh_path:
+            raise FileNotFoundError("El ejecutable 'ssh' no fue encontrado. Asegúrate de que OpenSSH esté instalado y en el PATH.")
+
         # 1. Establecer Conexión SSH
-        cmd = pexpect.spawn(f'ssh -o StrictHostKeyChecking=no -p {PSX_PORT} {PSX_USER}@{PSX_IP}', timeout=30, encoding='utf-8', codec_errors='replace')
+        cmd = pexpect.spawn(f'{ssh_path} -o StrictHostKeyChecking=no -p {PSX_PORT} {PSX_USER}@{PSX_IP}', timeout=30, encoding='utf-8', codec_errors='replace')
         cmd.setecho(False)
         cmd.delaybeforesend = 0.8
         
