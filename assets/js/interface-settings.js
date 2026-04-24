@@ -1,0 +1,128 @@
+/**
+ * INTERFACE SETTINGS MODULE
+ * Manages global UI preferences stored in localStorage.
+ */
+
+window.nexusSettings = {
+    notifications: true,
+    refreshInterval: 60, // seconds
+    initialized: false
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadInterfaceSettings();
+    initSettingsUI();
+});
+
+/**
+ * Loads settings from localStorage or defaults
+ */
+function loadInterfaceSettings() {
+    const saved = localStorage.getItem('nexus_interface_settings');
+    if (saved) {
+        try {
+            const parsed = JSON.parse(saved);
+            window.nexusSettings = { ...window.nexusSettings, ...parsed };
+        } catch (e) {
+            console.error('Error parsing settings:', e);
+        }
+    }
+    window.nexusSettings.initialized = true;
+    
+    // Apply initial state if needed (e.g. starting pollers)
+    startGlobalPolling();
+}
+
+/**
+ * Initializes the Modal UI interaction
+ */
+function initSettingsUI() {
+    const settingsBtn = document.getElementById('settingsBtn');
+    const saveBtn = document.getElementById('saveSettingsBtn');
+    const refreshRange = document.getElementById('settingRefreshRange');
+    const refreshDisplay = document.getElementById('refreshValueDisplay');
+    const notifyToggle = document.getElementById('settingNotifyToggle');
+
+    if (!settingsBtn) return;
+
+    // Open Modal
+    settingsBtn.addEventListener('click', () => {
+        // Sync UI with current settings
+        if (refreshRange) refreshRange.value = window.nexusSettings.refreshInterval;
+        if (refreshDisplay) refreshDisplay.textContent = window.nexusSettings.refreshInterval + 's';
+        if (notifyToggle) notifyToggle.checked = window.nexusSettings.notifications;
+        
+        if (typeof openModal === 'function') openModal('settingsModal');
+    });
+
+    // Range Input Feedback
+    if (refreshRange && refreshDisplay) {
+        refreshRange.addEventListener('input', (e) => {
+            refreshDisplay.textContent = e.target.value + 's';
+        });
+    }
+
+    // Save Logic
+    if (saveBtn) {
+        saveBtn.addEventListener('click', () => {
+            const newSettings = {
+                notifications: notifyToggle ? notifyToggle.checked : true,
+                refreshInterval: refreshRange ? parseInt(refreshRange.value) : 60
+            };
+
+            const changedInterval = newSettings.refreshInterval !== window.nexusSettings.refreshInterval;
+            
+            window.nexusSettings = { ...window.nexusSettings, ...newSettings };
+            localStorage.setItem('nexus_interface_settings', JSON.stringify(window.nexusSettings));
+
+            if (typeof showToast === 'function') {
+                showToast('Ajustes aplicados correctamente', 'success');
+            }
+
+            // If interval changed, we need to restart pollers
+            if (changedInterval) {
+                startGlobalPolling();
+            }
+
+            if (typeof closeModal === 'function') closeModal('settingsModal');
+        });
+    }
+}
+
+/**
+ * Global Polking Orchestrator
+ * Clears existing intervals and sets up new ones based on current settings.
+ */
+window.nexusPollers = window.nexusPollers || [];
+
+function startGlobalPolling() {
+    // 1. Clear existing pollers
+    window.nexusPollers.forEach(p => clearInterval(p.id));
+    window.nexusPollers = [];
+
+    const intervalMs = window.nexusSettings.refreshInterval * 1000;
+
+    // 2. Register Poller: PSX Task Table (if present)
+    const psxTable = $('#auditTableBody').closest('table').DataTable();
+    if (psxTable) {
+        const id = setInterval(() => {
+            console.log('🔄 Polling: DataTables Reload');
+            psxTable.ajax.reload(null, false); // Reload without resetting pagination
+        }, intervalMs);
+        window.nexusPollers.push({ name: 'psx_table', id });
+    }
+
+    // 3. Register Poller: Dashboard Charts (if present)
+    // Add logic here if dashboard charts need refresh
+}
+
+/**
+ * Notification Helper
+ * Usage: if (window.canNotify()) { ... }
+ */
+window.canNotify = function() {
+    return window.nexusSettings.notifications;
+};
+
+// Re-run polling start when custom events or navigation happen
+document.addEventListener('nexus:viewChanged', startGlobalPolling);

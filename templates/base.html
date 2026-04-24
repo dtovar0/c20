@@ -110,52 +110,68 @@
                     <button id="themeToggle" class="p-2 hover:bg-surface-container rounded-base transition-all group flex items-center justify-center relative overflow-hidden active:scale-95" data-nx-tooltip="Cambiar Tema">
                         <svg class="w-5 h-5 text-label/60 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path></svg>
                     </button>
+
+                    <!-- User Settings -->
+                    <button id="settingsBtn" class="p-2 hover:bg-surface-container rounded-base transition-all group active:scale-95" data-nx-tooltip="Ajustes de Interfaz">
+                        <svg class="w-5 h-5 text-label/60 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </button>
                 </div>
             </header>
 
-            <!-- Global Search Results Modal (History PSX5K) -->
-            <div id="globalSearchModal" class="nexus-modal hidden fixed inset-0 z-[100] items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
-                <div class="nexus-modal-content w-full max-w-4xl bg-panel-fill border border-panel-border rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300">
-                    <!-- Header -->
+            <!-- Settings Modal -->
+            <div id="settingsModal" class="nexus-modal hidden fixed inset-0 z-[100] items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+                <div class="nexus-modal-content w-full max-w-lg bg-panel-fill border border-panel-border rounded-3xl shadow-2xl overflow-hidden">
                     <div class="p-6 border-b border-panel-border flex items-center justify-between bg-surface-container/30">
                         <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary shadow-lg shadow-primary/10">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary shadow-lg">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
                             </div>
                             <div>
-                                <h3 class="text-base font-black text-primary uppercase itaic leading-none tracking-tighter">Búsqueda en Historial PSX5K</h3>
-                                <p id="searchQueryDisplay" class="text-[12px] text-label/60 font-bold uppercase tracking-widest mt-1">Resultados para: "..."</p>
+                                <h3 class="text-base font-black text-primary uppercase leading-none tracking-tighter italic">Ajustes de Interfaz</h3>
+                                <p class="text-[12px] text-label/60 font-bold uppercase tracking-widest mt-1">Configuración del Sistema</p>
                             </div>
                         </div>
-                        <button onclick="closeModal('globalSearchModal')" class="p-2 hover:bg-surface-container rounded-xl transition-all group">
-                            <svg class="w-6 h-6 text-label group-hover:text-rose-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        <button onclick="closeModal('settingsModal')" class="p-2 hover:bg-surface-container rounded-xl transition-all">
+                            <svg class="w-6 h-6 text-label" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         </button>
                     </div>
 
-                    <!-- Body -->
-                    <div class="max-h-[60vh] overflow-y-auto custom-scrollbar p-0">
-                        <table class="w-full text-left border-collapse">
-                            <thead class="sticky top-0 bg-panel-fill/95 backdrop-blur-md z-10">
-                                <tr class="text-[12px] font-black text-primary/60 uppercase tracking-widest border-b border-panel-border">
-                                    <th class="px-6 py-4">ID</th>
-                                    <th class="px-6 py-4">Routing Label</th>
-                                    <th class="px-6 py-4 text-center">Estado</th>
-                                    <th class="px-6 py-4">Fecha</th>
-                                </tr>
-                            </thead>
-                            <tbody id="globalSearchResultsBody" class="divide-y divide-panel-border/50">
-                                <!-- Results injected here -->
-                            </tbody>
-                        </table>
-                        <div id="noHistoryResults" class="hidden p-20 text-center opacity-40">
-                             <svg class="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 9.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                             <p class="text-sm font-black uppercase tracking-widest">No se encontraron registros en el historial</p>
+                    <div class="p-8 space-y-6">
+                        <!-- Notification Toggle -->
+                        <div class="flex items-center justify-between p-4 bg-surface-container/20 rounded-2xl border border-panel-border/40">
+                            <div>
+                                <h4 class="text-sm font-black text-label uppercase tracking-tight">Notificaciones de Escritorio</h4>
+                                <p class="text-[12px] text-label/60 font-medium leading-none mt-1">Recibir alertas de tareas terminadas</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="settingNotifyToggle" class="sr-only peer">
+                                <div class="w-12 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                            </label>
+                        </div>
+
+                        <!-- Refresh Interval -->
+                        <div class="p-4 bg-surface-container/20 rounded-2xl border border-panel-border/40">
+                            <div class="flex justify-between items-center mb-4">
+                                <div>
+                                    <h4 class="text-sm font-black text-label uppercase tracking-tight">Frecuencia de Refresco</h4>
+                                    <p class="text-[12px] text-label/60 font-medium leading-none mt-1">Actualización automática de tablas</p>
+                                </div>
+                                <span id="refreshValueDisplay" class="px-3 py-1 bg-primary/20 text-primary text-[12px] font-black rounded-lg">60s</span>
+                            </div>
+                            <input type="range" id="settingRefreshRange" min="10" max="300" step="10" value="60" class="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-primary">
+                            <div class="flex justify-between text-[10px] font-black text-label/40 uppercase tracking-widest mt-2">
+                                <span>10s (Alta)</span>
+                                <span>300s (Baja)</span>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Footer -->
-                    <div class="p-4 bg-surface-container/20 border-t border-panel-border flex justify-end">
-                        <button onclick="closeModal('globalSearchModal')" class="px-6 py-2.5 bg-panel-border hover:bg-surface-container text-label text-xs font-black rounded-xl uppercase tracking-widest transition-all">Cerrar</button>
+                    <div class="p-6 bg-surface-container/30 border-t border-panel-border flex justify-end gap-3">
+                        <button onclick="closeModal('settingsModal')" class="px-6 py-2.5 text-label/60 hover:text-label text-xs font-black uppercase tracking-widest transition-all">Cancelar</button>
+                        <button id="saveSettingsBtn" class="px-8 py-2.5 bg-primary text-white text-xs font-black rounded-xl uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all">Guardar Cambios</button>
                     </div>
                 </div>
             </div>
@@ -170,6 +186,7 @@
     </div>
 
     <!-- Scripts Globales -->
+    <script src="{{ url_for('core.serve_assets', filename='js/interface-settings.js') }}"></script>
     {% block scripts %}{% endblock %}
 </body>
 </html>
