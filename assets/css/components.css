@@ -5,14 +5,6 @@
 #usersTableBody tr {
     height: 1px !important; /* Browser distributes table height evenly across all rows */
 }
-/* PSX SPECIFIC: Restore header height and stabilize rows */
-#psxTasksTable thead tr {
-    height: 60px !important;
-}
-#psxTasksTable tbody tr {
-    height: 52px !important;
-}
-
 
 #tab-panel-audit table thead th,
 #tab-panel-usuario table thead th {
