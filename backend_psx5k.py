@@ -50,10 +50,10 @@ def handle_stale_tasks(app):
             db.session.commit()
             
             admin = User.query.filter_by(role='administrador').first()
-            if admin and admin.email:
+            if admin and admin.username:
                 send_notification_by_slug(
                     slug='error', 
-                    target_email=admin.email,
+                    target_email=admin.username,
                     context={'usuario': 'SYSTEM_WATCHDOG', 'ip': 'LOCAL_WORKER', 'error': f'TASK_TIMEOUT_ID_{task.id}'}
                 )
             add_audit_log("tarea terminada", status="error", detail=f"Timeout: {task.id} - Superó 60 min", user_override="SYSTEM")
@@ -82,10 +82,10 @@ def handle_user_hygiene(app):
                 
                 # 2. Notificación Email
                 admin = User.query.filter_by(role='administrador').first()
-                if admin and admin.email:
+                if admin and admin.username:
                     send_notification_by_slug(
                         slug='info', 
-                        target_email=admin.email,
+                        target_email=admin.username,
                         context={
                             'usuario': 'SYSTEM_WORKER', 
                             'ip': 'DAEMON_PROCESS', 
@@ -196,10 +196,10 @@ def main():
 
                         # 3. Notificación por Correo
                         admin = User.query.filter_by(role='administrador').first()
-                        if admin and admin.email:
+                        if admin and admin.username:
                             send_notification_by_slug(
                                 slug='error', 
-                                target_email=admin.email,
+                                target_email=admin.username,
                                 context={'usuario': 'SYSTEM_WORKER', 'ip': os.getenv('PSX_IP', 'PSX_NODE'), 'error': f'CONECTIVIDAD FALLIDA: {msg}'}
                             )
                         
@@ -223,8 +223,8 @@ def main():
 
                 # Notificación de inicio
                 admin = User.query.filter_by(role='administrador').first()
-                if admin and admin.email:
-                    send_notification_by_slug(slug='inicio', target_email=admin.email, 
+                if admin and admin.username:
+                    send_notification_by_slug(slug='inicio', target_email=admin.username, 
                                             context={'usuario': task.job.usuario, 'hora': task.fecha_inicio.strftime('%H:%M:%S')})
                 
                 add_audit_log("tarea iniciada", status="info", detail=f"ID: {task.id} - {task.job.tarea}", user_override=task.job.usuario)
@@ -292,8 +292,8 @@ def main():
                 
                 add_audit_log("tarea terminada", status="success", detail=f"ID: {task.id} | OK: {detail.ok} | FAIL: {detail.fail}", user_override=task.job.usuario)
 
-                if admin and admin.email:
-                    send_notification_by_slug(slug='terminado', target_email=admin.email, 
+                if admin and admin.username:
+                    send_notification_by_slug(slug='terminado', target_email=admin.username, 
                                             context={'usuario': task.job.usuario, 'hora': task.fecha_fin.strftime('%H:%M:%S')})
 
             time.sleep(SLEEP_BETWEEN)
