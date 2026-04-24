@@ -308,7 +308,7 @@ async function finalizeWizard() {
                 if (typeof showToast === 'function') {
                     showToast(`Se han creado ${numTasks} tareas correctamente`, 'success');
                 }
-                if (typeof fetchPSXData === 'function') fetchPSXData();
+                if (window.activeNexusTable) window.activeNexusTable.ajax.reload(null, false);
                 
                 setTimeout(() => {
                     if (progressBar) progressBar.style.width = '0%';
@@ -741,7 +741,7 @@ async function finalizeScheduleWizard() {
                 if (typeof showToast === 'function') {
                     showToast(`Se han programado ${numTasks} tareas con éxito`, 'success');
                 }
-                if (typeof fetchPSXData === 'function') fetchPSXData();
+                if (window.activeNexusTable) window.activeNexusTable.ajax.reload(null, false);
             }, 1000);
 
         } catch (error) {

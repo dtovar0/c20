@@ -325,7 +325,7 @@ $(document).on('submit', '#form-add-user', async function(e) {
             closeModal('modal-add-user');
             this.reset();
             document.getElementById('admin_role_text_add').textContent = 'Rol: Usuario Estándar';
-            usersDataTable.ajax.reload();
+            usersDataTable.ajax.reload(null, false);
             if(typeof showToast === 'function') showToast('Usuario creado correctamente', 'success');
         } else {
             showToast(res.message, 'error');
@@ -349,7 +349,7 @@ $(document).on('click', '#confirm-delete-action', async function() {
         if (res.status === 'success') {
             closeModal('modal-delete-confirm');
             selectedUsers.clear();
-            usersDataTable.ajax.reload();
+            usersDataTable.ajax.reload(null, false);
             if(typeof showToast === 'function') showToast(`${ids.length} usuarios eliminados`, 'success');
         }
     } catch (error) {
@@ -378,7 +378,7 @@ $(document).on('submit', '#form-modify-user', async function(e) {
         if (res.status === 'success') {
             closeModal('modal-modify-user');
             selectedUsers.clear();
-            usersDataTable.ajax.reload();
+            usersDataTable.ajax.reload(null, false);
             if(typeof showToast === 'function') showToast('Usuario actualizado', 'success');
         } else {
             showToast(res.message, 'error');

@@ -163,7 +163,7 @@ def main():
                 # Buscar una tarea pendiente
                 task = PSX5KTask.query.filter(
                     PSX5KTask.estado.in_(['Pendiente', 'Programada'])
-                ).order_by(PSX5KTask.created_at.asc()).first()
+                ).order_by(PSX5KTask.id.asc()).first()
 
                 # --- LÓGICA DE MONITOREO INTEGRADA ---
                 now = datetime.datetime.now()
