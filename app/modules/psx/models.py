@@ -14,7 +14,7 @@ class PSX5KJob(db.Model):
     datos_tipo = db.Column(db.String(50)) # Archivo / Manual
     routing_label = db.Column(db.String(100))
     archivo_origen = db.Column(db.String(255))
-    force = db.Column(db.Boolean, default=False)
+    run_force = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.datetime.now)
     
     # Relación con sus fragmentos (chunks)

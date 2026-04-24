@@ -248,7 +248,7 @@ def main():
                 ani_list = process_task_data(task)
                 
                 if os.getenv('DEBUG_PSX', 'false').lower() == 'true':
-                    print(f"🔍 DEBUG: [Task:{task.job.tarea}] [ANIs:{len(ani_list)}] [Type:{task.job.accion_tipo}] [Route:{task.job.routing_label}] [Force:{task.job.force}]")
+                    print(f"🔍 DEBUG: [Task:{task.job.tarea}] [ANIs:{len(ani_list)}] [Type:{task.job.accion_tipo}] [Route:{task.job.routing_label}] [Force:{task.job.run_force}]")
 
                 detail = db.session.get(PSX5KDetail, task.id) or PSX5KDetail(id=task.id)
                 detail.total = len(ani_list)
@@ -268,7 +268,7 @@ def main():
                         line_number=ani_list,
                         line_type=task.job.accion_tipo if task.job.tarea == 'add' else None,
                         routing_label=task.job.routing_label,
-                        force=task.job.force
+                        force=task.job.run_force
                     )
                     if os.getenv('DEBUG_PSX', 'false').lower() == 'true':
                         # Omitimos logs y full_flow para no saturar la consola

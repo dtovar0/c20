@@ -136,7 +136,7 @@ def create_task():
             datos_tipo=raw_origen,
             routing_label=data.get('routing_label'),
             archivo_origen=data.get('datos') if raw_origen == 'Archivo' else 'Ingreso Manual',
-            force=data.get('force', False)
+            run_force=data.get('force', False)
         )
         db.session.add(new_job)
         db.session.flush() # Para obtener el new_job.id
@@ -410,7 +410,7 @@ def update_or_reprocess_job(job_id):
                 datos_tipo=job.datos_tipo,
                 routing_label=data.get('routing_label', job.routing_label),
                 archivo_origen=f"REPROCESO_FROM_{job_id}",
-                force=data.get('force', job.force)
+                run_force=data.get('force', job.run_force)
             )
             db.session.add(new_job)
             db.session.flush()
@@ -446,7 +446,7 @@ def update_or_reprocess_job(job_id):
             job.tarea = data.get('tarea', job.tarea)
             job.accion_tipo = data.get('accion_tipo', job.accion_tipo)
             job.routing_label = data.get('routing_label', job.routing_label)
-            job.force = data.get('force', job.force)
+            job.run_force = data.get('force', job.run_force)
             
             # Actualizar estado y tiempos de las tareas asociadas
             for t in job.tasks:
