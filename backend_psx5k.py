@@ -271,7 +271,9 @@ def main():
                         force=task.job.force
                     )
                     if os.getenv('DEBUG_PSX', 'false').lower() == 'true':
-                        print(f"✅ DEBUG RESULT: {results}")
+                        # Omitimos logs y full_flow para no saturar la consola
+                        debug_res = {k: v for k, v in results.items() if k not in ['logs', 'full_flow']}
+                        print(f"✅ DEBUG RESULT: {debug_res}")
                 except Exception as task_err:
                     print(f"❌ Error ejecutando Tarea ID {task.id}: {task_err}")
                     task.estado = 'Error'
