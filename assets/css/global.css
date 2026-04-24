@@ -1,11 +1,14 @@
 html {
     background-color: var(--color-body-bg);
-    overflow-y: scroll; /* Constante para evitar saltos horizontales */
+    overflow: hidden; /* Layout fijo: scroll confinado al <main> interno */
+    height: 100%;
 }
 
 body {
     font-family: 'Inter', sans-serif;
     background-color: var(--color-body-bg);
+    height: 100%;
+    overflow: hidden;
 }
 
 /* === VIEW TRANSITIONS (Eliminate flickering) === */
@@ -19,10 +22,6 @@ body {
     animation-duration: 0.25s;
 }
 
-/* Evitar que el scrollbar desaparezca durante la transición */
-html {
-    overflow-y: scroll;
-}
 
 .custom-scrollbar::-webkit-scrollbar {
     width: 4px;

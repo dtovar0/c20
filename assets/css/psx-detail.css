@@ -73,7 +73,10 @@ body {
     display: none;
 }
 .tab-pane.active {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 100%;
     animation: fadeIn 0.5s ease-out;
 }
 

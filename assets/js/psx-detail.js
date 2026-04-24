@@ -207,13 +207,13 @@ function renderPageNumbers(total) {
         if(i == 1 || i == total || (i >= currentPage - 1 && i <= currentPage + 1)) {
             const btn = document.createElement('button');
             btn.innerText = i;
-            btn.className = `w-8 h-8 rounded-lg text-[12px] font-black transition-all ${i === currentPage ? 'bg-primary text-panel-fill shadow-lg shadow-primary/20' : 'bg-panel-fill/10 text-label hover:bg-panel-fill/20'}`;
+            btn.className = `w-9 h-9 rounded-xl text-[12px] font-black transition-all flex items-center justify-center ${i === currentPage ? 'bg-primary text-panel-fill shadow-lg shadow-primary/20 border border-primary' : 'bg-panel-fill/30 text-label border border-panel-border/20 hover:bg-panel-fill/50 hover:border-primary/20'}`;
             btn.onclick = () => { currentPage = i; renderTable(); };
             container.appendChild(btn);
         } else if (i == currentPage - 2 || i == currentPage + 2) {
             const span = document.createElement('span');
             span.innerText = '...';
-            span.className = 'text-label text-[10px] px-1';
+            span.className = 'text-label/40 text-[10px] px-0.5 font-black';
             container.appendChild(span);
         }
     }
