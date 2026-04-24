@@ -270,16 +270,16 @@ function renderGhostRows(settings, columns) {
     let ghostHtml = '';
     for (let i = 0; i < ghostCount; i++) {
         ghostHtml += `
-            <tr class="animate-pulse pointer-events-none select-none opacity-40">
-                <td class="bg-surface-container/5 border-y border-l border-panel-border/10 rounded-l-2xl">
+            <tr class="animate-pulse pointer-events-none select-none opacity-40" style="height: 52px !important;">
+                <td class="border-y border-l border-panel-border/10 rounded-l-2xl" style="background: rgba(255,255,255,0.02)">
                     <div class="h-1.5 w-10 bg-label/10 rounded-full mx-auto"></div>
                 </td>
                 ${Array(columns - 2).fill(0).map(() => `
-                    <td class="bg-surface-container/5 border-y border-panel-border/10">
+                    <td class="border-y border-panel-border/10" style="background: rgba(255,255,255,0.02)">
                         <div class="h-1 w-full bg-label/5 rounded-full"></div>
                     </td>
                 `).join('')}
-                <td class="bg-surface-container/5 border-y border-r border-panel-border/10 rounded-r-2xl">
+                <td class="border-y border-r border-panel-border/10 rounded-r-2xl" style="background: rgba(255,255,255,0.02)">
                     <div class="h-1 w-full bg-label/5 rounded-full"></div>
                 </td>
             </tr>
