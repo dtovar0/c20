@@ -4,26 +4,38 @@
  * Tab switching logic for Dashboard, Technical History, and CMD History.
  */
 function switchTab(tabId) {
-    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(b => {
-        b.classList.remove('active', 'text-white');
-        b.classList.add('text-slate-500');
-        const dot = b.querySelector('div');
-        dot.className = 'w-1.5 h-1.5 rounded-full bg-slate-600 transition-colors';
+    const panes = document.querySelectorAll('.tab-pane');
+    panes.forEach(p => {
+        p.classList.remove('active');
+        p.style.opacity = '0';
+        p.style.transform = 'translateY(10px)';
+        p.style.transition = 'all 0.4s ease-out';
     });
 
-    document.getElementById('tab-' + tabId).classList.add('active');
-    const btn = document.getElementById('btn-' + tabId);
-    btn.classList.add('active', 'text-white');
-    btn.classList.remove('text-slate-500');
+    document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('active');
+        const dot = b.querySelector('div');
+        if (dot) dot.className = 'w-1.5 h-1.5 rounded-full bg-label/20 transition-colors';
+    });
+
+    const activePane = document.getElementById('tab-' + tabId);
+    activePane.classList.add('active');
     
-    const dot = btn.querySelector('div');
-    if(tabId === 'dashboard') {
-        dot.className = 'w-1.5 h-1.5 rounded-full bg-sky-500 shadow-[0_0_8px_rgba(14,165,233,1)]';
-    } else if(tabId === 'logs') {
-        dot.className = 'w-1.5 h-1.5 rounded-full bg-violet-500 shadow-[0_0_8px_rgba(139,92,246,1)]';
-    } else if(tabId === 'cmd') {
-        dot.className = 'w-1.5 h-1.5 rounded-full bg-orange-500 shadow-[0_0_8px_rgba(249,115,22,1)]';
+    // Trigger animation
+    setTimeout(() => {
+        activePane.style.opacity = '1';
+        activePane.style.transform = 'translateY(0)';
+    }, 50);
+
+    const btn = document.getElementById('btn-' + tabId);
+    if (btn) {
+        btn.classList.add('active');
+        const dot = btn.querySelector('div');
+        if(dot) {
+            if(tabId === 'dashboard') dot.className = 'w-1.5 h-1.5 rounded-full bg-sky-500 shadow-[0_0_8px_rgba(14,165,233,1)]';
+            else if(tabId === 'logs') dot.className = 'w-1.5 h-1.5 rounded-full bg-violet-500 shadow-[0_0_8px_rgba(139,92,246,1)]';
+            else if(tabId === 'cmd') dot.className = 'w-1.5 h-1.5 rounded-full bg-orange-500 shadow-[0_0_8px_rgba(249,115,22,1)]';
+        }
     }
 }
 
@@ -69,6 +81,63 @@ function sortHistory(colIndex) {
     renderTable();
 }
 
+let currentQuickFilter = 'all';
+
+function quickFilter(type) {
+    const table = document.getElementById('historyTable');
+    if (!table) return;
+    
+    const rows = Array.from(table.getElementsByClassName('history-row'));
+    
+    // LOGIC: Toggle off if clicking the same active filter
+    if (type === currentQuickFilter && type !== 'all') {
+        type = 'all';
+    }
+    
+    currentQuickFilter = type;
+    
+    // Apply Filtering
+    if (type === 'all') {
+        filteredRows = rows;
+    } else {
+        filteredRows = rows.filter(row => {
+            const statusCell = row.querySelector('.status-badge');
+            return statusCell && statusCell.textContent.includes(type);
+        });
+    }
+
+    // UPDATE UI STYLES (Dinamically)
+    const container = document.getElementById('logFiltersContainer');
+    if (container) {
+        const buttons = container.querySelectorAll('button');
+        buttons.forEach(btn => {
+            const btnOnclick = btn.getAttribute('onclick') || '';
+            const isTarget = btnOnclick.includes(`'${type}'`);
+            const isAll = btnOnclick.includes("'all'");
+
+            // Base classes (Common)
+            const base = "p-3 rounded-2xl transition-all active:scale-95 border ";
+            
+            if (isAll) {
+                // Return to neutral
+                btn.className = base + "bg-panel-fill/20 hover:bg-panel-fill/40 border-panel-border/30 text-label";
+                return;
+            }
+
+            if (btnOnclick.includes("'OK'")) {
+                btn.className = base + (isTarget ? "bg-emerald-500 text-white border-emerald-500 shadow-lg shadow-emerald-500/20" : "bg-emerald-500/10 hover:bg-emerald-500/20 border-emerald-500/30 text-emerald-500");
+            } else if (btnOnclick.includes("'FAIL'")) {
+                btn.className = base + (isTarget ? "bg-rose-500 text-white border-rose-500 shadow-lg shadow-rose-500/20" : "bg-rose-500/10 hover:bg-rose-500/20 border-rose-500/30 text-rose-500");
+            } else if (btnOnclick.includes("'DUP'")) {
+                btn.className = base + (isTarget ? "bg-amber-500 text-white border-amber-500 shadow-lg shadow-amber-500/20" : "bg-amber-500/10 hover:bg-amber-500/20 border-amber-500/30 text-amber-500");
+            }
+        });
+    }
+
+    currentPage = 1;
+    renderTable();
+}
+
 function filterHistory() {
     const input = document.getElementById('logSearch');
     if (!input) return;
@@ -80,8 +149,8 @@ function filterHistory() {
     const rows = Array.from(table.getElementsByClassName('history-row'));
 
     filteredRows = rows.filter(row => {
-        const text = row.textContent || row.innerText;
-        return text.toUpperCase().indexOf(filter) > -1;
+        const text = row.innerText.toUpperCase();
+        return text.includes(filter);
     });
 
     currentPage = 1;
@@ -138,13 +207,13 @@ function renderPageNumbers(total) {
         if(i == 1 || i == total || (i >= currentPage - 1 && i <= currentPage + 1)) {
             const btn = document.createElement('button');
             btn.innerText = i;
-            btn.className = `w-8 h-8 rounded-lg text-[12px] font-black transition-all ${i === currentPage ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/20' : 'bg-white/5 text-slate-500 hover:bg-white/10'}`;
+            btn.className = `w-8 h-8 rounded-lg text-[12px] font-black transition-all ${i === currentPage ? 'bg-primary text-panel-fill shadow-lg shadow-primary/20' : 'bg-panel-fill/10 text-label hover:bg-panel-fill/20'}`;
             btn.onclick = () => { currentPage = i; renderTable(); };
             container.appendChild(btn);
         } else if (i == currentPage - 2 || i == currentPage + 2) {
             const span = document.createElement('span');
             span.innerText = '...';
-            span.className = 'text-slate-700 text-xs px-1';
+            span.className = 'text-label text-[10px] px-1';
             container.appendChild(span);
         }
     }

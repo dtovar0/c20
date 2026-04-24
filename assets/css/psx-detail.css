@@ -7,18 +7,16 @@
 
 html, body {
     height: 100vh;
+    width: 100%;
     overflow: hidden !important;
     margin: 0;
     padding: 0;
 }
 
 body {
-    background: linear-gradient(135deg, #020617 0%, #0f172a 100%);
-    color: #f1f5f9;
+    background-color: var(--color-body-bg);
+    color: var(--color-body-text);
     font-family: 'Inter', sans-serif;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .scroll-container {
@@ -31,7 +29,6 @@ body {
     padding: 3rem 1rem;
     display: flex;
     flex-direction: column;
-    align-items: center;
 }
 
 .scroll-container::-webkit-scrollbar {
@@ -39,16 +36,16 @@ body {
 }
 
 .glass-panel {
-    background: rgba(15, 23, 42, 0.6);
+    background: rgb(var(--color-panel-fill) / 0.6);
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgb(var(--color-panel-border) / 0.3);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
 
 .cyber-grid {
     mask-image: radial-gradient(circle at center, black, transparent 80%);
-    background-image: linear-gradient(rgba(14, 165, 233, 0.05) 1px, transparent 1px),
-                      linear-gradient(90deg, rgba(14, 165, 233, 0.05) 1px, transparent 1px);
+    background-image: linear-gradient(rgb(var(--color-primary) / 0.05) 1px, transparent 1px),
+                      linear-gradient(90deg, rgb(var(--color-primary) / 0.05) 1px, transparent 1px);
     background-size: 30px 30px;
 }
 
@@ -78,6 +75,23 @@ body {
 .tab-pane.active {
     display: block;
     animation: fadeIn 0.5s ease-out;
+}
+
+.tab-btn.active {
+    background: rgb(var(--color-primary) / 0.08);
+    color: rgb(var(--color-primary));
+    box-shadow: 0 8px 25px -10px rgb(var(--color-primary) / 0.4);
+    border: 1px solid rgb(var(--color-primary) / 0.2);
+}
+
+.tab-btn:not(.active):hover {
+    background: rgb(var(--color-panel-fill) / 0.2);
+    transform: translateX(4px);
+}
+
+.tab-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px rgb(var(--color-primary) / 0.5);
 }
 
 @keyframes fadeIn {

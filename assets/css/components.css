@@ -1177,8 +1177,8 @@ input[name="db_engine"]:checked + label .w-5.h-5 .bg-primary {
 .nx-tour-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.15);
-    z-index: 10000;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 20000;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.5s ease;
@@ -1192,9 +1192,9 @@ input[name="db_engine"]:checked + label .w-5.h-5 .bg-primary {
 /* Spotlight Cutout */
 .nx-tour-spotlight {
     position: fixed;
-    z-index: 10001;
+    z-index: 20001;
     background: transparent;
-    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
     border: 3px solid rgb(var(--color-primary));
     border-radius: 16px;
     pointer-events: none;
@@ -1208,7 +1208,7 @@ input[name="db_engine"]:checked + label .w-5.h-5 .bg-primary {
 
 .nx-tour-step {
     position: absolute;
-    z-index: 10002;
+    z-index: 20002;
     width: 420px;
     background: rgb(var(--color-panel-fill));
     border: 2px solid rgb(var(--color-panel-border));

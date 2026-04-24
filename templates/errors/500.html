@@ -6,17 +6,42 @@
     <title>Nexus | Error 500</title>
     <link rel="stylesheet" href="/assets/css/main.css">
     <link rel="stylesheet" href="/static/css/tokens.css">
+    <script src="/assets/js/global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: 'rgb(var(--color-primary))',
+                        brand: 'rgb(var(--color-brand))',
+                        label: 'rgb(var(--color-label-text))',
+                        'panel-fill': 'rgb(var(--color-panel-fill))',
+                        'panel-border': 'rgb(var(--color-panel-border))',
+                        'input-bg': 'rgb(var(--color-input-bg))',
+                        'surface-container': 'rgb(var(--color-surface-container-bg))',
+                        'body-bg': 'var(--color-body-bg)',
+                        'body-text': 'var(--color-body-text)',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        body { background-color: #050505; color: white; display: flex; align-items: center; justify-content: center; min-height: 100vh; font-family: 'Inter', sans-serif; overflow: hidden; }
-        .cyber-grid { position: fixed; inset: 0; background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0); background-size: 40px 40px; pointer-events: none; }
-        .glitch-text { animation: glitch 2s infinite; position: relative; }
+        body { background-color: var(--color-body-bg); color: var(--color-body-text); display: flex; align-items: center; justify-content: center; min-height: 100vh; font-family: 'Inter', sans-serif; overflow: hidden; }
+        .cyber-grid { position: fixed; inset: 0; background-image: radial-gradient(circle at 2px 2px, rgb(var(--color-primary) / 0.05) 1px, transparent 0); background-size: 40px 40px; pointer-events: none; }
+        .glitch-text { 
+            animation: glitch 2s infinite; 
+            position: relative; 
+            color: rgb(var(--color-primary));
+        }
         @keyframes glitch {
             0% { transform: translate(0); text-shadow: none; }
-            20% { transform: translate(-2px, 2px); text-shadow: 2px 0 #f43f5e, -2px 0 #2563eb; }
-            40% { transform: translate(-2px, -2px); text-shadow: 2px 0 #f43f5e, -2px 0 #2563eb; }
-            60% { transform: translate(2px, 2px); text-shadow: 2px 0 #f43f5e, -2px 0 #2563eb; }
-            80% { transform: translate(2px, -2px); text-shadow: 2px 0 #f43f5e, -2px 0 #2563eb; }
+            20% { transform: translate(-2px, 2px); text-shadow: 2px 0 rgb(var(--color-accent-peach)), -2px 0 rgb(var(--color-secondary)); }
+            40% { transform: translate(-2px, -2px); text-shadow: 2px 0 rgb(var(--color-accent-peach)), -2px 0 rgb(var(--color-secondary)); }
+            60% { transform: translate(2px, 2px); text-shadow: 2px 0 rgb(var(--color-accent-peach)), -2px 0 rgb(var(--color-secondary)); }
+            80% { transform: translate(2px, -2px); text-shadow: 2px 0 rgb(var(--color-accent-peach)), -2px 0 rgb(var(--color-secondary)); }
             100% { transform: translate(0); text-shadow: none; }
         }
     </style>
@@ -30,11 +55,11 @@
             </div>
         </div>
         <h1 class="text-6xl md:text-8xl font-black tracking-tighter mb-4 glitch-text">500</h1>
-        <h2 class="text-xl md:text-2xl font-bold uppercase tracking-[0.3em] text-white/90 mb-6">Internal Server Error</h2>
+        <h2 class="text-xl md:text-2xl font-bold uppercase tracking-[0.3em] text-body-text/80 mb-6 font-mono">Internal Server Error</h2>
         <p class="text-label/60 max-w-md mx-auto mb-10 leading-relaxed">Nuestros sistemas han detectado una anomalía crítica en el núcleo del servidor. El equipo técnico ha sido notificado automáticamente.</p>
         <div class="flex flex-col md:flex-row items-center justify-center gap-4">
-            <a href="/" class="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl text-[12px] font-black uppercase tracking-widest text-white transition-all">Regresar al Inicio</a>
-            <button onclick="window.location.reload()" class="px-8 py-4 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 rounded-2xl text-[12px] font-black uppercase tracking-widest text-rose-400 transition-all">Intentar de nuevo</button>
+            <a href="/" class="px-8 py-4 bg-panel-fill/5 hover:bg-panel-fill/10 border border-panel-border/20 rounded-2xl text-[12px] font-black uppercase tracking-widest text-body-text transition-all">Regresar al Portal</a>
+            <button onclick="window.location.reload()" class="px-8 py-4 bg-primary/10 hover:bg-primary/20 border border-primary/30 rounded-2xl text-[12px] font-black uppercase tracking-widest text-primary transition-all">Intentar de nuevo</button>
         </div>
     </div>
 </body>

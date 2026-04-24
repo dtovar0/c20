@@ -87,10 +87,13 @@ class PSXNexusTour {
 
     showStep() {
         const step = this.steps[this.currentStep];
+        console.log(`[PSX-TOUR] Showing step ${this.currentStep + 1}/${this.steps.length}: ${step.title}`);
         const target = document.querySelector(step.target);
+        console.log(`[PSX-TOUR] Target element for '${step.target}':`, target);
         
         if (target) {
             const rect = target.getBoundingClientRect();
+            console.log(`[PSX-TOUR] Target rect:`, rect);
             const padding = 10;
             
             this.spotlight.style.top = `${rect.top - padding}px`;
@@ -142,16 +145,17 @@ class PSXNexusTour {
             `;
 
             const stepWidth = 420;
-            let stepTop = rect.bottom + 30;
-            let stepLeft = rect.left + (rect.width / 2) - (stepWidth / 2);
+            // POSICIÓN ABSOLUTA = Viewport Pos + Scroll
+            let stepTop = rect.bottom + window.scrollY + 30;
+            let stepLeft = rect.left + window.scrollX + (rect.width / 2) - (stepWidth / 2);
 
             // Screen bounds protection
             if (stepLeft < 20) stepLeft = 20;
             if (stepLeft + stepWidth > window.innerWidth - 20) stepLeft = window.innerWidth - stepWidth - 20;
             
             // If at bottom of screen, show above target
-            if (stepTop + 400 > window.innerHeight) {
-                stepTop = Math.max(20, rect.top - 420);
+            if (stepTop + 400 > document.documentElement.scrollHeight) {
+                stepTop = Math.max(20, (rect.top + window.scrollY) - 420);
             }
 
             this.stepEl.style.width = `${stepWidth}px`;
@@ -166,6 +170,50 @@ class PSXNexusTour {
         }
     }
 }
+
+// === LOG AUDIT TOUR (DETAIL VIEW) ===
+window.logAuditTour = new PSXNexusTour([
+    {
+        type: 'Buscador',
+        target: '#logSearch',
+        title: 'Filtro Transaccional',
+        content: 'Escribe cualquier número (ANI) para filtrar instantáneamente el historial. La búsqueda es <b>reactiva</b> y se actualiza en tiempo real.'
+    },
+    {
+        type: 'Filtros Rápidos',
+        target: '#logFiltersContainer',
+        title: 'Estado de Evento',
+        content: 'Filtra rápidamente por la respuesta del nodo. Usa los iconos para aislar estados específicos:',
+        table: [
+            { val: '<div class="p-1 bg-panel-fill/20 text-slate-600 rounded-md inline-block"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg></div>', desc: '<b>Limpiar (Reset)</b> — Elimina los filtros activos.' },
+            { val: '<div class="p-1 bg-emerald-500/10 text-emerald-600 rounded-md inline-block"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg></div>', desc: '<b>Éxito (OK)</b> — Registro procesado correctamente.' },
+            { val: '<div class="p-1 bg-rose-500/10 text-rose-600 rounded-md inline-block"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg></div>', desc: '<b>Error (FAIL)</b> — El nodo rechazó la transacción.' },
+            { val: '<div class="p-1 bg-amber-500/10 text-amber-600 rounded-md inline-block"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg></div>', desc: '<b>Duplicado (DUP)</b> — Registro ignorado por repetición.' }
+        ]
+    },
+    {
+        type: 'Herramientas de Acción',
+        target: '#logActionsContainer',
+        title: 'Gestión de Datos',
+        content: 'Acciones operativas disponibles para el manejo de resultados:',
+        table: [
+            { val: '<div class="p-1 bg-slate-500/10 text-slate-600 rounded-md inline-block"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>', desc: '<b>Ayuda</b> — Inicia este tour guiado.' },
+            { val: '<div class="p-1 bg-slate-500/10 text-slate-600 rounded-md inline-block"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg></div>', desc: '<b>Descargar</b> — Exporta CSV de registros duplicados.' },
+            { val: '<div class="p-1 bg-sky-500/10 text-sky-500 rounded-md inline-block"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg></div>', desc: '<b>Procesar</b> — Reintenta el lote de duplicados.' }
+        ]
+    },
+    {
+        type: 'Rejilla Técnica',
+        target: '#historyTable thead',
+        title: 'Encabezados de Auditoría',
+        content: 'Haz clic en cualquier encabezado para **ordenar** la tabla. Cada columna ofrece datos específicos sobre la ruta y el tiempo de respuesta del nodo.'
+    }
+]);
+
+window.startLogTour = function() {
+    console.log('🔍 Starting Log Audit Tour...');
+    window.logAuditTour.start();
+};
 
 // === INSTANCE & FLOW TRIGGER ===
 (function() {
@@ -205,7 +253,7 @@ class PSXNexusTour {
         {
             type: 'Columna',
             target: '#colTicketHeader',
-            title: 'Master Ticket ID',
+            title: 'ID de Ticket Principal',
             content: 'Identificador único global del lote de datos. Se usa para auditorías y seguimiento transaccional.'
         },
         {
@@ -223,7 +271,7 @@ class PSXNexusTour {
         {
             type: 'Columna',
             target: '#colLabelHeader',
-            title: 'Routing Label',
+            title: 'Etiqueta de Enrutamiento',
             content: 'Etiqueta lógica de destino enviada al PSX. Define el canal de salida de los datos procesados.'
         },
         {
@@ -245,7 +293,7 @@ class PSXNexusTour {
             content: 'Tríada de indicadores que resume el ciclo de vida del proceso.',
             table: [
                 { val: 'Operación', desc: `${ico(svgPlus, '#2563eb')} Alta / ${ico(svgTrash, '#f43f5e')} Baja` },
-                { val: 'Modo', desc: `${ico(svgIn, '#0ea5e9')} Call In / ${ico(svgInOut, '#6366f1')} Call In/Out` },
+                { val: 'Modo', desc: `${ico(svgIn, '#0ea5e9')} Solo Llamadas / ${ico(svgInOut, '#6366f1')} Llamadas y Recibe` },
                 { val: 'Estado', desc: `${ico(svgSpin, '#2563eb')} Ejecutando / ${ico(svgCheck, '#10b981')} Éxito / ${ico(svgWarn, '#f43f5e')} Error / ${ico(svgClock, '#f59e0b')} Espera` }
             ]
         },
@@ -253,7 +301,7 @@ class PSXNexusTour {
             type: 'Columna + Botón',
             target: '#colSearchHeader',
             title: 'Auditoría Profunda',
-            content: 'Abre el log detallado de la tarea. Permite auditar la respuesta <b>(Success / Reject)</b> individual de cada registro enviado al nodo.'
+            content: 'Abre el log detallado de la tarea. Permite auditar la respuesta <b>(Éxito / Rechazo)</b> individual de cada registro enviado al nodo.'
         }
     ]);
 
@@ -266,7 +314,5 @@ class PSXNexusTour {
             e.stopPropagation();
             window.psxTour.start();
         });
-    } else {
-        console.warn('❌ PSX Help Button (#helpTourBtn) not found in DOM.');
     }
 })();
