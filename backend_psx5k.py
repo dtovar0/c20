@@ -3,6 +3,20 @@ import sys
 import time
 import datetime
 import signal
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# Configuración de notificaciones
+ADMIN_EMAIL = os.getenv('NOTIFICATION_ADMIN_EMAIL', 'admin@example.com')
+
+def get_notification_target(username):
+    """Resuelve el destinatario de la notificación."""
+    if not username: return ADMIN_EMAIL
+    if '@' in username: return username
+    # Si es 'admin' o usuario sin arroba, enviamos al admin de .env
+    return ADMIN_EMAIL
+
 from app import create_app, db
 from app.modules.psx.models import PSX5KTask, PSX5KDetail, PSX5KHistory, PSX5KCommandLog
 from app.modules.notifications.services import send_notification_by_slug
@@ -221,10 +235,10 @@ def main():
                 task.fecha_inicio = datetime.datetime.now()
                 db.session.commit()
 
-                # Notificación de inicio
-                admin = User.query.filter_by(role='administrador').first()
-                if admin and admin.username:
-                    send_notification_by_slug(slug='inicio', target_email=admin.username, 
+                # Notificación de inicio al propietario
+                target = get_notification_target(task.job.usuario)
+                if target:
+                    send_notification_by_slug(slug='inicio', target_email=target, 
                                             context={'usuario': task.job.usuario, 'hora': task.fecha_inicio.strftime('%H:%M:%S')})
                 
                 add_audit_log("tarea iniciada", status="info", detail=f"ID: {task.id} - {task.job.tarea}", user_override=task.job.usuario)
@@ -256,6 +270,11 @@ def main():
                     task.estado = 'Error'
                     db.session.commit()
                     add_audit_log("tarea terminada", status="error", detail=f"ID: {task.id} - Fallo Técnico: {str(task_err)[:100]}", user_override=task.job.usuario)
+                    # Notificación de error al propietario
+                    target = get_notification_target(task.job.usuario)
+                    if target:
+                        send_notification_by_slug(slug='error', target_email=target,
+                                                context={'usuario': task.job.usuario, 'ip': 'PSX_NODE', 'error': str(task_err)[:100]})
                     continue
                
                 # Resultados Detallados
@@ -291,9 +310,11 @@ def main():
                 db.session.commit()
                 
                 add_audit_log("tarea terminada", status="success", detail=f"ID: {task.id} | OK: {detail.ok} | FAIL: {detail.fail}", user_override=task.job.usuario)
-
-                if admin and admin.username:
-                    send_notification_by_slug(slug='terminado', target_email=admin.username, 
+                
+                # Notificación de término al propietario
+                target = get_notification_target(task.job.usuario)
+                if target:
+                    send_notification_by_slug(slug='terminado', target_email=target, 
                                             context={'usuario': task.job.usuario, 'hora': task.fecha_fin.strftime('%H:%M:%S')})
 
             time.sleep(SLEEP_BETWEEN)
