@@ -67,7 +67,7 @@
                                 <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-2 px-1">Servidor</label>
                                 <div class="relative group">
                                     <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/40 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path></svg>
-                                    <input type="text" value="smtp.gmail.com" placeholder="smtp.ejemplo.com" data-validation-type="server" class="premium-validate w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3 text-sm font-bold text-input outline-none transition-all focus:border-input-focus focus:ring-4 focus:ring-primary/10">
+                                    <input type="text" id="smtpServer" value="{{ config.server if config else 'smtp.gmail.com' }}" placeholder="smtp.ejemplo.com" data-validation-type="server" class="premium-validate w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3 text-sm font-bold text-input outline-none transition-all focus:border-input-focus focus:ring-4 focus:ring-primary/10">
                                 </div>
                             </div>
 
@@ -78,7 +78,7 @@
                                     <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-2 px-1">Puerto</label>
                                     <div class="relative group">
                                         <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/40 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path></svg>
-                                        <input type="text" value="587" placeholder="587" data-validation-type="port" class="premium-validate w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3 text-sm font-bold text-input outline-none transition-all focus:border-input-focus focus:ring-4 focus:ring-primary/10">
+                                        <input type="text" id="smtpPort" value="{{ config.port if config else '587' }}" placeholder="587" data-validation-type="port" class="premium-validate w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3 text-sm font-bold text-input outline-none transition-all focus:border-input-focus focus:ring-4 focus:ring-primary/10">
                                     </div>
                                 </div>
 
@@ -87,10 +87,10 @@
                                     <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-2 px-1">Cifrado SSL</label>
                                     <div class="relative group">
                                         <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/40 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                                        <select class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3 text-sm font-bold text-input outline-none transition-all focus:border-input-focus focus:ring-4 focus:ring-primary/10 appearance-none cursor-pointer">
-                                            <option value="none">Ninguno</option>
-                                            <option value="ssl">SSL</option>
-                                            <option value="starttls" selected>STARTTLS</option>
+                                        <select id="smtpEncryption" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3 text-sm font-bold text-input outline-none transition-all focus:border-input-focus focus:ring-4 focus:ring-primary/10 appearance-none cursor-pointer">
+                                            <option value="none" {{ 'selected' if config and config.encryption == 'none' }}>Ninguno</option>
+                                            <option value="ssl" {{ 'selected' if config and config.encryption == 'ssl' }}>SSL</option>
+                                            <option value="starttls" {{ 'selected' if config and config.encryption == 'starttls' or not config }}>STARTTLS</option>
                                         </select>
                                     </div>
                                 </div>
@@ -99,9 +99,9 @@
                                 <div class="group">
                                     <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-2 px-1">Autenticación</label>
                                     <div class="flex items-center justify-between bg-input-bg px-5 py-3 border-2 border-panel-border rounded-2xl h-[52px]">
-                                        <span id="authStatusText" class="text-[9px] text-primary/60 font-bold uppercase tracking-widest">Activo</span>
+                                        <span id="authStatusText" class="text-[9px] text-primary/60 font-bold uppercase tracking-widest">{{ 'Activo' if not config or config.auth_enabled else 'Inactivo' }}</span>
                                         <label class="relative inline-flex items-center cursor-pointer">
-                                            <input type="checkbox" id="smtpAuthToggle" checked class="sr-only peer">
+                                            <input type="checkbox" id="smtpAuthToggle" {{ 'checked' if not config or config.auth_enabled }} class="sr-only peer">
                                             <div class="w-10 h-5 bg-panel-border rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
                                         </label>
                                     </div>
