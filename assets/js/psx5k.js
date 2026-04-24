@@ -221,11 +221,18 @@ function updatePSXActions() {
     const modifyBtn = $('#modifyTaskBtn');
     
     if (tr.length === 1) {
-        modifyBtn.removeClass('opacity-30 pointer-events-none');
         const data = psxDataTable.row(tr).data();
-        modifyBtn.off('click').on('click', () => {
-            if (typeof openModifyModal === 'function') openModifyModal(data.id);
-        });
+        const isRunning = data.estado.toLowerCase() === 'ejecutando';
+
+        if (isRunning) {
+            modifyBtn.addClass('opacity-30 pointer-events-none');
+            modifyBtn.off('click');
+        } else {
+            modifyBtn.removeClass('opacity-30 pointer-events-none');
+            modifyBtn.off('click').on('click', () => {
+                if (typeof openModifyModal === 'function') openModifyModal(data.id);
+            });
+        }
     } else {
         modifyBtn.addClass('opacity-30 pointer-events-none');
         modifyBtn.off('click');

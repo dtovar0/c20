@@ -410,68 +410,142 @@
     <div class="w-full max-w-xl nx-modal-glass rounded-[32px] shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300">
         <header class="px-8 py-6 border-b border-panel-border flex items-center justify-between bg-header/50">
             <div class="flex items-center gap-4">
-                <div class="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-500">
+                <div class="w-10 h-10 rounded-xl bg-slate-500/20 flex items-center justify-center text-slate-400">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                 </div>
                 <div>
-                    <h3 class="text-lg font-black tracking-tighter text-body-text uppercase italic leading-none">Gestión de Tarea PSX5K</h3>
-                    <p class="text-[9px] text-amber-500/60 font-bold tracking-widest uppercase mt-1">Ticket #<span id="modifyTicketNum">---</span> / Paso <span id="modifyStepNum">1</span> de 5</p>
+                    <h3 class="text-lg font-black tracking-tighter text-body-text uppercase italic leading-none">Modificar tarea PSX5K</h3>
+                    <p class="text-[9px] text-slate-500/60 font-bold tracking-widest uppercase mt-1">Ticket #<span id="modifyTicketNum">---</span> / Paso <span id="modifyStepNum">1</span> de 5</p>
                 </div>
             </div>
             <button onclick="closeModifyModal()" class="p-2 text-label/40 hover:text-label transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
         </header>
 
-        <div class="h-1 w-full bg-panel-border relative"><div id="modifyStepProgress" class="absolute inset-y-0 left-0 bg-amber-500 transition-all duration-500" style="width: 20%;"></div></div>
+        <div class="h-1 w-full bg-panel-border relative"><div id="modifyStepProgress" class="absolute inset-y-0 left-0 bg-slate-400 transition-all duration-500" style="width: 20%;"></div></div>
         
         <div class="p-8 h-[500px] flex flex-col relative overflow-hidden">
             <!-- STEP 1: DECISION -->
-            <div id="modifyStep1" class="modify-step-content w-full flex-1 flex flex-col items-center justify-center animate-in fade-in zoom-in-95">
-                <h4 class="nx-label-strip mb-8 text-amber-500/80 text-center">Seleccione Acción Crítica</h4>
-                <div class="grid grid-cols-2 gap-4 w-full">
-                    <button type="button" id="btnActionCancel" onclick="selectModifyAction('cancel')" class="p-8 rounded-3xl border-2 border-panel-border bg-surface-container/30 flex flex-col items-center gap-4 hover:border-rose-500 hover:bg-rose-500/5 transition-all group disabled:opacity-30 disabled:pointer-events-none">
-                        <div class="w-16 h-16 rounded-2xl bg-panel-border/30 group-hover:bg-rose-500/20 flex items-center justify-center">
-                            <svg class="w-8 h-8 group-hover:text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
-                        </div>
-                        <span class="text-xs font-black uppercase tracking-widest group-hover:text-rose-500">Cancelar Tarea</span>
-                    </button>
-                    <button type="button" id="btnActionModify" onclick="selectModifyAction('modify')" class="p-8 rounded-3xl border-2 border-panel-border bg-surface-container/30 flex flex-col items-center gap-4 hover:border-primary hover:bg-primary/5 transition-all group">
-                        <div class="w-16 h-16 rounded-2xl bg-panel-border/30 group-hover:bg-primary/20 flex items-center justify-center">
-                            <svg class="w-8 h-8 group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                        </div>
-                        <span id="modifyActionText" class="text-xs font-black uppercase tracking-widest group-hover:text-primary">Modificar Parámetros</span>
-                    </button>
+            <div id="modifyStep1" class="modify-step-content w-full flex-1 flex flex-col items-center justify-center animate-in fade-in zoom-in-95 duration-300">
+                <div class="max-w-md w-full flex flex-col items-center my-auto">
+                    <h4 class="nx-label-strip mb-12 text-primary/80 text-center">Selección: Acción Crítica</h4>
+                    <div class="space-y-6 w-full" id="modifyDecisionGrid">
+                        <!-- CANCELAR -->
+                        <button type="button" id="btnActionCancel" onclick="selectModifyAction('cancel')" class="w-full p-10 rounded-[40px] border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-rose-500 hover:bg-rose-500/5 hover:shadow-[0_0_50px_rgba(244,63,94,0.2)] transition-all group relative overflow-hidden hidden">
+                            <div class="w-20 h-20 min-w-[80px] rounded-[32px] bg-panel-border/30 group-hover:bg-rose-500/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
+                                <svg class="w-10 h-10 group-hover:text-rose-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </div>
+                            <div class="text-left">
+                                <span class="block text-base font-black uppercase tracking-widest group-hover:text-rose-500 transition-colors">Cancelar Tarea</span>
+                                <span class="block text-xs opacity-40 font-bold mt-1.5">Detener fragmentos del proceso</span>
+                            </div>
+                            <div class="absolute right-10 opacity-0 group-hover:opacity-100 transition-all -translate-x-3 group-hover:translate-x-0">
+                                <svg class="w-7 h-7 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                            </div>
+                        </button>
+
+                        <!-- ACTIVAR -->
+                        <button type="button" id="btnActionActivate" onclick="selectModifyAction('activate')" class="w-full p-10 rounded-[40px] border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-emerald-500 hover:bg-emerald-500/5 hover:shadow-[0_0_50px_rgba(16,185,129,0.2)] transition-all group relative overflow-hidden hidden">
+                            <div class="w-20 h-20 min-w-[80px] rounded-[32px] bg-panel-border/30 group-hover:bg-emerald-500/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
+                                <svg class="w-10 h-10 group-hover:text-emerald-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </div>
+                            <div class="text-left">
+                                <span class="block text-base font-black uppercase tracking-widest group-hover:text-emerald-500 transition-colors">Activar Tarea</span>
+                                <span class="block text-xs opacity-40 font-bold mt-1.5">Re-procesar fragmentos pendientes</span>
+                            </div>
+                            <div class="absolute right-10 opacity-0 group-hover:opacity-100 transition-all -translate-x-3 group-hover:translate-x-0">
+                                <svg class="w-7 h-7 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                            </div>
+                        </button>
+
+                        <!-- MODIFICAR (DEFAULT) -->
+                        <button type="button" id="btnActionModify" onclick="selectModifyAction('modify')" class="w-full p-10 rounded-[40px] border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-primary hover:bg-primary/5 hover:shadow-[0_0_50px_rgba(rgb(var(--color-primary)),0.2)] transition-all group relative overflow-hidden">
+                            <div class="w-20 h-20 min-w-[80px] rounded-[32px] bg-panel-border/30 group-hover:bg-primary/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
+                                <svg class="w-10 h-10 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                            </div>
+                            <div class="text-left">
+                                <span class="block text-base font-black uppercase tracking-widest group-hover:text-primary transition-colors">Modificar Tarea</span>
+                                <span class="block text-xs opacity-40 font-bold mt-1.5">Renombrar o reconfigurar job</span>
+                            </div>
+                            <div class="absolute right-10 opacity-0 group-hover:opacity-100 transition-all -translate-x-3 group-hover:translate-x-0">
+                                <svg class="w-7 h-7 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                            </div>
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <!-- STEP 2: TASK TYPE -->
-            <div id="modifyStep2" class="modify-step-content w-full hidden animate-in slide-in-from-right-4">
-                 <h4 class="nx-label-strip mb-6 text-primary/80">Paso 2: Tipo de Operación</h4>
-                 <div class="space-y-4">
-                    <button onclick="setModifyTaskType('add')" id="modTypeAdd" class="w-full p-6 rounded-2xl border-2 border-panel-border bg-surface-container/20 flex items-center gap-4 hover:border-primary transition-all group">
-                        <div class="w-10 h-10 rounded-xl bg-panel-border/30 group-hover:bg-primary/20 flex items-center justify-center text-primary"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg></div>
-                        <span class="text-xs font-black uppercase tracking-widest">Añadir registros</span>
-                    </button>
-                    <button onclick="setModifyTaskType('delete')" id="modTypeDel" class="w-full p-6 rounded-2xl border-2 border-panel-border bg-surface-container/20 flex items-center gap-4 hover:border-rose-500 transition-all group">
-                        <div class="w-10 h-10 rounded-xl bg-panel-border/30 group-hover:bg-rose-500/20 flex items-center justify-center text-rose-500"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></div>
-                        <span class="text-xs font-black uppercase tracking-widest">Eliminar registros</span>
-                    </button>
-                 </div>
+            <div id="modifyStep2" class="modify-step-content w-full hidden animate-in slide-in-from-right-4 duration-300">
+                <div class="max-w-md w-full flex flex-col items-center mx-auto">
+                    <h4 class="nx-label-strip mb-12 text-primary/80 text-center">Selección: Tipo de Operación</h4>
+                    <div class="space-y-6 w-full">
+                        <button type="button" id="modTypeAdd" onclick="setModifyTaskType('add')" class="w-full p-10 rounded-[40px] border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-primary hover:bg-primary/5 hover:shadow-[0_0_50px_rgba(rgb(var(--color-primary)),0.2)] transition-all group relative overflow-hidden">
+                            <div class="w-20 h-20 min-w-[80px] rounded-[32px] bg-panel-border/30 group-hover:bg-primary/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
+                                <svg class="w-10 h-10 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                            </div>
+                            <div class="text-left">
+                                <span class="block text-base font-black uppercase tracking-widest group-hover:text-primary transition-colors">Añadir registros</span>
+                                <span class="block text-xs opacity-40 font-bold mt-1.5">Integrar nuevos registros al nodo</span>
+                            </div>
+                            <div class="absolute right-10 opacity-0 group-hover:opacity-100 transition-all -translate-x-3 group-hover:translate-x-0">
+                                <svg class="w-7 h-7 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                            </div>
+                        </button>
+
+                        <button type="button" id="modTypeDel" onclick="setModifyTaskType('delete')" class="w-full p-10 rounded-[40px] border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-rose-500 hover:bg-rose-500/5 hover:shadow-[0_0_50px_rgba(244,63,94,0.2)] transition-all group relative overflow-hidden">
+                            <div class="w-20 h-20 min-w-[80px] rounded-[32px] bg-panel-border/30 group-hover:bg-rose-500/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
+                                <svg class="w-10 h-10 group-hover:text-rose-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </div>
+                            <div class="text-left">
+                                <span class="block text-base font-black uppercase tracking-widest group-hover:text-rose-500 transition-colors">Eliminar registros</span>
+                                <span class="block text-xs opacity-40 font-bold mt-1.5">Remover registros de la base</span>
+                            </div>
+                            <div class="absolute right-10 opacity-0 group-hover:opacity-100 transition-all -translate-x-3 group-hover:translate-x-0">
+                                <svg class="w-7 h-7 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                            </div>
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <!-- STEP 3: TIMING & CALENDAR -->
             <div id="modifyStep3" class="modify-step-content w-full hidden animate-in slide-in-from-right-4">
-                <h4 class="nx-label-strip mb-6 text-primary/80">Paso 3: Programación</h4>
-                <div class="space-y-6">
-                    <div class="flex items-center bg-surface-container/30 p-1 rounded-2xl border border-panel-border">
+                <div class="space-y-4 w-full py-2 max-w-sm mx-auto">
+                    <h4 class="nx-label-strip text-primary/80 text-center">Programación de Fecha</h4>
+                    
+                    <div class="flex items-center bg-surface-container/30 p-1 rounded-2xl border border-panel-border mb-4">
                         <button onclick="setModifyTiming('now')" id="modTimingNow" class="flex-1 py-3 text-[10px] font-black uppercase rounded-xl transition-all">Ejecutar Ahora</button>
                         <button onclick="setModifyTiming('schedule')" id="modTimingLate" class="flex-1 py-3 text-[10px] font-black uppercase rounded-xl transition-all">Programar</button>
                     </div>
-                    
-                    <div id="modCalendarContainer" class="hidden space-y-4 animate-in fade-in duration-300">
-                        <div class="bg-surface-container/50 border-2 border-panel-border rounded-2xl p-4">
-                            <input type="date" id="modDateInput" class="w-full bg-transparent border-none text-sm font-bold text-primary outline-none">
+
+                    <!-- CALENDARIO INLINE (Premium) -->
+                    <div id="modCalendarContainer" class="hidden space-y-4 animate-in fade-in duration-500">
+                        <div class="bg-surface-container/30 border-2 border-panel-border rounded-[32px] p-5 overflow-hidden">
+                            <div class="flex items-center justify-between mb-4 px-2">
+                                <span id="modCalendarMonthLabel" class="text-xs font-black uppercase tracking-widest text-primary">--</span>
+                                <div class="flex gap-1">
+                                    <button type="button" onclick="changeModCalendarMonth(-1)" class="p-1.5 hover:bg-primary/10 rounded-lg text-label/40 hover:text-primary transition-all"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path></svg></button>
+                                    <button type="button" onclick="changeModCalendarMonth(1)" class="p-1.5 hover:bg-primary/10 rounded-lg text-label/40 hover:text-primary transition-all"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg></button>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-7 gap-1 text-center mb-2">
+                                <span class="text-[8px] font-black text-label/20 uppercase">Do</span>
+                                <span class="text-[8px] font-black text-label/20 uppercase">Lu</span>
+                                <span class="text-[8px] font-black text-label/20 uppercase">Ma</span>
+                                <span class="text-[8px] font-black text-label/20 uppercase">Mi</span>
+                                <span class="text-[8px] font-black text-label/20 uppercase">Ju</span>
+                                <span class="text-[8px] font-black text-label/20 uppercase">Vi</span>
+                                <span class="text-[8px] font-black text-label/20 uppercase">Sa</span>
+                            </div>
+                            
+                            <div id="modCalendarGrid" class="grid grid-cols-7 gap-1"></div>
                         </div>
-                        <input type="time" id="modTimeInput" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl px-5 py-3 text-sm font-bold text-input text-center outline-none">
+
+                        <div class="space-y-3">
+                            <label class="nx-label-strip opacity-40 text-center block">Hora de Inicio (24h)</label>
+                            <input type="time" id="modTimeInput" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl px-5 py-4 text-sm font-bold text-input text-center outline-none focus:border-primary transition-all">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -484,7 +558,7 @@
                         <label class="nx-label-strip mb-2 block opacity-40">Routing Label</label>
                         <input type="text" id="modRoutingInput" placeholder="N/A" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl px-5 py-4 text-sm font-bold text-input outline-none">
                     </div>
-                    <div class="flex items-center justify-between p-4 bg-rose-500/5 border border-rose-500/20 rounded-2xl">
+                    <div id="modForceContainer" class="flex items-center justify-between p-4 bg-rose-500/5 border border-rose-500/20 rounded-2xl">
                         <span class="text-[10px] font-black text-rose-500 uppercase">Forzar Operación</span>
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="modForceToggle" class="sr-only peer">
@@ -500,7 +574,7 @@
 
             <!-- STEP 5: FINAL CONFIRMATION -->
             <div id="modifyStep5" class="modify-step-content w-full hidden animate-in slide-in-from-right-4 text-center">
-                 <div class="w-16 h-16 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500 mx-auto mb-4">
+                 <div class="w-16 h-16 rounded-full bg-slate-500/10 flex items-center justify-center text-slate-400 mx-auto mb-4">
                      <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                  </div>
                  <h4 id="modFinalTitle" class="text-lg font-black text-body-text uppercase italic px-10">Confirmar Cambios</h4>

@@ -974,16 +974,37 @@ async function openModifyModal(taskId) {
         currentModifyStep = 1;
         document.getElementById('modifyTicketNum').innerText = String(taskId).padStart(5, '0');
         
-        // Bloquear cancelar si ya terminó/canceló
+        // 1. Mostrar botones según estado
         const btnCancel = document.getElementById('btnActionCancel');
-        const isFinished = ['Terminada', 'Cancelada', 'Error'].includes(task.estado);
+        const btnActivate = document.getElementById('btnActionActivate');
+        const btnModify = document.getElementById('btnActionModify');
+        const grid = document.getElementById('modifyDecisionGrid');
+
+        // Reset
+        btnCancel.classList.add('hidden');
+        btnCancel.classList.remove('col-span-2');
+        btnActivate.classList.add('hidden');
+        btnModify.classList.remove('hidden', 'col-span-2');
+        grid.classList.replace('grid-cols-1', 'grid-cols-2');
+
+        const stateLower = task.estado.toLowerCase();
         
-        if (isFinished) {
-            btnCancel.disabled = true;
-            document.getElementById('modifyActionText').innerText = "Reprogramar Tarea";
+        if (stateLower === 'ejecutando') {
+            // Solo se puede cancelar si está ejecutando
+            btnCancel.classList.remove('hidden');
+            btnCancel.classList.add('col-span-2');
+            btnModify.classList.add('hidden');
+            grid.classList.replace('grid-cols-2', 'grid-cols-1');
+        } else if (['activa', 'programada', 'pendiente'].includes(stateLower)) {
+            btnCancel.classList.remove('hidden');
+            btnModify.classList.remove('hidden');
+        } else if (['terminada', 'error', 'cancelada'].includes(stateLower)) {
+            btnActivate.classList.remove('hidden');
+            btnModify.classList.remove('hidden');
         } else {
-            btnCancel.disabled = false;
-            document.getElementById('modifyActionText').innerText = "Modificar Parámetros";
+            // Unificamos el resto de estados para que al menos se pueda cancelar si no es un estado terminal
+            btnCancel.classList.remove('hidden');
+            btnModify.classList.remove('hidden');
         }
 
         // Pre-cargar valores
@@ -997,12 +1018,19 @@ async function openModifyModal(taskId) {
         // Timing
         if (task.estado === 'Programada' && task.fecha_inicio) {
             setModifyTiming('schedule');
-            const date = task.fecha_inicio.split('T')[0];
+            const d = new Date(task.fecha_inicio);
+            selectedModDate = d;
+            currentModMonth = d.getMonth();
+            currentModYear = d.getFullYear();
             const time = task.fecha_inicio.split('T')[1].split('.')[0].substring(0, 5);
-            document.getElementById('modDateInput').value = date;
             document.getElementById('modTimeInput').value = time;
+            renderModCalendar();
         } else {
             setModifyTiming('now');
+            selectedModDate = new Date();
+            currentModMonth = selectedModDate.getMonth();
+            currentModYear = selectedModDate.getFullYear();
+            renderModCalendar();
         }
 
         modal.classList.remove('opacity-0', 'pointer-events-none');
@@ -1020,33 +1048,55 @@ function closeModifyModal() {
 
 function selectModifyAction(action) {
     modifyAction = action;
-    
-    // Visual Feedback
-    const btnCancel = document.getElementById('btnActionCancel');
-    const btnModify = document.getElementById('btnActionModify');
-    
-    btnCancel.classList.remove('border-rose-500', 'bg-rose-500/10');
-    btnModify.classList.remove('border-primary', 'bg-primary/10');
+    const btns = [
+        { id: 'btnActionCancel', color: 'rose-500' },
+        { id: 'btnActionActivate', color: 'emerald-500' },
+        { id: 'btnActionModify', color: 'primary' }
+    ];
 
-    if (action === 'cancel') {
-        btnCancel.classList.add('border-rose-500', 'bg-rose-500/10');
-    } else {
-        btnModify.classList.add('border-primary', 'bg-primary/10');
-    }
+    btns.forEach(item => {
+        const btn = document.getElementById(item.id);
+        if (!btn) return;
+        
+        // Reset to default
+        btn.classList.remove(`border-${item.color}`, `bg-${item.color}/10`, 'text-label');
+        btn.classList.add('border-panel-border', 'bg-surface-container/40', 'text-label/60');
+        btn.style.boxShadow = 'none';
+        
+        if (modifyAction === item.id.replace('btnAction', '').toLowerCase()) {
+            btn.classList.remove('border-panel-border', 'bg-surface-container/40', 'text-label/60');
+            btn.classList.add(`border-${item.color}`, `bg-${item.color}/10`, 'text-label');
+            if (item.color === 'primary') {
+                btn.style.boxShadow = '0 0 50px rgba(var(--color-primary), 0.2)';
+            } else {
+                const hex = item.color === 'rose-500' ? '244,63,94' : '16,185,129';
+                btn.style.boxShadow = `0 0 50px rgba(${hex}, 0.2)`;
+            }
+        }
+    });
 }
 
 function setModifyTaskType(type) {
     modifyTaskType = type;
     const btnAdd = document.getElementById('modTypeAdd');
     const btnDel = document.getElementById('modTypeDel');
-    
-    btnAdd.classList.remove('border-primary', 'bg-primary/10');
-    btnDel.classList.remove('border-rose-500', 'bg-rose-500/10');
+    if (!btnAdd || !btnDel) return;
+
+    // Reset
+    [btnAdd, btnDel].forEach(b => {
+        b.classList.remove('border-primary', 'bg-primary/10', 'border-rose-500', 'bg-rose-500/10', 'text-label');
+        b.classList.add('border-panel-border', 'bg-surface-container/40', 'text-label/60');
+        b.style.boxShadow = 'none';
+    });
 
     if (type === 'add') {
-        btnAdd.classList.add('border-primary', 'bg-primary/10');
+        btnAdd.classList.remove('border-panel-border', 'bg-surface-container/40', 'text-label/60');
+        btnAdd.classList.add('border-primary', 'bg-primary/10', 'text-label');
+        btnAdd.style.boxShadow = '0 0 50px rgba(var(--color-primary), 0.2)';
     } else {
-        btnDel.classList.add('border-rose-500', 'bg-rose-500/10');
+        btnDel.classList.remove('border-panel-border', 'bg-surface-container/40', 'text-label/60');
+        btnDel.classList.add('border-rose-500', 'bg-rose-500/10', 'text-label');
+        btnDel.style.boxShadow = '0 0 50px rgba(244,63,94,0.2)';
     }
 }
 
@@ -1065,30 +1115,36 @@ function setModifyTiming(timing) {
     } else {
         btnLate.classList.add('bg-primary', 'text-white');
         calendar.classList.remove('hidden');
+        renderModCalendar();
     }
 }
 
 function changeModifyStep(delta) {
-    // Si elegimos cancelar en paso 1, saltamos directo al 5
-    if (currentModifyStep === 1 && modifyAction === 'cancel' && delta > 0) {
+    // Decisiones en Paso 1 (Saltos directos para Cancelar/Activar)
+    const isQuickAction = (modifyAction === 'cancel' || modifyAction === 'activate');
+    
+    if (currentModifyStep === 1 && isQuickAction && delta > 0) {
         currentModifyStep = 5;
     } 
-    // Si regresamos desde el 5 y la acción era cancelar, volvemos al 1
-    else if (currentModifyStep === 5 && modifyAction === 'cancel' && delta < 0) {
+    else if (currentModifyStep === 5 && isQuickAction && delta < 0) {
         currentModifyStep = 1;
-    }
-    // Si la tarea estaba cancelada y le damos siguiente en paso 1, saltamos al 3 o 4?
-    // User dijo: "si la actividad esta cancelada ... si le das siguiente te manda al step 4 y el estado sera programado"
-    else if (currentModifyStep === 1 && currentModifyTaskData.estado === 'Cancelada' && delta > 0) {
-        currentModifyStep = 4;
     }
     else {
         // Validación de Calendario si es programada
         if (currentModifyStep === 3 && modifyTiming === 'schedule' && delta > 0) {
-            const date = document.getElementById('modDateInput').value;
-            const time = document.getElementById('modTimeInput').value;
-            if (!date || !time) {
+            const timeVal = document.getElementById('modTimeInput').value;
+            if (!timeVal || !selectedModDate) {
                 if (typeof showToast === 'function') showToast("Complete fecha y hora", "error");
+                return;
+            }
+
+            const [hours, minutes] = timeVal.split(':');
+            const scheduledDateTime = new Date(selectedModDate);
+            scheduledDateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+            const diffHours = (scheduledDateTime - new Date()) / (1000 * 60 * 60);
+
+            if (diffHours < 1) {
+                if (typeof showToast === 'function') showToast('Mínimo 1 hora de anticipación', 'error');
                 return;
             }
         }
@@ -1116,6 +1172,12 @@ function updateModifyUI() {
     nextBtn.classList.toggle('hidden', currentModifyStep === 5);
     submitBtn.classList.toggle('hidden', currentModifyStep !== 5);
 
+    // Ocultar forzado en eliminación
+    const forceContainer = document.getElementById('modForceContainer');
+    if (forceContainer) {
+        forceContainer.style.display = (modifyTaskType === 'delete' || modifyTaskType === 'del') ? 'none' : 'flex';
+    }
+
     if (currentModifyStep === 5) collectModifySummary();
 }
 
@@ -1125,28 +1187,37 @@ function collectModifySummary() {
     
     if (modifyAction === 'cancel') {
         title.innerText = "Confirmar Cancelación";
-        title.classList.replace('text-amber-500', 'text-rose-500');
-        desc.innerText = "Esta acción detendrá todos los fragmentos pendientes. No se puede deshacer.";
-        document.getElementById('summaryModAction').innerText = "CANCELAR TODO";
+        desc.innerText = "Se detendrán los fragmentos pendientes de esta tarea.";
+        document.getElementById('summaryModAction').innerText = "CANCELAR TAREA";
+    } else if (modifyAction === 'activate') {
+        title.innerText = "Confirmar Activación";
+        desc.innerText = "Se procederá a poner en cola nuevamente el fragmento seleccionado.";
+        document.getElementById('summaryModAction').innerText = "ACTIVAR TAREA";
     } else {
         title.innerText = "Confirmar Modificaciones";
-        title.classList.replace('text-rose-500', 'text-amber-500');
         desc.innerText = "Se aplicarán los parámetros a los fragmentos o se creará una nueva tarea de reproceso.";
         document.getElementById('summaryModAction').innerText = modifyTaskType.toUpperCase();
     }
 
-    document.getElementById('summaryModTime').innerText = modifyTiming === 'now' ? 'INMEDIATO' : `${document.getElementById('modDateInput').value} ${document.getElementById('modTimeInput').value}`;
+    const dateStr = selectedModDate ? selectedModDate.toISOString().split('T')[0] : 'HOY';
+    document.getElementById('summaryModTime').innerText = modifyTiming === 'now' ? 'INMEDIATO' : `${dateStr} ${document.getElementById('modTimeInput').value}`;
     document.getElementById('summaryModLabel').innerText = document.getElementById('modRoutingInput').value || 'N/A';
 }
 
 async function confirmModifyAction() {
+    let schedTime = null;
+    if (modifyTiming === 'schedule' && selectedModDate) {
+        const timeVal = document.getElementById('modTimeInput').value;
+        schedTime = `${selectedModDate.toISOString().split('T')[0]}T${timeVal}:00`;
+    }
+
     const payload = {
         action: modifyAction,
         tarea: modifyTaskType,
         routing_label: document.getElementById('modRoutingInput').value,
         force: document.getElementById('modForceToggle').checked,
         is_scheduled: modifyTiming === 'schedule',
-        scheduled_time: modifyTiming === 'schedule' ? `${document.getElementById('modDateInput').value}T${document.getElementById('modTimeInput').value}:00` : null
+        scheduled_time: schedTime
     };
 
     try {
@@ -1169,3 +1240,63 @@ async function confirmModifyAction() {
         if (typeof showToast === 'function') showToast(e.message, 'error');
     }
 }
+
+// === MODIFY CALENDAR ENGINE ===
+let selectedModDate = new Date();
+let currentModMonth = selectedModDate.getMonth();
+let currentModYear = selectedModDate.getFullYear();
+
+function renderModCalendar() {
+    const grid = document.getElementById('modCalendarGrid');
+    const label = document.getElementById('modCalendarMonthLabel');
+    if (!grid || !label) return;
+
+    grid.innerHTML = '';
+    const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    label.innerText = `${months[currentModMonth]} ${currentModYear}`;
+
+    const firstDay = new Date(currentModYear, currentModMonth, 1).getDay();
+    const daysInMonth = new Date(currentModYear, currentModMonth + 1, 0).getDate();
+    const today = new Date();
+    today.setHours(0,0,0,0);
+
+    for (let i = 0; i < firstDay; i++) {
+        grid.innerHTML += '<div></div>';
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+        const date = new Date(currentModYear, currentModMonth, day);
+        const isPast = date < today;
+        const isSelected = selectedModDate && date.getTime() === selectedModDate.getTime();
+        
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.innerText = day;
+        btn.className = `h-8 w-8 text-[10px] font-bold rounded-lg transition-all ${isPast ? 'opacity-20 cursor-not-allowed' : 'hover:bg-primary/20 cursor-pointer'}`;
+        if (isSelected) btn.className += ' bg-primary text-white shadow-lg shadow-primary/40 scale-110';
+        
+        if (!isPast) {
+            btn.onclick = () => {
+                selectedModDate = date;
+                renderModCalendar();
+            };
+        }
+        grid.appendChild(btn);
+    }
+}
+
+function changeModCalendarMonth(delta) {
+    currentModMonth += delta;
+    if (currentModMonth < 0) { currentModMonth = 11; currentModYear--; }
+    if (currentModMonth > 11) { currentModMonth = 0; currentModYear++; }
+    renderModCalendar();
+}
+
+// Global KeyDown listener for ESC key
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        if (typeof closeModifyModal === 'function') closeModifyModal();
+        if (typeof closeWizard === 'function') closeWizard();
+        if (typeof closeScheduleWizard === 'function') closeScheduleWizard();
+    }
+});
