@@ -6,6 +6,7 @@
 window.nexusSettings = {
     notifications: true,
     refreshInterval: 60, // seconds
+    tourEnabled: true,
     initialized: false
 };
 
@@ -42,6 +43,7 @@ function initSettingsUI() {
     const refreshRange = document.getElementById('settingRefreshRange');
     const refreshDisplay = document.getElementById('refreshValueDisplay');
     const notifyToggle = document.getElementById('settingNotifyToggle');
+    const tourToggle = document.getElementById('settingTourToggle');
 
     if (!settingsBtn) return;
 
@@ -51,6 +53,7 @@ function initSettingsUI() {
         if (refreshRange) refreshRange.value = window.nexusSettings.refreshInterval;
         if (refreshDisplay) refreshDisplay.textContent = window.nexusSettings.refreshInterval + 's';
         if (notifyToggle) notifyToggle.checked = window.nexusSettings.notifications;
+        if (tourToggle) tourToggle.checked = window.nexusSettings.tourEnabled;
         
         if (typeof openModal === 'function') openModal('settingsModal');
     });
@@ -67,7 +70,8 @@ function initSettingsUI() {
         saveBtn.addEventListener('click', () => {
             const newSettings = {
                 notifications: notifyToggle ? notifyToggle.checked : true,
-                refreshInterval: refreshRange ? parseInt(refreshRange.value) : 60
+                refreshInterval: refreshRange ? parseInt(refreshRange.value) : 60,
+                tourEnabled: tourToggle ? tourToggle.checked : true
             };
 
             const changedInterval = newSettings.refreshInterval !== window.nexusSettings.refreshInterval;
@@ -76,7 +80,7 @@ function initSettingsUI() {
             localStorage.setItem('nexus_interface_settings', JSON.stringify(window.nexusSettings));
 
             if (typeof showToast === 'function') {
-                showToast('Ajustes aplicados correctamente', 'success');
+                showToast('Configuración aplicada correctamente', 'success');
             }
 
             // If interval changed, we need to restart pollers
