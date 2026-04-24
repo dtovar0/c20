@@ -265,9 +265,9 @@ async function finalizeWizard() {
     const taskPayload = {
         tarea: isEliminar ? 'delete' : 'add',
         estado: 'Pendiente',
-        accion_tipo: isManual ? 'Manual' : 'Archivo',
+        accion_tipo: isEliminar ? 'N/A' : clientMode,
         routing_label: isEliminar ? null : routingLabel,
-        datos_tipo: isEliminar ? 'N/A' : clientMode,
+        datos_tipo: isManual ? 'Manual' : 'Archivo',
         datos: isManual ? manualData : (fileInput.files[0] ? fileInput.files[0].name : ''),
         total_items: isManual ? countRealRecords(manualData) : 0,
         force: forceTask
@@ -1284,7 +1284,8 @@ async function confirmModifyAction() {
         action: modifyAction,
         tarea: modifyTaskType,
         routing_label: modRouting ? modRouting.value : null,
-        datos_tipo: modifyTaskType === 'delete' ? 'N/A' : (modClientMode ? modClientMode.value : 'call_in'),
+        accion_tipo: modifyTaskType === 'delete' ? 'N/A' : (modClientMode ? modClientMode.value : 'call_in'),
+        datos_tipo: 'Manual', // Se mantiene Manual en modificación ya que no se puede cambiar el origen
         force: modForce ? modForce.checked : false,
         is_scheduled: modifyTiming === 'schedule',
         scheduled_time: schedTime
