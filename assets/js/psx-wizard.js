@@ -1261,8 +1261,12 @@ function collectModifySummary() {
     }
 
     const dateStr = selectedModDate ? selectedModDate.toISOString().split('T')[0] : 'HOY';
-    document.getElementById('summaryModTime').innerText = modifyTiming === 'now' ? 'INMEDIATO' : `${dateStr} ${document.getElementById('modTimeInput').value}`;
-    document.getElementById('summaryModLabel').innerText = document.getElementById('modRoutingInput').value || 'N/A';
+    const modTimeInput = document.getElementById('modTimeInput');
+    const modRoutingInput = document.getElementById('modRoutingInput');
+    
+    const timeVal = modTimeInput ? modTimeInput.value : '00:00';
+    document.getElementById('summaryModTime').innerText = modifyTiming === 'now' ? 'INMEDIATO' : `${dateStr} ${timeVal}`;
+    document.getElementById('summaryModLabel').innerText = (modRoutingInput ? modRoutingInput.value : '') || 'N/A';
 }
 
 async function confirmModifyAction() {
@@ -1272,12 +1276,16 @@ async function confirmModifyAction() {
         schedTime = `${selectedModDate.toISOString().split('T')[0]}T${timeVal}:00`;
     }
 
+    const modClientMode = document.getElementById('modClientModeSelect');
+    const modRouting = document.getElementById('modRoutingInput');
+    const modForce = document.getElementById('modForceToggle');
+
     const payload = {
         action: modifyAction,
         tarea: modifyTaskType,
-        routing_label: document.getElementById('modRoutingInput').value,
-        datos_tipo: modifyTaskType === 'delete' ? 'N/A' : document.getElementById('modClientModeSelect').value,
-        force: document.getElementById('modForceToggle').checked,
+        routing_label: modRouting ? modRouting.value : null,
+        datos_tipo: modifyTaskType === 'delete' ? 'N/A' : (modClientMode ? modClientMode.value : 'call_in'),
+        force: modForce ? modForce.checked : false,
         is_scheduled: modifyTiming === 'schedule',
         scheduled_time: schedTime
     };
