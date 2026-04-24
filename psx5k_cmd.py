@@ -156,7 +156,7 @@ def psx5k_cmd(line_task, line_number, line_type=None, routing_label=None, force=
                         stats["dup"] += 1
                         stats["logs"].append(f"[DUP] {number} - Registro ya existente")
 
-                elif line_task == 'del':
+                elif line_task == 'delete':
                     cmd.sendline(f'delete subscriber Subscriber_Id {number} Country_Id 52')
                     cmd.expect(EXPECT)
                     cmd.sendline(f'delete destination National_Id {number} Country_Id 52')
