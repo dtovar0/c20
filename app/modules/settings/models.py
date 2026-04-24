@@ -10,7 +10,7 @@ class SystemConfig(db.Model):
     portal_icon = db.Column(db.Text, nullable=True) # Storing SVG code or Image DataURL/Path
     bg_color = db.Column(db.String(20), default='#0f172a')
     text_color = db.Column(db.String(20), default='#ffffff')
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
 
     def to_dict(self):
         return {

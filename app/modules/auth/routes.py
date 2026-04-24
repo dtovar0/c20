@@ -49,7 +49,7 @@ def login():
                         
                     # Actualizar telemetría de sesión
                     from datetime import datetime
-                    user.last_login_at = datetime.utcnow()
+                    user.last_login_at = datetime.now()
                     db.session.commit()
                     
                     login_user(user)

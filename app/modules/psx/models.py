@@ -15,7 +15,7 @@ class PSX5KJob(db.Model):
     routing_label = db.Column(db.String(100))
     archivo_origen = db.Column(db.String(255))
     force = db.Column(db.Boolean, default=False)
-    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.datetime.now)
     
     # Relación con sus fragmentos (chunks)
     tasks = db.relationship('PSX5KTask', backref='job', lazy=True, cascade="all, delete-orphan")
@@ -94,7 +94,7 @@ class PSX5KHistory(db.Model):
     routing_label = db.Column(db.String(100))
     accion = db.Column(db.String(50))
     estado = db.Column(db.String(50))
-    fecha = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    fecha = db.Column(db.DateTime, default=datetime.datetime.now)
     def to_dict(self):
         return {
             "id": self.id,
@@ -113,7 +113,7 @@ class PSX5KCommandLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     task_id = db.Column(db.Integer, db.ForeignKey('psx5k_tasks.id'), nullable=False)
     raw_log = db.Column(db.Text)
-    fecha = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    fecha = db.Column(db.DateTime, default=datetime.datetime.now)
 
     def to_dict(self):
         return {

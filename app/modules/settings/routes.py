@@ -28,7 +28,7 @@ def export_config():
         # 1. Gather all system data
         data = {
             "version": "1.0",
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now().isoformat(),
             "export_by": current_user.username,
             "payload": {
                 "system_config": SystemConfig.query.first().to_dict() if SystemConfig.query.first() else {},

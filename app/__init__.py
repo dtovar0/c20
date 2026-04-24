@@ -8,6 +8,15 @@ import os
 # Cargar variables de entorno
 load_dotenv()
 
+# Configurar Zona Horaria del Sistema
+tz = os.getenv('TZ_APP', os.getenv('TZ', 'America/Mexico_City'))
+os.environ['TZ'] = tz
+try:
+    import time
+    time.tzset()
+except AttributeError:
+    pass # Windows fallback
+
 # Instancias globales
 db = SQLAlchemy()
 login_manager = LoginManager()

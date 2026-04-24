@@ -12,7 +12,7 @@ class SMTPConfig(db.Model):
     username = db.Column(db.String(100), nullable=True)
     password = db.Column(db.String(100), nullable=True) # Should be encrypted in production
     sender_name = db.Column(db.String(100), default='Nexus System')
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
 
     def to_dict(self):
         return {
@@ -33,7 +33,7 @@ class NotificationTemplate(db.Model):
     subject = db.Column(db.String(255), nullable=False)
     body = db.Column(db.Text, nullable=False)
     is_html = db.Column(db.Boolean, default=False)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
 
     def to_dict(self):
         return {
@@ -54,7 +54,7 @@ class InAppNotification(db.Model):
     title = db.Column(db.String(100), nullable=False)
     message = db.Column(db.Text, nullable=False)
     is_read = db.Column(db.Boolean, default=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.now)
 
     def to_dict(self):
         return {
@@ -68,7 +68,7 @@ class InAppNotification(db.Model):
         }
     
     def human_time(self):
-        now = datetime.utcnow()
+        now = datetime.now()
         diff = now - self.created_at
         if diff.days > 0: return f"Hace {diff.days} d"
         if diff.seconds > 3600: return f"Hace {diff.seconds // 3600} h"

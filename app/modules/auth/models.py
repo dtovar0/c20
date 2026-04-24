@@ -13,7 +13,7 @@ class User(db.Model, UserMixin):
     role = db.Column(db.String(20), default='usuario') # administrador, usuario
     auth_source = db.Column(db.String(10), default='local') # local, ldap
     is_active = db.Column(db.Boolean, default=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.now)
     last_login_at = db.Column(db.DateTime, nullable=True)
     
     def set_password(self, password):
@@ -39,7 +39,7 @@ class AuthConfig(db.Model):
     ldap_group_user = db.Column(db.String(200), nullable=True)
     ldap_role_mappings = db.Column(db.Text, nullable=True) # JSON string for dynamic mappings
     
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
 
     def to_dict(self):
         return {

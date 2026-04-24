@@ -13,7 +13,7 @@ with app.app_context():
     db.session.commit()
     db.create_all()
     
-    now = datetime.utcnow()
+    now = datetime.now()
     
     # Tarea 1
     db.session.add(PSX5KTask(id=1, usuario="OPERADOR_ALPHA", tarea="add", estado="Terminada", accion_tipo="Archivo"))

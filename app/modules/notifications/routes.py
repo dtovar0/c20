@@ -142,14 +142,14 @@ def get_active_notifications():
         from datetime import timedelta
         # SILENT MAINTENANCE: Auto-clean old records
         # 1. Delete READ notifications older than 4 days
-        four_days_ago = datetime.utcnow() - timedelta(days=4)
+        four_days_ago = datetime.now() - timedelta(days=4)
         InAppNotification.query.filter(
             InAppNotification.is_read == True,
             InAppNotification.created_at < four_days_ago
         ).delete()
         
         # 2. Delete ALL notifications older than 7 days
-        week_ago = datetime.utcnow() - timedelta(days=7)
+        week_ago = datetime.now() - timedelta(days=7)
         InAppNotification.query.filter(
             InAppNotification.created_at < week_ago
         ).delete()

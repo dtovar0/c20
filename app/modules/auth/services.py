@@ -108,7 +108,7 @@ def authenticate_user_ldap(username, password):
                     local_user.auth_source = 'ldap'
                 
                 # Actualizar telemetría de sesión
-                local_user.last_login_at = datetime.utcnow()
+                local_user.last_login_at = datetime.now()
                 
                 # Lógica de Mapeo de Roles Avanzado (JSON + Legacy Fallback)
                 new_role = 'usuario' # Default
@@ -166,7 +166,7 @@ def purge_inactive_users(days=30):
     from app import db
     from datetime import datetime, timedelta
 
-    cutoff = datetime.utcnow() - timedelta(days=days)
+    cutoff = datetime.now() - timedelta(days=days)
     
     try:
         # No purgar administradores nunca por seguridad
