@@ -46,19 +46,32 @@ def migrate_db():
             except Exception as e:
                 print(f"❌ Error al desbloquear candado de password_hash: {e}")
 
-            # 6. Reordenamiento visual estético
+            # 6. Agregar columnas de preferencias si no existen
+            pref_columns = [
+                ("pref_notifications", "TINYINT(1) DEFAULT 1"),
+                ("pref_refresh_interval", "INT DEFAULT 60"),
+                ("pref_tour_enabled", "TINYINT(1) DEFAULT 1"),
+                ("pref_email_notifications", "TINYINT(1) DEFAULT 1")
+            ]
+
+            for col_name, col_type in pref_columns:
+                try:
+                    conn.execute(text(f"ALTER TABLE users ADD COLUMN {col_name} {col_type};"))
+                    print(f"✅ Columna {col_name} agregada.")
+                except Exception as e:
+                    print(f"ℹ️ Columna {col_name} ya existía u omitida: {e}")
+
+            # 7. Reordenamiento visual estético
             try:
                 conn.execute(text("ALTER TABLE users MODIFY COLUMN nombre VARCHAR(100) DEFAULT NULL AFTER username;"))
-                print("✅ Columna nombre movida estéticamente después de username.")
+                conn.execute(text("ALTER TABLE users MODIFY COLUMN pref_notifications TINYINT(1) DEFAULT 1 AFTER created_at;"))
+                conn.execute(text("ALTER TABLE users MODIFY COLUMN pref_refresh_interval INT DEFAULT 60 AFTER pref_notifications;"))
+                conn.execute(text("ALTER TABLE users MODIFY COLUMN pref_tour_enabled TINYINT(1) DEFAULT 1 AFTER pref_refresh_interval;"))
+                conn.execute(text("ALTER TABLE users MODIFY COLUMN pref_email_notifications TINYINT(1) DEFAULT 1 AFTER pref_tour_enabled;"))
+                print("✅ Reordenamiento estético de columnas completado.")
             except Exception as e:
-                print(f"ℹ️ Error u omisión al reordenar nombre: {e}")
-
-            try:
-                conn.execute(text("ALTER TABLE users MODIFY COLUMN auth_source VARCHAR(10) DEFAULT 'local' AFTER password_hash;"))
-                print("✅ Columna auth_source movida estéticamente antes de role.")
-            except Exception as e:
-                print(f"ℹ️ Error u omisión al reordenar auth_source: {e}")
+                print(f"ℹ️ Error u omisión al reordenar columnas: {e}")
 
 if __name__ == '__main__':
-    print("🚀 Iniciando Consolidación de Migración V2.6 para Producción...")
+    print("🚀 Iniciando Consolidación de Migración V3.0 para Producción...")
     migrate_db()

@@ -9,22 +9,22 @@ def seed_users():
         
         # Definición de datos profesionales
         demo_users = [
-            { 'username': 'admin', 'name': 'Administrador Principal', 'role': 'admin', 'email': 'admin@nexus.com', 'active': True },
-            { 'username': 'dtovar', 'name': 'Daniel Tovar', 'role': 'admin', 'email': 'dtovar@nexus-infra.com', 'active': True },
-            { 'username': 'schen', 'name': 'Sarah Chen', 'role': 'user', 'email': 'schen@nexus-infra.com', 'active': True },
-            { 'username': 'mrosso', 'name': 'Marco Rosso', 'role': 'user', 'email': 'mrosso@nexus-infra.com', 'active': True },
-            { 'username': 'anovak', 'name': 'Alex Novak', 'role': 'Audit Compliance', 'email': 'anovak@nexus-infra.com', 'active': False },
-            { 'username': 'engine', 'name': 'Service Engine', 'role': 'System', 'email': 'engine@nexus-internal.svc', 'active': True },
-            { 'username': 'auditor', 'name': 'External Auditor', 'role': 'Guest', 'email': 'auditor@external.com', 'active': False }
+            { 'username': 'admin', 'name': 'Administrador Principal', 'role': 'admin', 'active': True },
+            { 'username': 'dtovar', 'name': 'Daniel Tovar', 'role': 'admin', 'active': True },
+            { 'username': 'schen', 'name': 'Sarah Chen', 'role': 'user', 'active': True },
+            { 'username': 'mrosso', 'name': 'Marco Rosso', 'role': 'user', 'active': True },
+            { 'username': 'anovak', 'name': 'Alex Novak', 'role': 'Audit Compliance', 'active': False },
+            { 'username': 'engine', 'name': 'Service Engine', 'role': 'System', 'active': True },
+            { 'username': 'auditor', 'name': 'External Auditor', 'role': 'Guest', 'active': False }
         ]
 
         for data in demo_users:
             # Verificar si ya existe para evitar duplicados
-            existing = User.query.filter((User.username == data['username']) | (User.email == data['email'])).first()
+            existing = User.query.filter_by(username=data['username']).first()
             if not existing:
                 user = User(
                     username=data['username'],
-                    email=data['email'],
+                    nombre=data['name'],
                     role=data['role'],
                     is_active=data['active']
                 )

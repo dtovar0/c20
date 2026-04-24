@@ -63,8 +63,8 @@ def clean_database():
             print("\n👤 Restaurando usuario 'admin'...")
             admin_user = User(
                 username='admin',
-                email='admin@nexus.ai',
-                role='administrador',  # Basado en tu modelo actual (administrador/usuario)
+                nombre='Administrador',
+                role='administrador',  
                 auth_source='local',
                 is_active=True
             )

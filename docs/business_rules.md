@@ -49,3 +49,16 @@ El botón "Añadir" tiene el mismo largo físico que "Modificar", independientem
 
 ### Impacto
 Interfaz de administración de usuarios y roles.
+
+---
+
+## Módulo: Preferencias de Usuario
+
+### Regla: Persistencia de Configuración Personalizada
+El sistema debe permitir a cada usuario personalizar su experiencia operativa mediante las columnas `pref_`. Estas preferencias deben persistir en la base de datos y cargarse automáticamente al iniciar sesión.
+
+### Ejemplo
+Si un usuario desactiva `pref_tour_enabled`, el asistente de bienvenida no volverá a aparecer en ninguna sesión futura hasta que el usuario lo reactive explícitamente en su perfil.
+
+### Impacto
+Experiencia de usuario (UX) y personalización del panel de control.

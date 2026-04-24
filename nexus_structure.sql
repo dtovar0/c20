@@ -259,6 +259,10 @@ CREATE TABLE `users` (
   `is_active` tinyint(1) DEFAULT NULL,
   `last_login_at` datetime DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
+  `pref_notifications` tinyint(1) DEFAULT '1',
+  `pref_refresh_interval` int DEFAULT '60',
+  `pref_tour_enabled` tinyint(1) DEFAULT '1',
+  `pref_email_notifications` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   KEY `auth_source` (`auth_source`)
