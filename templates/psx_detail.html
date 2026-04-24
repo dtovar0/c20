@@ -44,20 +44,50 @@
         
         <!-- SIDEBAR NAVIGATION (NEXUS STANDARD SYNC) -->
         <aside class="w-72 bg-panel-fill border-r border-panel-border flex flex-col shrink-0 relative z-20 overflow-hidden">
-            <!-- 1. BRAND HEADER -->
-            <div class="h-16 px-6 border-b border-panel-border flex items-center gap-3 flex-shrink-0">
-                <div class="w-9 h-9 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/30 ring-2 ring-primary/20 text-white">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                </div>
-                <div class="flex flex-col -space-y-1">
-                    <span class="text-lg font-black tracking-tighter uppercase text-body-text italic leading-none">NEXUS Detail</span>
-                    <span class="text-[10px] text-primary/60 font-bold uppercase tracking-[0.2em] leading-none">Management Console</span>
+            <!-- 1. BRAND HEADER (ORIGINAL BANNER STYLE) -->
+            <div class="p-8 border-b border-panel-border">
+                <div class="flex items-center gap-4">
+                    <div class="w-1.5 h-10 bg-primary rounded-full shadow-[0_0_15px_rgba(rgb(var(--color-primary)),0.4)]"></div>
+                    <div class="flex flex-col -space-y-1">
+                        <h1 class="text-3xl font-black text-body-text tracking-tighter uppercase leading-none">
+                            {% if sys_config and sys_config.portal_name %}
+                                {{ sys_config.portal_name }}
+                            {% else %}
+                                NEXUS
+                            {% endif %}
+                        </h1>
+                        <span class="text-[10px] font-black text-primary uppercase tracking-[0.3em] whitespace-nowrap opacity-60">MODO DETALLE</span>
+                    </div>
                 </div>
             </div>
 
-            <!-- 2. NAVIGATION MENU -->
+            <!-- 2. TASK CONTEXT -->
+            <div class="p-8 border-b border-panel-border bg-surface-container/5 space-y-4">
+                <h2 class="text-[11px] font-black text-label/50 uppercase tracking-[0.3em] mb-4">DETALLES DE TAREA</h2>
+                
+                <div class="p-5 bg-panel-fill border border-panel-border/30 rounded-2xl shadow-sm group hover:border-primary/30 transition-all">
+                    <span class="text-[10px] items-center gap-2 flex uppercase tracking-[0.3em] text-label/30 font-black mb-1">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 20l4-16m2 16l4-16"></path></svg>
+                        Tarea ID
+                    </span>
+                    <span class="text-[16px] font-black text-primary tracking-tighter italic">#{{ "%06d"|format(task.id) }}</span>
+                </div>
+
+                <div class="p-5 bg-panel-fill border border-panel-border/30 rounded-2xl shadow-sm group hover:border-primary/30 transition-all">
+                    <span class="text-[10px] items-center gap-2 flex uppercase tracking-[0.3em] text-label/30 font-black mb-1">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        Estado
+                    </span>
+                    <div class="flex items-center gap-2 font-black {% if task.estado == 'Terminada' %}text-emerald-500{% elif task.estado == 'Error' %}text-rose-500{% else %}text-primary{% endif %} uppercase italic text-sm tracking-tighter">
+                        <span class="w-1.5 h-1.5 rounded-full bg-current animate-pulse shadow-[0_0_8px_currentColor]"></span>
+                        <span>{{ task.estado }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. NAVIGATION MENU -->
             <nav class="flex-grow overflow-y-auto custom-scrollbar p-3 space-y-1">
-                <p class="text-[11px] font-black text-label/40 uppercase tracking-[0.2em] px-3 mt-4 mb-2">Vistas Operativas</p>
+                <p class="text-[11px] font-black text-label/40 uppercase tracking-[0.2em] px-3 mt-8 mb-2">Vistas Operativas</p>
                 
                 <button onclick="switchTab('dashboard')" id="tab-trigger-dashboard" class="nav-item tab-trigger nav-item-active w-full px-4 py-3 text-sm font-bold flex items-center gap-4 transition-all group relative">
                     <svg class="w-5 h-5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"></path></svg>
@@ -66,8 +96,8 @@
 
                 {% if task.estado == 'Terminada' or task.estado == 'Error' %}
                 <button onclick="switchTab('logs')" id="tab-trigger-logs" class="nav-item tab-trigger w-full px-4 py-3 text-sm font-bold flex items-center gap-4 transition-all group relative">
-                    <svg class="w-5 h-5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    <span>Historial de Eventos</span>
+                    <svg class="w-5 h-5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
+                    <span>Tabla de Datos</span>
                 </button>
                 <button onclick="switchTab('cmd')" id="tab-trigger-cmd" class="nav-item tab-trigger w-full px-4 py-3 text-sm font-bold flex items-center gap-4 transition-all group relative">
                     <svg class="w-5 h-5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
@@ -79,25 +109,13 @@
                     <span class="text-sm font-bold truncate">Registros Bloqueados</span>
                 </div>
                 {% endif %}
-
-                <p class="text-[11px] font-black text-label/40 uppercase tracking-[0.2em] px-3 mt-8 mb-2">Herramientas</p>
-                <div class="px-3 space-y-3">
-                    <button id="downloadDuplicatesBtn" class="psx-action-btn w-full h-12 rounded-xl bg-label/5 text-label/60 border border-panel-border hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-all active:scale-95 flex items-center justify-center gap-4 group" data-nx-tooltip="Bajar Excel">
-                        <svg class="w-5 h-5 group-hover:-translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                        <span class="text-[11px] font-black uppercase tracking-widest">Descargar Excel</span>
-                    </button>
-                    <button id="processDuplicatesBtn" class="psx-action-btn w-full h-12 rounded-xl bg-primary text-white font-black text-[11px] uppercase tracking-widest flex items-center justify-center gap-4 hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-primary/20">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                        <span>Reprocesar</span>
-                    </button>
-                </div>
             </nav>
 
-            <!-- 3. FOOTER ACTIONS -->
-            <div class="p-4 border-t border-panel-border bg-surface-container/20">
-                <button onclick="window.location.href='/'" class="w-full flex items-center justify-center gap-3 py-4 rounded-2xl bg-panel-fill border border-panel-border text-label/60 font-black text-[11px] uppercase tracking-widest hover:border-primary hover:text-primary transition-all shadow-sm active:scale-95 group">
-                    <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                    Cerrar y Salir
+            <!-- 3. FOOTER BANNER -->
+            <div class="p-6 border-t border-panel-border bg-surface-container/10">
+                <button onclick="window.location.href='/'" class="w-full flex items-center justify-center gap-4 py-5 rounded-3xl bg-primary text-white font-black text-[12px] uppercase tracking-[0.2em] hover:scale-[1.02] hover:shadow-2xl hover:shadow-primary/30 transition-all active:scale-95 group">
+                    <svg class="w-5 h-5 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    Regresar al Portal
                 </button>
             </div>
         </aside>
@@ -132,7 +150,7 @@
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full min-h-0 relative z-10">
                             
                             <!-- LEFT PANEL: OPERATIONAL CONTEXT -->
-                            <div class="tab-panel-inner bg-panel-fill border-2 border-dashed border-panel-border rounded-3xl p-8 flex flex-col h-full overflow-y-auto custom-scrollbar transition-all hover:bg-primary/[0.02]">
+                            <div class="tab-panel-inner bg-panel-fill border-2 border-dashed border-panel-border rounded-3xl p-8 flex flex-col h-full overflow-y-auto custom-scrollbar transition-all">
                                 <label class="block text-[12px] font-black text-label uppercase tracking-[0.2em] mb-8 px-1 text-center">Detalles de Operación</label>
                                 
                                 <div class="space-y-10 flex-1">
@@ -225,13 +243,13 @@
                             </div>
 
                             <!-- RIGHT PANEL: TELEMETRY -->
-                            <div class="tab-panel-inner bg-panel-fill border-2 border-dashed border-panel-border rounded-3xl p-8 flex flex-col h-full overflow-y-auto custom-scrollbar transition-all hover:bg-primary/[0.02]">
+                            <div class="tab-panel-inner bg-panel-fill border-2 border-dashed border-panel-border rounded-3xl p-8 flex flex-col h-full overflow-y-auto custom-scrollbar">
                                 <label class="block text-[12px] font-black text-label uppercase tracking-[0.2em] mb-8 px-1 text-center">Telemetría Operativa</label>
                                 
                                 <div class="space-y-10 flex-1">
                                     <!-- Main Metric Card -->
-                                    <div class="bg-surface-container/40 rounded-[28px] border border-panel-border p-8 relative overflow-hidden group">
-                                        <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700">
+                                    <div class="bg-surface-container/40 rounded-[28px] border border-panel-border p-8 relative overflow-hidden">
+                                        <div class="absolute -right-4 -bottom-4 opacity-5 transition-transform duration-700">
                                             <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 24 24"><path d="M13 3v6h8V3h-8zm0 18h8v-10h-8v10zM3 21h8v-6H3v6zM3 3v10h8V3H3z"/></svg>
                                         </div>
                                         <div class="flex items-center gap-4 mb-4">
@@ -248,11 +266,11 @@
 
                                     <!-- Status Grid -->
                                     <div class="grid grid-cols-3 gap-4">
-                                        <div class="bg-emerald-500/5 border border-emerald-500/10 rounded-2xl p-5 text-center transition-all hover:bg-emerald-500/10">
+                                        <div class="bg-emerald-500/5 border border-emerald-500/10 rounded-2xl p-5 text-center transition-all">
                                             <p class="text-[10px] font-black uppercase tracking-widest text-emerald-500/60 mb-2">Éxito</p>
                                             <p class="text-2xl font-black text-emerald-500 tabular-nums">{{ task.resumen.ok }}</p>
                                         </div>
-                                        <div class="bg-amber-500/5 border border-amber-500/10 rounded-2xl p-5 text-center transition-all hover:bg-amber-500/10">
+                                        <div class="bg-amber-500/5 border border-amber-500/10 rounded-2xl p-5 text-center transition-all">
                                             {% if task.job.force %}
                                                 <p class="text-[10px] font-black uppercase tracking-widest text-sky-500/60 mb-2">Forzado</p>
                                                 <p class="text-2xl font-black text-sky-500 tabular-nums">{{ task.resumen.force_ok }}</p>
@@ -261,7 +279,7 @@
                                                 <p class="text-2xl font-black text-amber-500 tabular-nums">{{ task.resumen.dup or 0 }}</p>
                                             {% endif %}
                                         </div>
-                                        <div class="bg-rose-500/5 border border-rose-500/10 rounded-2xl p-5 text-center transition-all hover:bg-rose-500/10">
+                                        <div class="bg-rose-500/5 border border-rose-500/10 rounded-2xl p-5 text-center transition-all">
                                             <p class="text-[10px] font-black uppercase tracking-widest text-rose-500/60 mb-2">Falla</p>
                                             <p class="text-2xl font-black text-rose-500 tabular-nums">{{ task.resumen.fail }}</p>
                                         </div>

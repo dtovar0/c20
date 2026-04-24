@@ -13,36 +13,47 @@ $(document).ready(function() {
  * Tab switching logic for Dashboard, Technical History, and CMD History.
  */
 function switchTab(tabId) {
+    // 1. Reset all panels
     const panes = document.querySelectorAll('.tab-panel');
     panes.forEach(p => {
         p.classList.add('hidden');
+        p.classList.remove('active');
         p.style.opacity = '0';
         p.style.transform = 'translateY(10px)';
     });
 
+    // 2. Reset all triggers
     document.querySelectorAll('.tab-trigger').forEach(b => {
         b.classList.remove('nav-item-active');
+        b.classList.remove('active');
     });
 
+    // 3. Activate target panel
     const activePane = document.getElementById('tab-panel-' + tabId);
     if (activePane) {
         activePane.classList.remove('hidden');
+        activePane.classList.add('active');
         
         // Trigger animation
         setTimeout(() => {
             activePane.style.opacity = '1';
             activePane.style.transform = 'translateY(0)';
-            activePane.style.transition = 'all 0.4s cubic-bezier(0.22, 1, 0.36, 1)';
+            activePane.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
         }, 50);
 
+        // Specific fix for DataTables
         if (tabId === 'logs' && historyDataTable) {
-            historyDataTable.columns.adjust().draw(false);
+            setTimeout(() => {
+                historyDataTable.columns.adjust().draw(false);
+            }, 100);
         }
     }
 
+    // 4. Activate target trigger
     const btn = document.getElementById('tab-trigger-' + tabId);
     if (btn) {
         btn.classList.add('nav-item-active');
+        btn.classList.add('active');
     }
 }
 
