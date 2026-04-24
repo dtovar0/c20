@@ -1,237 +1,204 @@
 /* PSX DETAIL MODULE - LOGIC DECOUPLING */
 
+let historyDataTable;
+
+$(document).ready(function() {
+    initHistoryDataTable();
+
+    // Custom tab switching logic
+    // We don't use ready for switchTab as it is called from onclick
+});
+
 /**
  * Tab switching logic for Dashboard, Technical History, and CMD History.
  */
 function switchTab(tabId) {
-    const panes = document.querySelectorAll('.tab-pane');
+    const panes = document.querySelectorAll('.tab-panel');
     panes.forEach(p => {
-        p.classList.remove('active');
+        p.classList.add('hidden');
         p.style.opacity = '0';
         p.style.transform = 'translateY(10px)';
-        p.style.transition = 'all 0.4s ease-out';
     });
 
-    document.querySelectorAll('.tab-btn').forEach(b => {
-        b.classList.remove('active');
-        const dot = b.querySelector('div');
-        if (dot) dot.className = 'w-1.5 h-1.5 rounded-full bg-label/20 transition-colors';
+    document.querySelectorAll('.tab-trigger').forEach(b => {
+        b.classList.remove('nav-item-active');
     });
 
-    const activePane = document.getElementById('tab-' + tabId);
-    activePane.classList.add('active');
-    
-    // Trigger animation
-    setTimeout(() => {
-        activePane.style.opacity = '1';
-        activePane.style.transform = 'translateY(0)';
-    }, 50);
+    const activePane = document.getElementById('tab-panel-' + tabId);
+    if (activePane) {
+        activePane.classList.remove('hidden');
+        
+        // Trigger animation
+        setTimeout(() => {
+            activePane.style.opacity = '1';
+            activePane.style.transform = 'translateY(0)';
+            activePane.style.transition = 'all 0.4s cubic-bezier(0.22, 1, 0.36, 1)';
+        }, 50);
 
-    const btn = document.getElementById('btn-' + tabId);
-    if (btn) {
-        btn.classList.add('active');
-        const dot = btn.querySelector('div');
-        if(dot) {
-            if(tabId === 'dashboard') dot.className = 'w-1.5 h-1.5 rounded-full bg-sky-500 shadow-[0_0_8px_rgba(14,165,233,1)]';
-            else if(tabId === 'logs') dot.className = 'w-1.5 h-1.5 rounded-full bg-violet-500 shadow-[0_0_8px_rgba(139,92,246,1)]';
-            else if(tabId === 'cmd') dot.className = 'w-1.5 h-1.5 rounded-full bg-orange-500 shadow-[0_0_8px_rgba(249,115,22,1)]';
+        if (tabId === 'logs' && historyDataTable) {
+            historyDataTable.columns.adjust().draw(false);
         }
     }
+
+    const btn = document.getElementById('tab-trigger-' + tabId);
+    if (btn) {
+        btn.classList.add('nav-item-active');
+    }
 }
 
-// Pagination & Search Logic
-let currentPage = 1;
-const rowsPerPage = 10;
-let filteredRows = [];
-let sortDirections = [true, true, true, true]; // Ascending by default
+/**
+ * DATATABLES INTEGRATION
+ */
+function initHistoryDataTable() {
+    const tableEl = $('#historyTable');
+    if (!tableEl.length) return;
 
-function initPagination() {
-    const table = document.getElementById('historyTable');
-    if (!table) return;
-    const rows = Array.from(table.getElementsByClassName('history-row'));
-    filteredRows = rows;
-    renderTable();
-}
-
-function sortHistory(colIndex) {
-    const table = document.getElementById('historyTable');
-    if (!table) return;
-    
-    const rows = Array.from(table.getElementsByClassName('history-row'));
-    const asc = sortDirections[colIndex];
-    
-    rows.sort((a, b) => {
-        const valA = a.cells[colIndex].textContent.trim();
-        const valB = b.cells[colIndex].textContent.trim();
-        return asc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+    historyDataTable = tableEl.DataTable({
+        autoWidth: false,
+        pageLength: 10,
+        pagingType: 'simple',
+        order: [[3, 'desc']], // Order by time by default
+        layout: {
+            topStart: null,
+            topEnd: null,
+            bottomStart: 'info',
+            bottomEnd: 'paging'
+        },
+        language: {
+            zeroRecords: "No se encontraron registros",
+            info: "Mostrando _START_-_END_ de _TOTAL_ registros",
+            infoEmpty: "Mostrando 0-0 de 0 registros",
+            infoFiltered: "(filtrado de _MAX_ registros totales)",
+            paginate: {
+                previous: '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>',
+                next: '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>'
+            }
+        },
+        drawCallback: function(settings) {
+            renderGhostRows(settings, 4);
+        }
     });
 
-    // Update direction
-    sortDirections[colIndex] = !asc;
+    // Sync custom search input
+    $('#logSearch').on('input', function() {
+        historyDataTable.search(this.value).draw();
+    });
 
-    // Clear icons and set active one
-    for(let i=0; i<4; i++) {
-        const sortIcon = document.getElementById('sort-'+i);
-        if(sortIcon) sortIcon.innerHTML = '';
-    }
-    const currentSortIcon = document.getElementById('sort-'+colIndex);
-    if(currentSortIcon) currentSortIcon.innerHTML = asc ? '↑' : '↓';
+    // Custom quick filters
+    window.quickFilter = function(type) {
+        if (type === 'all') {
+            historyDataTable.search('').column(2).search('').draw();
+        } else {
+            // Search in column 2 (Event) using regex
+            historyDataTable.column(2).search(type).draw();
+        }
 
-    filteredRows = rows; 
-    renderTable();
+        // Update UI of buttons
+        updateFilterUI(type);
+    };
+
+    // Register for global search
+    window.activeNexusTable = historyDataTable;
 }
 
-let currentQuickFilter = 'all';
-
-function quickFilter(type) {
-    const table = document.getElementById('historyTable');
-    if (!table) return;
-    
-    const rows = Array.from(table.getElementsByClassName('history-row'));
-    
-    // LOGIC: Toggle off if clicking the same active filter
-    if (type === currentQuickFilter && type !== 'all') {
-        type = 'all';
-    }
-    
-    currentQuickFilter = type;
-    
-    // Apply Filtering
-    if (type === 'all') {
-        filteredRows = rows;
-    } else {
-        filteredRows = rows.filter(row => {
-            const statusCell = row.querySelector('.status-badge');
-            return statusCell && statusCell.textContent.includes(type);
-        });
-    }
-
-    // UPDATE UI STYLES (Dinamically)
+function updateFilterUI(type) {
     const container = document.getElementById('logFiltersContainer');
-    if (container) {
-        const buttons = container.querySelectorAll('button');
-        buttons.forEach(btn => {
-            const btnOnclick = btn.getAttribute('onclick') || '';
-            const isTarget = btnOnclick.includes(`'${type}'`);
-            const isAll = btnOnclick.includes("'all'");
-
-            // Base classes (Common)
-            const base = "p-3 rounded-2xl transition-all active:scale-95 border ";
-            
-            if (isAll) {
-                // Return to neutral
-                btn.className = base + "bg-panel-fill/20 hover:bg-panel-fill/40 border-panel-border/30 text-label";
-                return;
-            }
-
-            if (btnOnclick.includes("'OK'")) {
-                btn.className = base + (isTarget ? "bg-emerald-500 text-white border-emerald-500 shadow-lg shadow-emerald-500/20" : "bg-emerald-500/10 hover:bg-emerald-500/20 border-emerald-500/30 text-emerald-500");
-            } else if (btnOnclick.includes("'FAIL'")) {
-                btn.className = base + (isTarget ? "bg-rose-500 text-white border-rose-500 shadow-lg shadow-rose-500/20" : "bg-rose-500/10 hover:bg-rose-500/20 border-rose-500/30 text-rose-500");
-            } else if (btnOnclick.includes("'DUP'")) {
-                btn.className = base + (isTarget ? "bg-amber-500 text-white border-amber-500 shadow-lg shadow-amber-500/20" : "bg-amber-500/10 hover:bg-amber-500/20 border-amber-500/30 text-amber-500");
-            }
-        });
-    }
-
-    currentPage = 1;
-    renderTable();
-}
-
-function filterHistory() {
-    const input = document.getElementById('logSearch');
-    if (!input) return;
-    
-    const filter = input.value.toUpperCase();
-    const table = document.getElementById('historyTable');
-    if (!table) return;
-    
-    const rows = Array.from(table.getElementsByClassName('history-row'));
-
-    filteredRows = rows.filter(row => {
-        const text = row.innerText.toUpperCase();
-        return text.includes(filter);
-    });
-
-    currentPage = 1;
-    renderTable();
-}
-
-function renderTable() {
-    const total = filteredRows.length;
-    const table = document.getElementById('historyTable');
-    if (!table) return;
-    
-    const allRows = Array.from(table.getElementsByClassName('history-row'));
-    
-    // Hide everything first
-    allRows.forEach(row => row.style.display = 'none');
-
-    // Show slice
-    const start = (currentPage - 1) * rowsPerPage;
-    const end = Math.min(start + rowsPerPage, total);
-    
-    for(let i = start; i < end; i++) {
-        filteredRows[i].style.display = '';
-    }
-
-    // Update info
-    const totalCountEl = document.getElementById('totalCount');
-    const rangeStartEl = document.getElementById('rangeStart');
-    const rangeEndEl = document.getElementById('rangeEnd');
-    
-    if(totalCountEl) totalCountEl.innerText = total;
-    if(rangeStartEl) rangeStartEl.innerText = total === 0 ? 0 : start + 1;
-    if(rangeEndEl) rangeEndEl.innerText = end;
-
-    // Update buttons
-    const totalPages = Math.ceil(total / rowsPerPage);
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    
-    if(prevBtn) prevBtn.disabled = currentPage === 1;
-    if(nextBtn) nextBtn.disabled = currentPage === totalPages || totalPages === 0;
-
-    renderPageNumbers(totalPages);
-}
-
-function renderPageNumbers(total) {
-    const container = document.getElementById('pageNumbers');
     if (!container) return;
     
-    container.innerHTML = '';
-    
-    if (total <= 1) return;
-
-    for(let i = 1; i <= total; i++) {
-        if(i == 1 || i == total || (i >= currentPage - 1 && i <= currentPage + 1)) {
-            const btn = document.createElement('button');
-            btn.innerText = i;
-            btn.className = `w-9 h-9 rounded-xl text-[12px] font-black transition-all flex items-center justify-center ${i === currentPage ? 'bg-primary text-panel-fill shadow-lg shadow-primary/20 border border-primary' : 'bg-panel-fill/30 text-label border border-panel-border/20 hover:bg-panel-fill/50 hover:border-primary/20'}`;
-            btn.onclick = () => { currentPage = i; renderTable(); };
-            container.appendChild(btn);
-        } else if (i == currentPage - 2 || i == currentPage + 2) {
-            const span = document.createElement('span');
-            span.innerText = '...';
-            span.className = 'text-label/40 text-[10px] px-0.5 font-black';
-            container.appendChild(span);
+    const buttons = container.querySelectorAll('button');
+    buttons.forEach(btn => {
+        const btnOnclick = btn.getAttribute('onclick') || '';
+        const isTarget = btnOnclick.includes(`'${type}'`);
+        const isAll = btnOnclick.includes("'all'");
+        const base = "p-3 rounded-2xl transition-all active:scale-95 border ";
+        
+        if (isAll) {
+            btn.className = base + "bg-panel-fill/20 hover:bg-panel-fill/40 border-panel-border/30 text-label";
+            return;
         }
+
+        if (btnOnclick.toLowerCase().includes("'ok'")) {
+            btn.className = base + (isTarget ? "bg-emerald-500 text-white border-emerald-500 shadow-lg shadow-emerald-500/20" : "bg-emerald-500/10 hover:bg-emerald-500/20 border-emerald-500/30 text-emerald-500");
+        } else if (btnOnclick.toLowerCase().includes("'force_ok'")) {
+            btn.className = base + (isTarget ? "bg-sky-500 text-white border-sky-500 shadow-lg shadow-sky-500/20" : "bg-sky-500/10 hover:bg-sky-500/20 border-sky-500/30 text-sky-400");
+        } else if (btnOnclick.toLowerCase().includes("'fail'")) {
+            btn.className = base + (isTarget ? "bg-rose-500 text-white border-rose-500 shadow-lg shadow-rose-500/20" : "bg-rose-500/10 hover:bg-rose-500/20 border-rose-500/30 text-rose-500");
+        } else if (btnOnclick.toLowerCase().includes("'dup'")) {
+            btn.className = base + (isTarget ? "bg-amber-500 text-white border-amber-500 shadow-lg shadow-amber-500/20" : "bg-amber-500/10 hover:bg-amber-500/20 border-amber-500/30 text-amber-500");
+        }
+    });
+}
+
+function renderGhostRows(settings, columns) {
+    const api = new $.fn.dataTable.Api(settings);
+    const info = api.page.info();
+    const tbody = $(settings.nTBody);
+    
+    tbody.find('.dataTables_empty').closest('tr').remove();
+    const rowsOnPage = info.end - info.start;
+    const targetTotal = 10;
+    const ghostCount = targetTotal - rowsOnPage;
+
+    if (ghostCount <= 0) return;
+
+    let ghostHtml = '';
+    for (let i = 0; i < ghostCount; i++) {
+        ghostHtml += `
+            <tr class="animate-pulse pointer-events-none select-none opacity-20">
+                <td class="bg-panel-fill/5 border-y border-l border-panel-border/10 rounded-l-2xl py-6 px-5">
+                    <div class="h-2 w-24 bg-label/10 rounded-full"></div>
+                </td>
+                <td class="bg-panel-fill/5 border-y border-panel-border/10 py-6 px-5">
+                    <div class="h-1.5 w-full bg-label/5 rounded-full"></div>
+                </td>
+                <td class="bg-panel-fill/5 border-y border-panel-border/10 py-6 px-5">
+                    <div class="h-8 w-8 bg-label/5 rounded-lg mx-auto"></div>
+                </td>
+                <td class="bg-panel-fill/5 border-y border-r border-panel-border/10 rounded-r-2xl py-6 px-5">
+                    <div class="h-1.5 w-12 bg-label/5 rounded-full ml-auto"></div>
+                </td>
+            </tr>
+        `;
+    }
+    
+    setTimeout(() => {
+        tbody.append(ghostHtml);
+    }, 0);
+}
+
+function reprocessDuplicates(taskId) {
+    const modal = document.getElementById('reprocessModal');
+    if (modal) {
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        modal.classList.add('opacity-100');
     }
 }
 
-function changePage(dir) {
-    currentPage += dir;
-    renderTable();
+function closeReprocessModal() {
+    const modal = document.getElementById('reprocessModal');
+    if (modal) {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        modal.classList.remove('opacity-100');
+    }
 }
 
-async function reprocessDuplicates(taskId) {
-    if(!confirm('¿Desea crear una nueva tarea utilizando únicamente los registros duplicados?')) return;
-    
-    const btn = document.getElementById('reprocessBtn');
+// Cerrar modal con tecla ESC
+window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeReprocessModal();
+});
+
+async function executeReprocess(taskId) {
+    const btn = document.getElementById('confirmReprocessBtn');
     if (!btn) return;
     
-    const originalText = btn.innerText;
-    btn.innerText = 'PROCESANDO...';
+    const originalContent = btn.innerHTML;
+    btn.innerHTML = `
+        <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <span>Procesando...</span>
+    `;
     btn.disabled = true;
 
     try {
@@ -239,19 +206,17 @@ async function reprocessDuplicates(taskId) {
         const data = await res.json();
         
         if (data.status === 'success') {
-            alert(`Éxito: Se ha creado la Tarea #${data.task_id}`);
-            window.location.href = `/psx/view/${data.task_id}`;
+            closeReprocessModal();
+            // Notificamos éxito con el estilo de la plataforma (puedes usar un toast si tienes, si no alert por ahora)
+            location.href = `/psx/view/${data.task_id}?tour=true`;
         } else {
             alert(`Error: ${data.message}`);
-            btn.innerText = originalText;
+            btn.innerHTML = originalContent;
             btn.disabled = false;
         }
     } catch (err) {
         alert('Fallo de conexión con el servidor.');
-        btn.innerText = originalText;
+        btn.innerHTML = originalContent;
         btn.disabled = false;
     }
 }
-
-// Initialize on load
-window.onload = initPagination;

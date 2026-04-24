@@ -69,10 +69,10 @@ body {
 .status-terminada { background: rgba(16, 185, 129, 0.1); color: var(--cyber-emerald); }
 
 /* Tabs Animations */
-.tab-pane {
+.tab-panel {
     display: none;
 }
-.tab-pane.active {
+.tab-panel.active {
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -80,19 +80,19 @@ body {
     animation: fadeIn 0.5s ease-out;
 }
 
-.tab-btn.active {
+.tab-trigger.active {
     background: rgb(var(--color-primary) / 0.08);
     color: rgb(var(--color-primary));
     box-shadow: 0 8px 25px -10px rgb(var(--color-primary) / 0.4);
     border: 1px solid rgb(var(--color-primary) / 0.2);
 }
 
-.tab-btn:not(.active):hover {
+.tab-trigger:not(.active):hover {
     background: rgb(var(--color-panel-fill) / 0.2);
     transform: translateX(4px);
 }
 
-.tab-btn:focus-visible {
+.tab-trigger:focus-visible {
     outline: none;
     box-shadow: 0 0 0 2px rgb(var(--color-primary) / 0.5);
 }

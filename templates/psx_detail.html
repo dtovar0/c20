@@ -22,6 +22,7 @@
                         label: 'rgb(var(--color-label-text))',
                         'panel-fill': 'rgb(var(--color-panel-fill))',
                         'panel-border': 'rgb(var(--color-panel-border))',
+                        'panel-header': 'rgb(var(--color-panel-header-bg))',
                         'input-bg': 'rgb(var(--color-input-bg))',
                         'surface-container': 'rgb(var(--color-surface-container-bg))',
                         'body-bg': 'var(--color-body-bg)',
@@ -31,83 +32,73 @@
             }
         }
     </script>
+    <!-- jQuery & DataTables -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.5/css/dataTables.dataTables.min.css">
+    <script src="https://cdn.datatables.net/2.0.5/js/dataTables.min.js"></script>
 </head>
 <body class="relative">
     <div class="fixed inset-0 cyber-grid pointer-events-none"></div>
 
     <div class="flex w-full h-screen overflow-hidden relative z-10">
         
-        <!-- SIDEBAR NAVIGATION (NEW MINIMALIST DESIGN) -->
-        <aside class="w-80 bg-panel-fill/20 backdrop-blur-3xl border-r border-panel-border/30 flex flex-col shrink-0">
-            
+        <!-- SIDEBAR NAVIGATION (NEXUS STANDARD SYNC) -->
+        <aside class="w-72 bg-panel-fill border-r border-panel-border flex flex-col shrink-0 relative z-20 overflow-hidden">
             <!-- 1. BRAND HEADER -->
-            <div class="p-8 border-b border-panel-border/30">
-                <div class="flex items-center gap-4">
-                    <div class="w-1.5 h-10 bg-primary rounded-full"></div>
-                    <div class="flex flex-col -space-y-1">
-                        <h1 class="text-3xl font-black text-body-text tracking-tighter uppercase leading-none">
-                            {% if sys_config and sys_config.portal_name %}
-                                {{ sys_config.portal_name }}
-                            {% else %}
-                                NEXUS
-                            {% endif %}
-                        </h1>
-                        <span class="text-[10px] font-black text-primary uppercase tracking-[0.3em] whitespace-nowrap opacity-60">Modo Detalle</span>
-                    </div>
+            <div class="h-16 px-6 border-b border-panel-border flex items-center gap-3 flex-shrink-0">
+                <div class="w-9 h-9 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/30 ring-2 ring-primary/20 text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                </div>
+                <div class="flex flex-col -space-y-1">
+                    <span class="text-lg font-black tracking-tighter uppercase text-body-text italic leading-none">NEXUS Detail</span>
+                    <span class="text-[10px] text-primary/60 font-bold uppercase tracking-[0.2em] leading-none">Management Console</span>
                 </div>
             </div>
 
-
-
-            <div class="p-8 border-b border-panel-border/30 space-y-4">
-                <h2 class="text-[11px] font-black text-label/50 uppercase tracking-[0.3em] mb-4">Detalles</h2>
-                <div class="px-6 py-4 bg-panel-border/5 border border-panel-border/20 rounded-2xl group hover:border-primary/30 transition-all">
-                    <span class="text-[10px] uppercase tracking-[0.2em] text-label/40 block mb-1">Tarea ID</span>
-                    <span class="text-xl font-black text-primary tracking-tighter">#{{ "%06d"|format(task.id) }}</span>
-                </div>
-
-                <div class="px-6 py-4 bg-panel-border/5 border border-panel-border/20 rounded-2xl group hover:border-primary/30 transition-all">
-                    <span class="text-[10px] uppercase tracking-[0.2em] text-label/40 block mb-1">Estado de Ejecución</span>
-                    <div class="flex items-center gap-2 text-sm font-bold {% if task.estado == 'Terminada' %}text-emerald-500{% elif task.estado == 'Error' %}text-rose-500{% else %}text-primary{% endif %}">
-                        <span class="w-1.5 h-1.5 rounded-full bg-current animate-pulse"></span>
-                        <span class="tracking-tight">{{ task.estado }}</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 4. NAVIGATION TABS -->
-            <div class="p-8 flex-1 space-y-4 overflow-y-auto">
-                <h2 class="text-[11px] font-black text-label/50 uppercase tracking-[0.3em] mb-4">Vistas</h2>
-                <nav class="space-y-1">
-                <button onclick="switchTab('dashboard')" id="btn-dashboard" class="tab-btn active w-full px-5 py-4 rounded-2xl text-[12px] font-bold text-label/60 hover:text-body-text hover:bg-panel-fill/10 flex items-center gap-4 transition-all group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50">
-                    <div class="w-1.5 h-1.5 rounded-full bg-label/20 transition-colors"></div>
-                    <span>Resumen</span>
-                </button>
+            <!-- 2. NAVIGATION MENU -->
+            <nav class="flex-grow overflow-y-auto custom-scrollbar p-3 space-y-1">
+                <p class="text-[11px] font-black text-label/40 uppercase tracking-[0.2em] px-3 mt-4 mb-2">Vistas Operativas</p>
                 
-                {% if task.estado == 'Terminada' or task.estado == 'Error' %}
-                <button onclick="switchTab('logs')" id="btn-logs" class="tab-btn w-full px-5 py-4 rounded-2xl text-[12px] font-bold text-label/60 hover:text-body-text hover:bg-panel-fill/10 flex items-center gap-4 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50">
-                    <div class="w-1.5 h-1.5 rounded-full bg-label/20 transition-colors"></div>
-                    <span>Historial</span>
+                <button onclick="switchTab('dashboard')" id="tab-trigger-dashboard" class="nav-item tab-trigger nav-item-active w-full px-4 py-3 text-sm font-bold flex items-center gap-4 transition-all group relative">
+                    <svg class="w-5 h-5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"></path></svg>
+                    <span>Dashboard</span>
                 </button>
-                <button onclick="switchTab('cmd')" id="btn-cmd" class="tab-btn w-full px-5 py-4 rounded-2xl text-[12px] font-bold text-label/60 hover:text-body-text hover:bg-panel-fill/10 flex items-center gap-4 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50">
-                    <div class="w-1.5 h-1.5 rounded-full bg-label/20 transition-colors"></div>
-                    <span>Consola</span>
+
+                {% if task.estado == 'Terminada' or task.estado == 'Error' %}
+                <button onclick="switchTab('logs')" id="tab-trigger-logs" class="nav-item tab-trigger w-full px-4 py-3 text-sm font-bold flex items-center gap-4 transition-all group relative">
+                    <svg class="w-5 h-5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>Historial de Eventos</span>
+                </button>
+                <button onclick="switchTab('cmd')" id="tab-trigger-cmd" class="nav-item tab-trigger w-full px-4 py-3 text-sm font-bold flex items-center gap-4 transition-all group relative">
+                    <svg class="w-5 h-5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <span>Consola RAW</span>
                 </button>
                 {% else %}
-                <div class="px-5 py-4 opacity-30 flex items-center gap-4 cursor-not-allowed">
-                    <div class="w-1.5 h-1.5 rounded-full bg-label/20"></div>
-                    <span class="text-[12px] font-bold text-label/60">Registros Bloqueados</span>
+                <div class="px-4 py-3 opacity-30 flex items-center gap-4 cursor-not-allowed">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    <span class="text-sm font-bold truncate">Registros Bloqueados</span>
                 </div>
                 {% endif %}
-                </nav>
-            </div>
 
-            <!-- 5. SIDEBAR FOOTER -->
-            <div class="p-8 border-t border-panel-border/30">
-                <a href="/psx" class="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-label/40 hover:text-body-text transition-all group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-lg">
-                    <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                    Regresar al Portal
-                </a>
+                <p class="text-[11px] font-black text-label/40 uppercase tracking-[0.2em] px-3 mt-8 mb-2">Herramientas</p>
+                <div class="px-3 space-y-3">
+                    <button id="downloadDuplicatesBtn" class="psx-action-btn w-full h-12 rounded-xl bg-label/5 text-label/60 border border-panel-border hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-all active:scale-95 flex items-center justify-center gap-4 group" data-nx-tooltip="Bajar Excel">
+                        <svg class="w-5 h-5 group-hover:-translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        <span class="text-[11px] font-black uppercase tracking-widest">Descargar Excel</span>
+                    </button>
+                    <button id="processDuplicatesBtn" class="psx-action-btn w-full h-12 rounded-xl bg-primary text-white font-black text-[11px] uppercase tracking-widest flex items-center justify-center gap-4 hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-primary/20">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        <span>Reprocesar</span>
+                    </button>
+                </div>
+            </nav>
+
+            <!-- 3. FOOTER ACTIONS -->
+            <div class="p-4 border-t border-panel-border bg-surface-container/20">
+                <button onclick="window.location.href='/'" class="w-full flex items-center justify-center gap-3 py-4 rounded-2xl bg-panel-fill border border-panel-border text-label/60 font-black text-[11px] uppercase tracking-widest hover:border-primary hover:text-primary transition-all shadow-sm active:scale-95 group">
+                    <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    Cerrar y Salir
+                </button>
             </div>
         </aside>
 
@@ -117,20 +108,22 @@
 
             {% if task.estado == 'Terminada' or task.estado == 'Error' %}
             <!-- DASHBOARD PANEL -->
-            <div id="tab-dashboard" class="tab-pane w-full h-full active">
-                <div class="tab-panel tab-panel-content flex-grow flex flex-col rounded-2xl overflow-hidden border border-panel-border shadow-2xl shadow-primary/5 relative">
-                    <!-- PANEL HEADER (AUDIT STYLE) -->
-                    <header class="bg-panel-header border-b border-panel-border px-6 py-4 flex items-center justify-between relative z-10">
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary shadow-lg shadow-primary/10">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2"></path></svg>
-                            </div>
-                            <div>
-                                <h2 class="text-xl font-black text-primary uppercase italic leading-none tracking-tighter">Resumen Operativo</h2>
-                                <p class="text-[12px] text-primary/60 font-bold uppercase tracking-widest mt-1">Métricas globales y estado de ejecución</p>
-                            </div>
+            <!-- DASHBOARD PANEL -->
+            <div id="tab-panel-dashboard" class="tab-panel tab-panel-content w-full h-full active flex flex-col rounded-2xl overflow-hidden border border-panel-border shadow-2xl shadow-primary/5 relative">
+                <!-- PANEL HEADER (AUDIT STYLE) -->
+                <header class="bg-panel-header border-b border-panel-border px-6 py-4 flex items-center justify-between relative z-10 overflow-hidden">
+                    <!-- Grid overlay -->
+                    <div class="absolute inset-0 cyber-grid opacity-[0.03] pointer-events-none"></div>
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary shadow-lg shadow-primary/10">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2"></path></svg>
                         </div>
-                    </header>
+                        <div>
+                            <h2 class="text-xl font-black text-primary uppercase italic leading-none tracking-tighter">Resumen Operativo</h2>
+                            <p class="text-[12px] text-primary/60 font-bold uppercase tracking-widest mt-1">Métricas globales y estado de ejecución</p>
+                        </div>
+                    </div>
+                </header>
 
                     <!-- PANEL BODY (CLONED FROM SETTINGS) -->
                     <main class="flex-grow p-6 overflow-hidden relative">
@@ -221,7 +214,7 @@
                                             <span class="font-mono text-sm font-black text-emerald-500">
                                                 {% if task.fecha_inicio and task.fecha_fin %}
                                                     {% set duration = task.fecha_fin - task.fecha_inicio %}
-                                                    {{ duration.total_seconds() | round(1) }}s
+                                                    {{ (duration.total_seconds() / 60) | round(0) | int }}m
                                                 {% else %}
                                                     --
                                                 {% endif %}
@@ -307,30 +300,38 @@
                             </div>
                         </div>
                     </main>
-                </div>
             </div>
 
             <!-- LOG PANEL -->
-            <div id="tab-logs" class="tab-pane w-full h-full">
-                <div class="tab-panel tab-panel-content flex-grow flex flex-col rounded-2xl overflow-hidden border border-panel-border shadow-2xl shadow-primary/5 relative">
-                    <!-- PANEL HEADER (AUDIT STYLE) -->
-                    <header class="bg-panel-header border-b border-panel-border px-6 py-4 flex items-center justify-between relative z-10">
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary shadow-lg shadow-primary/10">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            </div>
-                            <div>
-                                <h2 class="text-xl font-black text-primary uppercase italic leading-none tracking-tighter">Historial de Transacciones</h2>
-                                <p class="text-[12px] text-primary/60 font-bold uppercase tracking-widest mt-1">Detalle cronológico de registros procesados</p>
-                            </div>
+            <!-- LOG PANEL -->
+            <div id="tab-panel-logs" class="tab-panel tab-panel-content w-full h-full flex flex-col rounded-2xl overflow-hidden border border-panel-border shadow-2xl shadow-primary/5 relative hidden">
+                {% set stats = namespace(ok=0, fail=0, dup=0, force=0) %}
+                {% for it in history %}
+                    {% if 'OK' in it.estado %}{% set stats.ok = stats.ok + 1 %}{% endif %}
+                    {% if 'FAIL' in it.estado or 'ERROR' in it.estado %}{% set stats.fail = stats.fail + 1 %}{% endif %}
+                    {% if 'DUP' in it.estado %}{% set stats.dup = stats.dup + 1 %}{% endif %}
+                    {% if 'FORCE' in it.estado %}{% set stats.force = stats.force + 1 %}{% endif %}
+                {% endfor %}
+                <!-- PANEL HEADER (AUDIT STYLE) -->
+                <header class="bg-panel-header border-b border-panel-border px-6 py-4 flex items-center justify-between relative z-10 overflow-hidden">
+                    <!-- Grid overlay -->
+                    <div class="absolute inset-0 cyber-grid opacity-[0.03] pointer-events-none"></div>
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary shadow-lg shadow-primary/10">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
+                        <div>
+                            <h2 class="text-xl font-black text-primary uppercase italic leading-none tracking-tighter">Historial de Transacciones</h2>
+                            <p class="text-[12px] text-primary/60 font-bold uppercase tracking-widest mt-1">Detalle cronológico de registros procesados</p>
+                        </div>
+                    </div>
 
-                        <div class="flex items-center gap-2">
-                            <button onclick="startLogTour()" aria-label="Iniciar tour de ayuda" class="w-10 h-10 flex items-center justify-center bg-panel-fill/10 hover:bg-panel-fill/20 border border-panel-border/30 rounded-full text-body-text transition-all group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50" title="Ayuda y Tour de Auditoría">
-                                <svg class="w-5 h-5 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            </button>
-                        </div>
-                    </header>
+                    <div class="flex items-center gap-2">
+                        <button onclick="startLogTour()" aria-label="Iniciar tour de ayuda" class="w-10 h-10 flex items-center justify-center bg-panel-fill/10 hover:bg-panel-fill/20 border border-panel-border/30 rounded-full text-body-text transition-all group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50" title="Ayuda y Tour de Auditoría">
+                            <svg class="w-5 h-5 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </button>
+                    </div>
+                </header>
 
                     <!-- PANEL BODY -->
                     <main class="flex-grow p-6 overflow-hidden flex flex-col relative">
@@ -350,155 +351,145 @@
                                     <button onclick="quickFilter('all')" aria-label="Limpiar todos los filtros" class="p-3 bg-panel-fill/20 hover:bg-panel-fill/40 border border-panel-border/30 rounded-2xl text-label transition-all active:scale-95 group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50" title="Limpiar Filtros">
                                         <svg class="h-5 w-5 opacity-60 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                                     </button>
-                                    <button onclick="quickFilter('ok')" class="p-3 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 rounded-2xl text-emerald-500 transition-all active:scale-95 group focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50" title="Solo Éxitos">
+                                    <button onclick="quickFilter('ok')" {% if stats.ok == 0 %}disabled{% endif %} class="p-3 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 rounded-2xl text-emerald-500 transition-all active:scale-95 group focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 {% if stats.ok == 0 %}opacity-20 pointer-events-none grayscale{% endif %}" title="Solo Éxitos ({{ stats.ok }})">
                                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                     </button>
-                                    <button onclick="quickFilter('fail')" class="p-3 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 rounded-2xl text-rose-500 transition-all active:scale-95 group focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500/50" title="Solo Errores">
+                                    <button onclick="quickFilter('FORCE_OK')" {% if stats.force == 0 %}disabled{% endif %} class="p-3 bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/20 rounded-2xl text-sky-400 transition-all active:scale-95 group focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/50 {% if stats.force == 0 %}opacity-20 pointer-events-none grayscale{% endif %}" title="Procesados por Fuerza ({{ stats.force }})">
+                                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"></path></svg>
+                                    </button>
+                                    <button onclick="quickFilter('fail')" {% if stats.fail == 0 %}disabled{% endif %} class="p-3 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 rounded-2xl text-rose-500 transition-all active:scale-95 group focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500/50 {% if stats.fail == 0 %}opacity-20 pointer-events-none grayscale{% endif %}" title="Solo Errores ({{ stats.fail }})">
                                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
                                     </button>
-                                    <button onclick="quickFilter('dup')" class="p-3 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 rounded-2xl text-amber-500 transition-all active:scale-95 group focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50" title="Solo Duplicados">
+                                    <button onclick="quickFilter('dup')" {% if stats.dup == 0 %}disabled{% endif %} class="p-3 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 rounded-2xl text-amber-500 transition-all active:scale-95 group focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50 {% if stats.dup == 0 %}opacity-20 pointer-events-none grayscale{% endif %}" title="Solo Duplicados ({{ stats.dup }})">
                                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
                                     </button>
                                 </div>
                             </div>
-                        </div>
-                        <div class="flex items-center justify-end gap-2 mb-6" id="logActionsContainer">
 
-                            <a href="/api/psx/download_duplicates/{{ task.id }}" id="downloadLogsBtn" aria-label="Descargar registros duplicados" class="p-3 bg-panel-fill/10 hover:bg-panel-fill/20 border border-panel-border/30 rounded-2xl text-body-text transition-all group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50" title="Descargar Duplicados">
-                                <svg class="w-5 h-5 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                            </a>
+                            <!-- RIGHT: ACTIONS -->
+                            <div class="flex items-center gap-2" id="logActionsContainer">
+                                <a href="/api/psx/download_duplicates/{{ task.id }}" id="downloadLogsBtn" aria-label="Descargar registros duplicados" class="p-3 bg-panel-fill/10 hover:bg-panel-fill/20 border border-panel-border/30 rounded-2xl text-body-text transition-all group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 {% if stats.dup == 0 %}opacity-20 pointer-events-none grayscale{% endif %}" title="Descargar Duplicados ({{ stats.dup }})">
+                                    <svg class="w-5 h-5 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                </a>
 
-                            {% if task.retries %}
-                                <div class="p-3 bg-emerald-500/5 border border-emerald-500/20 rounded-2xl text-emerald-500/40 cursor-not-allowed" title="Duplicados Procesados">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                </div>
-                            {% else %}
-                                <button onclick="reprocessDuplicates({{ task.id }})" id="reprocessBtn" aria-label="Reprocesar registros duplicados" class="p-3 bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 rounded-2xl text-sky-400 transition-all active:scale-95 group focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/50" title="Procesar Duplicados">
-                                    <svg class="w-5 h-5 group-hover:rotate-90 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                                </button>
-                            {% endif %}
-                        </div>
-
-                        <div class="overflow-x-auto custom-scrollbar flex-1">
-                        <table class="w-full text-left table-fixed border-separate border-spacing-y-1.5" id="historyTable">
-                            <thead class="sticky top-0 z-20">
-                                <tr class="text-[12px] font-black text-body-text uppercase tracking-[0.2em]">
-                                    <th class="w-[35%] px-5 py-4 bg-panel-fill/50 rounded-l-2xl border-y border-l border-panel-border/40 cursor-pointer hover:bg-panel-fill/70 transition-all" onclick="sortHistory(0)">
-                                        <div class="flex items-center gap-2">
-                                            <svg class="w-3.5 h-3.5 text-primary/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
-                                            Número (ANI) <span id="sort-0" class="text-primary"></span>
-                                        </div>
-                                    </th>
-                                    <th class="w-[20%] px-5 py-4 bg-panel-fill/50 border-y border-panel-border/40 cursor-pointer hover:bg-panel-fill/70 transition-all" onclick="sortHistory(1)">
-                                        <div class="flex items-center gap-2">Routing <span id="sort-1" class="text-primary"></span></div>
-                                    </th>
-                                    <th class="w-[25%] px-5 py-4 bg-panel-fill/50 border-y border-panel-border/40 cursor-pointer hover:bg-panel-fill/70 transition-all text-center" onclick="sortHistory(2)">
-                                        <div class="flex items-center justify-center gap-2">Evento <span id="sort-2" class="text-primary"></span></div>
-                                    </th>
-                                    <th class="w-[20%] px-5 py-4 bg-panel-fill/50 rounded-r-2xl border-y border-r border-panel-border/40 cursor-pointer hover:bg-panel-fill/70 transition-all text-right" onclick="sortHistory(3)">
-                                        <div class="flex items-center justify-end gap-2">Hora <span id="sort-3" class="text-primary"></span></div>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for item in history %}
-                                <tr class="history-row group transition-all hover:scale-[1.005] hover:z-10">
-                                    <td class="py-4 px-5 bg-panel-fill/20 border-y border-l border-panel-border/20 rounded-l-2xl group-hover:bg-primary/5 group-hover:border-primary/20 transition-all">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-all">
-                                                <svg class="w-3.5 h-3.5 text-primary/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
-                                            </div>
-                                            <span class="text-[12px] font-black text-body-text/80 font-mono tracking-tighter group-hover:text-primary transition-colors">{{ item.numero }}</span>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-5 bg-panel-fill/20 border-y border-panel-border/20 group-hover:bg-primary/5 group-hover:border-primary/20 transition-all">
-                                        <span class="px-2.5 py-1 bg-panel-fill/30 border border-panel-border/20 rounded-lg text-[10px] font-black font-mono text-label/60 uppercase tracking-tight">{{ item.routing_label or '---' }}</span>
-                                    </td>
-                                    <td class="py-4 px-5 bg-panel-fill/20 border-y border-panel-border/20 group-hover:bg-primary/5 group-hover:border-primary/20 transition-all">
-                                        <div class="flex items-center justify-center">
-                                            {% if 'OK' in item.estado %}
-                                            <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="color:#10b981;background:rgba(16,185,129,0.15);border-color:rgba(16,185,129,0.3)">
-                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                                            </div>
-                                            {% elif 'FAIL' in item.estado or 'ERROR' in item.estado %}
-                                            <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="color:#f43f5e;background:rgba(244,63,94,0.15);border-color:rgba(244,63,94,0.3)">
-                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                            </div>
-                                            {% elif 'DUP' in item.estado %}
-                                            <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="color:#f59e0b;background:rgba(245,158,11,0.15);border-color:rgba(245,158,11,0.3)">
-                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
-                                            </div>
-                                            {% else %}
-                                            <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="color:rgb(var(--color-label-text));background:rgb(var(--color-panel-fill)/0.3);border-color:rgb(var(--color-panel-border)/0.3)">
-                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4"></path></svg>
-                                            </div>
-                                            {% endif %}
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-5 bg-panel-fill/20 border-y border-r border-panel-border/20 rounded-r-2xl group-hover:bg-primary/5 group-hover:border-primary/20 transition-all text-right">
-                                        <span class="font-mono text-[10px] font-bold text-label/40 group-hover:text-body-text transition-colors tracking-widest">{{ item.fecha.strftime('%H:%M:%S') }}</span>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                        </div>
-
-                        <!-- PAGINATION (PREMIUM) -->
-                        <div class="mt-6 flex flex-col md:flex-row items-center justify-between gap-4 pt-6 border-t border-panel-border/10">
-                            <p class="text-[12px] font-black text-label/60 uppercase tracking-[0.2em]" id="paginationInfo">
-                                Mostrando <span class="text-primary font-black" id="rangeStart">1</span> - <span class="text-primary font-black" id="rangeEnd">10</span> de <span class="text-body-text font-black" id="totalCount">{{ history|length }}</span>
-                            </p>
-                            <div class="flex items-center gap-1.5" id="paginationBtns">
-                                <button onclick="changePage(-1)" id="prevBtn" aria-label="Página anterior" class="w-9 h-9 flex items-center justify-center bg-panel-fill/30 border border-panel-border/20 rounded-xl hover:bg-panel-fill/50 hover:border-primary/20 disabled:opacity-20 disabled:cursor-not-allowed transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50">
-                                    <svg class="w-4 h-4 text-body-text" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                                </button>
-                                <div id="pageNumbers" class="flex items-center gap-1.5"></div>
-                                <button onclick="changePage(1)" id="nextBtn" aria-label="Página siguiente" class="w-9 h-9 flex items-center justify-center bg-panel-fill/30 border border-panel-border/20 rounded-xl hover:bg-panel-fill/50 hover:border-primary/20 disabled:opacity-20 disabled:cursor-not-allowed transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50">
-                                    <svg class="w-4 h-4 text-body-text" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                                </button>
-                            </div>
-                        </div>
-                    </main>
-                </div>
-            </div>
-
-            <!-- CMD PANEL -->
-            <div id="tab-cmd" class="tab-pane w-full h-full">
-                <div class="tab-panel tab-panel-content flex-grow flex flex-col rounded-2xl overflow-hidden border border-panel-border shadow-2xl shadow-primary/5 relative bg-slate-950 font-mono">
-                    <!-- PANEL HEADER (AUDIT STYLE) -->
-                    <header class="bg-panel-header border-b border-panel-border px-6 py-4 flex items-center justify-between relative z-10">
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                            </div>
-                            <div>
-                                <h2 class="text-xl font-black text-emerald-500 uppercase italic leading-none tracking-tighter">RAW LOG</h2>
-                                <p class="text-[12px] text-emerald-500/60 font-bold uppercase tracking-widest mt-1">Debug comandos PSX</p>
-                            </div>
-                        </div>
-                    </header>
-
-                    <!-- PANEL BODY -->
-                    <main class="flex-grow p-6 overflow-hidden flex flex-col relative z-10">
-                        <div class="flex-1 overflow-y-auto custom-scrollbar">
-
-                            
-                            <div class="text-label/70 whitespace-pre-wrap leading-relaxed">
-                                {% if command_log and command_log.raw_log %}
-                                    {{ command_log.raw_log }}
-                                {% else %}
-                                    <div class="py-10 text-center opacity-40 font-sans">
-                                        <p>[ SISTEMA ] ADVERTENCIA: NO SE ENCONTRARON REGISTROS DE COMANDO PARA ESTA TAREA.</p>
-                                        <p class="text-[10px] mt-2">VERIFIQUE SI LA TAREA FUE PROCESADA MEDIANTE EL MOTOR PEXPECT.</p>
+                                {% if task.retries %}
+                                    <div class="p-3 bg-emerald-500/5 border border-emerald-500/20 rounded-2xl text-emerald-500/40 cursor-not-allowed" title="Duplicados Procesados">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                                     </div>
+                                {% else %}
+                                    <button onclick="reprocessDuplicates({{ task.id }})" id="reprocessBtn" {% if stats.dup == 0 %}disabled{% endif %} aria-label="Reprocesar registros duplicados" class="p-3 bg-primary/10 hover:bg-primary/20 border border-primary/30 rounded-2xl text-primary transition-all active:scale-95 group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 {% if stats.dup == 0 %}opacity-20 pointer-events-none grayscale{% endif %}" title="Procesar Duplicados ({{ stats.dup }})">
+                                        <svg class="w-5 h-5 group-hover:rotate-90 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                    </button>
                                 {% endif %}
                             </div>
                         </div>
 
+                        <div class="flex-1 min-h-0 pr-1">
+                            <table class="w-full text-left table-fixed border-separate border-spacing-y-1.5" id="historyTable">
+                                <thead class="sticky top-0 z-20">
+                                    <tr class="text-[12px] font-black text-body-text uppercase tracking-[0.2em]">
+                                        <th class="w-[35%] px-5 py-4 bg-panel-fill/50 rounded-l-2xl border-y border-l border-panel-border/40">
+                                            <div class="flex items-center gap-2">
+                                                <svg class="w-3.5 h-3.5 text-primary/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                                                Número (ANI)
+                                            </div>
+                                        </th>
+                                        <th class="w-[20%] px-5 py-4 bg-panel-fill/50 border-y border-panel-border/40">
+                                            <div class="flex items-center gap-2">Routing</div>
+                                        </th>
+                                        <th class="w-[25%] px-5 py-4 bg-panel-fill/50 border-y border-panel-border/40 text-center">
+                                            <div class="flex items-center justify-center gap-2">Evento</div>
+                                        </th>
+                                        <th class="w-[20%] px-5 py-4 bg-panel-fill/50 rounded-r-2xl border-y border-r border-panel-border/40 text-right">
+                                            <div class="flex items-center justify-end gap-2">Hora</div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in history %}
+                                    <tr class="history-row group transition-all">
+                                        <td class="py-4 px-5 bg-panel-fill/20 border-y border-l border-panel-border/20 rounded-l-2xl group-hover:bg-primary/5 group-hover:border-primary/20 transition-all">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-all">
+                                                    <svg class="w-3.5 h-3.5 text-primary/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                                                </div>
+                                                <span class="text-[12px] font-black text-body-text/80 font-mono tracking-tighter group-hover:text-primary transition-colors">{{ item.numero }}</span>
+                                            </div>
+                                        </td>
+                                        <td class="py-4 px-5 bg-panel-fill/20 border-y border-panel-border/20 group-hover:bg-primary/5 group-hover:border-primary/20 transition-all">
+                                            <span class="px-2.5 py-1 bg-panel-fill/30 border border-panel-border/20 rounded-lg text-[10px] font-black font-mono text-label/60 uppercase tracking-tight">{{ item.routing_label or '---' }}</span>
+                                        </td>
+                                        <td class="py-4 px-5 bg-panel-fill/20 border-y border-panel-border/20 group-hover:bg-primary/5 group-hover:border-primary/20 transition-all">
+                                            <div class="flex items-center justify-center">
+                                                <div class="status-marker hidden">{{ item.estado }}</div>
+                                                {% if 'OK' in item.estado %}
+                                                <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="color:#10b981;background:rgba(16,185,129,0.15);border-color:rgba(16,185,129,0.3)">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                                </div>
+                                                {% elif 'FAIL' in item.estado or 'ERROR' in item.estado %}
+                                                <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="color:#f43f5e;background:rgba(244,63,94,0.15);border-color:rgba(244,63,94,0.3)">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                                </div>
+                                                {% elif 'DUP' in item.estado %}
+                                                <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="color:#f59e0b;background:rgba(245,158,11,0.15);border-color:rgba(245,158,11,0.3)">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
+                                                </div>
+                                                {% else %}
+                                                <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="color:rgb(var(--color-label-text));background:rgb(var(--color-panel-fill)/0.3);border-color:rgb(var(--color-panel-border)/0.3)">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4"></path></svg>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                        <td class="py-4 px-5 bg-panel-fill/20 border-y border-r border-panel-border/20 rounded-r-2xl group-hover:bg-primary/5 group-hover:border-primary/20 transition-all text-right">
+                                            <span class="font-mono text-[10px] font-bold text-label/40 group-hover:text-body-text transition-colors tracking-widest">{{ item.fecha.strftime('%H:%M:%S') }}</span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
 
+
+                    </main>
+            </div>
+
+            <!-- CMD PANEL -->
+            <!-- CMD PANEL -->
+            <div id="tab-panel-cmd" class="tab-panel tab-panel-content w-full h-full flex flex-col rounded-2xl overflow-hidden border border-panel-border shadow-2xl shadow-primary/5 relative bg-slate-950 font-mono hidden">
+                <!-- PANEL HEADER (AUDIT STYLE) -->
+                <header class="bg-panel-header border-b border-panel-border px-6 py-4 flex items-center justify-between relative z-10 overflow-hidden">
+                    <!-- Grid overlay -->
+                    <div class="absolute inset-0 cyber-grid opacity-[0.03] pointer-events-none"></div>
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-[0_0_15px_rgba(rgb(var(--color-primary)),0.1)]">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-black text-primary uppercase italic leading-none tracking-tighter">RAW LOG</h2>
+                            <p class="text-[12px] text-primary/60 font-bold uppercase tracking-widest mt-1">Debug comandos PSX</p>
+                        </div>
                     </div>
-                </div>
+                </header>
+
+                    <!-- PANEL BODY -->
+                    <main class="flex-grow overflow-hidden flex flex-col relative z-10">
+                        <div class="flex-1 overflow-y-auto custom-scrollbar h-full">
+                                {% if command_log and command_log.raw_log %}
+                                    <div class="p-8 text-slate-300/90 whitespace-pre-wrap leading-relaxed font-mono text-[13px]">
+                                        {{ command_log.raw_log }}
+                                    </div>
+                                {% else %}
+                                    <div class="h-full flex flex-col items-center justify-center text-center font-sans space-y-6">
+                                        <div class="inline-flex items-center gap-3 px-6 py-3 bg-primary/10 border border-primary/20 rounded-2xl text-primary shadow-[0_0_20px_rgba(rgb(var(--color-primary)),0.05)]">
+                                            <svg class="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                            <span class="text-xs font-black uppercase tracking-widest">[ SISTEMA ] ADVERTENCIA</span>
+                                        </div>
+                                        <p class="text-slate-400 text-[13px] font-medium max-w-sm mx-auto leading-relaxed">No se encontraron registros de comando para esta tarea. Verifique si la ejecución se realizó mediante el motor PEXPECT o si los logs fueron rotados.</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                    </main>
             </div> <!-- End tab-cmd -->
 
 
@@ -531,6 +522,65 @@
         </main>
     </div>
 
+    <!-- MODAL: REPROCESAR DUPLICADOS (THEME-AWARE WIZARD) -->
+    <div id="reprocessModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+        <div class="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onclick="closeReprocessModal()"></div>
+        <div class="w-full max-w-xl nx-modal-glass rounded-[32px] shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300">
+            <!-- Header -->
+            <header class="px-8 py-6 border-b border-panel-border flex items-center justify-between bg-header/50 relative overflow-hidden">
+                <div class="absolute inset-0 cyber-grid opacity-[0.03] pointer-events-none"></div>
+                <div class="flex items-center gap-4 relative z-10">
+                    <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary shadow-[0_0_15px_rgba(rgb(var(--color-primary)),0.1)]">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-black tracking-tighter text-body-text uppercase italic leading-none">Configurador de Duplicados</h3>
+                        <p class="text-[12px] text-primary/60 font-bold tracking-widest uppercase mt-1">Recuperación de registros excluidos</p>
+                    </div>
+                </div>
+                <button onclick="closeReprocessModal()" class="p-2 text-label/40 hover:text-primary transition-all relative z-10"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+            </header>
+
+            <!-- Body -->
+            <div class="p-8 flex flex-col relative overflow-hidden">
+                <div class="space-y-6">
+                    <p class="text-[13px] text-label/70 leading-relaxed font-medium">
+                        Está a punto de generar una <span class="text-primary font-bold font-mono">NUEVA ORDEN DE EJECUCIÓN</span> extrayendo registros descartados como <span class="text-amber-500 font-bold">DUPLICADOS</span> en la tarea original.
+                    </p>
+                    
+                    <div class="bg-surface-container/30 border border-panel-border rounded-[24px] p-6 space-y-4">
+                        <div class="grid grid-cols-[140px_1fr] items-center border-b border-panel-border pb-3">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-label/40">Referencia:</span>
+                            <span class="text-xs font-black text-body-text uppercase italic pl-4">Tarea #{{ "%06d"|format(task.id) }}</span>
+                        </div>
+                        <div class="grid grid-cols-[140px_1fr] items-center border-b border-panel-border pb-3">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-label/40">Routing:</span>
+                            <span class="text-xs font-bold text-primary pl-4">{{ routing_label or 'Default (Node)' }}</span>
+                        </div>
+                        <div class="grid grid-cols-[140px_1fr] items-center">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-label/40">Persistencia:</span>
+                            <span class="text-xs font-bold text-label/60 pl-4">Configuración de Comandos Original</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer class="px-8 py-6 border-t border-panel-border bg-header/50 flex items-center justify-between">
+                <button onclick="closeReprocessModal()" class="nx-btn-base nx-btn-back">Cancelar</button>
+                <button id="confirmReprocessBtn" onclick="executeReprocess({{ task.id }})" class="nx-btn-base nx-btn-primary flex items-center gap-3">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                    <span>Confirmar</span>
+                </button>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Scripts Globales -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.5/css/dataTables.dataTables.min.css">
+    <script src="https://cdn.datatables.net/2.0.5/js/dataTables.min.js"></script>
     <script src="{{ url_for('core.serve_assets', filename='js/global.js') }}"></script>
     <script src="{{ url_for('core.serve_assets', filename='js/psx-tour.js') }}"></script>
     <script src="{{ url_for('core.serve_assets', filename='js/psx-detail.js') }}"></script>
