@@ -375,15 +375,34 @@ def update_or_reprocess_job(job_id):
             # Acción de Cancelación (Solo para tareas no terminadas)
             updated_count = 0
             for t in job.tasks:
-                if t.estado in ['Pendiente', 'Programada']:
+                if t.estado in ['Pendiente', 'Programada', 'Ejecutando', 'Activa']:
                     t.estado = 'Cancelada'
                     updated_count += 1
             db.session.commit()
             add_audit_log("tarea cancelada", status="warning", detail=f"Job ID: {job_id} cancelado por usuario.")
             return jsonify({"status": "success", "message": f"Se han cancelado {updated_count} fragmentos."})
 
+        if action == 'activate':
+            # Acción de Reactivación (Reponer en cola fragmentos no terminados o errores)
+            updated_count = 0
+            for t in job.tasks:
+                # Si los datos se purgaron (en terminadas), los recuperamos del historial
+                if not t.datos:
+                    recovery = PSX5KHistory.query.filter_by(task_id=t.id).all()
+                    if recovery:
+                        t.datos = ",".join([r.numero for r in recovery])
+                
+                if t.estado in ['Cancelada', 'Error', 'Terminada']:
+                    t.estado = 'Pendiente' if not data.get('is_scheduled') else 'Programada'
+                    t.fecha_inicio = data.get('scheduled_time') if data.get('is_scheduled') else None
+                    updated_count += 1
+            
+            db.session.commit()
+            add_audit_log("tarea reactivada", status="info", detail=f"Job ID: {job_id} reactivado ({updated_count} fragmentos).")
+            return jsonify({"status": "success", "message": f"Se han reactivado {updated_count} fragmentos satisfactoriamente."})
+
         # Si el job ya terminó/canceló y se pide modificar -> CLONAMOS (REPROCESO)
-        if finished:
+        if finished and action == 'modify':
             new_job = PSX5KJob(
                 usuario=current_user.username,
                 tarea=data.get('tarea', job.tarea),
@@ -398,11 +417,18 @@ def update_or_reprocess_job(job_id):
             
             # Clonar tareas
             for old_task in job.tasks:
+                # Recuperar datos si están purgados
+                task_data = old_task.datos
+                if not task_data:
+                    recovery = PSX5KHistory.query.filter_by(task_id=old_task.id).all()
+                    if recovery:
+                        task_data = ",".join([r.numero for r in recovery])
+
                 new_task = PSX5KTask(
                     job_id=new_job.id,
                     chunk_index=old_task.chunk_index,
                     chunk_total=old_task.chunk_total,
-                    datos=old_task.datos, # Aquí deberíamos tener los datos originales si no se borraron
+                    datos=task_data, 
                     estado='Pendiente' if not data.get('is_scheduled') else 'Programada',
                     fecha_inicio=data.get('scheduled_time') if data.get('is_scheduled') else None
                 )
@@ -415,7 +441,7 @@ def update_or_reprocess_job(job_id):
             return jsonify({"status": "success", "message": "Nueva tarea creada satisfactoriamente.", "new_job_id": new_job.id})
 
         else:
-            # UPDATE In-place
+            # UPDATE In-place (Para estados pendientes/programados/cancelados)
             old_label = job.routing_label
             job.tarea = data.get('tarea', job.tarea)
             job.accion_tipo = data.get('accion_tipo', job.accion_tipo)
@@ -424,7 +450,12 @@ def update_or_reprocess_job(job_id):
             
             # Actualizar estado y tiempos de las tareas asociadas
             for t in job.tasks:
-                if t.estado in ['Pendiente', 'Programada', 'Cancelada']:
+                if t.estado in ['Pendiente', 'Programada', 'Cancelada', 'Error']:
+                    if not t.datos:
+                        recovery = PSX5KHistory.query.filter_by(task_id=t.id).all()
+                        if recovery:
+                            t.datos = ",".join([r.numero for r in recovery])
+                            
                     t.estado = 'Pendiente' if not data.get('is_scheduled') else 'Programada'
                     t.fecha_inicio = data.get('scheduled_time') if data.get('is_scheduled') else None
             

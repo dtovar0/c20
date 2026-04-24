@@ -284,10 +284,10 @@ def main():
                         raw_log=results["full_flow"]
                     ))
 
-                # Finalizar y limpiar datos para ahorrar espacio
+                # Finalizar
                 task.estado = 'Terminada'
                 task.fecha_fin = datetime.datetime.now()
-                task.datos = None  # Liberar espacio: ya está en psx5k_history
+                # task.datos = None  # Se deshabilita la purga por solicitud del usuario
                 db.session.commit()
                 
                 add_audit_log("tarea terminada", status="success", detail=f"ID: {task.id} | OK: {detail.ok} | FAIL: {detail.fail}", user_override=task.job.usuario)
