@@ -110,8 +110,8 @@ def create_task():
     data = request.json
     try:
         raw_tarea = data.get('tarea') # add / delete
-        raw_accion = data.get('datos_tipo') if raw_tarea != 'delete' else 'delete' 
-        raw_origen = data.get('accion_tipo') # Archivo / Manual
+        raw_accion = data.get('accion_tipo', 'N/A') # Modo: call_in / call_inout
+        raw_origen = data.get('datos_tipo', 'Manual') # Procedencia: Manual / Archivo
         
         # 1. Extraer TODOS los registros del origen (sea archivo o manual)
         all_records = extract_records(
