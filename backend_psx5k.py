@@ -270,6 +270,8 @@ def main():
                         routing_label=task.job.routing_label,
                         force=task.job.force
                     )
+                    if os.getenv('DEBUG_PSX', 'false').lower() == 'true':
+                        print(f"✅ DEBUG RESULT: {results}")
                 except Exception as task_err:
                     print(f"❌ Error ejecutando Tarea ID {task.id}: {task_err}")
                     task.estado = 'Error'
