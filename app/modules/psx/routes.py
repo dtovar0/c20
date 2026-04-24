@@ -227,7 +227,7 @@ def check_psx_connectivity():
     Endpoint para verificar la conectividad con el nodo PSX5K
     """
     try:
-        from psx5k_cmd import test_connectivity
+        from bin.psx5k_cmd import test_connectivity
         ok, message = test_connectivity()
         
         if ok:

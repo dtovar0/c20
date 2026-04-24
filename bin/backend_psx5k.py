@@ -1,11 +1,8 @@
-import os
-import sys
-import time
-import datetime
-import signal
-from dotenv import load_dotenv
+# Configuración de PATH y Raíz
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, PROJECT_ROOT)
 
-load_dotenv()
+load_dotenv(dotenv_path=os.path.join(PROJECT_ROOT, '.env'))
 
 # Configuración de notificaciones
 ADMIN_EMAIL = os.getenv('NOTIFICATION_ADMIN_EMAIL', 'admin@example.com')
@@ -24,7 +21,7 @@ from app.modules.auth.models import User
 from app.modules.audit.services import add_audit_log
 
 # Configuración Global
-LOCK_FILE = "/tmp/psx5k_worker.pid"
+LOCK_FILE = os.path.join(PROJECT_ROOT, "psx5k_worker.pid") # Movido a la raíz para consistencia
 SLEEP_IDLE = 10  # Segundos a esperar si no hay tareas
 SLEEP_BETWEEN = 2 # Segundos entre tareas para no saturar DB
 
@@ -118,8 +115,7 @@ def process_task_data(task):
         return [x.strip() for x in task.datos.split(',') if x.strip()]
     
     # Si no hay comas, comprobamos si es un archivo físico (formato legacy o archivo único)
-    base_path = os.getenv('PROJECT_ROOT', os.getcwd())
-    file_path = os.path.join(base_path, 'uploads/psx5k', task.datos)
+    file_path = os.path.join(PROJECT_ROOT, 'uploads/psx5k', task.datos)
     
     if os.path.exists(file_path):
         try:
