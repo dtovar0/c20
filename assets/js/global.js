@@ -1,24 +1,46 @@
-// 1. Immediate Persistence Logic (Prevent Flickering)
+// 1. Theme Engine — 6-Theme Cycling System
+const NEXUS_THEMES = [
+    { name: 'Sapphire',       class: 'light',              isDark: false },
+    { name: 'Midnight Ocean',  class: 'dark',               isDark: true  },
+    { name: 'Emerald Forest',  class: 'theme-emerald-light', isDark: false },
+    { name: 'Obsidian',        class: 'theme-obsidian-dark', isDark: true  },
+    { name: 'Rose Quartz',     class: 'theme-rose-light',   isDark: false },
+    { name: 'Cyber Violet',    class: 'theme-violet-dark',  isDark: true  }
+];
+
+function applyNexusTheme(index) {
+    const html = document.documentElement;
+    const allClasses = NEXUS_THEMES.map(t => t.class);
+    html.classList.remove('dark', 'light', ...allClasses);
+
+    const theme = NEXUS_THEMES[index];
+    html.classList.add(theme.class);
+    if (theme.isDark) html.classList.add('dark');
+    else html.classList.add('light');
+
+    localStorage.setItem('nexusThemeIndex', index);
+}
+
+// Immediate Apply (Prevent Flickering)
 (() => {
     const html = document.documentElement;
-    const storedTheme = localStorage.getItem('theme');
+    const storedIndex = parseInt(localStorage.getItem('nexusThemeIndex'));
     const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
     const isMobile = window.innerWidth < 1024;
     
-    // Immediate Theme Apply
-    if (storedTheme === 'dark' || (!storedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        html.classList.add('dark');
-        html.classList.remove('light');
+    if (!isNaN(storedIndex) && storedIndex >= 0 && storedIndex < NEXUS_THEMES.length) {
+        applyNexusTheme(storedIndex);
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        applyNexusTheme(1);
     } else {
-        html.classList.remove('dark');
-        html.classList.add('light');
+        applyNexusTheme(0);
     }
 
-    // Immediate Sidebar State Apply (Global Class)
     if (isCollapsed && !isMobile) {
         html.classList.add('sidebar-is-collapsed');
     }
 })();
+
 
 // 2. DOM Interaction Logic
 document.addEventListener('DOMContentLoaded', () => {
@@ -70,13 +92,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 3. Theme Toggle Listener
+    // 3. Theme Toggle Listener — 6-Theme Cycler
     const themeToggle = document.getElementById('themeToggle');
     if (themeToggle) {
         themeToggle.addEventListener('click', () => {
-            const isDark = html.classList.toggle('dark');
-            html.classList.toggle('light', !isDark);
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            const current = parseInt(localStorage.getItem('nexusThemeIndex')) || 0;
+            const next = (current + 1) % NEXUS_THEMES.length;
+            applyNexusTheme(next);
+            
+            if (typeof showToast === 'function') {
+                const t = NEXUS_THEMES[next];
+                const icon = t.isDark ? '🌙' : '☀️';
+                showToast(`${icon} ${t.name}`, 'info');
+            }
         });
     }
 
@@ -107,10 +135,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     noResults.classList.add('hidden');
                     tbody.innerHTML = data.results.map(r => `
                         <tr class="hover:bg-primary/5 transition-colors group">
-                            <td class="px-6 py-4 text-[10px] font-bold text-label uppercase tracking-tighter">#${r.task_id}</td>
-                            <td class="px-6 py-4 text-[10px] font-bold text-label/80">${r.routing_label || '-'}</td>
+                            <td class="px-6 py-4 text-[12px] font-bold text-label uppercase tracking-tighter">#${r.task_id}</td>
+                            <td class="px-6 py-4 text-[12px] font-bold text-label/80">${r.routing_label || '-'}</td>
                             <td class="px-6 py-4 text-center">
-                                <span class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase
+                                <span class="px-2 py-0.5 rounded-md text-[12px] font-black uppercase
                                     ${r.estado === 'OK' ? 'bg-emerald-500/10 text-emerald-500' : 
                                       r.estado === 'FAIL' ? 'bg-rose-500/10 text-rose-500' : 
                                       r.estado === 'DUP' ? 'bg-amber-500/10 text-amber-500' : 
@@ -118,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     ${r.estado || 'UNKNOWN'}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 text-[11px] font-bold text-label/60">${r.fecha ? new Date(r.fecha).toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-'}</td>
+                            <td class="px-6 py-4 text-[12px] font-bold text-label/60">${r.fecha ? new Date(r.fecha).toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-'}</td>
                         </tr>
                     `).join('');
                     openModal('globalSearchModal');
@@ -187,7 +215,7 @@ function showToast(message, type = 'info', clearAll = false) {
     toast.innerHTML = `
         ${icons[type] || icons.info}
         <div class="toast-content py-1">
-            <h4 class="text-[10px] font-black uppercase text-primary/60 tracking-[0.2em] mb-0.5">${type === 'success' ? 'Nexus Success' : type === 'error' ? 'nexus error' : 'nexus system'}</h4>
+            <h4 class="text-[12px] font-black uppercase text-primary/60 tracking-[0.2em] mb-0.5">${type === 'success' ? 'Nexus Success' : type === 'error' ? 'nexus error' : 'nexus system'}</h4>
             <p class="toast-message leading-tight">${message}</p>
         </div>
         <div class="toast-progress" style="background-color: ${type === 'success' ? '#10b981' : type === 'error' ? '#f43f5e' : type === 'warning' ? '#f59e0b' : '#0ea5e9'}"></div>
@@ -552,7 +580,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 list.innerHTML = `
                     <div class="p-8 text-center opacity-40">
                         <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
-                        <p class="text-[10px] font-black uppercase tracking-widest italic">Sin avisos en esta categoría</p>
+                        <p class="text-[12px] font-black uppercase tracking-widest italic">Sin avisos en esta categoría</p>
                     </div>
                 `;
                 return;
@@ -583,8 +611,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         <div class="flex-grow">
                             <p class="text-xs font-bold text-text mb-0.5 line-clamp-1 italic">${n.title}</p>
-                            <p class="text-[10px] text-label/60 leading-tight line-clamp-2">${n.message}</p>
-                            <span class="text-[10px] font-bold opacity-40 mt-1 block">${n.time}</span>
+                            <p class="text-[12px] text-label/60 leading-tight line-clamp-2">${n.message}</p>
+                            <span class="text-[12px] font-bold opacity-40 mt-1 block">${n.time}</span>
                         </div>
                         ${!n.is_read ? '<div class="w-1.5 h-1.5 rounded-full bg-primary mt-1 flex-shrink-0 shadow-lg shadow-primary/20"></div>' : ''}
                     </div>
@@ -717,11 +745,21 @@ document.addEventListener('DOMContentLoaded', () => {
             tooltip.classList.add('show');
             
             const rect = target.getBoundingClientRect();
-            const top = rect.top - tooltip.offsetHeight - 10;
-            const left = rect.left + (rect.width / 2) - (tooltip.offsetWidth / 2);
+            const isSidebar = target.closest('#sidebar');
             
-            tooltip.style.top = (top < 10 ? rect.bottom + 10 : top) + 'px';
-            tooltip.style.left = left + 'px';
+            if (isSidebar) {
+                // Position to the RIGHT of the sidebar item
+                const top = rect.top + (rect.height / 2) - (tooltip.offsetHeight / 2);
+                const left = rect.right + 12;
+                tooltip.style.top = top + 'px';
+                tooltip.style.left = left + 'px';
+            } else {
+                // Default: position ABOVE the element
+                const top = rect.top - tooltip.offsetHeight - 10;
+                const left = rect.left + (rect.width / 2) - (tooltip.offsetWidth / 2);
+                tooltip.style.top = (top < 10 ? rect.bottom + 10 : top) + 'px';
+                tooltip.style.left = left + 'px';
+            }
         }
     });
 

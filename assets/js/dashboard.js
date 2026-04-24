@@ -20,8 +20,8 @@ function changeActivityPage(page) {
     const b1 = document.getElementById('btnPage1');
     const b2 = document.getElementById('btnPage2');
     
-    const activeClass = 'w-7 h-7 flex items-center justify-center bg-primary text-white text-[11px] font-black rounded-lg shadow-lg shadow-primary/20 transition-all';
-    const inactiveClass = 'w-7 h-7 flex items-center justify-center text-label/60 text-[11px] font-black hover:bg-surface-container rounded-lg cursor-pointer transition-all';
+    const activeClass = 'w-7 h-7 flex items-center justify-center bg-primary text-white text-[12px] font-black rounded-lg shadow-lg shadow-primary/20 transition-all';
+    const inactiveClass = 'w-7 h-7 flex items-center justify-center text-label/60 text-[12px] font-black hover:bg-surface-container rounded-lg cursor-pointer transition-all';
 
     if (page === 1) {
         if(b1) b1.className = activeClass;

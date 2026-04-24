@@ -905,7 +905,7 @@ function renderCalendar() {
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.innerText = day;
-        btn.className = "h-9 w-full rounded-xl text-[10px] font-bold flex items-center justify-center transition-all";
+        btn.className = "h-9 w-full rounded-xl text-[12px] font-bold flex items-center justify-center transition-all";
         
         const currentIterDate = new Date(year, month, day);
         const isPast = currentIterDate < today;
@@ -1374,7 +1374,7 @@ function renderModCalendar() {
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.innerText = day;
-        btn.className = `h-8 w-8 text-[10px] font-bold rounded-lg transition-all ${isPast ? 'opacity-20 cursor-not-allowed' : 'hover:bg-primary/20 cursor-pointer'}`;
+        btn.className = `h-8 w-8 text-[12px] font-bold rounded-lg transition-all ${isPast ? 'opacity-20 cursor-not-allowed' : 'hover:bg-primary/20 cursor-pointer'}`;
         if (isSelected) btn.className += ' bg-primary text-white shadow-lg shadow-primary/40 scale-110';
         
         if (!isPast) {

@@ -22,7 +22,7 @@
                 <div>
                     <div class="flex items-center gap-3 mb-2">
                         <span class="w-10 h-[2px] bg-sky-500"></span>
-                        <span class="text-[10px] font-black uppercase tracking-[0.5em] text-sky-400/60">Sistema de Control Nexus</span>
+                        <span class="text-[12px] font-black uppercase tracking-[0.5em] text-sky-400/60">Sistema de Control Nexus</span>
                     </div>
                     <h1 class="text-4xl md:text-5xl font-black text-white tracking-tighter">
                         {{ "Lote Multi-Parte" if task.chunk_total > 1 else "Operación Unitaria" }}
@@ -31,11 +31,11 @@
                     <div class="flex flex-col items-end gap-2">
                     <div class="flex items-center gap-2">
                         {% if task.job.archivo_origen and task.job.archivo_origen.startswith('RETRY_TASK_') %}
-                        <span class="px-3 py-1 bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-[10px] font-black uppercase tracking-[0.2em] rounded-lg">Complementaria</span>
+                        <span class="px-3 py-1 bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-[12px] font-black uppercase tracking-[0.2em] rounded-lg">Complementaria</span>
                         {% else %}
-                        <span class="px-3 py-1 bg-white/5 border border-white/10 text-label text-[10px] font-black uppercase tracking-[0.2em] rounded-lg">Convencional</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 text-label text-[12px] font-black uppercase tracking-[0.2em] rounded-lg">Convencional</span>
                         {% endif %}
-                        <span class="text-[10px] font-black text-label uppercase tracking-widest">Ticket ID</span>
+                        <span class="text-[12px] font-black text-label uppercase tracking-widest">Ticket ID</span>
                     </div>
                     <div class="px-5 py-2 bg-slate-900 border border-white/5 rounded-xl text-lg font-mono text-white">#{{ "%06d" | format(task.id) }}</div>
                 </div>
@@ -44,15 +44,15 @@
             {% if task.estado == 'Terminada' or task.estado == 'Error' %}
             <!-- TABS NAV -->
             <nav class="flex gap-3 mb-10 p-1.5 bg-white/5 rounded-2xl border border-white/5 w-fit">
-                <button onclick="switchTab('dashboard')" id="btn-dashboard" class="tab-btn active px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 flex items-center gap-2 group">
+                <button onclick="switchTab('dashboard')" id="btn-dashboard" class="tab-btn active px-8 py-3 rounded-xl text-[12px] font-black uppercase tracking-widest transition-all duration-300 flex items-center gap-2 group">
                     <div class="w-1.5 h-1.5 rounded-full bg-sky-500 shadow-[0_0_8px_rgba(14,165,233,1)]"></div>
                     Dashboard
                 </button>
-                <button onclick="switchTab('logs')" id="btn-logs" class="tab-btn px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest text-label hover:text-label/40 transition-all duration-300 flex items-center gap-2 group">
+                <button onclick="switchTab('logs')" id="btn-logs" class="tab-btn px-8 py-3 rounded-xl text-[12px] font-black uppercase tracking-widest text-label hover:text-label/40 transition-all duration-300 flex items-center gap-2 group">
                     <div class="w-1.5 h-1.5 rounded-full bg-slate-600 group-hover:bg-violet-500 transition-colors"></div>
                     Historial Técnico
                 </button>
-                <button onclick="switchTab('cmd')" id="btn-cmd" class="tab-btn px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest text-label hover:text-label/40 transition-all duration-300 flex items-center gap-2 group">
+                <button onclick="switchTab('cmd')" id="btn-cmd" class="tab-btn px-8 py-3 rounded-xl text-[12px] font-black uppercase tracking-widest text-label hover:text-label/40 transition-all duration-300 flex items-center gap-2 group">
                     <div class="w-1.5 h-1.5 rounded-full bg-slate-600 group-hover:bg-orange-500 transition-colors"></div>
                     Historial CMD
                 </button>
@@ -70,14 +70,14 @@
                         <div class="space-y-10">
                             <!-- Usuario -->
                             <section>
-                                <label class="text-[10px] font-black uppercase tracking-[0.2em] text-label mb-3 block">Operador Responsable</label>
+                                <label class="text-[12px] font-black uppercase tracking-[0.2em] text-label mb-3 block">Operador Responsable</label>
                                 <div class="flex items-center gap-4">
                                     <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-sky-500 to-indigo-600 flex items-center justify-center text-2xl font-black text-white shadow-lg shadow-sky-500/20">
                                         {{ task.job.usuario[0]|upper }}
                                     </div>
                                     <div>
                                         <p class="text-xl font-bold text-white tracking-tight">{{ task.job.usuario }}</p>
-                                        <p class="text-[10px] font-bold text-sky-400/60 uppercase tracking-widest leading-none mt-1">Identity Verified</p>
+                                        <p class="text-[12px] font-bold text-sky-400/60 uppercase tracking-widest leading-none mt-1">Identity Verified</p>
                                     </div>
                                 </div>
                             </section>
@@ -85,7 +85,7 @@
                             <!-- Accion & Estado -->
                             <div class="flex gap-8">
                                 <section>
-                                    <label class="text-[10px] font-black uppercase tracking-[0.2em] text-label mb-3 block">Acción Operativa</label>
+                                    <label class="text-[12px] font-black uppercase tracking-[0.2em] text-label mb-3 block">Acción Operativa</label>
                                     <div class="flex">
                                         <span class="status-badge px-4 py-1.5 text-xs font-black bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
                                             ● {{ 'Baja (Delete)' if task.job.tarea == 'delete' else 'Alta (Add)' }}
@@ -93,7 +93,7 @@
                                     </div>
                                 </section>
                                 <section>
-                                    <label class="text-[10px] font-black uppercase tracking-[0.2em] text-label mb-3 block">Estado Final</label>
+                                    <label class="text-[12px] font-black uppercase tracking-[0.2em] text-label mb-3 block">Estado Final</label>
                                     <div class="flex">
                                         <span class="status-badge status-{{ task.estado|lower }} px-4 py-1.5 text-xs border border-white/10 uppercase font-black">
                                             ● {{ task.estado }}
@@ -105,20 +105,20 @@
                             <!-- List Metadata -->
                             <div class="space-y-5 pt-8 border-t border-white/5">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-[10px] font-bold text-label uppercase tracking-wide">Origen de Datos</span>
+                                    <span class="text-[12px] font-bold text-label uppercase tracking-wide">Origen de Datos</span>
                                     <div class="flex flex-col items-end">
-                                        <span class="text-[11px] font-black text-orange-500/90 uppercase tracking-tight">{{ task.job.archivo_origen or 'Carga Directa' }}</span>
+                                        <span class="text-[12px] font-black text-orange-500/90 uppercase tracking-tight">{{ task.job.archivo_origen or 'Carga Directa' }}</span>
                                         {% if task.job.archivo_origen and task.job.archivo_origen.startswith('RETRY_TASK_') %}
-                                        <a href="/api/psx/detail/{{ task.job.archivo_origen.split('_')[2] }}" class="text-[10px] font-bold text-sky-400 hover:text-white underline mt-1 tracking-widest">VER TAREA PADRE #{{ task.job.archivo_origen.split('_')[2] }}</a>
+                                        <a href="/api/psx/detail/{{ task.job.archivo_origen.split('_')[2] }}" class="text-[12px] font-bold text-sky-400 hover:text-white underline mt-1 tracking-widest">VER TAREA PADRE #{{ task.job.archivo_origen.split('_')[2] }}</a>
                                         {% endif %}
                                     </div>
                                 </div>
                                 <div class="flex justify-between items-center">
-                                    <span class="text-[10px] font-bold text-label uppercase tracking-wide">Secuencia de Carga</span>
-                                    <span class="text-[11px] font-black text-indigo-400 uppercase tracking-widest">Parte {{ task.chunk_index }} de {{ task.chunk_total }}</span>
+                                    <span class="text-[12px] font-bold text-label uppercase tracking-wide">Secuencia de Carga</span>
+                                    <span class="text-[12px] font-black text-indigo-400 uppercase tracking-widest">Parte {{ task.chunk_index }} de {{ task.chunk_total }}</span>
                                 </div>
                                 <div class="flex justify-between items-center">
-                                    <span class="text-[10px] font-bold text-label uppercase tracking-wide">Fin de Ejecución</span>
+                                    <span class="text-[12px] font-bold text-label uppercase tracking-wide">Fin de Ejecución</span>
                                     <span class="font-mono text-sm text-white/80">{{ task.fecha_fin.strftime('%H:%M:%S') if task.fecha_fin else '--:--:--' }}</span>
                                 </div>
                             </div>
@@ -126,13 +126,13 @@
 
                         <!-- Telemetry Column (RIGHT) -->
                         <div class="flex flex-col">
-                            <label class="text-[10px] font-black uppercase tracking-[0.2em] text-label mb-4 block">Telemetría Resultante</label>
+                            <label class="text-[12px] font-black uppercase tracking-[0.2em] text-label mb-4 block">Telemetría Resultante</label>
                             
                             <div class="space-y-4">
                                 <!-- TOTAL -->
                                 <div class="bg-white/5 border border-white/10 rounded-2xl p-6 flex items-center justify-between">
                                     <div>
-                                        <p class="text-[10px] font-black uppercase text-label tracking-widest mb-1">Total Procesado</p>
+                                        <p class="text-[12px] font-black uppercase text-label tracking-widest mb-1">Total Procesado</p>
                                         <p class="text-4xl font-black text-white tabular-nums tracking-tighter">{{ task.resumen.total }}</p>
                                     </div>
                                     <div class="w-12 h-12 rounded-xl bg-slate-900/50 border border-white/5 flex items-center justify-center text-label">
@@ -143,24 +143,24 @@
                                 <!-- Fixed 3-Column Grid based on Mode -->
                                 <div class="grid grid-cols-3 gap-4">
                                     <div class="bg-emerald-500/5 border border-emerald-500/10 rounded-2xl p-4 text-center">
-                                        <p class="text-[10px] font-black text-emerald-500/60 uppercase mb-1">OK</p>
+                                        <p class="text-[12px] font-black text-emerald-500/60 uppercase mb-1">OK</p>
                                         <p class="text-2xl font-black text-emerald-500 tabular-nums">{{ task.resumen.ok }}</p>
                                     </div>
                                     
                                     {% if task.job.force %}
                                     <div class="bg-sky-500/5 border border-sky-500/10 rounded-2xl p-4 text-center">
-                                        <p class="text-[10px] font-black text-sky-500/60 uppercase mb-1">Force</p>
+                                        <p class="text-[12px] font-black text-sky-500/60 uppercase mb-1">Force</p>
                                         <p class="text-2xl font-black text-sky-500 tabular-nums">{{ task.resumen.force_ok }}</p>
                                     </div>
                                     {% else %}
                                     <div class="bg-amber-500/5 border border-amber-500/10 rounded-2xl p-4 text-center">
-                                        <p class="text-[10px] font-black text-amber-500/60 uppercase mb-1">DUP</p>
+                                        <p class="text-[12px] font-black text-amber-500/60 uppercase mb-1">DUP</p>
                                         <p class="text-2xl font-black text-amber-500 tabular-nums">{{ task.resumen.dup or 0 }}</p>
                                     </div>
                                     {% endif %}
                                     
                                     <div class="bg-rose-500/5 border border-rose-500/10 rounded-2xl p-4 text-center">
-                                        <p class="text-[10px] font-black text-rose-500/60 uppercase mb-1">Fail</p>
+                                        <p class="text-[12px] font-black text-rose-500/60 uppercase mb-1">Fail</p>
                                         <p class="text-2xl font-black text-rose-500 tabular-nums">{{ task.resumen.fail }}</p>
                                     </div>
                                 </div>
@@ -173,7 +173,7 @@
                                     <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden mb-3">
                                         <div class="h-full bg-sky-500 shadow-[0_0_15px_rgba(14,165,233,0.5)] transition-all duration-1000" style="width: {{ percent }}%"></div>
                                     </div>
-                                    <div class="flex justify-between items-center uppercase font-black text-[10px] tracking-widest text-label">
+                                    <div class="flex justify-between items-center uppercase font-black text-[12px] tracking-widest text-label">
                                         <span>Tasa de Éxito</span>
                                         <span class="text-white text-sm tracking-tight">{{ percent }}%</span>
                                     </div>
@@ -191,7 +191,7 @@
                     <div class="flex flex-col md:flex-row items-center justify-between gap-6 mb-10">
                         <div>
                             <h2 class="text-2xl font-black text-white">Transacciones Detalladas</h2>
-                            <p class="text-[10px] font-bold text-label uppercase tracking-widest mt-1">Audit Log Consolidado</p>
+                            <p class="text-[12px] font-bold text-label uppercase tracking-widest mt-1">Audit Log Consolidado</p>
                         </div>
                         
                         <div class="flex items-center gap-4 w-full md:w-auto">
@@ -203,16 +203,16 @@
                                 <input type="text" id="logSearch" onkeyup="filterHistory()" placeholder="Buscar por número..." class="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-sky-500/50 focus:bg-white/10 transition-all">
                             </div>
 
-                            <a href="/api/psx/download_duplicates/{{ task.id }}" class="px-5 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-white transition-all whitespace-nowrap">
+                            <a href="/api/psx/download_duplicates/{{ task.id }}" class="px-5 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[12px] font-black uppercase tracking-widest text-white transition-all whitespace-nowrap">
                                 Descargar Duplicados
                             </a>
 
                             {% if task.retries %}
-                            <button disabled class="px-5 py-2.5 bg-slate-500/10 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-label cursor-not-allowed whitespace-nowrap">
+                            <button disabled class="px-5 py-2.5 bg-slate-500/10 border border-white/10 rounded-xl text-[12px] font-black uppercase tracking-widest text-label cursor-not-allowed whitespace-nowrap">
                                 Complementaria Generada
                             </button>
                             {% else %}
-                            <button onclick="reprocessDuplicates({{ task.id }})" id="reprocessBtn" class="px-5 py-2.5 bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 rounded-xl text-[10px] font-black uppercase tracking-widest text-sky-400 transition-all whitespace-nowrap">
+                            <button onclick="reprocessDuplicates({{ task.id }})" id="reprocessBtn" class="px-5 py-2.5 bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 rounded-xl text-[12px] font-black uppercase tracking-widest text-sky-400 transition-all whitespace-nowrap">
                                 Tarea Duplicados
                             </button>
                             {% endif %}
@@ -222,7 +222,7 @@
                     <div class="overflow-x-auto min-h-[400px]">
                         <table class="w-full text-left" id="historyTable">
                             <thead>
-                                <tr class="text-[10px] font-black text-label uppercase tracking-[0.2em] border-b border-white/5">
+                                <tr class="text-[12px] font-black text-label uppercase tracking-[0.2em] border-b border-white/5">
                                     <th class="pb-4 px-4 cursor-pointer hover:text-white transition-colors" onclick="sortHistory(0)">
                                         <div class="flex items-center gap-2">Número (ANI) <span id="sort-0"></span></div>
                                     </th>
@@ -243,13 +243,13 @@
                                     <td class="py-4 px-4 font-mono font-bold text-white">{{ item.numero }}</td>
                                     <td class="py-4 px-4 font-bold text-sky-400/70">{{ item.routing_label or '---' }}</td>
                                     <td class="py-4 px-4">
-                                        <span class="status-tag px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest 
+                                        <span class="status-tag px-3 py-1 rounded-lg text-[12px] font-black uppercase tracking-widest 
                                             {% if 'OK' in item.estado %}bg-emerald-500/10 text-emerald-500 border border-emerald-500/20
                                             {% elif 'FAIL' in item.estado or 'ERROR' in item.estado %}bg-rose-500/10 text-rose-500 border border-rose-500/20
                                             {% elif 'DUP' in item.estado %}bg-amber-500/10 text-amber-500 border border-amber-500/20
                                             {% else %}bg-slate-500/10 text-label border border-white/10{% endif %}">{{ item.estado }}</span>
                                     </td>
-                                    <td class="py-4 px-4 text-right font-mono text-[11px] text-label">{{ item.fecha.strftime('%H:%M:%S') }}</td>
+                                    <td class="py-4 px-4 text-right font-mono text-[12px] text-label">{{ item.fecha.strftime('%H:%M:%S') }}</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -257,7 +257,7 @@
                     </div>
 
                     <div class="mt-8 flex flex-col md:flex-row items-center justify-between gap-6 border-t border-white/5 pt-8">
-                        <p class="text-[10px] font-bold text-label uppercase tracking-widest" id="paginationInfo">
+                        <p class="text-[12px] font-bold text-label uppercase tracking-widest" id="paginationInfo">
                             Mostrando <span class="text-white" id="rangeStart">1</span> - <span class="text-white" id="rangeEnd">10</span> de <span class="text-white" id="totalCount">{{ history|length }}</span>
                         </p>
                         <div class="flex items-center gap-2" id="paginationBtns">
@@ -275,7 +275,7 @@
 
             <!-- CMD PANEL -->
             <div id="tab-cmd" class="tab-pane">
-                <div class="bg-[#050505] rounded-[2rem] border border-white/5 p-8 font-mono text-[11px] min-h-[500px] shadow-2xl relative overflow-hidden group">
+                <div class="bg-[#050505] rounded-[2rem] border border-white/5 p-8 font-mono text-[12px] min-h-[500px] shadow-2xl relative overflow-hidden group">
                     <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,#333,transparent)] opacity-20"></div>
                     <div class="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.03),rgba(0,255,0,0.01),rgba(0,0,255,0.03))] bg-[length:100%_4px,3px_100%] opacity-20"></div>
                     <div class="relative z-10 space-y-1">
@@ -315,7 +315,7 @@
                     <p class="text-label/60 max-w-sm text-sm mx-auto mb-10">La transacción está siendo orquestada con los procesadores del PSX5K. No cierre esta pestaña.</p>
                     <div class="flex flex-col items-center gap-6">
                         <span class="status-badge status-{{ task.estado|lower }} px-8 py-3 text-sm shadow-xl">● {{ task.estado }}</span>
-                        <button onclick="window.location.reload()" class="flex items-center gap-3 px-8 py-4 bg-sky-500/10 border border-sky-500/30 rounded-2xl hover:bg-sky-500/20 transition-all active:scale-95 text-sky-400 text-[10px] font-black uppercase tracking-widest">
+                        <button onclick="window.location.reload()" class="flex items-center gap-3 px-8 py-4 bg-sky-500/10 border border-sky-500/30 rounded-2xl hover:bg-sky-500/20 transition-all active:scale-95 text-sky-400 text-[12px] font-black uppercase tracking-widest">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                             Refrescar Estado
                         </button>
@@ -325,9 +325,9 @@
             {% endif %}
 
             <footer class="mt-12 flex items-center justify-between opacity-30 pb-12">
-                <p class="text-[10px] font-black uppercase tracking-widest">&copy; 2026 Nexus PSX-Core Services</p>
+                <p class="text-[12px] font-black uppercase tracking-widest">&copy; 2026 Nexus PSX-Core Services</p>
                 <div class="flex gap-2">
-                    <button onclick="window.close()" class="px-6 py-2 bg-white/5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-white/10">Regresar al Main</button>
+                    <button onclick="window.close()" class="px-6 py-2 bg-white/5 rounded-lg text-[12px] font-black uppercase tracking-widest hover:bg-white/10">Regresar al Main</button>
                 </div>
             </footer>
         </div>

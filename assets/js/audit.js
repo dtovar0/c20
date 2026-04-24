@@ -54,7 +54,7 @@ function initAuditDataTable() {
                         'SET_IDENTITY': 'bg-amber-500/10 text-amber-400 border-amber-500/20'
                     };
                     const actionClass = actionColors[data] || 'bg-primary/5 text-primary/70 border-primary/20';
-                    return `<div class="flex items-center h-full"><div class="inline-flex px-3 py-1 text-[10px] font-black tracking-widest uppercase border rounded-lg ${actionClass} truncate">${data}</div></div>`;
+                    return `<div class="flex items-center h-full"><div class="inline-flex px-3 py-1 text-[12px] font-black tracking-widest uppercase border rounded-lg ${actionClass} truncate">${data}</div></div>`;
                 }
             },
             { 
@@ -68,11 +68,11 @@ function initAuditDataTable() {
                         'info': 'text-primary'
                     };
                     const colorClass = statusColors[data.toLowerCase()] || statusColors['info'];
-                    return `<div class="flex items-center justify-center h-full"><span class="text-[10px] font-black tracking-widest uppercase ${colorClass}">${data}</span></div>`;
+                    return `<div class="flex items-center justify-center h-full"><span class="text-[12px] font-black tracking-widest uppercase ${colorClass}">${data}</span></div>`;
                 }
             },
-            { data: 'detail', width: 'auto', render: (data) => `<div class="flex items-center h-full text-[10px] font-bold text-label/60 line-clamp-1 min-w-0 overflow-hidden text-ellipsis" title="${data || ''}">${data || '-'}</div>` },
-            { data: 'time', width: '180px', render: (data) => `<div class="flex items-center h-full font-mono text-[10px] font-bold text-label/60 justify-end">${data}</div>` }
+            { data: 'detail', width: 'auto', render: (data) => `<div class="flex items-center h-full text-[12px] font-bold text-label/60 line-clamp-1 min-w-0 overflow-hidden text-ellipsis" title="${data || ''}">${data || '-'}</div>` },
+            { data: 'time', width: '180px', render: (data) => `<div class="flex items-center h-full font-mono text-[12px] font-bold text-label/60 justify-end">${data}</div>` }
         ],
         autoWidth: false,
         pageLength: 10,

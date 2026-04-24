@@ -13,24 +13,30 @@ function generateTaskGraphic(resumen) {
         return `<div class="h-1.5 w-24 bg-panel-border/20 rounded-full"></div>`;
     }
 
-    const okPct = (resumen.ok / resumen.total) * 100;
-    const failPct = (resumen.fail / resumen.total) * 100;
-    const forcePct = (resumen.force_ok / resumen.total) * 100;
-    const dupPct = (resumen.dup / resumen.total) * 100;
+    const processed = resumen.ok + resumen.fail + resumen.force_ok + resumen.dup;
+    const rawPct = (processed / resumen.total) * 100;
+    const totalPct = Math.min(rawPct, 100);
+
+    // Normalize segments proportionally within 100%
+    const scale = processed > 0 ? totalPct / rawPct : 0;
+    const okPct = ((resumen.ok / resumen.total) * 100) * scale;
+    const failPct = ((resumen.fail / resumen.total) * 100) * scale;
+    const forcePct = ((resumen.force_ok / resumen.total) * 100) * scale;
+    const dupPct = ((resumen.dup / resumen.total) * 100) * scale;
     const pendingPct = Math.max(0, 100 - (okPct + failPct + forcePct + dupPct));
 
     return `
         <div class="flex flex-col gap-1.5 w-full max-w-[130px] mx-auto">
-            <div class="h-4 w-full bg-panel-border/20 rounded-lg overflow-hidden flex shadow-inner border border-white/5">
-                <div class="h-full bg-primary transition-all duration-700 ease-out" style="width: ${okPct}%" title="OK: ${resumen.ok}"></div>
-                <div class="h-full bg-rose-500 transition-all duration-700 ease-out" style="width: ${failPct}%" title="FAIL: ${resumen.fail}"></div>
-                <div class="h-full bg-violet-500 transition-all duration-700 ease-out" style="width: ${forcePct}%" title="FORCED: ${resumen.force_ok}"></div>
-                <div class="h-full bg-amber-500 transition-all duration-700 ease-out" style="width: ${dupPct}%" title="DUP: ${resumen.dup}"></div>
-                <div class="h-full bg-transparent" style="width: ${pendingPct}%"></div>
+            <div class="h-4 w-full rounded-lg overflow-hidden flex shadow-inner border border-white/5" style="background:rgba(148,163,184,0.15)">
+                <div class="h-full transition-all duration-700 ease-out" style="width:${okPct}%;background:#2563eb" title="OK: ${resumen.ok}"></div>
+                <div class="h-full transition-all duration-700 ease-out" style="width:${failPct}%;background:#f43f5e" title="FAIL: ${resumen.fail}"></div>
+                <div class="h-full transition-all duration-700 ease-out" style="width:${forcePct}%;background:#8b5cf6" title="FORCED: ${resumen.force_ok}"></div>
+                <div class="h-full transition-all duration-700 ease-out" style="width:${dupPct}%;background:#f59e0b" title="DUP: ${resumen.dup}"></div>
+                <div class="h-full bg-transparent" style="width:${pendingPct}%"></div>
             </div>
             <div class="flex justify-between items-center px-0.5">
-                <span class="text-[10px] font-black text-primary/60">${Math.round(okPct + failPct + forcePct + dupPct)}%</span>
-                <span class="text-[10px] font-bold text-label/30">${resumen.ok + resumen.fail + resumen.force_ok + resumen.dup}/${resumen.total}</span>
+                <span class="text-[12px] font-black" style="color:#2563eb">${Math.round(totalPct)}%</span>
+                <span class="text-[12px] font-bold text-label/30">${processed}/${resumen.total}</span>
             </div>
         </div>
     `;
@@ -87,7 +93,9 @@ function initPSXDataTable() {
             dataSrc: (json) => {
                 const isAdmin = json.is_admin || false;
                 const api = tableEl.DataTable();
-                if (api) { api.column(5).visible(isAdmin); } // Index shifted due to removal of 'Fin'
+                if (api) { 
+                    api.column(2).visible(isAdmin); // Columna Usuario (Admin Only)
+                } 
                 return json.tasks;
             }
         },
@@ -106,18 +114,23 @@ function initPSXDataTable() {
             },
             { 
                 data: 'id', 
-                width: '100px', 
-                render: (data) => `<div class="flex items-center justify-center h-full text-[11px] font-black text-primary/80">#${String(data).padStart(5, '0')}</div>` 
+                width: '80px', 
+                render: (data) => `<div class="flex items-center justify-center h-full text-[12px] font-black text-primary/80">#${String(data).padStart(5, '0')}</div>` 
+            },
+            { 
+                data: 'usuario', 
+                width: '120px', 
+                render: (data) => `<div class="flex items-center justify-center h-full text-[12px] font-bold text-label/80 uppercase tracking-tighter truncate" data-nx-tooltip="Propietario: ${data}">${data}</div>` 
             },
             { 
                 data: 'archivo_origen', 
                 width: '280px', 
                 render: (data, type, row) => `
                     <div class="flex items-center h-full gap-3">
-                        <span class="text-[10px] font-bold text-label/60 truncate max-w-[180px]" data-nx-tooltip="${data}">
+                        <span class="text-[12px] font-bold text-label/60 truncate max-w-[180px]" data-nx-tooltip="${data}">
                             ${data && data.length > 25 ? '...' + data.slice(-22) : (data || 'MANUAL')}
                         </span>
-                        <span class="px-2 py-0.5 rounded-md bg-white/[0.07] border border-white/10 text-[10px] font-black text-label/60 uppercase tracking-tighter whitespace-nowrap shadow-sm shadow-black/20">
+                        <span class="px-2 py-0.5 rounded-md bg-white/[0.07] border border-white/10 text-[12px] font-black text-label/60 uppercase tracking-tighter whitespace-nowrap shadow-sm shadow-black/20">
                             ${row.chunk_index}/${row.chunk_total}
                         </span>
                     </div>` 
@@ -125,7 +138,7 @@ function initPSXDataTable() {
             { 
                 data: 'routing_label', 
                 width: '140px', 
-                render: (data) => `<div class="flex items-center justify-center h-full text-[10px] font-bold text-label/60 uppercase tracking-tight truncate" data-nx-tooltip="${data || 'N/A'}">${data || 'N/A'}</div>` 
+                render: (data) => `<div class="flex items-center justify-center h-full text-[12px] font-bold text-label/60 uppercase tracking-tight truncate" data-nx-tooltip="${data || 'N/A'}">${data || 'N/A'}</div>` 
             },
             { data: 'resumen', width: '120px', orderable: false, render: (data) => `<div class="flex items-center justify-center h-full min-w-0 overflow-hidden">${generateTaskGraphic(data)}</div>` },
             { 
@@ -133,53 +146,54 @@ function initPSXDataTable() {
                 width: '150px',
                 orderable: false,
                 render: (data, type, row) => {
-                    // Logic remains the same...
                     const isAdd = row.tarea === 'add';
-                    const actionColor = isAdd ? 'text-primary bg-primary/10 border-primary/20' : 'text-rose-500 bg-rose-500/10 border-rose-500/20';
+                    const actionStyle = isAdd 
+                        ? 'color:#2563eb;background:rgba(37,99,235,0.1);border-color:rgba(37,99,235,0.2)' 
+                        : 'color:#f43f5e;background:rgba(244,63,94,0.1);border-color:rgba(244,63,94,0.2)';
                     const actionIcon = isAdd 
                         ? `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>`
                         : `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>`;
                     
                     let modeIcon = '';
-                    let modeColor = 'text-label/40 bg-label/5 border-panel-border';
+                    let modeStyle = 'color:rgba(148,163,184,0.5);background:rgba(148,163,184,0.05);border-color:rgba(148,163,184,0.15)';
                     let modeTitle = row.accion_tipo || 'N/A';
                     
                     if (row.accion_tipo === 'call_in') {
                         modeIcon = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>`;
-                        modeColor = 'text-sky-500 bg-sky-500/10 border-sky-500/20';
+                        modeStyle = 'color:#0ea5e9;background:rgba(14,165,233,0.1);border-color:rgba(14,165,233,0.2)';
                     } else if (row.accion_tipo === 'call_inout') {
                         modeIcon = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>`;
-                        modeColor = 'text-indigo-500 bg-indigo-500/10 border-indigo-500/20';
+                        modeStyle = 'color:#6366f1;background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.2)';
                     } else {
                         modeIcon = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4"></path></svg>`;
                     }
 
                     let statusIcon = '';
-                    let statusColor = '';
+                    let statusStyle = '';
                     const state = row.estado.toLowerCase();
                     if (state === 'ejecutando') {
                         statusIcon = `<svg class="w-3.5 h-3.5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>`;
-                        statusColor = 'bg-primary/20 text-primary border-primary/30';
+                        statusStyle = 'color:#2563eb;background:rgba(37,99,235,0.15);border-color:rgba(37,99,235,0.3)';
                     } else if (state === 'terminada') {
                         statusIcon = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
-                        statusColor = 'bg-emerald-500/20 text-emerald-500 border-emerald-500/30';
+                        statusStyle = 'color:#10b981;background:rgba(16,185,129,0.15);border-color:rgba(16,185,129,0.3)';
                     } else if (state === 'error') {
                         statusIcon = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>`;
-                        statusColor = 'bg-rose-500/20 text-rose-500 border-rose-500/30';
+                        statusStyle = 'color:#f43f5e;background:rgba(244,63,94,0.15);border-color:rgba(244,63,94,0.3)';
                     } else {
                         statusIcon = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
-                        statusColor = 'bg-amber-500/20 text-amber-500 border-amber-500/30';
+                        statusStyle = 'color:#f59e0b;background:rgba(245,158,11,0.15);border-color:rgba(245,158,11,0.3)';
                     }
 
                     return `
                         <div class="flex items-center justify-center gap-2 h-full">
-                            <div class="flex items-center justify-center w-8 h-8 rounded-lg border ${actionColor} transition-all hover:scale-110" data-nx-tooltip="${row.tarea.toUpperCase()}">
+                            <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="${actionStyle}" data-nx-tooltip="${row.tarea.toUpperCase()}">
                                 ${actionIcon}
                             </div>
-                            <div class="flex items-center justify-center w-8 h-8 rounded-lg border ${modeColor} transition-all hover:scale-110" data-nx-tooltip="MODO: ${modeTitle.toUpperCase()}">
+                            <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="${modeStyle}" data-nx-tooltip="MODO: ${modeTitle.toUpperCase()}">
                                 ${modeIcon}
                             </div>
-                            <div class="flex items-center justify-center w-8 h-8 rounded-lg border ${statusColor} transition-all hover:scale-110" data-nx-tooltip="${row.estado.toUpperCase()}">
+                            <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="${statusStyle}" data-nx-tooltip="${row.estado.toUpperCase()}">
                                 ${statusIcon}
                             </div>
                         </div>`;

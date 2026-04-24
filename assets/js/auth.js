@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <td colspan="6" class="text-center py-20">
                         <div class="flex flex-col items-center opacity-20">
                             <svg class="w-12 h-12 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                            <p class="text-[10px] font-black uppercase tracking-widest text-label">Sin resultados encontrados</p>
+                            <p class="text-[12px] font-black uppercase tracking-widest text-label">Sin resultados encontrados</p>
                         </div>
                     </td>
                 </tr>
@@ -54,17 +54,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 tbody.innerHTML += `
                     <tr class="bg-surface-container border border-surface-container-border rounded-xl hover:border-primary transition-all group active:scale-[0.995]">
-                        <td class="px-4 py-3 text-[11px] font-bold text-label/80">
+                        <td class="px-4 py-3 text-[12px] font-bold text-label/80">
                             <div class="flex items-center gap-2">
                                 <span class="w-1.5 h-1.5 rounded-full ${row.status === 'active' ? 'bg-green-500' : 'bg-red-500/40'}"></span>
                                 ${row.user}
                             </div>
                         </td>
-                        <td class="px-4 py-3 text-[11px] font-medium text-label/60 lowercase italic">${row.email}</td>
-                        <td class="px-4 py-3 text-[10px] font-black text-label uppercase tracking-widest">${row.role}</td>
-                        <td class="px-4 py-3 text-[10px] font-mono text-label/40">${row.lastLogin}</td>
+                        <td class="px-4 py-3 text-[12px] font-medium text-label/60 lowercase italic">${row.email}</td>
+                        <td class="px-4 py-3 text-[12px] font-black text-label uppercase tracking-widest">${row.role}</td>
+                        <td class="px-4 py-3 text-[12px] font-mono text-label/40">${row.lastLogin}</td>
                         <td class="px-4 py-3">
-                            <span class="px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest ${statusClass}">${row.status}</span>
+                            <span class="px-3 py-0.5 rounded-full text-[12px] font-black uppercase tracking-widest ${statusClass}">${row.status}</span>
                         </td>
                         <td class="px-4 py-3 text-right pr-4">
                             <div class="flex items-center justify-end gap-2">
@@ -194,7 +194,7 @@ function addMappingRow(group = '', role = 'usuario') {
     row.className = 'mapping-row flex items-end gap-6 animate-in fade-in slide-in-from-left-2 duration-300';
     row.innerHTML = `
         <div class="flex-grow space-y-2 group">
-            <label class="block text-[10px] font-black text-label/40 uppercase tracking-[0.2em] ml-1 group-focus-within:text-primary transition-colors">GRUPO LDAP (DN)</label>
+            <label class="block text-[12px] font-black text-label/40 uppercase tracking-[0.2em] ml-1 group-focus-within:text-primary transition-colors">GRUPO LDAP (DN)</label>
             <div class="relative">
                 <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/40 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                 <input type="text" class="mapping-group w-full bg-input-bg border-2 border-panel-border rounded-xl pl-12 pr-4 py-3 text-sm font-bold text-input outline-none focus:border-primary transition-all placeholder:text-label/20" 
@@ -202,10 +202,10 @@ function addMappingRow(group = '', role = 'usuario') {
             </div>
         </div>
         <div class="w-60 shrink-0 space-y-2 group">
-            <label class="block text-[10px] font-black text-label/40 uppercase tracking-[0.2em] ml-1 group-focus-within:text-primary transition-colors">ROL ASIGNADO</label>
+            <label class="block text-[12px] font-black text-label/40 uppercase tracking-[0.2em] ml-1 group-focus-within:text-primary transition-colors">ROL ASIGNADO</label>
             <div class="relative">
                 <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/40 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                <select class="mapping-role w-full bg-input-bg border-2 border-panel-border rounded-xl pl-12 pr-10 py-3 text-[10px] font-black uppercase tracking-widest text-input outline-none focus:border-primary transition-all cursor-pointer appearance-none">
+                <select class="mapping-role w-full bg-input-bg border-2 border-panel-border rounded-xl pl-12 pr-10 py-3 text-[12px] font-black uppercase tracking-widest text-input outline-none focus:border-primary transition-all cursor-pointer appearance-none">
                     <option value="administrador" ${role === 'administrador' ? 'selected' : ''}>Administrador</option>
                     <option value="usuario" ${role === 'usuario' ? 'selected' : ''}>Usuario</option>
                 </select>

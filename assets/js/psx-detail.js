@@ -138,7 +138,7 @@ function renderPageNumbers(total) {
         if(i == 1 || i == total || (i >= currentPage - 1 && i <= currentPage + 1)) {
             const btn = document.createElement('button');
             btn.innerText = i;
-            btn.className = `w-8 h-8 rounded-lg text-[10px] font-black transition-all ${i === currentPage ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/20' : 'bg-white/5 text-slate-500 hover:bg-white/10'}`;
+            btn.className = `w-8 h-8 rounded-lg text-[12px] font-black transition-all ${i === currentPage ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/20' : 'bg-white/5 text-slate-500 hover:bg-white/10'}`;
             btn.onclick = () => { currentPage = i; renderTable(); };
             container.appendChild(btn);
         } else if (i == currentPage - 2 || i == currentPage + 2) {

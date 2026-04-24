@@ -1,5 +1,5 @@
 /**
- * NEXUS PREMIUM GUIDED TOUR - PSX5K TERMINAL (TOKEN-BASED V7)
+ * NEXUS PREMIUM GUIDED TOUR - PSX5K TERMINAL (V8)
  */
 class NexusTour {
     constructor(steps) {
@@ -8,6 +8,7 @@ class NexusTour {
         this.overlay = null;
         this.stepEl = null;
         this.spotlight = null;
+        this._keyHandler = null;
         
         this.init();
     }
@@ -42,6 +43,15 @@ class NexusTour {
         this.overlay.classList.add('active');
         this.spotlight.classList.add('active');
         this.showStep();
+
+        // Keyboard navigation
+        this._keyHandler = (e) => {
+            if (this.currentStep < 0) return;
+            if (e.key === 'Enter' || e.key === 'ArrowRight') { e.preventDefault(); this.next(); }
+            else if (e.key === 'Backspace' || e.key === 'ArrowLeft') { e.preventDefault(); this.prev(); }
+            else if (e.key === 'Escape') { e.preventDefault(); this.end(); }
+        };
+        document.addEventListener('keydown', this._keyHandler);
     }
 
     next() {
@@ -68,6 +78,11 @@ class NexusTour {
         this.stepEl.classList.remove('active');
         this.spotlight.classList.remove('active');
         this.currentStep = -1;
+
+        if (this._keyHandler) {
+            document.removeEventListener('keydown', this._keyHandler);
+            this._keyHandler = null;
+        }
     }
 
     showStep() {
@@ -83,10 +98,13 @@ class NexusTour {
             this.spotlight.style.width = `${rect.width + (padding * 2)}px`;
             this.spotlight.style.height = `${rect.height + (padding * 2)}px`;
 
-            // Build dots
+            // Build pagination: <-- ● ● ● ● ● -->
             const dots = this.steps.map((_, i) => 
                 `<div class="nx-tour-dot ${i === this.currentStep ? 'active' : ''}"></div>`
             ).join('');
+
+            const arrowLeft = `<svg class="nx-tour-arrow ${this.currentStep === 0 ? 'disabled' : ''}" onclick="window.nexusTour.prev()" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 19l-7-7 7-7"></path></svg>`;
+            const arrowRight = `<svg class="nx-tour-arrow" onclick="window.nexusTour.next()" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>`;
 
             // Build table if present
             let tableHTML = '';
@@ -114,17 +132,14 @@ class NexusTour {
                     ${tableHTML}
                 </div>
                 <div class="nx-tour-footer">
-                    <div style="display:flex;gap:6px;">${dots}</div>
-                    <div style="display:flex;gap:12px;align-items:center;">
-                        <button class="nx-tour-btn-back" onclick="window.nexusTour.prev()" ${this.currentStep === 0 ? 'style="display:none"' : ''}>Atrás</button>
-                        <button class="nx-tour-btn-next" id="nx-tour-next-btn">
-                            ${this.currentStep === this.steps.length - 1 ? 'Finalizar' : 'Siguiente'}
-                        </button>
+                    <div class="nx-tour-pagination">
+                        ${arrowLeft}
+                        <div class="nx-tour-dots">${dots}</div>
+                        ${arrowRight}
                     </div>
+                    <div class="nx-tour-counter">${this.currentStep + 1} / ${this.steps.length}</div>
                 </div>
             `;
-
-            this.stepEl.querySelector('#nx-tour-next-btn').onclick = () => this.next();
 
             const stepWidth = 420;
             let stepTop = rect.bottom + 30;
@@ -184,27 +199,33 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         {
             type: 'Columna',
-            target: '#psxDataTable thead th:nth-child(2)',
+            target: '#colTicketHeader',
             title: 'Master Ticket ID',
             content: 'Identificador único global del lote de datos. Se usa para auditorías y seguimiento transaccional.'
         },
         {
             type: 'Columna',
-            target: '#psxDataTable thead th:nth-child(3)',
+            target: '#colUserHeader',
+            title: 'Propietario',
+            content: 'Muestra el usuario que generó la tarea. (Solo visible para administradores).'
+        },
+        {
+            type: 'Columna',
+            target: '#colOrigenHeader',
             title: 'Origen / Segmento',
             content: 'Nombre del archivo fuente o indicador manual, acompañado del índice del fragmento procesado. Ejemplo: <b>data.csv — 2/5</b>.'
         },
         {
             type: 'Columna',
-            target: '#psxDataTable thead th:nth-child(4)',
+            target: '#colLabelHeader',
             title: 'Routing Label',
             content: 'Etiqueta lógica de destino enviada al PSX. Define el canal de salida de los datos procesados.'
         },
         {
             type: 'Columna + Iconos',
-            target: '#psxDataTable thead th:nth-child(5)',
+            target: '#colGraphHeader',
             title: 'Métricas de Avance',
-            content: 'Barra de progreso que muestra los resultados por bloque según la respuesta del nodo.',
+            content: 'Barra de progreso que muestra los resultados por bloque según la respuesta del nodo.<br><br><b style="color:#2563eb">Porcentaje</b> = % de registros procesados &nbsp;|&nbsp; <b>OK</b> / <b style="color:#f43f5e">FAIL</b> + <b style="color:#f59e0b">DUP</b> + <b style="color:#8b5cf6">FORCE-OK</b>',
             table: [
                 { val: `${dot('#2563eb')} Azul`, desc: '<b>OK</b> — Procesamiento exitoso' },
                 { val: `${dot('#f43f5e')} Rojo`, desc: '<b>FAIL</b> — Error reportado por el nodo' },
@@ -214,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         {
             type: 'Columna + Iconos',
-            target: '#psxDataTable thead th:nth-child(6)',
+            target: '#colStatusHeader',
             title: 'Estatus Operativo',
             content: 'Tríada de indicadores que resume el ciclo de vida del proceso.',
             table: [
@@ -225,7 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         {
             type: 'Columna + Botón',
-            target: '#psxDataTable thead th:nth-child(7)',
+            target: '#colSearchHeader',
             title: 'Auditoría Profunda',
             content: 'Abre el log detallado de la tarea. Permite auditar la respuesta <b>(Success / Reject)</b> individual de cada registro enviado al nodo.'
         }

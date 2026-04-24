@@ -76,40 +76,39 @@
                             <svg class="w-5 h-5 text-secondary group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                             </svg>
-                            <span id="notificationBadge" class="hidden absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-gradient-to-br from-rose-500 to-pink-600 rounded-full border-2 border-bg shadow-[0_0_10px_rgba(244,63,94,0.4)] flex items-center justify-center text-[10px] font-black text-white transition-all duration-300 group-hover:scale-110 active:scale-90 z-10">0</span>
+                            <span id="notificationBadge" class="hidden absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-gradient-to-br from-rose-500 to-pink-600 rounded-full border-2 border-bg shadow-[0_0_10px_rgba(244,63,94,0.4)] flex items-center justify-center text-[12px] font-black text-white transition-all duration-300 group-hover:scale-110 active:scale-90 z-10">0</span>
                         </button>
 
                         <!-- Notification Dropdown -->
                         <div id="notificationDropdown" class="absolute right-0 top-full mt-2 w-80 bg-panel-fill/95 backdrop-blur-xl border border-panel-border rounded-2xl shadow-2xl opacity-0 translate-y-4 pointer-events-none transition-all duration-300 z-50 overflow-hidden">
                             <div class="p-4 border-b border-panel-border flex justify-between items-center bg-surface-container/30">
-                                <h3 class="text-[10px] font-black text-label uppercase tracking-widest text-primary/80">Notificaciones</h3>
+                                <h3 class="text-[12px] font-black text-label uppercase tracking-widest text-primary/80">Notificaciones</h3>
                                 <div class="flex items-center gap-3">
-                                    <button onclick="markAllAsRead()" class="text-[10px] font-black text-primary hover:underline uppercase tracking-tighter">Marcar todo</button>
+                                    <button onclick="markAllAsRead()" class="text-[12px] font-black text-primary hover:underline uppercase tracking-tighter">Marcar todo</button>
                                     <div class="w-1 h-1 rounded-full bg-panel-border"></div>
-                                    <button onclick="deleteAllNotifications()" class="text-[10px] font-black text-rose-500/60 hover:text-rose-500 hover:underline uppercase tracking-tighter">Borrar todo</button>
+                                    <button onclick="deleteAllNotifications()" class="text-[12px] font-black text-rose-500/60 hover:text-rose-500 hover:underline uppercase tracking-tighter">Borrar todo</button>
                                 </div>
                             </div>
                             <!-- Filter Pills -->
                             <div class="px-4 py-2 bg-surface-container/10 border-b border-panel-border flex gap-2 overflow-x-auto custom-scrollbar no-scrollbar">
-                                <button data-filter="all" class="notif-filter active px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter transition-all">Todos</button>
-                                <button data-filter="warning" class="notif-filter px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter transition-all opacity-40 hover:opacity-100">Seguridad</button>
-                                <button data-filter="info" class="notif-filter px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter transition-all opacity-40 hover:opacity-100">Sistema</button>
-                                <button data-filter="success" class="notif-filter px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter transition-all opacity-40 hover:opacity-100">Éxito</button>
+                                <button data-filter="all" class="notif-filter active px-3 py-1 rounded-full text-[12px] font-black uppercase tracking-tighter transition-all">Todos</button>
+                                <button data-filter="warning" class="notif-filter px-3 py-1 rounded-full text-[12px] font-black uppercase tracking-tighter transition-all opacity-40 hover:opacity-100">Seguridad</button>
+                                <button data-filter="info" class="notif-filter px-3 py-1 rounded-full text-[12px] font-black uppercase tracking-tighter transition-all opacity-40 hover:opacity-100">Sistema</button>
+                                <button data-filter="success" class="notif-filter px-3 py-1 rounded-full text-[12px] font-black uppercase tracking-tighter transition-all opacity-40 hover:opacity-100">Éxito</button>
                             </div>
                             <div id="notificationList" class="max-h-[320px] overflow-y-auto custom-scrollbar">
                                 <div class="p-8 text-center opacity-40">
                                     <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
-                                    <p class="text-[10px] font-black uppercase tracking-widest">Sin notificaciones</p>
+                                    <p class="text-[12px] font-black uppercase tracking-widest">Sin notificaciones</p>
                                 </div>
                             </div>
-                            <a href="{{ url_for('audit.index') }}" class="p-3 bg-surface-container/30 border-t border-panel-border text-center block text-[10px] font-black text-label uppercase tracking-widest hover:text-primary transition-colors">Ver historial completo</a>
+                            <a href="{{ url_for('audit.index') }}" class="p-3 bg-surface-container/30 border-t border-panel-border text-center block text-[12px] font-black text-label uppercase tracking-widest hover:text-primary transition-colors">Ver historial completo</a>
                         </div>
                     </div>
 
-                    <!-- Theme Toggle -->
-                    <button id="themeToggle" class="p-2 hover:bg-surface-container rounded-base transition-all group flex items-center justify-center relative overflow-hidden active:scale-95">
-                        <svg class="w-5 h-5 text-secondary dark:hidden group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.364l-.707-.707M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                        <svg class="w-5 h-5 text-label/60 hidden dark:block group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    <!-- Theme Toggle (6 Themes) -->
+                    <button id="themeToggle" class="p-2 hover:bg-surface-container rounded-base transition-all group flex items-center justify-center relative overflow-hidden active:scale-95" data-nx-tooltip="Cambiar Tema">
+                        <svg class="w-5 h-5 text-label/60 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path></svg>
                     </button>
                 </div>
             </header>
@@ -125,7 +124,7 @@
                             </div>
                             <div>
                                 <h3 class="text-base font-black text-primary uppercase itaic leading-none tracking-tighter">Búsqueda en Historial PSX5K</h3>
-                                <p id="searchQueryDisplay" class="text-[10px] text-label/60 font-bold uppercase tracking-widest mt-1">Resultados para: "..."</p>
+                                <p id="searchQueryDisplay" class="text-[12px] text-label/60 font-bold uppercase tracking-widest mt-1">Resultados para: "..."</p>
                             </div>
                         </div>
                         <button onclick="closeModal('globalSearchModal')" class="p-2 hover:bg-surface-container rounded-xl transition-all group">
@@ -137,7 +136,7 @@
                     <div class="max-h-[60vh] overflow-y-auto custom-scrollbar p-0">
                         <table class="w-full text-left border-collapse">
                             <thead class="sticky top-0 bg-panel-fill/95 backdrop-blur-md z-10">
-                                <tr class="text-[10px] font-black text-primary/60 uppercase tracking-widest border-b border-panel-border">
+                                <tr class="text-[12px] font-black text-primary/60 uppercase tracking-widest border-b border-panel-border">
                                     <th class="px-6 py-4">ID</th>
                                     <th class="px-6 py-4">Routing Label</th>
                                     <th class="px-6 py-4 text-center">Estado</th>

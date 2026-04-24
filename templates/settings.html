@@ -15,21 +15,21 @@
         <div class="flex items-center p-2 gap-2">
             <!-- General Tab (Active) -->
             <button onclick="switchTab('general')" id="tab-trigger-general" 
-                class="tab-trigger w-60 relative py-3.5 flex items-center justify-center gap-3 rounded-xl text-[10px] font-black uppercase tracking-[0.25em] transition-all duration-300 z-10 text-tab-active-text bg-tab-active shadow-xl shadow-tab-active/20 active:scale-95">
+                class="tab-trigger w-60 relative py-3.5 flex items-center justify-center gap-3 rounded-xl text-[12px] font-black uppercase tracking-[0.25em] transition-all duration-300 z-10 text-tab-active-text bg-tab-active shadow-xl shadow-tab-active/20 active:scale-95">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
                 <span>General</span>
             </button>
 
             <!-- Database Tab (Standby) -->
             <button onclick="switchTab('database')" id="tab-trigger-database" 
-                class="tab-trigger w-60 relative py-3.5 flex items-center justify-center gap-3 rounded-xl text-[10px] font-black uppercase tracking-[0.25em] transition-all duration-300 z-10 text-tab-inactive-text bg-tab-inactive border border-panel-border active:scale-95">
+                class="tab-trigger w-60 relative py-3.5 flex items-center justify-center gap-3 rounded-xl text-[12px] font-black uppercase tracking-[0.25em] transition-all duration-300 z-10 text-tab-inactive-text bg-tab-inactive border border-panel-border active:scale-95">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
                 <span>Base de Datos</span>
             </button>
 
             <!-- Respaldos Tab (Standby) -->
             <button onclick="switchTab('backups')" id="tab-trigger-backups" 
-                class="tab-trigger w-60 relative py-3.5 flex items-center justify-center gap-3 rounded-xl text-[10px] font-black uppercase tracking-[0.25em] transition-all duration-300 z-10 text-tab-inactive-text bg-tab-inactive border border-panel-border active:scale-95">
+                class="tab-trigger w-60 relative py-3.5 flex items-center justify-center gap-3 rounded-xl text-[12px] font-black uppercase tracking-[0.25em] transition-all duration-300 z-10 text-tab-inactive-text bg-tab-inactive border border-panel-border active:scale-95">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
                 <span>Respaldos</span>
             </button>
@@ -50,7 +50,7 @@
                     </div>
                     <div>
                         <h2 class="text-xl font-black tracking-tighter text-primary uppercase italic leading-none">Control de Sistema</h2>
-                        <p class="text-[10px] text-primary/60 font-bold tracking-widest uppercase mt-0.5">Gestión / Estructura</p>
+                        <p class="text-[12px] text-primary/60 font-bold tracking-widest uppercase mt-0.5">Gestión / Estructura</p>
                     </div>
                 </div>
 
@@ -67,10 +67,10 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full min-h-0">
                     <!-- Vertical Panel A (Tokenized) -->
                     <div class="tab-panel-inner flex flex-col h-full overflow-y-auto custom-scrollbar">
-                        <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-6 px-1 text-center">Configuración de Portal</label>
+                        <label class="block text-[12px] font-black text-label uppercase tracking-[0.2em] mb-6 px-1 text-center">Configuración de Portal</label>
                         <!-- Form Group: Nombre del Portal -->
                         <div class="group mb-8">
-                            <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-3 px-1">Nombre del Portal</label>
+                            <label class="block text-[12px] font-black text-label uppercase tracking-[0.2em] mb-3 px-1">Nombre del Portal</label>
                             <div class="relative group">
                                 <svg class="w-5 h-5 absolute left-5 top-1/2 -translate-y-1/2 text-label/40 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
                                 <input type="text" 
@@ -83,7 +83,7 @@
 
                         <!-- Action Group: Identidad Visual -->
                         <div class="group">
-                            <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-3 px-1">Identidad Visual</label>
+                            <label class="block text-[12px] font-black text-label uppercase tracking-[0.2em] mb-3 px-1">Identidad Visual</label>
                             {% set is_image = sys_config.portal_identity_type == 'image' if sys_config else false %}
                             <div class="flex gap-4">
                                 <button id="btn-toggle-icon" onclick="toggleIdentityMode('icon')" 
@@ -101,16 +101,16 @@
 
                         <!-- Color Customization Group -->
                         <div class="group mt-8">
-                            <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-4 px-1">Personalización Cromática</label>
+                            <label class="block text-[12px] font-black text-label uppercase tracking-[0.2em] mb-4 px-1">Personalización Cromática</label>
                             <div class="grid grid-cols-2 gap-4">
                                 <!-- BG Color Picker -->
                                 <div class="bg-input-bg p-4 rounded-2xl border border-panel-border flex flex-col items-center">
-                                    <span class="text-[10px] font-bold text-primary/60 uppercase mb-3">Fondo</span>
+                                    <span class="text-[12px] font-bold text-primary/60 uppercase mb-3">Fondo</span>
                                     <input type="color" id="portal-bg-color" value="{{ sys_config.bg_color if sys_config else '#0f172a' }}" class="w-full h-10 rounded-lg cursor-pointer bg-transparent border-none">
                                 </div>
                                 <!-- Text Color Picker -->
                                 <div class="bg-input-bg p-4 rounded-2xl border border-panel-border flex flex-col items-center">
-                                    <span class="text-[10px] font-bold text-primary/60 uppercase mb-3">Texto</span>
+                                    <span class="text-[12px] font-bold text-primary/60 uppercase mb-3">Texto</span>
                                     <input type="color" id="portal-text-color" value="{{ sys_config.text_color if sys_config else '#ffffff' }}" class="w-full h-10 rounded-lg cursor-pointer bg-transparent border-none">
                                 </div>
                             </div>
@@ -119,7 +119,7 @@
 
                     <!-- Vertical Panel B (Preview Area) -->
                     <div class="tab-panel-inner flex flex-col h-full overflow-y-auto custom-scrollbar">
-                        <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-6 px-1 text-center">Identidad Visual</label>
+                        <label class="block text-[12px] font-black text-label uppercase tracking-[0.2em] mb-6 px-1 text-center">Identidad Visual</label>
                         
                         <!-- Preview Board -->
                         <div class="flex-grow min-h-0 bg-surface-container rounded-[24px] border border-surface-container-border flex flex-col items-center justify-center p-4 shadow-xl shadow-primary/5 relative overflow-hidden">
@@ -141,14 +141,14 @@
                                 </div>
                             </div>
                             
-                            <p id="preview-portal-name" class="mt-4 text-label text-[10px] font-black text-center max-w-[180px] leading-tight uppercase tracking-[0.25em] transition-all">
+                            <p id="preview-portal-name" class="mt-4 text-label text-[12px] font-black text-center max-w-[180px] leading-tight uppercase tracking-[0.25em] transition-all">
                                 {{ sys_config.portal_name if sys_config else 'Nexus Core AI' }}
                             </p>
                         </div>
 
                         <!-- Icon Picker Group -->
                         <div id="group-icon-picker" class="mt-8">
-                            <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-3 px-1">Selección de Icono</label>
+                            <label class="block text-[12px] font-black text-label uppercase tracking-[0.2em] mb-3 px-1">Selección de Icono</label>
                             <div class="bg-surface-container border-2 border-surface-container-border rounded-2xl h-[120px] flex items-center justify-center shadow-sm overflow-hidden">
                                 <div class="grid grid-cols-12 w-full h-full">
                                     <!-- Row 1: Core & System -->
@@ -198,12 +198,12 @@
 
                         <!-- Image Upload Group (Hidden by default) -->
                         <div id="group-image-upload" class="mt-8 hidden animate-in fade-in slide-in-from-top-2 duration-300">
-                            <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-3 px-1">Subir Imagen</label>
+                            <label class="block text-[12px] font-black text-label uppercase tracking-[0.2em] mb-3 px-1">Subir Imagen</label>
                             <div class="relative group cursor-pointer">
                                 <input type="file" id="portal-image-input" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20">
                                 <div class="bg-surface-container border-2 border-dashed border-surface-container-border rounded-2xl h-[120px] flex flex-col items-center justify-center transition-all group-hover:border-primary group-hover:bg-primary/5">
                                     <svg class="w-8 h-8 text-label/40 group-hover:text-primary mb-2 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                    <span class="text-[10px] font-black text-label uppercase tracking-widest group-hover:text-primary transition-colors">Click o arrastra imagen</span>
+                                    <span class="text-[12px] font-black text-label uppercase tracking-widest group-hover:text-primary transition-colors">Click o arrastra imagen</span>
                                 </div>
                             </div>
                         </div>
@@ -222,7 +222,7 @@
                     </div>
                     <div>
                         <h2 class="text-xl font-black tracking-tighter text-primary uppercase italic leading-none">Control de Estructura</h2>
-                        <p class="text-[10px] text-primary/60 font-bold tracking-widest uppercase mt-0.5">Sincronización / Base de Datos</p>
+                        <p class="text-[12px] text-primary/60 font-bold tracking-widest uppercase mt-0.5">Sincronización / Base de Datos</p>
                     </div>
                 </div>
                 
@@ -248,7 +248,7 @@
                                     </div>
                                     <div class="flex-grow">
                                         <span class="block font-black text-label uppercase tracking-tighter text-sm">MySQL / MariaDB</span>
-                                        <span class="block text-[10px] font-bold text-label/40 uppercase tracking-widest mt-0.5 whitespace-nowrap overflow-hidden text-ellipsis">Standard Relation DB</span>
+                                        <span class="block text-[12px] font-bold text-label/40 uppercase tracking-widest mt-0.5 whitespace-nowrap overflow-hidden text-ellipsis">Standard Relation DB</span>
                                     </div>
                                     <div class="w-5 h-5 rounded-full border-2 border-surface-container-border flex items-center justify-center peer-checked:border-primary">
                                         <div class="w-2.5 h-2.5 rounded-full bg-primary scale-0 transition-transform duration-300 peer-checked:scale-100"></div>
@@ -264,7 +264,7 @@
                                     </div>
                                     <div class="flex-grow">
                                         <span class="block font-black text-label uppercase tracking-tighter text-sm">PostgreSQL</span>
-                                        <span class="block text-[10px] font-bold text-label/40 uppercase tracking-widest mt-0.5 whitespace-nowrap overflow-hidden text-ellipsis">Advanced Object-Relational</span>
+                                        <span class="block text-[12px] font-bold text-label/40 uppercase tracking-widest mt-0.5 whitespace-nowrap overflow-hidden text-ellipsis">Advanced Object-Relational</span>
                                     </div>
                                     <div class="w-5 h-5 rounded-full border-2 border-surface-container-border flex items-center justify-center peer-checked:border-primary">
                                         <div class="w-2.5 h-2.5 rounded-full bg-primary scale-0 transition-transform duration-300 peer-checked:scale-100"></div>
@@ -278,26 +278,26 @@
                     <div class="grid grid-cols-2 gap-6 flex-grow">
                         <!-- Credentials Panel -->
                         <div class="bg-panel-fill border-2 border-dashed border-panel-border rounded-3xl p-8 flex flex-col">
-                            <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-6 px-1 text-center">Credenciales de Acceso</label>
+                            <label class="block text-[12px] font-black text-label uppercase tracking-[0.2em] mb-6 px-1 text-center">Credenciales de Acceso</label>
                             <div class="space-y-4 flex-grow">
                                 <div class="group">
-                                    <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-2 px-1">Host / Servidor</label>
+                                    <label class="block text-[12px] font-black text-label uppercase tracking-[0.2em] mb-2 px-1">Host / Servidor</label>
                                     <div class="relative group">
                                         <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/40 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path></svg>
                                         <input type="text" placeholder="localhost" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3 text-sm font-bold text-input outline-none focus:border-input-focus transition-all">
                                     </div>
                                 </div>
                                 <div class="group">
-                                    <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-2 px-1">Puerto</label>
+                                    <label class="block text-[12px] font-black text-label uppercase tracking-[0.2em] mb-2 px-1">Puerto</label>
                                     <div class="relative group">
                                         <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/40 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path></svg>
                                         <input type="text" id="db-port" placeholder="3306" value="3306" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3 text-sm font-bold text-input outline-none focus:border-input-focus transition-all">
                                     </div>
                                 </div>
                                 <div class="group">
-                                    <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-2 px-1">Cifrado SSL</label>
+                                    <label class="block text-[12px] font-black text-label uppercase tracking-[0.2em] mb-2 px-1">Cifrado SSL</label>
                                     <div class="flex items-center justify-between bg-input-bg px-5 py-3 border-2 border-panel-border rounded-2xl h-[52px]">
-                                        <span class="text-[10px] text-primary/60 font-bold uppercase tracking-widest">Seguridad Activa</span>
+                                        <span class="text-[12px] text-primary/60 font-bold uppercase tracking-widest">Seguridad Activa</span>
                                         <label class="relative inline-flex items-center cursor-pointer">
                                             <input type="checkbox" class="sr-only peer">
                                             <div class="w-10 h-5 bg-panel-border rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
@@ -309,25 +309,25 @@
 
                         <!-- Access Identity Panel -->
                         <div class="bg-panel-fill border-2 border-dashed border-panel-border rounded-3xl p-8 flex flex-col">
-                            <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-6 px-1 text-center">Identidad de Acceso</label>
+                            <label class="block text-[12px] font-black text-label uppercase tracking-[0.2em] mb-6 px-1 text-center">Identidad de Acceso</label>
                             
                             <div class="space-y-4 flex-grow">
                                 <div class="group">
-                                    <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-2 px-1">Nombre de la DB</label>
+                                    <label class="block text-[12px] font-black text-label uppercase tracking-[0.2em] mb-2 px-1">Nombre de la DB</label>
                                     <div class="relative group">
                                         <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/40 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
                                         <input type="text" placeholder="nexus_production" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3 text-sm font-bold text-input outline-none focus:border-input-focus transition-all">
                                     </div>
                                 </div>
                                 <div class="group">
-                                    <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-2 px-1">Usuario</label>
+                                    <label class="block text-[12px] font-black text-label uppercase tracking-[0.2em] mb-2 px-1">Usuario</label>
                                     <div class="relative group">
                                         <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/40 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                                         <input type="text" placeholder="db_admin" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3 text-sm font-bold text-input outline-none focus:border-input-focus transition-all">
                                     </div>
                                 </div>
                                 <div class="group">
-                                    <label class="block text-[10px] font-black text-label uppercase tracking-[0.2em] mb-2 px-1">Contraseña</label>
+                                    <label class="block text-[12px] font-black text-label uppercase tracking-[0.2em] mb-2 px-1">Contraseña</label>
                                     <div class="relative group">
                                         <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/40 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                                         <input type="password" value="********" placeholder="********" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-12 py-3 text-sm font-bold text-input outline-none focus:border-input-focus transition-all">
@@ -340,7 +340,7 @@
                             
                             <!-- Test Connection Button -->
                             <div class="mt-8">
-                                <button onclick="if(validateNexusForm('tab-panel-database')) { showToast('Probando...', 'info'); setTimeout(() => showToast('Conexión Exitosa', 'success'), 1200); }" class="w-full h-14 bg-button-bg text-button-text rounded-2xl text-[10px] font-black uppercase tracking-[0.28em] shadow-xl shadow-button-bg/20 hover:opacity-90 transition-all active:scale-95 flex items-center justify-center gap-3">
+                                <button onclick="if(validateNexusForm('tab-panel-database')) { showToast('Probando...', 'info'); setTimeout(() => showToast('Conexión Exitosa', 'success'), 1200); }" class="w-full h-14 bg-button-bg text-button-text rounded-2xl text-[12px] font-black uppercase tracking-[0.28em] shadow-xl shadow-button-bg/20 hover:opacity-90 transition-all active:scale-95 flex items-center justify-center gap-3">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                                     Probar Conexión
                                 </button>
@@ -360,7 +360,7 @@
                     </div>
                     <div>
                         <h2 class="text-xl font-black tracking-tighter text-primary uppercase italic leading-none">Gestión de Respaldos</h2>
-                        <p class="text-[10px] text-primary/60 font-bold tracking-widest uppercase mt-0.5">Portabilidad / Restauracion</p>
+                        <p class="text-[12px] text-primary/60 font-bold tracking-widest uppercase mt-0.5">Portabilidad / Restauracion</p>
                     </div>
                 </div>
             </header>
@@ -374,9 +374,9 @@
                             <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                         </div>
                         <h3 class="text-lg font-black text-white uppercase tracking-widest mb-3">Exportar Configuración</h3>
-                        <p class="text-[11px] text-label/60 font-medium leading-relaxed max-w-[280px] mb-8">Genera un paquete maestro con usuarios, LDAP, plantillas y ajustes del sistema para migración o respaldo de seguridad.</p>
+                        <p class="text-[12px] text-label/60 font-medium leading-relaxed max-w-[280px] mb-8">Genera un paquete maestro con usuarios, LDAP, plantillas y ajustes del sistema para migración o respaldo de seguridad.</p>
                         
-                        <button onclick="exportSystemConfig()" class="w-full h-14 bg-primary text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.25em] shadow-xl shadow-primary/20 hover:opacity-90 transition-all active:scale-95 flex items-center justify-center gap-3">
+                        <button onclick="exportSystemConfig()" class="w-full h-14 bg-primary text-white rounded-2xl text-[12px] font-black uppercase tracking-[0.25em] shadow-xl shadow-primary/20 hover:opacity-90 transition-all active:scale-95 flex items-center justify-center gap-3">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                             Descargar Respaldo
                         </button>
@@ -388,7 +388,7 @@
                             <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
                         </div>
                         <h3 class="text-lg font-black text-white uppercase tracking-widest mb-3">Importar Configuración</h3>
-                        <p class="text-[11px] text-label/60 font-medium leading-relaxed max-w-[280px] mb-8">Carga un archivo de respaldo previo para restaurar instantáneamente toda la infraestructura del portal.</p>
+                        <p class="text-[12px] text-label/60 font-medium leading-relaxed max-w-[280px] mb-8">Carga un archivo de respaldo previo para restaurar instantáneamente toda la infraestructura del portal.</p>
                         
                         <!-- Drop Zone Container -->
                         <div id="import-drop-zone" class="w-full p-8 border-2 border-dashed border-panel-border rounded-[32px] bg-surface-container/20 group hover:border-violet-500/50 hover:bg-violet-500/5 transition-all duration-300 relative cursor-pointer">
@@ -399,8 +399,8 @@
                                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
                                 </div>
                                 <div class="text-center">
-                                    <p class="text-[10px] font-black uppercase tracking-[0.25em] text-label mb-1">Arrastra tu respaldo aquí</p>
-                                    <p class="text-[10px] font-bold uppercase tracking-widest text-label/40">O haz clic para explorar (.zip)</p>
+                                    <p class="text-[12px] font-black uppercase tracking-[0.25em] text-label mb-1">Arrastra tu respaldo aquí</p>
+                                    <p class="text-[12px] font-bold uppercase tracking-widest text-label/40">O haz clic para explorar (.zip)</p>
                                 </div>
                             </div>
 
@@ -429,7 +429,7 @@
             </div>
             <div>
                 <h3 class="text-lg font-black text-rose-600 dark:text-rose-500 uppercase tracking-tighter italic">Confirmar Restauración</h3>
-                <p class="text-[10px] text-rose-500/60 font-black tracking-widest uppercase mt-0.5">Operación de Sobrescritura Detectada</p>
+                <p class="text-[12px] text-rose-500/60 font-black tracking-widest uppercase mt-0.5">Operación de Sobrescritura Detectada</p>
             </div>
         </header>
 
@@ -440,16 +440,16 @@
             <div class="bg-surface-container/50 border border-panel-border rounded-2xl p-5 mb-8">
                 <div class="flex items-center gap-3 text-primary mb-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    <span class="text-[10px] font-black uppercase tracking-widest">Recomendación de Seguridad</span>
+                    <span class="text-[12px] font-black uppercase tracking-widest">Recomendación de Seguridad</span>
                 </div>
-                <p class="text-[10px] text-label/40 font-bold italic">Se sugiere descargar un respaldo del estado actual antes de proceder para garantizar un punto de retorno seguro.</p>
+                <p class="text-[12px] text-label/40 font-bold italic">Se sugiere descargar un respaldo del estado actual antes de proceder para garantizar un punto de retorno seguro.</p>
             </div>
 
             <div class="flex gap-4">
-                <button onclick="closeModal('confirmImportModal')" class="flex-grow py-4 bg-panel-fill border-2 border-panel-border text-label rounded-2xl text-[10px] font-black uppercase tracking-widest hover:border-label/40 transition-all active:scale-95">
+                <button onclick="closeModal('confirmImportModal')" class="flex-grow py-4 bg-panel-fill border-2 border-panel-border text-label rounded-2xl text-[12px] font-black uppercase tracking-widest hover:border-label/40 transition-all active:scale-95">
                     Cancelar
                 </button>
-                <button id="confirmBtnAction" class="flex-grow py-4 bg-rose-600 text-white shadow-xl shadow-rose-600/20 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:opacity-90 transition-all active:scale-95 flex items-center justify-center gap-2">
+                <button id="confirmBtnAction" class="flex-grow py-4 bg-rose-600 text-white shadow-xl shadow-rose-600/20 rounded-2xl text-[12px] font-black uppercase tracking-widest hover:opacity-90 transition-all active:scale-95 flex items-center justify-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                     Confirmar e Importar
                 </button>

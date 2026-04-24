@@ -286,7 +286,7 @@ html:not(.dark) .modal-footer {
     background-color: rgb(var(--color-primary));
     color: white;
     border-radius: 0.75rem;
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 0.25em;
@@ -367,12 +367,12 @@ html:not(.dark) .modal-footer {
 }
 
 #sidebar.is-collapsed .nav-item svg {
-    min-width: 20px !important;
-    min-height: 20px !important;
-    width: 20px !important;
-    height: 20px !important;
-    max-width: 20px !important;
-    max-height: 20px !important;
+    min-width: 26px !important;
+    min-height: 26px !important;
+    width: 26px !important;
+    height: 26px !important;
+    max-width: 26px !important;
+    max-height: 26px !important;
     stroke-width: 1.75 !important;
 }
 
@@ -385,7 +385,7 @@ html:not(.dark) .modal-footer {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 12px;
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 0.1em;

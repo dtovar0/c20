@@ -78,13 +78,13 @@ function initUsersDataTable() {
                 width: 'auto',
                 render: (data) => `
                     <div class="flex items-center gap-3 overflow-hidden">
-                        <div class="w-8 h-8 rounded-full bg-primary/10 flex-shrink-0 flex items-center justify-center text-[10px] font-black text-primary border border-primary/20">
+                        <div class="w-8 h-8 rounded-full bg-primary/10 flex-shrink-0 flex items-center justify-center text-[12px] font-black text-primary border border-primary/20">
                             ${(data || '?').charAt(0).toUpperCase()}
                         </div>
-                        <span class="text-[11px] font-black text-label uppercase tracking-tighter truncate">${data || '-'}</span>
+                        <span class="text-[12px] font-black text-label uppercase tracking-tighter truncate">${data || '-'}</span>
                     </div>`
             },
-            { data: 'name', width: '220px', render: (data) => `<div class="flex items-center h-full text-[10px] font-mono text-label/40 truncate">${data}</div>` },
+            { data: 'name', width: '220px', render: (data) => `<div class="flex items-center h-full text-[12px] font-mono text-label/40 truncate">${data}</div>` },
             { 
                 data: 'source', 
                 width: '100px',
@@ -93,7 +93,7 @@ function initUsersDataTable() {
                     const sourceClass = isLdap ? 'bg-primary/10 text-primary border-primary/20' : 'bg-label/5 text-label/40 border-panel-border';
                     return `
                         <div class="flex items-center h-full">
-                            <span class="px-2 py-0.5 rounded-lg border text-[10px] font-black uppercase tracking-widest ${sourceClass}">${data}</span>
+                            <span class="px-2 py-0.5 rounded-lg border text-[12px] font-black uppercase tracking-widest ${sourceClass}">${data}</span>
                         </div>`;
                 }
             },
@@ -108,7 +108,7 @@ function initUsersDataTable() {
                     return `
                         <div class="flex items-center h-full gap-2 overflow-hidden">
                             ${roleIcon}
-                            <span class="text-[10px] font-bold text-label/60 uppercase tracking-widest truncate">${data}</span>
+                            <span class="text-[12px] font-bold text-label/60 uppercase tracking-widest truncate">${data}</span>
                         </div>`;
                 }
             },
@@ -122,7 +122,7 @@ function initUsersDataTable() {
                         inactive: 'bg-label/10 text-label/40',
                         suspended: 'bg-red-500/10 text-red-500'
                     }[data.toLowerCase()] || 'bg-label/10 text-label/40';
-                    return `<div class="flex items-center justify-end h-full"><span class="px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest ${statusClass}">${data}</span></div>`;
+                    return `<div class="flex items-center justify-end h-full"><span class="px-3 py-0.5 rounded-full text-[12px] font-black uppercase tracking-widest ${statusClass}">${data}</span></div>`;
                 }
             }
         ],
