@@ -240,12 +240,13 @@ def main():
                 if target:
                     send_notification_by_slug(slug='inicio', target_email=target, 
                                             context={'usuario': task.job.usuario, 'hora': task.fecha_inicio.strftime('%H:%M:%S')})
+                    print(f"📧 Correo de inicio enviado satisfactoriamente a: {target}")
                 
                 add_audit_log("tarea iniciada", status="info", detail=f"ID: {task.id} - {task.job.tarea}", user_override=task.job.usuario)
 
                 # Procesar datos
                 ani_list = process_task_data(task)
-                detail = PSX5KDetail.query.get(task.id) or PSX5KDetail(id=task.id)
+                detail = db.session.get(PSX5KDetail, task.id) or PSX5KDetail(id=task.id)
                 detail.total = len(ani_list)
                 db.session.add(detail)
                 if detail.total == 0:
@@ -275,6 +276,7 @@ def main():
                     if target:
                         send_notification_by_slug(slug='error', target_email=target,
                                                 context={'usuario': task.job.usuario, 'ip': 'PSX_NODE', 'error': str(task_err)[:100]})
+                        print(f"📧 Correo de error enviado satisfactoriamente a: {target}")
                     continue
                
                 # Resultados Detallados
@@ -316,6 +318,7 @@ def main():
                 if target:
                     send_notification_by_slug(slug='terminado', target_email=target, 
                                             context={'usuario': task.job.usuario, 'hora': task.fecha_fin.strftime('%H:%M:%S')})
+                    print(f"📧 Correo de término enviado satisfactoriamente a: {target}")
 
             time.sleep(SLEEP_BETWEEN)
 
