@@ -41,12 +41,15 @@ def test_connectivity():
     except Exception as e:
         return False, str(e)
 
+DEBUG_PSX_ENABLED = os.getenv('DEBUG_PSX', 'false').lower() == 'true'
+
 class StreamLog:
     def __init__(self):
         self.content = ""
     def write(self, s):
         self.content += s
-        sys.stdout.write(s)
+        if DEBUG_PSX_ENABLED:
+            sys.stdout.write(s)
     def flush(self):
         sys.stdout.flush()
 
@@ -108,6 +111,8 @@ def psx5k_cmd(line_task, line_number, line_type=None, routing_label=None, force=
         
         # 2. Procesar Números (ANI)
         for number in line_number:
+            if DEBUG_PSX_ENABLED:
+                print(f"\n🔍 [DEBUG] Procesando ANI: {number}")
             stats["total"] += 1
             try:
                 if line_task == 'add':
@@ -118,7 +123,7 @@ def psx5k_cmd(line_task, line_number, line_type=None, routing_label=None, force=
                     
                     found = 'ERR_REC_NOT_FOUND' not in result
 
-                    if found or force:
+                    if not found or force:
                         # Modo Inserción o Sobreescritura Forzada
                         is_force = found and force
                         msg_prefix = "[OK]" if not found else "[FORCE-OK]"

@@ -144,8 +144,8 @@
                         <div>
                             <label class="nx-label-strip mb-3 block">Modo de Cliente</label>
                             <select id="clientModeSelect" onchange="handleRoutingLabelState()" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl px-5 py-4 text-sm font-bold text-input outline-none focus:border-input-focus transition-all">
-                                <option value="calls_only">Cliente solo hace llamadas</option>
-                                <option value="both">Cliente hace y recibe llamadas</option>
+                                <option value="call_in">Cliente solo hace llamadas</option>
+                                <option value="call_inout">Cliente hace y recibe llamadas</option>
                             </select>
                         </div>
                         <div>
@@ -285,8 +285,8 @@
                         <div>
                             <label class="nx-label-strip mb-3 block">Modo de Cliente</label>
                             <select id="scheduleClientModeSelect" onchange="handleScheduleRoutingLabelState()" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl px-5 py-4 text-sm font-bold text-input outline-none focus:border-input-focus transition-all">
-                                <option value="calls_only">Cliente solo hace llamadas</option>
-                                <option value="both">Cliente hace y recibe llamadas</option>
+                                <option value="call_in">Cliente solo hace llamadas</option>
+                                <option value="call_inout">Cliente hace y recibe llamadas</option>
                             </select>
                         </div>
                         <div>
@@ -554,8 +554,15 @@
                 <h4 class="nx-label-strip mb-6 text-primary/80">Paso 4: Parámetros del Job</h4>
                 <div class="space-y-6">
                     <div>
+                        <label class="nx-label-strip mb-3 block">Modo de Cliente</label>
+                        <select id="modClientModeSelect" onchange="handleModRoutingLabelState()" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl px-5 py-4 text-sm font-bold text-input outline-none focus:border-input-focus transition-all">
+                            <option value="call_in">Cliente solo hace llamadas</option>
+                            <option value="call_inout">Cliente hace y recibe llamadas</option>
+                        </select>
+                    </div>
+                    <div>
                         <label class="nx-label-strip mb-2 block opacity-40">Routing Label</label>
-                        <input type="text" id="modRoutingInput" placeholder="N/A" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl px-5 py-4 text-sm font-bold text-input outline-none">
+                        <input type="text" id="modRoutingInput" placeholder="N/A" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl px-5 py-4 text-sm font-bold text-input outline-none transition-all">
                     </div>
                     <div id="modForceContainer" class="flex items-center justify-between p-4 bg-rose-500/5 border border-rose-500/20 rounded-2xl">
                         <span class="text-[10px] font-black text-rose-500 uppercase">Forzar Operación</span>

@@ -363,7 +363,7 @@ function handleRoutingLabelState() {
     const label = document.getElementById('routingLabelTag');
     if (!select || !input || !label) return;
 
-    if (select.value === 'both') {
+    if (select.value === 'call_inout') {
         input.disabled = false;
         input.placeholder = 'Ingrese etiqueta de ruta...';
         label.innerText = 'Routing Label (Activo)';
@@ -377,6 +377,42 @@ function handleRoutingLabelState() {
         label.style.opacity = '0.4';
     }
 }
+
+function handleScheduleRoutingLabelState() {
+    const select = document.getElementById('scheduleClientModeSelect');
+    const input = document.getElementById('scheduleRoutingLabelInput');
+    if (!select || !input) return;
+
+    if (select.value === 'call_inout') {
+        input.disabled = false;
+        input.placeholder = 'Ingrese etiqueta de ruta...';
+    } else {
+        input.disabled = true;
+        input.placeholder = 'Bloqueado...';
+    }
+}
+
+function handleModRoutingLabelState() {
+    const select = document.getElementById('modClientModeSelect');
+    const input = document.getElementById('modRoutingInput');
+    if (!select || !input) return;
+
+    if (select.value === 'call_inout') {
+        input.disabled = false;
+        input.placeholder = 'Ingrese etiqueta de ruta...';
+    } else {
+        input.disabled = true;
+        input.placeholder = 'N/A (Bloqueado)';
+        input.value = '';
+    }
+}
+
+function handleDataMethodChange() {
+    const toggle = document.getElementById('dataEntryToggle');
+    const fileArea = document.getElementById('methodFileUpload');
+    const manualArea = document.getElementById('methodManualEntry');
+    const labelFile = document.getElementById('labelFileMode');
+    const labelManual = document.getElementById('labelManualMode');
 
 function toggleDataMethod() {
     const toggle = document.getElementById('dataEntryToggle');
@@ -580,7 +616,7 @@ function validateScheduleStep() {
 
         const mode = document.getElementById('scheduleClientModeSelect').value;
         const routing = document.getElementById('scheduleRoutingLabelInput');
-        if (!isEliminar && mode === 'both' && routing.value.trim() === '') {
+        if (!isEliminar && mode === 'call_inout' && routing.value.trim() === '') {
             routing.style.borderColor = ERROR_COLOR;
             isValid = false;
         }
@@ -1247,6 +1283,7 @@ async function confirmModifyAction() {
         action: modifyAction,
         tarea: modifyTaskType,
         routing_label: document.getElementById('modRoutingInput').value,
+        datos_tipo: modifyTaskType === 'delete' ? 'N/A' : document.getElementById('modClientModeSelect').value,
         force: document.getElementById('modForceToggle').checked,
         is_scheduled: modifyTiming === 'schedule',
         scheduled_time: schedTime

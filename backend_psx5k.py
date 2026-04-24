@@ -262,7 +262,7 @@ def main():
                     results = psx5k_cmd(
                         line_task=task.job.tarea, 
                         line_number=ani_list,
-                        line_type=task.job.accion_tipo,
+                        line_type=task.job.datos_tipo if task.job.tarea == 'add' else None,
                         routing_label=task.job.routing_label,
                         force=task.job.force
                     )
