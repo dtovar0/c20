@@ -5,6 +5,7 @@
 
 window.nexusSettings = {
     notifications: true,
+    emailNotifications: true,
     refreshInterval: 60, // seconds
     tourEnabled: true,
     initialized: false
@@ -19,10 +20,21 @@ document.addEventListener('DOMContentLoaded', () => {
  * Loads settings from localStorage or defaults
  */
 function loadInterfaceSettings() {
+    // 1. Recover from Database (injected in body)
+    const body = document.body;
+    if (body.dataset.prefNotifications) {
+        window.nexusSettings.notifications = body.dataset.prefNotifications === 'true';
+        window.nexusSettings.emailNotifications = body.dataset.prefEmail === 'true';
+        window.nexusSettings.refreshInterval = parseInt(body.dataset.prefRefresh) || 60;
+        window.nexusSettings.tourEnabled = body.dataset.prefTour === 'true';
+    }
+
+    // 2. Fallback to localStorage (legacy support or local session overrides)
     const saved = localStorage.getItem('nexus_interface_settings');
     if (saved) {
         try {
             const parsed = JSON.parse(saved);
+            // We prioritize the localStorage if it exists, as it might have local session changes
             window.nexusSettings = { ...window.nexusSettings, ...parsed };
         } catch (e) {
             console.error('Error parsing settings:', e);
@@ -43,6 +55,7 @@ function initSettingsUI() {
     const refreshRange = document.getElementById('settingRefreshRange');
     const refreshDisplay = document.getElementById('refreshValueDisplay');
     const notifyToggle = document.getElementById('settingNotifyToggle');
+    const emailNotifyToggle = document.getElementById('settingEmailNotifyToggle');
     const tourToggle = document.getElementById('settingTourToggle');
 
     if (!settingsBtn) return;
@@ -53,6 +66,7 @@ function initSettingsUI() {
         if (refreshRange) refreshRange.value = window.nexusSettings.refreshInterval;
         if (refreshDisplay) refreshDisplay.textContent = window.nexusSettings.refreshInterval + 's';
         if (notifyToggle) notifyToggle.checked = window.nexusSettings.notifications;
+        if (emailNotifyToggle) emailNotifyToggle.checked = window.nexusSettings.emailNotifications;
         if (tourToggle) tourToggle.checked = window.nexusSettings.tourEnabled;
         
         if (typeof openModal === 'function') openModal('settingsModal');
@@ -70,6 +84,7 @@ function initSettingsUI() {
         saveBtn.addEventListener('click', () => {
             const newSettings = {
                 notifications: notifyToggle ? notifyToggle.checked : true,
+                emailNotifications: emailNotifyToggle ? emailNotifyToggle.checked : true,
                 refreshInterval: refreshRange ? parseInt(refreshRange.value) : 60,
                 tourEnabled: tourToggle ? tourToggle.checked : true
             };
@@ -77,11 +92,30 @@ function initSettingsUI() {
             const changedInterval = newSettings.refreshInterval !== window.nexusSettings.refreshInterval;
             
             window.nexusSettings = { ...window.nexusSettings, ...newSettings };
+            
+            // Local persistence
             localStorage.setItem('nexus_interface_settings', JSON.stringify(window.nexusSettings));
 
-            if (typeof showToast === 'function') {
-                showToast('Configuración aplicada correctamente', 'success');
-            }
+            // DB Persistence
+            fetch('/auth/preferences/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    notifications: newSettings.notifications,
+                    email_notifications: newSettings.emailNotifications,
+                    refresh_interval: newSettings.refreshInterval,
+                    tour_enabled: newSettings.tourEnabled
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    if (typeof showToast === 'function') {
+                        showToast('Configuración sincronizada con el servidor', 'success');
+                    }
+                }
+            })
+            .catch(err => console.error('Error syncing preferences:', err));
 
             // If interval changed, we need to restart pollers
             if (changedInterval) {

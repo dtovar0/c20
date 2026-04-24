@@ -33,7 +33,11 @@
 
     <body class="bg-bg text-text h-full overflow-hidden" 
           data-brand-bg="{{ sys_config.bg_color if sys_config else '' }}" 
-          data-brand-text="{{ sys_config.text_color if sys_config else '' }}">
+          data-brand-text="{{ sys_config.text_color if sys_config else '' }}"
+          data-pref-notifications="{{ 'true' if current_user.pref_notifications else 'false' }}"
+          data-pref-email="{{ 'true' if current_user.pref_email_notifications else 'false' }}"
+          data-pref-refresh="{{ current_user.pref_refresh_interval or 60 }}"
+          data-pref-tour="{{ 'true' if current_user.pref_tour_enabled else 'false' }}">
     <div class="flex h-full overflow-hidden">
         <!-- Sidebar -->
         {% include 'components/sidebar.html' %}
@@ -140,7 +144,7 @@
                     </div>
 
                     <div class="p-8 space-y-6">
-                        <!-- Notification Toggle -->
+                        <!-- Notification Toggle (Desktop) -->
                         <div class="flex items-center justify-between p-4 bg-surface-container/20 rounded-2xl border border-panel-border/40">
                             <div>
                                 <h4 class="text-sm font-black text-label uppercase tracking-tight">Notificaciones de Escritorio</h4>
@@ -148,6 +152,18 @@
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" id="settingNotifyToggle" class="sr-only peer">
+                                <div class="w-12 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                            </label>
+                        </div>
+
+                        <!-- Notification Toggle (Email) -->
+                        <div class="flex items-center justify-between p-4 bg-surface-container/20 rounded-2xl border border-panel-border/40">
+                            <div>
+                                <h4 class="text-sm font-black text-label uppercase tracking-tight">Notificaciones por Correo</h4>
+                                <p class="text-[12px] text-label/60 font-medium leading-none mt-1">Avisos de inicio, fin y errores de tareas</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="settingEmailNotifyToggle" class="sr-only peer">
                                 <div class="w-12 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                             </label>
                         </div>

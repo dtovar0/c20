@@ -258,3 +258,25 @@ def test_ldap():
         
     except Exception as e:
         return jsonify({"status": "error", "message": "Fallo en la sincronización de roles LDAP."}), 500
+
+@auth_bp.route("/preferences/save", methods=["POST"])
+@login_required
+def save_preferences():
+    """
+    Guarda las preferencias de interfaz del usuario actual.
+    """
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"status": "error", "message": "No se recibieron datos"}), 400
+            
+        if "notifications" in data: current_user.pref_notifications = data["notifications"]
+        if "email_notifications" in data: current_user.pref_email_notifications = data["email_notifications"]
+        if "refresh_interval" in data: current_user.pref_refresh_interval = data["refresh_interval"]
+        if "tour_enabled" in data: current_user.pref_tour_enabled = data["tour_enabled"]
+        
+        db.session.commit()
+        return jsonify({"status": "success", "message": "Preferencias del sistema actualizadas"})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"status": "error", "message": "Error al guardar preferencias"}), 500

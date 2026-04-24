@@ -81,8 +81,15 @@ class GlobalNexusTour {
             this._keyHandler = null;
         }
 
-        // Mark as completed in localStorage to avoid auto-activation next time
+        // Mark as completed in localStorage and DB to avoid auto-activation next time
         localStorage.setItem('nexus_tour_completed', 'true');
+        window.nexusSettings.tourEnabled = false;
+
+        fetch('/auth/preferences/save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tour_enabled: false })
+        }).catch(err => console.error('Error syncing tour state:', err));
     }
 
     showStep() {

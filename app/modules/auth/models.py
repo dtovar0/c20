@@ -16,6 +16,12 @@ class User(db.Model, UserMixin):
     created_at = db.Column(db.DateTime, default=datetime.now)
     last_login_at = db.Column(db.DateTime, nullable=True)
     
+    # User Interface Preferences
+    pref_notifications = db.Column(db.Boolean, default=True)
+    pref_email_notifications = db.Column(db.Boolean, default=True)
+    pref_refresh_interval = db.Column(db.Integer, default=60)
+    pref_tour_enabled = db.Column(db.Boolean, default=True)
+    
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
         
