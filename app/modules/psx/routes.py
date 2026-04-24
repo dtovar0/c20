@@ -403,13 +403,14 @@ def update_or_reprocess_job(job_id):
 
         # Si el job ya terminó/canceló y se pide modificar -> CLONAMOS (REPROCESO)
         if finished and action == 'modify':
+            origin_task_id = data.get('origin_task_id')
             new_job = PSX5KJob(
                 usuario=current_user.username,
                 tarea=data.get('tarea', job.tarea),
                 accion_tipo=data.get('accion_tipo', job.accion_tipo),
                 datos_tipo=job.datos_tipo,
                 routing_label=data.get('routing_label', job.routing_label),
-                archivo_origen=f"REPROCESO_FROM_{job_id}",
+                archivo_origen=f"REPROCESO_TASK_{origin_task_id}" if origin_task_id else f"REPROCESO_FROM_{job_id}",
                 run_force=data.get('force', job.run_force)
             )
             db.session.add(new_job)

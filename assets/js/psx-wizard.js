@@ -1063,6 +1063,7 @@ async function openModifyModal(taskId) {
         currentModifyTaskData = task;
 
         // Reset UI
+        resetModifyForm();
         currentModifyStep = 1;
         document.getElementById('modifyTicketNum').innerText = String(taskId).padStart(5, '0');
         
@@ -1135,7 +1136,44 @@ async function openModifyModal(taskId) {
 
 function closeModifyModal() {
     const modal = document.getElementById('modifyTaskModal');
-    if (modal) modal.classList.add('opacity-0', 'pointer-events-none');
+    if (modal) {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        setTimeout(resetModifyForm, 300);
+    }
+}
+
+function resetModifyForm() {
+    modifyAction = 'modify';
+    modifyTaskType = 'add';
+    modifyTiming = 'now';
+    currentModifyStep = 1;
+
+    const modal = document.getElementById('modifyTaskModal');
+    if (!modal) return;
+
+    modal.querySelectorAll('input, select').forEach(el => {
+        if (el.type === 'checkbox') el.checked = false;
+        else el.value = '';
+    });
+
+    const routingInput = document.getElementById('modRoutingInput');
+    if (routingInput) {
+        routingInput.disabled = false;
+        routingInput.placeholder = 'N/A';
+    }
+
+    const forceToggle = document.getElementById('modForceToggle');
+    if (forceToggle) forceToggle.checked = false;
+
+    // Reset button groups
+    selectModifyAction('modify');
+    setModifyTiming('now');
+    
+    const step4 = document.getElementById('modifyStep4');
+    if (step4) step4.classList.remove('hidden');
+    
+    const totalStepsLabel = document.getElementById('modifyTotalSteps');
+    if (totalStepsLabel) totalStepsLabel.innerText = '5';
 }
 
 function selectModifyAction(action) {
@@ -1240,7 +1278,14 @@ function changeModifyStep(delta) {
                 return;
             }
         }
+        
         currentModifyStep += delta;
+
+        // Skip Step 4 if it's a delete operation
+        const isEliminar = (modifyTaskType === 'delete' || modifyTaskType === 'del');
+        if (isEliminar && currentModifyStep === 4) {
+            currentModifyStep += delta;
+        }
     }
 
     if (currentModifyStep < 1) currentModifyStep = 1;
@@ -1250,11 +1295,31 @@ function changeModifyStep(delta) {
 }
 
 function updateModifyUI() {
+    const isQuickAction = (modifyAction === 'cancel' || modifyAction === 'activate');
+    const isEliminar = (modifyTaskType === 'delete' || modifyTaskType === 'del');
+    
+    // Calculate effective total steps and visual current step
+    let totalSteps = 5;
+    let visualStep = currentModifyStep;
+
+    if (isQuickAction) {
+        totalSteps = 2;
+        visualStep = (currentModifyStep === 5) ? 2 : 1;
+    } else if (isEliminar) {
+        totalSteps = 4;
+        if (currentModifyStep === 5) visualStep = 4;
+    }
+
     document.querySelectorAll('.modify-step-content').forEach(s => s.classList.add('hidden'));
     document.getElementById(`modifyStep${currentModifyStep}`).classList.remove('hidden');
 
-    document.getElementById('modifyStepNum').innerText = currentModifyStep;
-    document.getElementById('modifyStepProgress').style.width = `${(currentModifyStep / 5) * 100}%`;
+    const stepNumLabel = document.getElementById('modifyStepNum');
+    const totalStepsLabel = document.getElementById('modifyTotalSteps');
+    const progressBar = document.getElementById('modifyStepProgress');
+
+    if (stepNumLabel) stepNumLabel.innerText = visualStep;
+    if (totalStepsLabel) totalStepsLabel.innerText = totalSteps;
+    if (progressBar) progressBar.style.width = `${(visualStep / totalSteps) * 100}%`;
 
     const prevBtn = document.getElementById('modPrevBtn');
     const nextBtn = document.getElementById('modNextBtn');
@@ -1314,6 +1379,7 @@ async function confirmModifyAction() {
     const payload = {
         action: modifyAction,
         tarea: modifyTaskType,
+        origin_task_id: currentModifyTaskData ? currentModifyTaskData.id : null,
         routing_label: modRouting ? modRouting.value : null,
         accion_tipo: modifyTaskType === 'delete' ? 'N/A' : (modClientMode ? modClientMode.value : 'call_in'),
         datos_tipo: currentModifyTaskData.datos_tipo, 
