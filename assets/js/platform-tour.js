@@ -76,6 +76,14 @@ class GlobalNexusTour {
         this.spotlight.classList.remove('active');
         this.currentStep = -1;
 
+        // Cleanup any opened UI elements from the tour
+        if (typeof closeModal === 'function') closeModal('settingsModal');
+        const notifDropdown = document.getElementById('notificationDropdown');
+        if (notifDropdown) {
+            notifDropdown.style.opacity = '0';
+            notifDropdown.style.pointerEvents = 'none';
+        }
+
         if (this._keyHandler) {
             document.removeEventListener('keydown', this._keyHandler);
             this._keyHandler = null;
@@ -97,6 +105,15 @@ class GlobalNexusTour {
         const target = document.querySelector(step.target);
         
         if (target) {
+            // Execute automated action if defined
+            if (step.action && typeof step.action === 'function') {
+                try {
+                    step.action(target);
+                } catch (e) {
+                    console.error('Error executing tour step action:', e);
+                }
+            }
+
             const rect = target.getBoundingClientRect();
             const padding = 10;
             
@@ -169,10 +186,16 @@ document.addEventListener('DOMContentLoaded', () => {
             content: 'Utiliza este botón para <b>colapsar o expandir</b> el menú lateral. Maximiza tu espacio de trabajo cuando lo necesites.'
         },
         {
+            type: 'Orientación',
+            target: '#locationBar',
+            title: 'Barra de Ubicación',
+            content: 'Aquí puedes ver en qué sección de la plataforma te encuentras en todo momento. Te ayuda a mantener el contexto de tu navegación.'
+        },
+        {
             type: 'Topbar',
             target: '#systemSearch',
             title: 'Búsqueda Inteligente',
-            content: 'Realiza búsquedas globales en el historial. Encuentra números de ticket, routing labels o usuarios de forma instantánea.'
+            content: 'Realiza búsquedas globales en el historial. Encuentra números de ticket o usuarios de forma instantánea.'
         },
         {
             type: 'Personalización',
@@ -201,6 +224,18 @@ document.addEventListener('DOMContentLoaded', () => {
             target: '#dashboardWrapper .grid-cols-1.md\\:grid-cols-2',
             title: 'Indicadores KPI',
             content: 'Resumen ejecutivo de tu operación: tareas totales, pendientes, programadas y la ejecución activa en tiempo real.'
+        });
+        steps.push({
+            type: 'Analítica',
+            target: '#cardVolumen',
+            title: 'Volumen Operativo',
+            content: 'Visualiza la carga de trabajo diaria mediante gráficos dinámicos. Identifica picos de actividad de forma visual.'
+        });
+        steps.push({
+            type: 'Analítica',
+            target: '#cardCumplimiento',
+            title: 'Cumplimiento (SLA)',
+            content: 'Monitoriza el porcentaje de éxito y eficiencia de las tareas. Asegura que tu operación se mantenga en niveles óptimos.'
         });
         steps.push({
             type: 'Monitoreo',

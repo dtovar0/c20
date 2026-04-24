@@ -20,26 +20,34 @@ document.addEventListener('DOMContentLoaded', () => {
  * Loads settings from localStorage or defaults
  */
 function loadInterfaceSettings() {
-    // 1. Recover from Database (injected in body)
-    const body = document.body;
-    if (body.dataset.prefNotifications) {
-        window.nexusSettings.notifications = body.dataset.prefNotifications === 'true';
-        window.nexusSettings.emailNotifications = body.dataset.prefEmail === 'true';
-        window.nexusSettings.refreshInterval = parseInt(body.dataset.prefRefresh) || 60;
-        window.nexusSettings.tourEnabled = body.dataset.prefTour === 'true';
-    }
-
-    // 2. Fallback to localStorage (legacy support or local session overrides)
+    // 1. Fallback initial: localStorage (legacy support or local session overrides)
     const saved = localStorage.getItem('nexus_interface_settings');
     if (saved) {
         try {
             const parsed = JSON.parse(saved);
-            // We prioritize the localStorage if it exists, as it might have local session changes
+            // Ensure refreshInterval is a valid number if present
+            if (parsed.refreshInterval) {
+                parsed.refreshInterval = parseInt(parsed.refreshInterval);
+            }
             window.nexusSettings = { ...window.nexusSettings, ...parsed };
         } catch (e) {
             console.error('Error parsing settings:', e);
         }
     }
+
+    // 2. Recover from Database (SSoT - Single Source of Truth)
+    // We overwrite localStorage with DB values if they exist
+    const body = document.body;
+    if (body.dataset.prefNotifications !== undefined) {
+        window.nexusSettings.notifications = body.dataset.prefNotifications === 'true';
+        window.nexusSettings.emailNotifications = body.dataset.prefEmail === 'true';
+        window.nexusSettings.refreshInterval = parseInt(body.dataset.prefRefresh) || 60;
+        window.nexusSettings.tourEnabled = body.dataset.prefTour === 'true';
+        
+        // Sync back to localStorage to keep it fresh
+        localStorage.setItem('nexus_interface_settings', JSON.stringify(window.nexusSettings));
+    }
+    
     window.nexusSettings.initialized = true;
     
     // Apply initial state if needed (e.g. starting pollers)
@@ -62,14 +70,39 @@ function initSettingsUI() {
 
     // Open Modal
     settingsBtn.addEventListener('click', () => {
-        // Sync UI with current settings
-        if (refreshRange) refreshRange.value = window.nexusSettings.refreshInterval;
-        if (refreshDisplay) refreshDisplay.textContent = window.nexusSettings.refreshInterval + 's';
-        if (notifyToggle) notifyToggle.checked = window.nexusSettings.notifications;
-        if (emailNotifyToggle) emailNotifyToggle.checked = window.nexusSettings.emailNotifications;
-        if (tourToggle) tourToggle.checked = window.nexusSettings.tourEnabled;
-        
-        if (typeof openModal === 'function') openModal('settingsModal');
+        const val = window.nexusSettings.refreshInterval;
+        const $range = $('#settingRefreshRange');
+        const $display = $('#refreshValueDisplay');
+        const $notif = $('#settingNotifyToggle');
+        const $email = $('#settingEmailNotifyToggle');
+        const $tour = $('#settingTourToggle');
+
+        console.log('💎 Current Settings SSoT:', window.nexusSettings);
+
+        if (typeof openModal === 'function') {
+            openModal('settingsModal');
+            
+            // Sync UI *after* modal is visible (crucial for some browsers/range-inputs)
+            setTimeout(() => {
+                const $range = $('#settingRefreshRange');
+                const $display = $('#refreshValueDisplay');
+                const $notif = $('#settingNotifyToggle');
+                const $email = $('#settingEmailNotifyToggle');
+                const $tour = $('#settingTourToggle');
+                const val = window.nexusSettings.refreshInterval;
+
+                console.log('🔄 DEFERRED SYNC:', val);
+                
+                if ($range.length) {
+                    $range.val(val).attr('value', val);
+                    $range.trigger('input').trigger('change');
+                }
+                if ($display.length) $display.text(val + 's');
+                if ($notif.length) $notif.prop('checked', window.nexusSettings.notifications);
+                if ($email.length) $email.prop('checked', window.nexusSettings.emailNotifications);
+                if ($tour.length) $tour.prop('checked', window.nexusSettings.tourEnabled);
+            }, 50);
+        }
     });
 
     // Range Input Feedback
@@ -141,8 +174,9 @@ function startGlobalPolling() {
     const intervalMs = window.nexusSettings.refreshInterval * 1000;
 
     // 2. Register Poller: PSX Task Table (if present)
-    const psxTable = $('#auditTableBody').closest('table').DataTable();
-    if (psxTable) {
+    const tableTarget = $('#psxDataTable'); // Usar ID directo del elemento
+    if (tableTarget.length && $.fn.dataTable.isDataTable('#psxDataTable')) {
+        const psxTable = tableTarget.DataTable();
         const id = setInterval(() => {
             console.log('🔄 Polling: DataTables Reload');
             psxTable.ajax.reload(null, false); // Reload without resetting pagination

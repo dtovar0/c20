@@ -1,3 +1,10 @@
+import os
+import sys
+import time
+import datetime
+import signal
+from dotenv import load_dotenv
+
 # Configuración de PATH y Raíz
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.insert(0, PROJECT_ROOT)
@@ -8,10 +15,22 @@ load_dotenv(dotenv_path=os.path.join(PROJECT_ROOT, '.env'))
 ADMIN_EMAIL = os.getenv('NOTIFICATION_ADMIN_EMAIL', 'admin@example.com')
 
 def get_notification_target(username):
-    """Resuelve el destinatario de la notificación."""
+    """Resuelve el destinatario de la notificación consultando preferencias en DB."""
     if not username: return ADMIN_EMAIL
+    
+    # Intentar buscar al usuario en la base de datos para ver sus preferencias
+    user = User.query.filter_by(username=username).first()
+    if user:
+        if not user.pref_email_notifications:
+            print(f"🔇 Notificaciones por correo desactivadas para el usuario: {username}")
+            return None
+        
+        # Si el username es un correo, lo usamos, si no, intentamos resolver
+        if '@' in user.username: return user.username
+        
+    # Fallback: Si no existe el usuario o no tiene correo en username, usamos el ADMIN_EMAIL
+    # pero solo si el contexto lo permite (aquí retornamos ADMIN si username no es correo)
     if '@' in username: return username
-    # Si es 'admin' o usuario sin arroba, enviamos al admin de .env
     return ADMIN_EMAIL
 
 from app import create_app, db

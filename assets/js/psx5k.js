@@ -88,6 +88,7 @@ function initPSXDataTable() {
     if (!tableEl.length) return;
 
     psxDataTable = tableEl.DataTable({
+        retrieve: true,
         ajax: {
             url: '/api/psx/list',
             dataSrc: (json) => {
@@ -255,8 +256,13 @@ function initPSXDataTable() {
         drawCallback: function(settings) {
             const api = new $.fn.dataTable.Api(settings);
             const visibleCols = api.columns(':visible').count();
-            renderGhostRows(settings, visibleCols);
+            if (typeof renderGhostRows === 'function') {
+                renderGhostRows(settings, visibleCols);
+            }
             updatePSXActions();
+        },
+        initComplete: function() {
+            if (typeof startGlobalPolling === 'function') startGlobalPolling();
         }
     });
 

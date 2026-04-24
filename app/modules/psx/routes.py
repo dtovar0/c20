@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, render_template, current_app
 from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename
 from app import db
-from .models import PSX5KTask, PSX5KDetail, PSX5KHistory
+from .models import PSX5KTask, PSX5KDetail, PSX5KHistory, PSX5KCommandLog
 import os
 import datetime
 
@@ -48,7 +48,12 @@ def task_detail(task_id):
     try:
         task = PSX5KTask.query.get_or_404(task_id)
         history = PSX5KHistory.query.filter_by(task_id=task_id).order_by(PSX5KHistory.fecha.desc()).all()
-        return render_template('psx_detail.html', task=task, history=history)
+        command_log = PSX5KCommandLog.query.filter_by(task_id=task_id).first()
+        
+        return render_template('psx_detail.html', 
+                               task=task, 
+                               history=history, 
+                               command_log=command_log)
     except Exception as e:
         current_app.logger.error(f"Error en task_detail #{task_id}: {e}")
         return render_template('errors/500.html'), 500

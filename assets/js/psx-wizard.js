@@ -81,7 +81,7 @@ function resetWizardForm() {
     });
 
     const select = document.getElementById('clientModeSelect');
-    if (select) select.value = 'calls_only';
+    if (select) select.value = 'call_in';
 
     const toggle = document.getElementById('dataEntryToggle');
     if (toggle) toggle.checked = false;
@@ -575,7 +575,7 @@ function resetScheduleWizardForm() {
     if (scheduleForceToggle) scheduleForceToggle.checked = false;
 
     const select = document.getElementById('scheduleClientModeSelect');
-    if (select) select.value = 'calls_only';
+    if (select) select.value = 'call_in';
 
     // Reset Buttons Selection
     document.querySelectorAll('.schedule-op-btn').forEach(btn => {
@@ -1153,6 +1153,7 @@ function resetModifyForm() {
 
     modal.querySelectorAll('input, select').forEach(el => {
         if (el.type === 'checkbox') el.checked = false;
+        else if (el.tagName === 'SELECT') el.value = 'call_in';
         else el.value = '';
     });
 

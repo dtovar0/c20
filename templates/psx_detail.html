@@ -278,21 +278,23 @@
                 <div class="bg-[#050505] rounded-[2rem] border border-white/5 p-8 font-mono text-[12px] min-h-[500px] shadow-2xl relative overflow-hidden group">
                     <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,#333,transparent)] opacity-20"></div>
                     <div class="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.03),rgba(0,255,0,0.01),rgba(0,0,255,0.03))] bg-[length:100%_4px,3px_100%] opacity-20"></div>
-                    <div class="relative z-10 space-y-1">
+                    <div class="relative z-10 space-y-1 overflow-y-auto max-h-[600px] custom-scrollbar">
                         <div class="text-sky-500/80 mb-4 flex items-center gap-2">
                             <span class="animate-pulse">●</span>
                             <span>PSX5K_EXEC_SERVICE: ESTABLECIENDO CONEXIÓN SSH...</span>
                         </div>
-                        {% for item in history %}
-                        <div class="group/line hover:bg-white/5 transition-colors py-0.5 px-2 rounded-sm">
-                            <span class="text-label/80">[{{ item.fecha.strftime('%H:%M:%S') }}]</span>
-                            <span class="text-sky-500 ml-2">nexus@psx:~$</span>
-                            <span class="text-label/40 ml-1">put subscriber Id {{ item.numero }} ...</span>
-                            <span class="ml-2 {% if 'OK' in item.estado %}text-emerald-500{% elif 'FAIL' in item.estado %}text-rose-500{% else %}text-amber-500{% endif %}">
-                                [{{ item.estado }}]
-                            </span>
+                        
+                        <div class="text-label/70 whitespace-pre-wrap leading-relaxed">
+                            {% if command_log and command_log.raw_log %}
+                                {{ command_log.raw_log }}
+                            {% else %}
+                                <div class="py-10 text-center opacity-40">
+                                    <p>[ SISTEMA ] ADVERTENCIA: NO SE ENCONTRARON REGISTROS DE COMANDO PARA ESTA TAREA.</p>
+                                    <p class="text-[10px] mt-2">VERIFIQUE SI LA TAREA FUE PROCESADA MEDIANTE EL MOTOR PEXPECT.</p>
+                                </div>
+                            {% endif %}
                         </div>
-                        {% endfor %}
+
                         <div class="text-emerald-500/80 mt-4 flex items-center gap-2 border-t border-white/5 pt-4">
                             <span>●</span>
                             <span>PROCESO FINALIZADO - SESIÓN CERRADA.</span>

@@ -195,6 +195,98 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+
+    // 6. Initialize Premium Selects
+    initNexusSelects();
+});
+
+/**
+ * NEXUS LUXURY SELECT ENGINE
+ * Transforms native selects into premium UI components while maintaining data integrity.
+ */
+function initNexusSelects() {
+    // Only target visible selects that haven't been processed
+    document.querySelectorAll('select:not(.nx-hidden-native)').forEach(select => {
+        // Skip if inside a template or special container that shouldn't be touched yet
+        if (select.closest('.nx-select-wrapper')) return;
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'nx-select-wrapper';
+        select.parentNode.insertBefore(wrapper, select);
+        wrapper.appendChild(select);
+
+        const trigger = document.createElement('div');
+        trigger.className = 'nx-select-trigger';
+        trigger.innerHTML = `
+            <span class="nx-select-text">${select.options[select.selectedIndex]?.text || 'Seleccione...'}</span>
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path></svg>
+        `;
+
+        const dropdown = document.createElement('div');
+        dropdown.className = 'nx-select-dropdown';
+        
+        const optionsContainer = document.createElement('div');
+        optionsContainer.className = 'nx-select-options custom-scrollbar';
+
+        Array.from(select.options).forEach((option, index) => {
+            if (option.disabled && index === 0) return; // Skip placeholder if needed
+
+            const optEl = document.createElement('div');
+            optEl.className = `nx-select-option ${option.selected ? 'is-selected' : ''}`;
+            optEl.dataset.value = option.value;
+            optEl.innerText = option.text;
+
+            optEl.addEventListener('click', (e) => {
+                e.stopPropagation();
+                select.value = option.value;
+                trigger.querySelector('.nx-select-text').innerText = option.text;
+                
+                // Update active state
+                dropdown.querySelectorAll('.nx-select-option').forEach(el => el.classList.remove('is-selected'));
+                optEl.classList.add('is-selected');
+
+                // Trigger native change event
+                select.dispatchEvent(new Event('change', { bubbles: true }));
+                
+                wrapper.classList.remove('is-open');
+            });
+
+            optionsContainer.appendChild(optEl);
+        });
+
+        dropdown.appendChild(optionsContainer);
+        wrapper.appendChild(trigger);
+        wrapper.appendChild(dropdown);
+
+        // Hide native
+        select.classList.add('nx-hidden-native');
+
+        // Toggle dropdown
+        trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            // Close others
+            document.querySelectorAll('.nx-select-wrapper').forEach(w => {
+                if (w !== wrapper) w.classList.remove('is-open');
+            });
+            wrapper.classList.toggle('is-open');
+        });
+
+        // Sync back if native changes externally
+        select.addEventListener('sync', () => {
+             const selectedOption = select.options[select.selectedIndex];
+             if (selectedOption) {
+                 trigger.querySelector('.nx-select-text').innerText = selectedOption.text;
+                 dropdown.querySelectorAll('.nx-select-option').forEach(opt => {
+                     opt.classList.toggle('is-selected', opt.dataset.value === select.value);
+                 });
+             }
+        });
+    });
+}
+
+// Global click-to-close listener
+document.addEventListener('click', () => {
+    document.querySelectorAll('.nx-select-wrapper.is-open').forEach(w => w.classList.remove('is-open'));
 });
 
 // Registry for the active table instance
@@ -205,6 +297,15 @@ window.activeNexusTable = null;
  * Usage: showToast('Message', 'success' | 'error' | 'info' | 'warning', clearAll = false)
  */
 function showToast(message, type = 'info', clearAll = false) {
+    // Check user preference (if initialized)
+    // We allow 'error' and 'warning' types to bypass the block for safety
+    if (window.nexusSettings && !window.nexusSettings.notifications) {
+        if (type === 'info' || type === 'success') {
+            console.log(`[Toast Blocked]: ${message}`);
+            return;
+        }
+    }
+
     if (clearAll) {
         document.querySelectorAll('.toast').forEach(t => {
             t.classList.remove('show');

@@ -1,7 +1,7 @@
 /**
  * NEXUS PREMIUM GUIDED TOUR - PSX5K TERMINAL (V8)
  */
-class NexusTour {
+class PSXNexusTour {
     constructor(steps) {
         this.steps = steps;
         this.currentStep = -1;
@@ -9,17 +9,12 @@ class NexusTour {
         this.stepEl = null;
         this.spotlight = null;
         this._keyHandler = null;
-        
-        this.init();
     }
 
     init() {
-        const oldOverlay = document.querySelector('.nx-tour-overlay');
-        if (oldOverlay) oldOverlay.remove();
-        const oldStep = document.querySelector('.nx-tour-step');
-        if (oldStep) oldStep.remove();
-        const oldSpot = document.querySelector('.nx-tour-spotlight');
-        if (oldSpot) oldSpot.remove();
+        console.log('🏁 Initializing PSX Tour Elements...');
+        // Cleanup existing tour elements to prevent duplication
+        document.querySelectorAll('.nx-tour-overlay, .nx-tour-step, .nx-tour-spotlight').forEach(el => el.remove());
 
         this.overlay = document.createElement('div');
         this.overlay.className = 'nx-tour-overlay';
@@ -36,6 +31,11 @@ class NexusTour {
     }
 
     start() {
+        console.log('🚀 Starting PSX5K Guided Tour');
+        
+        // Ensure UI elements are initialized before starting
+        this.init();
+
         const modBtn = document.getElementById('modifyTaskBtn');
         if (modBtn) modBtn.classList.remove('opacity-30', 'pointer-events-none');
 
@@ -74,9 +74,9 @@ class NexusTour {
         const modBtn = document.getElementById('modifyTaskBtn');
         if (modBtn) modBtn.classList.add('opacity-30', 'pointer-events-none');
 
-        this.overlay.classList.remove('active');
-        this.stepEl.classList.remove('active');
-        this.spotlight.classList.remove('active');
+        if (this.overlay) this.overlay.classList.remove('active');
+        if (this.stepEl) this.stepEl.classList.remove('active');
+        if (this.spotlight) this.spotlight.classList.remove('active');
         this.currentStep = -1;
 
         if (this._keyHandler) {
@@ -98,15 +98,15 @@ class NexusTour {
             this.spotlight.style.width = `${rect.width + (padding * 2)}px`;
             this.spotlight.style.height = `${rect.height + (padding * 2)}px`;
 
-            // Build pagination: <-- ● ● ● ● ● -->
+            // Build pagination dots
             const dots = this.steps.map((_, i) => 
                 `<div class="nx-tour-dot ${i === this.currentStep ? 'active' : ''}"></div>`
             ).join('');
 
-            const arrowLeft = `<svg class="nx-tour-arrow ${this.currentStep === 0 ? 'disabled' : ''}" onclick="window.nexusTour.prev()" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 19l-7-7 7-7"></path></svg>`;
-            const arrowRight = `<svg class="nx-tour-arrow" onclick="window.nexusTour.next()" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>`;
+            const arrowLeft = `<svg class="nx-tour-arrow ${this.currentStep === 0 ? 'disabled' : ''}" onclick="window.psxTour.prev()" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 19l-7-7 7-7"></path></svg>`;
+            const arrowRight = `<svg class="nx-tour-arrow" onclick="window.psxTour.next()" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>`;
 
-            // Build table if present
+            // Build table if present in step
             let tableHTML = '';
             if (step.table) {
                 const rows = step.table.map(row => `
@@ -145,10 +145,13 @@ class NexusTour {
             let stepTop = rect.bottom + 30;
             let stepLeft = rect.left + (rect.width / 2) - (stepWidth / 2);
 
+            // Screen bounds protection
             if (stepLeft < 20) stepLeft = 20;
             if (stepLeft + stepWidth > window.innerWidth - 20) stepLeft = window.innerWidth - stepWidth - 20;
-            if (stepTop + 500 > window.innerHeight) {
-                stepTop = Math.max(20, rect.top - 520);
+            
+            // If at bottom of screen, show above target
+            if (stepTop + 400 > window.innerHeight) {
+                stepTop = Math.max(20, rect.top - 420);
             }
 
             this.stepEl.style.width = `${stepWidth}px`;
@@ -158,15 +161,19 @@ class NexusTour {
             
             target.scrollIntoView({ behavior: 'smooth', block: 'center' });
         } else {
+            console.warn(`[PSX-TOUR] Target not found: ${step.target}. Moving to next step.`);
             this.next();
         }
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Inline SVG icons for table references
+// === INSTANCE & FLOW TRIGGER ===
+(function() {
+    // Inline Icon Helpers
     const ico = (svg, color) => `<svg class="w-4 h-4 inline-block align-middle mr-1" style="color:${color}" fill="none" stroke="currentColor" viewBox="0 0 24 24">${svg}</svg>`;
+    const dot = (color) => `<div style="width:10px;height:10px;border-radius:50%;background:${color};box-shadow:0 0 6px ${color}40;display:inline-block;vertical-align:middle;"></div>`;
     
+    // SVGs for tables
     const svgPlus = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>';
     const svgTrash = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>';
     const svgIn = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>';
@@ -176,9 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const svgWarn = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>';
     const svgClock = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>';
 
-    const dot = (color) => `<div style="width:10px;height:10px;border-radius:50%;background:${color};box-shadow:0 0 6px ${color}40;display:inline-block;vertical-align:middle;"></div>`;
-
-    window.nexusTour = new NexusTour([
+    window.psxTour = new PSXNexusTour([
         {
             type: 'Botón',
             target: '#refreshAudit',
@@ -207,13 +212,13 @@ document.addEventListener('DOMContentLoaded', () => {
             type: 'Columna',
             target: '#colUserHeader',
             title: 'Propietario',
-            content: 'Muestra el usuario que generó la tarea. (Solo visible para administradores).'
+            content: 'Muestra el usuario que generó la tarea. (Personalizado según tu rol administrativo o de usuario).'
         },
         {
             type: 'Columna',
             target: '#colOrigenHeader',
             title: 'Origen / Segmento',
-            content: 'Nombre del archivo fuente o indicador manual, acompañado del índice del fragmento procesado. Ejemplo: <b>data.csv — 2/5</b>.'
+            content: 'Nombre del archivo fuente o indicador manual, acompañado del índice del fragmento procesado.'
         },
         {
             type: 'Columna',
@@ -252,11 +257,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     ]);
 
+    // Attachment Logic
     const helpBtn = document.getElementById('helpTourBtn');
     if (helpBtn) {
+        console.log('✅ PSX Help Button Found. Attaching Listener.');
         helpBtn.addEventListener('click', (e) => {
+            e.preventDefault();
             e.stopPropagation();
-            window.nexusTour.start();
+            window.psxTour.start();
         });
+    } else {
+        console.warn('❌ PSX Help Button (#helpTourBtn) not found in DOM.');
     }
-});
+})();
