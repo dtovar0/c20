@@ -76,6 +76,13 @@ def send_notification_by_slug(slug, target_email, context=None):
     Sends a pre-defined notification template using the global SMTP configuration.
     """
     from app import db
+    import os
+    
+    # Global Switch Check
+    if os.getenv('ENABLE_NOTIFICATIONS', 'true').lower() != 'true':
+        print(f"🔕 Notificaciones desactivadas globalmente (.env). Omitiendo slug: {slug}")
+        return {"status": "success", "message": "Notifications disabled globally"}
+
     try:
         config = SMTPConfig.query.first()
         template = NotificationTemplate.query.filter_by(slug=slug).first()

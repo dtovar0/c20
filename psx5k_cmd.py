@@ -117,8 +117,8 @@ def psx5k_cmd(line_task, line_number, line_type=None, routing_label=None, force=
                     result = cmd.before
                     
                     found = 'ERR_REC_NOT_FOUND' not in result
-                    
-                    if not found or force:
+
+                    if found or force:
                         # Modo Inserción o Sobreescritura Forzada
                         is_force = found and force
                         msg_prefix = "[OK]" if not found else "[FORCE-OK]"
