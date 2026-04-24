@@ -1030,3 +1030,31 @@ input[name="db_engine"]:checked + label .w-5.h-5 .bg-primary {
     background: var(--color-panel-border);
     border-radius: 10px;
 }
+
+/* PREMIUM TOOLTIP SYSTEM */
+.nx-tooltip {
+    position: fixed;
+    z-index: 9999;
+    padding: 8px 14px;
+    background: rgba(15, 23, 42, 0.9);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: #f8fafc;
+    font-size: 10px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+    transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), 
+                transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    white-space: nowrap;
+}
+
+.nx-tooltip.show {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}

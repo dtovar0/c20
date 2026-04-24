@@ -695,3 +695,40 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// --- PREMIUM TOOLTIP ENGINE ---
+(() => {
+    let tooltip = null;
+
+    function initTooltip() {
+        if (!tooltip) {
+            tooltip = document.createElement('div');
+            tooltip.className = 'nx-tooltip';
+            document.body.appendChild(tooltip);
+        }
+    }
+
+    document.addEventListener('mouseover', (e) => {
+        const target = e.target.closest('[data-nx-tooltip]');
+        if (target) {
+            initTooltip();
+            const text = target.getAttribute('data-nx-tooltip');
+            tooltip.innerText = text;
+            tooltip.classList.add('show');
+            
+            const rect = target.getBoundingClientRect();
+            const top = rect.top - tooltip.offsetHeight - 10;
+            const left = rect.left + (rect.width / 2) - (tooltip.offsetWidth / 2);
+            
+            tooltip.style.top = (top < 10 ? rect.bottom + 10 : top) + 'px';
+            tooltip.style.left = left + 'px';
+        }
+    });
+
+    document.addEventListener('mouseout', (e) => {
+        const target = e.target.closest('[data-nx-tooltip]');
+        if (target && tooltip) {
+            tooltip.classList.remove('show');
+        }
+    });
+})();
