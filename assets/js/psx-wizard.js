@@ -407,13 +407,6 @@ function handleModRoutingLabelState() {
     }
 }
 
-function handleDataMethodChange() {
-    const toggle = document.getElementById('dataEntryToggle');
-    const fileArea = document.getElementById('methodFileUpload');
-    const manualArea = document.getElementById('methodManualEntry');
-    const labelFile = document.getElementById('labelFileMode');
-    const labelManual = document.getElementById('labelManualMode');
-
 function toggleDataMethod() {
     const toggle = document.getElementById('dataEntryToggle');
     const fileArea = document.getElementById('methodFileUpload');
