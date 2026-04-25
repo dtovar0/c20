@@ -54,8 +54,8 @@
             </header>
 
             <!-- PANEL BODY -->
-            <main class="flex-grow px-4 pt-2 pb-1 flex flex-col overflow-hidden">
-                <div class="flex items-center justify-between mb-4 gap-2">
+            <main class="flex-grow px-4 pt-4 pb-0 flex flex-col overflow-hidden">
+                <div class="flex items-center justify-between gap-2">
                     <div class="relative flex-grow max-w-md group">
                         <svg class="w-4 h-4 absolute left-5 top-1/2 -translate-y-1/2 text-label/60 transition-all group-focus-within:text-primary group-focus-within:scale-110 z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         <input type="text" id="userSearch" placeholder="Buscar usuarios locales..." 
@@ -86,20 +86,20 @@
                     </div>
                 </div>
 
-                <div class="overflow-x-auto overflow-y-hidden custom-scrollbar flex-grow pr-1">
-                    <table class="w-full h-full text-left table-fixed">
+                <div class="overflow-x-auto overflow-y-hidden custom-scrollbar flex-grow pr-1 pt-2">
+                    <table class="w-full h-full text-left table-fixed border-separate border-spacing-0">
                         <thead>
                             <tr class="text-[12px] font-black uppercase tracking-[0.2em] text-white">
-                                <th class="px-4 py-4 bg-slate-900/50 rounded-l-2xl border-y border-l border-panel-border transition-all duration-300 w-[60px]">
+                                <th class="px-4 py-4 bg-slate-900/50 rounded-l-2xl border-t border-b border-l border-panel-border transition-all duration-300 w-[60px]">
                                     <div class="flex items-center justify-center h-full">
                                         <input type="checkbox" id="selectAllUsers" class="nexus-checkbox">
                                     </div>
                                 </th>
-                                <th class="px-4 py-4 bg-slate-900/50 border-y border-panel-border transition-all duration-300">Nombre</th>
-                                <th class="px-4 py-4 bg-slate-900/50 border-y border-panel-border transition-all duration-300">Usuario</th>
-                                <th class="px-4 py-4 bg-slate-900/50 border-y border-panel-border transition-all duration-300">Source</th>
-                                <th class="px-4 py-4 bg-slate-900/50 border-y border-panel-border transition-all duration-300">Perfil</th>
-                                <th class="px-6 py-4 bg-slate-900/50 rounded-r-2xl border-y border-r border-panel-border text-right pr-6 transition-all duration-300">Estado</th>
+                                <th class="px-4 py-4 bg-slate-900/50 border-t border-b border-panel-border transition-all duration-300">Nombre</th>
+                                <th class="px-4 py-4 bg-slate-900/50 border-t border-b border-panel-border transition-all duration-300">Usuario</th>
+                                <th class="px-4 py-4 bg-slate-900/50 border-t border-b border-panel-border transition-all duration-300">Source</th>
+                                <th class="px-4 py-4 bg-slate-900/50 border-t border-b border-panel-border transition-all duration-300">Perfil</th>
+                                <th class="px-6 py-4 bg-slate-900/50 rounded-r-2xl border-t border-b border-r border-panel-border text-right pr-6 transition-all duration-300">Estado</th>
                             </tr>
                         </thead>
                         <tbody id="usersTableBody"></tbody>

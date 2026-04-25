@@ -214,12 +214,12 @@ function renderGhostRows(settings, columns) {
     const info = api.page.info();
     const tbody = $(settings.nTBody);
     
-    // Remove default empty message if present
+    // 1. CLEANUP: Remove any existing ghost rows and the empty message
+    tbody.find('.ghost-row').remove();
     tbody.find('.dataTables_empty').closest('tr').remove();
 
     const rowsOnPage = info.end - info.start;
-    // STRICT LIMIT: Always target 8 rows to match pagination exactly
-    const targetTotal = 8;
+    const targetTotal = api.page.len(); 
     const ghostCount = targetTotal - rowsOnPage;
 
     if (ghostCount <= 0) return;
@@ -227,7 +227,7 @@ function renderGhostRows(settings, columns) {
     let ghostHtml = '';
     for (let i = 0; i < ghostCount; i++) {
         ghostHtml += `
-            <tr class="animate-pulse pointer-events-none select-none opacity-40">
+            <tr class="ghost-row animate-pulse pointer-events-none select-none opacity-40">
                 <td class="bg-surface-container/5 border-y border-l border-panel-border/10 rounded-l-2xl">
                     <div class="h-4 w-4 bg-label/10 rounded mx-auto"></div>
                 </td>
@@ -243,9 +243,7 @@ function renderGhostRows(settings, columns) {
         `;
     }
     
-    setTimeout(() => {
-        tbody.append(ghostHtml);
-    }, 0);
+    tbody.append(ghostHtml);
 }
 
 // Adaptive Redraw on Resize

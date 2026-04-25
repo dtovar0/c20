@@ -432,26 +432,26 @@
                             </div>
                         </div>
 
-                        <div class="flex-1 min-h-0 pr-1">
-                            <table class="w-full text-left table-fixed border-separate border-spacing-y-1.5" id="historyTable">
+                        <div class="flex-1 min-h-0 pr-1 pt-2">
+                            <table class="w-full h-full text-left table-fixed border-separate border-spacing-y-1.5" id="historyTable">
                                 <thead class="sticky top-0 z-20">
-                                    <tr class="text-[12px] font-black text-body-text uppercase tracking-[0.2em]">
-                                        <th class="w-[35%] px-5 py-4 bg-panel-fill/50 rounded-l-2xl border-y border-l border-panel-border/40">
-                                            <div class="flex items-center gap-2">
-                                                <svg class="w-3.5 h-3.5 text-primary/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
-                                                Número (ANI)
-                                            </div>
-                                        </th>
-                                        <th class="w-[20%] px-5 py-4 bg-panel-fill/50 border-y border-panel-border/40">
-                                            <div class="flex items-center gap-2">Routing</div>
-                                        </th>
-                                        <th class="w-[25%] px-5 py-4 bg-panel-fill/50 border-y border-panel-border/40 text-center">
-                                            <div class="flex items-center justify-center gap-2">Evento</div>
-                                        </th>
-                                        <th class="w-[20%] px-5 py-4 bg-panel-fill/50 rounded-r-2xl border-y border-r border-panel-border/40 text-right">
-                                            <div class="flex items-center justify-end gap-2">Hora</div>
-                                        </th>
-                                    </tr>
+                                     <tr class="text-[12px] font-black text-body-text uppercase tracking-[0.2em]">
+                                         <th class="w-[35%] px-5 py-4 bg-panel-fill/50 rounded-l-2xl border-t border-b border-l border-panel-border/40">
+                                             <div class="flex items-center gap-2">
+                                                 <svg class="w-3.5 h-3.5 text-primary/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                                                 Número (ANI)
+                                             </div>
+                                         </th>
+                                         <th class="w-[20%] px-5 py-4 bg-panel-fill/50 border-t border-b border-panel-border/40">
+                                             <div class="flex items-center gap-2">Routing</div>
+                                         </th>
+                                         <th class="w-[25%] px-5 py-4 bg-panel-fill/50 border-t border-b border-panel-border/40 text-center">
+                                             <div class="flex items-center justify-center gap-2">Evento</div>
+                                         </th>
+                                         <th class="w-[20%] px-5 py-4 bg-panel-fill/50 rounded-r-2xl border-t border-b border-r border-panel-border/40 text-right">
+                                             <div class="flex items-center justify-end gap-2">Hora</div>
+                                         </th>
+                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for item in history %}

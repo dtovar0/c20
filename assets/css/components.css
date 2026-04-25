@@ -11,12 +11,6 @@
     padding-top: 8px !important;
     padding-bottom: 8px !important;
 }
-
-#auditTableBody td,
-#usersTableBody td {
-    height: auto !important;
-}
-
 /* === NEXUS DATATABLES INTEGRATION === */
 .dt-container {
     display: flex;
@@ -142,7 +136,6 @@ table.dataTable thead th {
     text-transform: uppercase !important;
     letter-spacing: 0.2rem !important;
     padding: 1rem 1.25rem !important;
-    border-top: none !important;
 }
 
 table.dataTable thead th:first-child { border-radius: 1rem 0 0 1rem !important; border-left: 1px solid rgb(var(--color-panel-border)) !important; }

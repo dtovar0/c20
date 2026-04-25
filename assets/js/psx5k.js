@@ -325,19 +325,12 @@ function renderGhostRows(settings, columns) {
     const info = api.page.info();
     const tbody = $(settings.nTBody);
     
-    // Remove default empty message if present
+    // 1. CLEANUP: Remove any existing ghost rows and the empty message
+    tbody.find('.ghost-row').remove();
     tbody.find('.dataTables_empty').closest('tr').remove();
 
     const rowsOnPage = info.end - info.start;
-    
-    // Adaptive Logic: Calculate how many rows fit in the current viewport
-    const container = tbody.closest('.overflow-x-auto');
-    const containerHeight = container.innerHeight() || 500;
-    const rowHeight = 56; // High density row height including spacing (52px + 4px)
-    const headerHeight = tbody.closest('table').find('thead').outerHeight() || 50;
-    
-    // STRICT LIMIT: Always target 10 rows to match pagination exactly
-    const targetTotal = 10;
+    const targetTotal = api.page.len(); // Dynamically use the current page length (usually 10)
     const ghostCount = targetTotal - rowsOnPage;
 
     if (ghostCount <= 0) return;
@@ -345,7 +338,7 @@ function renderGhostRows(settings, columns) {
     let ghostHtml = '';
     for (let i = 0; i < ghostCount; i++) {
         ghostHtml += `
-            <tr class="animate-pulse pointer-events-none select-none opacity-40">
+            <tr class="ghost-row animate-pulse pointer-events-none select-none opacity-40">
                 <td class="bg-surface-container/5 border-y border-l border-panel-border/10 rounded-l-2xl">
                     <div class="h-1.5 w-10 bg-label/10 rounded-full mx-auto"></div>
                 </td>
@@ -361,9 +354,8 @@ function renderGhostRows(settings, columns) {
         `;
     }
     
-    setTimeout(() => {
-        tbody.append(ghostHtml);
-    }, 0);
+    // Append immediately without setTimeout to avoid race conditions during redraws
+    tbody.append(ghostHtml);
 }
 
 // Adaptive Redraw on Resize
