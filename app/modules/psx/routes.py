@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify, render_template, current_app
+from sqlalchemy import func
 from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename
 from app import db
@@ -89,13 +90,65 @@ def get_stats():
             PSX5KTask.estado == 'Ejecutando'
         ).order_by(PSX5KJob.created_at.desc()).first()
         
+        # 5. Dashboard Premium Stats: Volumen Hoy & Eficiencia
+        today = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        
+        # Volumen Operativo (Registros totales procesados hoy por el usuario)
+        volumen_hoy = db.session.query(func.sum(PSX5KDetail.total)).join(PSX5KTask).join(PSX5KJob).filter(
+            PSX5KJob.usuario == username,
+            PSX5KTask.fecha_inicio >= today
+        ).scalar() or 0
+        
+        # Eficiencia (Éxitos / Procesados) de las tareas terminadas hoy
+        stats_data = db.session.query(
+            func.sum(PSX5KDetail.ok),
+            func.sum(PSX5KDetail.fail),
+            func.sum(PSX5KDetail.force_ok),
+            func.sum(PSX5KDetail.dup),
+            func.sum(PSX5KDetail.total)
+        ).join(PSX5KTask).join(PSX5KJob).filter(
+            PSX5KJob.usuario == username,
+            PSX5KTask.estado == 'Terminada',
+            PSX5KTask.fecha_inicio >= today
+        ).first()
+
+        s_ok = stats_data[0] or 0
+        s_fail = stats_data[1] or 0
+        s_force = stats_data[2] or 0
+        s_dup = stats_data[3] or 0
+        total_p = stats_data[4] or 0
+
+        total_ok_eff = s_ok + s_force + s_dup
+        eficiencia = (total_ok_eff / total_p * 100) if total_p > 0 else 0.0
+
         return jsonify({
             "status": "success",
             "stats": {
                 "total": total_tareas,
                 "pending": pendientes,
                 "scheduled": programadas,
-                "active_task": activa.id if activa else "NINGUNA"
+                "active_task": activa.id if activa else "NINGUNA",
+                "volume_today": int(volumen_hoy),
+                "efficiency": round(eficiencia, 1),
+                "breakdown": {
+                    "ok": int(s_ok),
+                    "fail": int(s_fail),
+                    "force": int(s_force),
+                    "dup": int(s_dup)
+                },
+                "last_7_tasks": [
+                    {
+                        "id": t.id,
+                        "ok": t.resumen.ok if t.resumen else 0,
+                        "fail": t.resumen.fail if t.resumen else 0,
+                        "force": t.resumen.force_ok if t.resumen else 0,
+                        "dup": t.resumen.dup if t.resumen else 0,
+                        "total": t.resumen.total if t.resumen else 0
+                    } for t in sorted(PSX5KTask.query.join(PSX5KJob).filter(
+                        PSX5KJob.usuario == username,
+                        PSX5KTask.estado == 'Terminada'
+                    ).order_by(PSX5KTask.fecha_fin.desc()).limit(7).all(), key=lambda x: x.fecha_fin)
+                ]
             }
         })
     except Exception as e:
