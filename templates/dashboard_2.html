@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block content %}
-<div id="dashboardWrapper2" class="w-full h-[calc(100vh-100px)] flex flex-col space-y-6 p-4 overflow-hidden relative">
+<div id="dashboardWrapper2" class="w-full h-full flex flex-col space-y-6 p-6 overflow-hidden relative">
     
     <!-- Top KPI Row (Global Admin Portfolio) -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 flex-shrink-0">
@@ -77,10 +77,10 @@
         <div class="dashboard-grid-locked h-full">
             <!-- MAIN COMMAND ZONE (75.5%) -->
             <div class="monitor-main-zone grid grid-cols-2 grid-rows-2 gap-6 h-full">
-                <!-- Panel 1: Core Mirror Status -->
+                <!-- Panel 1: Tareas por Usuario -->
                 <div class="bg-panel-fill border border-panel-border rounded-2xl shadow-sm p-6 flex flex-col h-full overflow-hidden">
                     <div class="flex items-center justify-between mb-2">
-                        <h2 class="text-[12px] font-black text-label/80 uppercase tracking-[0.2em]">Mirror Status</h2>
+                        <h2 class="text-[12px] font-black text-label/80 uppercase tracking-[0.2em]">Tareas por Usuario</h2>
                         <div class="monitor-status-dot bg-success"></div>
                     </div>
                     <div class="flex-grow flex flex-col justify-center min-h-0">
@@ -88,37 +88,44 @@
                     </div>
                 </div>
 
-                <!-- Panel 2: Predictive Demand -->
+                <!-- Panel 2: Monitoreo de tareas -->
                 <div class="bg-panel-fill border border-panel-border rounded-2xl shadow-sm p-6 flex flex-col h-full overflow-hidden">
-                    <div class="flex items-center justify-between mb-2">
-                        <h2 class="text-[12px] font-black text-label/80 uppercase tracking-[0.2em]">Predicción de Demanda</h2>
-                        <span id="demandGrowth" class="text-[12px] font-black text-success">+12.5%</span>
-                    </div>
-                    <div class="flex-grow flex flex-col justify-center min-h-0">
-                        <div id="demandChartApex"></div>
+                    <h2 class="text-[12px] font-black text-label/80 uppercase tracking-[0.2em] mb-2 italic">Monitoreo de tareas</h2>
+                    <div class="flex-grow flex items-center justify-center min-h-0 relative">
+                        <div id="cpuEngineChartApex" class="w-full"></div>
+                        
+                        <!-- Empty State Premium -->
+                        <div id="cpuEmptyState" class="hidden absolute inset-0 flex flex-col items-center justify-center p-6 text-center animate-in fade-in zoom-in duration-700">
+                            <div class="w-16 h-16 rounded-full bg-success/10 border border-success/20 flex items-center justify-center mb-4 shadow-[0_0_20px_rgba(34,197,94,0.1)]">
+                                <i class="fas fa-check-circle text-success text-2xl animate-pulse"></i>
+                            </div>
+                            <h3 class="text-[11px] font-black text-label uppercase tracking-[0.2em] mb-1">Sin Actividad Hoy</h3>
+                            <p class="text-[10px] text-label/40 font-medium max-w-[180px] leading-relaxed">No se han registrado tareas operativas durante la jornada actual.</p>
+                        </div>
+
+                        <div id="cpuStatsOverlay" class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mb-4">
+                            <!-- Managed by JS -->
+                        </div>
                     </div>
                 </div>
 
-                <!-- Panel 4: AI Activity Pulse -->
+                <!-- Panel 4: Análisis de ANIs -->
                 <div class="bg-panel-fill border border-panel-border rounded-2xl shadow-sm p-6 flex flex-col h-full overflow-hidden">
                     <div class="flex items-center justify-between mb-2">
-                        <h2 class="text-[12px] font-black text-label/80 uppercase tracking-[0.2em]">AI Activity Pulse</h2>
-                        <span class="text-[12px] font-bold text-success font-mono uppercase">Live Pulse</span>
+                        <h2 class="text-[12px] font-black text-label/80 uppercase tracking-[0.2em] italic">Análisis de ANIs</h2>
                     </div>
                     <div class="flex-grow min-h-0">
                         <div id="aiPulseChartApex"></div>
                     </div>
                 </div>
 
-                <!-- Panel 5: CPU Engine Distribution -->
+                <!-- Panel 5: Tareas Diarias -->
                 <div class="bg-panel-fill border border-panel-border rounded-2xl shadow-sm p-6 flex flex-col h-full overflow-hidden">
-                    <h2 class="text-[12px] font-black text-label/80 uppercase tracking-[0.2em] mb-2">Monitoreo del sistema</h2>
-                    <div class="flex-grow flex items-center justify-center min-h-0 relative">
-                        <div id="cpuEngineChartApex" class="w-full"></div>
-                        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mb-4">
-                            <span class="text-xl font-black text-label leading-none">2.11M</span>
-                            <span class="text-[12px] font-black text-primary uppercase mt-1">Operaciones</span>
-                        </div>
+                    <div class="flex items-center justify-between mb-2">
+                        <h2 class="text-[12px] font-black text-label/80 uppercase tracking-[0.2em] italic">Tareas Diarias</h2>
+                    </div>
+                    <div class="flex-grow flex flex-col justify-center min-h-0">
+                        <div id="demandChartApex"></div>
                     </div>
                 </div>
             </div>
@@ -140,9 +147,9 @@
                     </div>
                     
                     <!-- Compact Tactical List container -->
-                    <div class="flex-grow overflow-y-auto custom-scrollbar" id="activityLogsContainer">
+                    <div class="flex-grow overflow-hidden custom-scrollbar" id="activityLogsContainer">
                         {% if activity %}
-                            <div class="divide-y divide-panel-border/30 animate-in fade-in duration-500">
+                            <div class="h-full grid grid-rows-10 divide-y divide-panel-border/30 animate-in fade-in duration-500">
                                 {% for log in activity %}
                                     {% set action_lower = log.action | lower %}
                                     {% set badge_color = 'bg-primary/20 text-primary border-primary/30' %}
@@ -152,31 +159,30 @@
                                     {% elif 'logou' in action_lower %}{% set badge_color = 'bg-violet/20 text-violet border-violet/30' %}
                                     {% endif %}
 
-                                    <div class="px-4 py-3 hover:bg-primary/5 transition-all duration-300 group cursor-default border-l-2 border-transparent hover:border-primary/40 flex-shrink-0">
-                                        <div class="flex items-center gap-3">
+                                    <div class="px-4 flex items-center hover:bg-primary/5 transition-all duration-300 group cursor-default border-l-2 border-transparent hover:border-primary/40 min-h-0">
+                                        <div class="w-full flex items-center gap-3">
                                             <div class="w-8 h-8 rounded-lg bg-panel-fill border border-panel-border shadow-sm flex items-center justify-center flex-shrink-0 group-hover:border-primary/40 transition-all relative overflow-hidden">
                                                 <div class="absolute inset-0 bg-primary/5"></div>
                                                 <span class="text-[10px] font-black text-primary">{{ log.user[:2].upper() }}</span>
                                             </div>
                                             
                                             <div class="flex-grow flex items-center justify-between min-w-0">
-                                                <div class="flex flex-col min-w-0 gap-1 mt-0.5">
+                                                <div class="flex flex-col min-w-0 gap-0.5">
                                                     <span class="text-[8px] font-black text-label/40 uppercase tracking-wider leading-none">{{ log.user }}</span>
                                                     <div class="flex items-center gap-2 min-w-0">
                                                         <span class="px-1.5 py-0.5 rounded-md text-[8px] font-black uppercase tracking-tight border {{ badge_color }} shadow-sm flex-shrink-0">
                                                             {{ log.action.split(' ')[0] }}
                                                         </span>
-                                                        <p class="text-[11px] font-bold text-body-text/80 truncate leading-none group-hover:text-primary transition-colors" title="{{ log.action }}">
+                                                        <p class="text-[10px] lg:text-[11px] font-bold text-body-text/80 truncate leading-none group-hover:text-primary transition-colors" title="{{ log.action }}">
                                                             {{ ' '.join(log.action.split(' ')[1:]) }}
                                                         </p>
                                                     </div>
                                                 </div>
                                                 
-                                                <div class="flex items-center gap-3 flex-shrink-0 ml-4">
-                                                    <span class="text-[10px] font-bold text-label/25 uppercase leading-none group-hover:text-primary/40 transition-colors">
+                                                <div class="flex items-center gap-3 flex-shrink-0 ml-2">
+                                                    <span class="text-[9px] font-bold text-label/25 uppercase leading-none group-hover:text-primary/40 transition-colors">
                                                         {{ log.timestamp.strftime('%H:%M') }}
                                                     </span>
-                                                    <div class="w-1 h-1 rounded-full bg-primary/10 group-hover:bg-primary transition-all duration-500"></div>
                                                 </div>
                                             </div>
                                         </div>

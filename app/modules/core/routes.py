@@ -28,7 +28,7 @@ def dashboard_2():
         page = request.args.get('page', 1, type=int)
         is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
         
-        # Paginación Global de Logs: 10 por página
+        # Paginación Global de Logs: 10 por página (Evitar Scroll)
         pagination = AuditLog.query.order_by(AuditLog.timestamp.desc()).paginate(page=page, per_page=10, error_out=False)
             
         return render_template("dashboard_2.html", 

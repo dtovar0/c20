@@ -197,6 +197,85 @@ def get_global_stats():
         if activa_obj and activa_obj.job and activa_obj.job.tarea:
             active_name = activa_obj.job.tarea.upper()
 
+        # 6. Top 5 Usuarios con Desglose de Estados (Stacked Column Data)
+        from sqlalchemy import case
+        top_users_base = db.session.query(PSX5KJob.usuario, func.count(PSX5KJob.id))\
+            .group_by(PSX5KJob.usuario)\
+            .order_by(func.count(PSX5KJob.id).desc())\
+            .limit(5).all()
+        
+        top_usernames = [u[0] for u in top_users_base]
+
+        status_breakdown = db.session.query(
+            PSX5KJob.usuario,
+            func.count(case((PSX5KTask.estado == 'Completado', 1))),
+            func.count(case((PSX5KTask.estado == 'Terminado con Errores', 1))),
+            func.count(case((PSX5KTask.estado.in_(['Pendiente', 'Programada']), 1))),
+            func.count(case((PSX5KTask.estado == 'Ejecutando', 1)))
+        ).join(PSX5KTask).filter(PSX5KJob.usuario.in_(top_usernames)).group_by(PSX5KJob.usuario).all()
+
+        # Formatear para ApexCharts: Series por estado
+        top_users_data = {
+            "users": [u[0] for u in status_breakdown],
+            "ok": [u[1] for u in status_breakdown],
+            "fail": [u[2] for u in status_breakdown],
+            "pending": [u[3] for u in status_breakdown],
+            "active": [u[4] for u in status_breakdown]
+        }
+
+        # 7. Tareas por Día (Últimos 7 días para gráfica de tendencia)
+        from datetime import timedelta, datetime
+        seven_days_ago = datetime.now() - timedelta(days=7)
+        daily_query = db.session.query(
+            func.date(PSX5KJob.created_at).label('day'),
+            func.count(PSX5KJob.id).label('count')
+        ).filter(PSX5KJob.created_at >= seven_days_ago)\
+        .group_by('day')\
+        .order_by('day').all()
+        
+        daily_tasks = [{"day": d.day.strftime('%d %b'), "count": d.count} for d in daily_query]
+
+        # 8. Análisis Diario (Agregación de psx5k_details por día)
+        from .models import PSX5KDetail
+        analysis_query = db.session.query(
+            func.date(PSX5KTask.fecha_inicio).label('day'),
+            func.sum(PSX5KDetail.ok).label('ok'),
+            func.sum(PSX5KDetail.fail).label('fail'),
+            func.sum(PSX5KDetail.force_ok).label('force'),
+            func.sum(PSX5KDetail.dup).label('dup')
+        ).join(PSX5KDetail, PSX5KTask.id == PSX5KDetail.id)\
+         .filter(PSX5KTask.fecha_inicio >= seven_days_ago)\
+         .group_by('day')\
+         .order_by('day').limit(7).all()
+        
+        analysis_daily = {
+            "days": [d.day.strftime('%d %b') for d in analysis_query],
+            "ok": [int(d.ok or 0) for d in analysis_query],
+            "fail": [int(d.fail or 0) for d in analysis_query],
+            "force": [int(d.force or 0) for d in analysis_query],
+            "dup": [int(d.dup or 0) for d in analysis_query]
+        }
+
+        # 9. Monitoreo de Tareas (Hoy)
+        today_date = datetime.now().date()
+        today_stats_query = db.session.query(
+            PSX5KTask.estado,
+            func.count(PSX5KTask.id)
+        ).join(PSX5KJob).filter(func.date(PSX5KJob.created_at) == today_date)\
+         .group_by(PSX5KTask.estado).all()
+        
+        # Mapeo de estados para la gráfica de dona
+        t_stats = {"Pendiente": 0, "Ejecutando": 0, "Error": 0, "Completado": 0}
+        for s in today_stats_query:
+            state = s[0]
+            count = s[1]
+            if state in ['Pendiente', 'Programada']: t_stats["Pendiente"] += count
+            elif state == 'Ejecutando': t_stats["Ejecutando"] += count
+            elif state == 'Terminado con Errores': t_stats["Error"] += count
+            elif state == 'Completado': t_stats["Completado"] += count
+
+        today_stats = [t_stats["Completado"], t_stats["Ejecutando"], t_stats["Pendiente"], t_stats["Error"]]
+
         return jsonify({
             "status": "success",
             "stats": {
@@ -206,7 +285,11 @@ def get_global_stats():
                 "queue": cola_total,
                 "active_count": activas,
                 "active_id": activa_obj.id if activa_obj else None,
-                "active_name": active_name if activa_obj else None
+                "active_name": active_name if activa_obj else None,
+                "top_users": top_users_data,
+                "daily_tasks": daily_tasks,
+                "analysis_daily": analysis_daily,
+                "today_stats": today_stats
             }
         })
     except Exception as e:
