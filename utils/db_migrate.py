@@ -51,7 +51,8 @@ def migrate_db():
                 ("pref_notifications", "TINYINT(1) DEFAULT 1"),
                 ("pref_refresh_interval", "INT DEFAULT 60"),
                 ("pref_tour_enabled", "TINYINT(1) DEFAULT 1"),
-                ("pref_email_notifications", "TINYINT(1) DEFAULT 1")
+                ("pref_email_notifications", "TINYINT(1) DEFAULT 1"),
+                ("pref_status_colors", "TEXT DEFAULT NULL")
             ]
 
             for col_name, col_type in pref_columns:
@@ -65,9 +66,10 @@ def migrate_db():
             try:
                 conn.execute(text("ALTER TABLE users MODIFY COLUMN nombre VARCHAR(100) DEFAULT NULL AFTER username;"))
                 conn.execute(text("ALTER TABLE users MODIFY COLUMN pref_notifications TINYINT(1) DEFAULT 1 AFTER created_at;"))
-                conn.execute(text("ALTER TABLE users MODIFY COLUMN pref_refresh_interval INT DEFAULT 60 AFTER pref_notifications;"))
+                conn.execute(text("ALTER TABLE users MODIFY COLUMN pref_refresh_interval INT DEFAULT 60 AFTER pref_notifications;"));
                 conn.execute(text("ALTER TABLE users MODIFY COLUMN pref_tour_enabled TINYINT(1) DEFAULT 1 AFTER pref_refresh_interval;"))
                 conn.execute(text("ALTER TABLE users MODIFY COLUMN pref_email_notifications TINYINT(1) DEFAULT 1 AFTER pref_tour_enabled;"))
+                conn.execute(text("ALTER TABLE users MODIFY COLUMN pref_status_colors TEXT DEFAULT NULL AFTER pref_email_notifications;"))
                 print("✅ Reordenamiento estético de columnas completado.")
             except Exception as e:
                 print(f"ℹ️ Error u omisión al reordenar columnas: {e}")

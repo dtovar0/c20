@@ -13,6 +13,7 @@ function generateTaskGraphic(resumen) {
         return `<div class="h-1.5 w-24 bg-panel-border/20 rounded-full"></div>`;
     }
 
+    const c = window.nexusSettings.statusColors;
     const processed = resumen.ok + resumen.fail + resumen.force_ok + resumen.dup;
     const rawPct = (processed / resumen.total) * 100;
     const totalPct = Math.min(rawPct, 100);
@@ -28,14 +29,14 @@ function generateTaskGraphic(resumen) {
     return `
         <div class="flex flex-col gap-1.5 w-full max-w-[130px] mx-auto">
             <div class="h-4 w-full rounded-lg overflow-hidden flex shadow-inner border border-white/5" style="background:rgba(148,163,184,0.15)">
-                <div class="h-full transition-all duration-700 ease-out" style="width:${okPct}%;background:#2563eb" title="OK: ${resumen.ok}"></div>
-                <div class="h-full transition-all duration-700 ease-out" style="width:${failPct}%;background:#f43f5e" title="FAIL: ${resumen.fail}"></div>
-                <div class="h-full transition-all duration-700 ease-out" style="width:${forcePct}%;background:#8b5cf6" title="FORCED: ${resumen.force_ok}"></div>
-                <div class="h-full transition-all duration-700 ease-out" style="width:${dupPct}%;background:#f59e0b" title="DUP: ${resumen.dup}"></div>
+                <div class="h-full transition-all duration-700 ease-out" style="width:${okPct}%;background:${c.ok}" title="OK: ${resumen.ok}"></div>
+                <div class="h-full transition-all duration-700 ease-out" style="width:${failPct}%;background:${c.fail}" title="FAIL: ${resumen.fail}"></div>
+                <div class="h-full transition-all duration-700 ease-out" style="width:${forcePct}%;background:${c.force}" title="FORCED: ${resumen.force_ok}"></div>
+                <div class="h-full transition-all duration-700 ease-out" style="width:${dupPct}%;background:${c.dup}" title="DUP: ${resumen.dup}"></div>
                 <div class="h-full bg-transparent" style="width:${pendingPct}%"></div>
             </div>
             <div class="flex justify-between items-center px-0.5">
-                <span class="text-[12px] font-black" style="color:#2563eb">${Math.round(totalPct)}%</span>
+                <span class="text-[12px] font-black" style="color:${c.ok}">${Math.round(totalPct)}%</span>
                 <span class="text-[12px] font-bold text-label/30">${processed}/${resumen.total}</span>
             </div>
         </div>

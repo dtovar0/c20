@@ -4,6 +4,11 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+    const getColors = () => {
+        const c = window.nexusSettings.statusColors;
+        return [c.ok, c.fail, c.force, c.dup];
+    };
+
     // 1. Panel de Líneas: Volumen Operativo
     const optionsVolume = {
         series: [{
@@ -36,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         },
         xaxis: {
-            categories: ['OK', 'FAIL', 'FORCE', 'DUP'],
+            categories: ['OK', 'FAIL', 'FORCE', 'Duplicados'],
             labels: {
                 style: {
                     colors: 'rgb(var(--color-label-text))',
@@ -65,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         legend: { show: false },
         tooltip: { theme: 'dark' },
-        colors: ['#2563eb', '#f43f5e', '#8b5cf6', '#f59e0b'] // Blue, Rose, Violet, Amber (Sync with psx5k.js)
+        colors: getColors()
     };
 
     const volumeChart = new ApexCharts(document.querySelector("#bookingSparkline"), optionsVolume);
@@ -121,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         legend: { show: false },
         tooltip: { theme: 'dark' },
-        colors: ['#2563eb', '#f43f5e', '#8b5cf6', '#f59e0b'] // Blue, Rose, Violet, Amber (Sync with psx5k.js)
+        colors: getColors()
     };
 
     const historyChart = new ApexCharts(document.querySelector("#onTimeRadial"), optionsHistory);
@@ -146,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (pendingEl) pendingEl.textContent = s.pending.toLocaleString();
                 if (scheduledEl) scheduledEl.textContent = s.scheduled.toLocaleString();
                 if (volumeEl) volumeEl.textContent = s.volume_today.toLocaleString();
-                if (efficiencyEl) efficiencyEl.textContent = `${s.efficiency}%`;
+                if (efficiencyEl) efficiencyEl.textContent = s.processed_total.toLocaleString();
 
                 // Update Volume Chart Breakdown
                 if (volumeChart) {
@@ -188,6 +193,17 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Error loading PSX stats:', error);
         }
     }
+
+    // React to settings changes
+    document.addEventListener('nexus:settingsUpdated', (e) => {
+        const newColors = getColors();
+        if (volumeChart) {
+            volumeChart.updateOptions({ colors: newColors });
+        }
+        if (historyChart) {
+            historyChart.updateOptions({ colors: newColors });
+        }
+    });
 
     loadPSXStats();
     // Auto-refresh stats every 30 seconds

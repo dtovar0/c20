@@ -8,7 +8,34 @@ window.nexusSettings = {
     emailNotifications: true,
     refreshInterval: 60, // seconds
     tourEnabled: true,
+    statusColors: {
+        ok: '#2563eb',
+        fail: '#f43f5e',
+        force: '#8b5cf6',
+        dup: '#f59e0b'
+    },
     initialized: false
+};
+
+/**
+ * Tab Switcher for Settings Modal
+ */
+window.switchSettingsTab = function(tab) {
+    const tabs = ['general', 'colors'];
+    tabs.forEach(t => {
+        const btn = document.getElementById(`tabBtn${t.charAt(0).toUpperCase() + t.slice(1)}`);
+        const content = document.getElementById(`tabContent${t.charAt(0).toUpperCase() + t.slice(1)}`);
+        
+        if (t === tab) {
+            btn.classList.add('bg-primary', 'text-white', 'shadow-lg', 'shadow-primary/20');
+            btn.classList.remove('bg-transparent', 'text-label/40', 'hover:bg-surface-container/30');
+            content.classList.remove('hidden');
+        } else {
+            btn.classList.remove('bg-primary', 'text-white', 'shadow-lg', 'shadow-primary/20');
+            btn.classList.add('bg-transparent', 'text-label/40', 'hover:bg-surface-container/30');
+            content.classList.add('hidden');
+        }
+    });
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -43,6 +70,13 @@ function loadInterfaceSettings() {
         window.nexusSettings.emailNotifications = body.dataset.prefEmail === 'true';
         window.nexusSettings.refreshInterval = parseInt(body.dataset.prefRefresh) || 60;
         window.nexusSettings.tourEnabled = body.dataset.prefTour === 'true';
+        
+        // Recover Colors
+        if (body.dataset.prefColors) {
+            try {
+                window.nexusSettings.statusColors = JSON.parse(body.dataset.prefColors);
+            } catch(e) { console.error("Error parsing DB colors", e); }
+        }
         
         // Sync back to localStorage to keep it fresh
         localStorage.setItem('nexus_interface_settings', JSON.stringify(window.nexusSettings));
@@ -101,7 +135,30 @@ function initSettingsUI() {
                 if ($notif.length) $notif.prop('checked', window.nexusSettings.notifications);
                 if ($email.length) $email.prop('checked', window.nexusSettings.emailNotifications);
                 if ($tour.length) $tour.prop('checked', window.nexusSettings.tourEnabled);
+
+                // Sync Colors
+                const colors = window.nexusSettings.statusColors;
+                if ($('#colorOk').length) $('#colorOk').val(colors.ok);
+                if ($('#colorFail').length) $('#colorFail').val(colors.fail);
+                if ($('#colorForce').length) $('#colorForce').val(colors.force);
+                if ($('#colorDup').length) $('#colorDup').val(colors.dup);
+
+                // Initial preview sync
+                updateIconPreview('previewIconOk', colors.ok);
+                updateIconPreview('previewIconFail', colors.fail);
+                updateIconPreview('previewIconForce', colors.force);
+                updateIconPreview('previewIconDup', colors.dup);
             }, 50);
+        }
+    });
+
+    // Real-time Preview Listeners
+    ['Ok', 'Fail', 'Force', 'Dup'].forEach(status => {
+        const picker = document.getElementById(`color${status}`);
+        if (picker) {
+            picker.addEventListener('input', (e) => {
+                updateIconPreview(`previewIcon${status}`, e.target.value);
+            });
         }
     });
 
@@ -119,7 +176,13 @@ function initSettingsUI() {
                 notifications: notifyToggle ? notifyToggle.checked : true,
                 emailNotifications: emailNotifyToggle ? emailNotifyToggle.checked : true,
                 refreshInterval: refreshRange ? parseInt(refreshRange.value) : 60,
-                tourEnabled: tourToggle ? tourToggle.checked : true
+                tourEnabled: tourToggle ? tourToggle.checked : true,
+                statusColors: {
+                    ok: document.getElementById('colorOk').value,
+                    fail: document.getElementById('colorFail').value,
+                    force: document.getElementById('colorForce').value,
+                    dup: document.getElementById('colorDup').value
+                }
             };
 
             const changedInterval = newSettings.refreshInterval !== window.nexusSettings.refreshInterval;
@@ -137,7 +200,8 @@ function initSettingsUI() {
                     notifications: newSettings.notifications,
                     email_notifications: newSettings.emailNotifications,
                     refresh_interval: newSettings.refreshInterval,
-                    tour_enabled: newSettings.tourEnabled
+                    tour_enabled: newSettings.tourEnabled,
+                    status_colors: newSettings.statusColors
                 })
             })
             .then(res => res.json())
@@ -146,6 +210,8 @@ function initSettingsUI() {
                     if (typeof showToast === 'function') {
                         showToast('Configuración sincronizada con el servidor', 'success');
                     }
+                    // Inform other modules about the change
+                    document.dispatchEvent(new CustomEvent('nexus:settingsUpdated', { detail: window.nexusSettings }));
                 }
             })
             .catch(err => console.error('Error syncing preferences:', err));
@@ -198,3 +264,16 @@ window.canNotify = function() {
 
 // Re-run polling start when custom events or navigation happen
 document.addEventListener('nexus:viewChanged', startGlobalPolling);
+
+/**
+ * Updates a specific icon preview with a given hex color
+ */
+function updateIconPreview(id, hex) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    
+    // Apply as background with transparency and solid text/border
+    el.style.backgroundColor = `${hex}4D`; // 30% alpha in hex
+    el.style.color = hex;
+    el.style.boxShadow = `inset 0 0 0 1px ${hex}66`; // 40% alpha for the ring
+}

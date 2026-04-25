@@ -21,6 +21,7 @@ class User(db.Model, UserMixin):
     pref_email_notifications = db.Column(db.Boolean, default=True)
     pref_refresh_interval = db.Column(db.Integer, default=60)
     pref_tour_enabled = db.Column(db.Boolean, default=True)
+    pref_status_colors = db.Column(db.Text, nullable=True) # JSON string: {"ok":"#...","fail":"#..."}
     
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

@@ -68,7 +68,7 @@
                     </div>
                 </div>
                 <div class="flex flex-col">
-                    <span class="text-sm font-bold text-label/60 tracking-tight uppercase">Tarea Activa</span>
+                    <span class="text-sm font-bold text-label/60 tracking-tight uppercase">Tarea Activa (Global)</span>
                     <h3 class="text-3xl font-black text-body-text tracking-tighter mt-1" id="kpiActiveTask">PSX-9421</h3>
                 </div>
             </div>
@@ -104,7 +104,7 @@
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                         </div>
                         <div class="flex flex-col justify-end mt-8">
-                            <h3 class="text-4xl font-black text-bi-main tracking-tighter" id="kpiEfficiency">--%</h3>
+                            <h3 class="text-4xl font-black text-bi-main tracking-tighter" id="kpiEfficiency">--</h3>
                             <p class="text-xs font-black text-primary uppercase tracking-[0.2em] mt-2">Detalle de tareas</p>
                             <p class="text-[12px] text-label/40 font-bold mt-1">Desempeño cronológico reciente</p>
                         </div>
@@ -126,6 +126,10 @@
                     <h2 class="text-xs font-black text-label/80 uppercase tracking-[0.3em]">Monitoreo de Actividad</h2>
                     <div class="monitor-status-dot bg-success"></div>
                 </div>
+                <!-- Audit Link Button (Minimal) -->
+                <a href="{{ url_for('audit.index') }}" class="group/btn w-8 h-8 flex items-center justify-center rounded-lg bg-surface-container/20 hover:bg-primary/10 border border-panel-border hover:border-primary/30 transition-all active:scale-95 shadow-sm" title="Ver Auditoría Completa">
+                    <svg class="w-4 h-4 text-primary transition-transform group-hover/btn:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </a>
             </div>
  
             <!-- Body: Activity (Minimalist High-Impact Feed) -->

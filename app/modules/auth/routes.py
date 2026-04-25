@@ -340,6 +340,11 @@ def save_preferences():
         if "refresh_interval" in data: current_user.pref_refresh_interval = data["refresh_interval"]
         if "tour_enabled" in data: current_user.pref_tour_enabled = data["tour_enabled"]
         
+        # Save color mapping
+        if "status_colors" in data:
+            import json
+            current_user.pref_status_colors = json.dumps(data["status_colors"])
+        
         db.session.commit()
         return jsonify({"status": "success", "message": "Preferencias del sistema actualizadas"})
     except Exception as e:

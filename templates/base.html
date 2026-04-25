@@ -37,7 +37,8 @@
           data-pref-notifications="{{ 'true' if current_user.pref_notifications else 'false' }}"
           data-pref-email="{{ 'true' if current_user.pref_email_notifications else 'false' }}"
           data-pref-refresh="{{ current_user.pref_refresh_interval or 60 }}"
-          data-pref-tour="{{ 'true' if current_user.pref_tour_enabled else 'false' }}">
+          data-pref-tour="{{ 'true' if current_user.pref_tour_enabled else 'false' }}"
+          data-pref-colors='{{ current_user.pref_status_colors or "" }}'>
     <div class="flex h-full overflow-hidden">
         <!-- Sidebar -->
         {% include 'components/sidebar.html' %}
@@ -143,7 +144,14 @@
                         </button>
                     </div>
 
-                    <div class="p-8 space-y-6">
+                    <!-- Tabs Navigation -->
+                    <div class="p-2 flex gap-2 border-b border-panel-border bg-surface-container/10">
+                        <button onclick="switchSettingsTab('general')" id="tabBtnGeneral" class="flex-1 py-3 px-4 rounded-xl bg-primary text-white text-[12px] font-black uppercase tracking-widest transition-all shadow-lg shadow-primary/20">Generales</button>
+                        <button onclick="switchSettingsTab('colors')" id="tabBtnColors" class="flex-1 py-3 px-4 rounded-xl bg-transparent text-label/40 hover:bg-surface-container/30 text-[12px] font-black uppercase tracking-widest transition-all">Colores & Estados</button>
+                    </div>
+
+                    <!-- Tab: Generales -->
+                    <div id="tabContentGeneral" class="p-8 space-y-6 min-h-[480px]">
                         <!-- Notification Toggle (Desktop) -->
                         <div class="flex items-center justify-between p-4 bg-surface-container/20 rounded-2xl border border-panel-border/40">
                             <div>
@@ -198,6 +206,84 @@
                                     <input type="checkbox" id="settingTourToggle" class="sr-only peer" checked>
                                     <div class="w-12 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                                 </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab: Colores -->
+                    <div id="tabContentColors" class="hidden p-8 min-h-[480px] flex flex-col">
+                        <div class="w-full border border-panel-border rounded-2xl overflow-hidden bg-surface-container/10">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="bg-surface-container/30 border-b border-panel-border">
+                                    <tr>
+                                        <th class="px-6 py-4 text-[11px] font-black text-label/40 uppercase tracking-widest">Estado</th>
+                                        <th class="px-6 py-4 text-[11px] font-black text-label/40 uppercase tracking-widest text-center">Color</th>
+                                        <th class="px-6 py-4 text-[11px] font-black text-label/40 uppercase tracking-widest text-center">Icono</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-panel-border/40">
+                                    <!-- OK Row -->
+                                    <tr class="hover:bg-primary/5 transition-colors">
+                                        <td class="px-6 py-4">
+                                            <span class="text-[12px] font-black text-label uppercase tracking-tighter">OK</span>
+                                        </td>
+                                        <td class="px-6 py-4 text-center">
+                                            <input type="color" id="colorOk" value="#2563eb" class="mx-auto w-10 h-10 bg-transparent border-none cursor-pointer rounded-xl overflow-hidden shadow-lg shadow-black/10">
+                                        </td>
+                                        <td class="px-6 py-4 text-center">
+                                            <div id="previewIconOk" class="mx-auto inline-flex items-center justify-center w-10 h-10 rounded-lg bg-emerald-500/30 text-emerald-500 font-bold text-xs ring-1 ring-emerald-500/40">OK</div>
+                                        </td>
+                                    </tr>
+                                    <!-- FAIL Row -->
+                                    <tr class="hover:bg-primary/5 transition-colors">
+                                        <td class="px-6 py-4">
+                                            <span class="text-[12px] font-black text-label uppercase tracking-tighter">Error</span>
+                                        </td>
+                                        <td class="px-6 py-4 text-center">
+                                            <input type="color" id="colorFail" value="#f43f5e" class="mx-auto w-10 h-10 bg-transparent border-none cursor-pointer rounded-xl overflow-hidden shadow-lg shadow-black/10">
+                                        </td>
+                                        <td class="px-6 py-4 text-center">
+                                            <div id="previewIconFail" class="mx-auto inline-flex items-center justify-center w-10 h-10 rounded-lg bg-rose-500/30 text-rose-500 font-bold text-xs text-center leading-none ring-1 ring-rose-500/40">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <!-- FORCE Row -->
+                                    <tr class="hover:bg-primary/5 transition-colors">
+                                        <td class="px-6 py-4">
+                                            <span class="text-[12px] font-black text-label uppercase tracking-tighter">Force</span>
+                                        </td>
+                                        <td class="px-6 py-4 text-center">
+                                            <input type="color" id="colorForce" value="#8b5cf6" class="mx-auto w-10 h-10 bg-transparent border-none cursor-pointer rounded-xl overflow-hidden shadow-lg shadow-black/10">
+                                        </td>
+                                        <td class="px-6 py-4 text-center">
+                                            <div id="previewIconForce" class="mx-auto inline-flex items-center justify-center w-10 h-10 rounded-lg bg-accent-violet/40 text-accent-violet font-bold text-xs ring-1 ring-accent-violet/50">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <!-- DUP Row -->
+                                    <tr class="hover:bg-primary/5 transition-colors">
+                                        <td class="px-6 py-4">
+                                            <span class="text-[12px] font-black text-label uppercase tracking-tighter">Dup</span>
+                                        </td>
+                                        <td class="px-6 py-4 text-center">
+                                            <input type="color" id="colorDup" value="#f59e0b" class="mx-auto w-10 h-10 bg-transparent border-none cursor-pointer rounded-xl overflow-hidden shadow-lg shadow-black/10">
+                                        </td>
+                                        <td class="px-6 py-4 text-center">
+                                            <div id="previewIconDup" class="mx-auto inline-flex items-center justify-center w-10 h-10 rounded-lg bg-amber-500/30 text-amber-500 font-bold text-xs ring-1 ring-amber-500/50">DUP</div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="mt-auto pt-6">
+                            <div class="p-4 bg-primary/5 border border-primary/20 rounded-2xl flex gap-3 items-center">
+                                <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <p class="text-[11px] text-primary font-bold leading-tight italic">
+                                    * Estos colores afectarán a las gráficas desarrolladas en ApexCharts y terminales tácticas en tiempo real.
+                                </p>
                             </div>
                         </div>
                     </div>

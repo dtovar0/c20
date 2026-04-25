@@ -43,6 +43,9 @@ def create_app():
         "pool_recycle": 3600,
     }
 
+    # Custom PSX Settings
+    app.config['PSX_CHUNK_SIZE'] = int(os.getenv('PSX_CHUNK_SIZE', 200))
+
     # Inicializar Extensiones
     Compress(app)
     db.init_app(app)

@@ -84,11 +84,10 @@ def get_stats():
             PSX5KTask.estado == 'Pendiente'
         ).count()
         
-        # 4. Tarea Activa (La más reciente con estado Ejecutando)
-        activa = PSX5KTask.query.join(PSX5KJob).filter(
-            PSX5KJob.usuario == username, 
+        # 4. Tarea Activa (GLOBAL: La más reciente con estado Ejecutando en todo el sistema)
+        activa = PSX5KTask.query.filter(
             PSX5KTask.estado == 'Ejecutando'
-        ).order_by(PSX5KJob.created_at.desc()).first()
+        ).order_by(PSX5KTask.id.desc()).first()
         
         # 5. Dashboard Premium Stats: Volumen Hoy & Eficiencia
         today = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
@@ -121,10 +120,17 @@ def get_stats():
         total_ok_eff = s_ok + s_force + s_dup
         eficiencia = (total_ok_eff / total_p * 100) if total_p > 0 else 0.0
 
+        # 6. Total de tareas TERMINADAS
+        total_procesadas = PSX5KTask.query.join(PSX5KJob).filter(
+            PSX5KJob.usuario == username,
+            PSX5KTask.estado == 'Terminada'
+        ).count()
+
         return jsonify({
             "status": "success",
             "stats": {
                 "total": total_tareas,
+                "processed_total": total_procesadas,
                 "pending": pendientes,
                 "scheduled": programadas,
                 "active_task": activa.id if activa else "NINGUNA",
@@ -182,7 +188,8 @@ def create_task():
             return jsonify({"status": "error", "message": "No se encontraron registros válidos para procesar"}), 400
             
         # 2. Aplicar DIVISION (Auto-Chunking) cada 200 registros
-        chunks = list(chunk_list(all_records, 200))
+        chunk_size = current_app.config.get('PSX_CHUNK_SIZE', 200)
+        chunks = list(chunk_list(all_records, chunk_size))
         total_chunks = len(chunks)
         
         # --- NUEVA LÓGICA: CREAR JOB MAESTRO ---
