@@ -93,7 +93,9 @@ def get_stats():
         today = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
         
         # Volumen Operativo (Registros totales procesados hoy por el usuario)
-        volumen_hoy = db.session.query(func.sum(PSX5KDetail.total)).join(PSX5KTask).join(PSX5KJob).filter(
+        volumen_hoy = db.session.query(func.sum(PSX5KDetail.total)).join(
+            PSX5KTask, PSX5KTask.id == PSX5KDetail.id
+        ).join(PSX5KJob).filter(
             PSX5KJob.usuario == username,
             PSX5KTask.fecha_inicio >= today
         ).scalar() or 0
@@ -105,7 +107,7 @@ def get_stats():
             func.sum(PSX5KDetail.force_ok),
             func.sum(PSX5KDetail.dup),
             func.sum(PSX5KDetail.total)
-        ).join(PSX5KTask).join(PSX5KJob).filter(
+        ).join(PSX5KTask, PSX5KTask.id == PSX5KDetail.id).join(PSX5KJob).filter(
             PSX5KJob.usuario == username,
             PSX5KTask.estado == 'Terminada',
             PSX5KTask.fecha_inicio >= today
@@ -276,13 +278,21 @@ def get_global_stats():
 
         today_stats = [t_stats["Completado"], t_stats["Ejecutando"], t_stats["Pendiente"], t_stats["Error"]]
 
+        # 10. Total de ANI procesados (Lifetime - Suma de todos los registros en tareas terminadas)
+        from .models import PSX5KDetail
+        total_ani_processed = db.session.query(func.sum(PSX5KDetail.total)).join(
+            PSX5KTask, PSX5KTask.id == PSX5KDetail.id
+        ).filter(
+            PSX5KTask.estado == 'Completado'
+        ).scalar() or 0
+
         return jsonify({
             "status": "success",
             "stats": {
                 "users": total_users,
                 "tasks": total_tareas,
                 "pending": pendientes,
-                "queue": cola_total,
+                "queue": int(total_ani_processed), # Reemplazamos queue por total_ani
                 "active_count": activas,
                 "active_id": activa_obj.id if activa_obj else None,
                 "active_name": active_name if activa_obj else None,
