@@ -161,6 +161,58 @@ def get_stats():
         current_app.logger.error(f"Error en get_stats: {e}")
         return jsonify({"status": "error", "message": "Error al calcular estadísticas"}), 500
 
+@psx_bp.route('/stats/global')
+@login_required
+def get_global_stats():
+    """
+    Retorna estadísticas globales del sistema para el dashboard de administrador
+    """
+    try:
+        from app.modules.auth.models import User
+        from .models import PSX5KJob
+        
+        # 1. Usuarios totales
+        total_users = User.query.count()
+        
+        # 2. Tareas totales (Fragmentos en todo el sistema)
+        total_tareas = PSX5KTask.query.count()
+        
+        # 3. Tareas Pendientes (Global - Fragmentos)
+        pendientes = PSX5KTask.query.filter(
+            PSX5KTask.estado.in_(['Programada', 'Pendiente'])
+        ).count()
+
+        # 4. TRABAJOS EN COLA (Global - Cuántos Jobs únicos tienen fragmentos pendientes)
+        cola_total = db.session.query(PSX5KTask.job_id).filter(
+            PSX5KTask.estado.in_(['Programada', 'Pendiente'])
+        ).distinct().count()
+        
+        # 5. Tarea Activa (GLOBAL: La más reciente con estado Ejecutando en todo el sistema)
+        activas = PSX5KTask.query.filter(PSX5KTask.estado == 'Ejecutando').count()
+        activa_obj = PSX5KTask.query.filter(
+            PSX5KTask.estado == 'Ejecutando'
+        ).order_by(PSX5KTask.id.desc()).first()
+        
+        active_name = "N/A"
+        if activa_obj and activa_obj.job and activa_obj.job.tarea:
+            active_name = activa_obj.job.tarea.upper()
+
+        return jsonify({
+            "status": "success",
+            "stats": {
+                "users": total_users,
+                "tasks": total_tareas,
+                "pending": pendientes,
+                "queue": cola_total,
+                "active_count": activas,
+                "active_id": activa_obj.id if activa_obj else None,
+                "active_name": active_name if activa_obj else None
+            }
+        })
+    except Exception as e:
+        current_app.logger.error(f"Error en get_global_stats: {e}")
+        return jsonify({"status": "error", "message": "Error al calcular estadísticas globales"}), 500
+
 @psx_bp.route('/create', methods=['POST'])
 @login_required
 def create_task():

@@ -206,6 +206,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     loadPSXStats();
-    // Auto-refresh stats every 30 seconds
-    setInterval(loadPSXStats, 30000);
+    // Auto-refresh stats every 60 seconds
+    setInterval(loadPSXStats, 60000);
 });

@@ -24,7 +24,16 @@ def index():
 @admin_required
 def dashboard_2():
     try:
-        return render_template("dashboard_2.html")
+        from flask import request
+        page = request.args.get('page', 1, type=int)
+        is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+        
+        # Paginación Global de Logs: 10 por página
+        pagination = AuditLog.query.order_by(AuditLog.timestamp.desc()).paginate(page=page, per_page=10, error_out=False)
+            
+        return render_template("dashboard_2.html", 
+                               activity=pagination.items, 
+                               pagination=pagination)
     except Exception as e:
         current_app.logger.error(f"Error en dashboard_2: {e}")
         return "Internal Error", 500
