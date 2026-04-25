@@ -1,3 +1,4 @@
+import os
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user
 from app import db
@@ -19,22 +20,42 @@ def login():
             auth_type = request.form.get("auth_type", "directory")
             
             # --- MODO SSO / AUTHELIA (AUTO-DETECT) ---
-            authelia_user = request.headers.get(os.getenv('AUTHELIA_HEADER_USER', 'Remote-User'))
+            header_user = os.getenv('AUTHELIA_HEADER_USER', 'Remote-Email')
+            header_name = os.getenv('AUTHELIA_HEADER_NAME', 'Remote-Name')
+            header_groups = os.getenv('AUTHELIA_HEADER_GROUPS', 'Remote-Groups')
+            
+            authelia_user = request.headers.get(header_user)
+            
             if os.getenv('AUTHELIA_ENABLED', 'false').lower() == 'true' and authelia_user:
                 user = User.query.filter_by(username=authelia_user).first()
+                
+                # Obtener metadatos adicionales del header
+                authelia_name = request.headers.get(header_name, authelia_user)
+                authelia_groups = request.headers.get(header_groups, '')
+                
+                # Lógica de Roles (Admin si está en grupo administrador)
+                inferred_role = 'usuario'
+                if 'administrador' in [g.strip().lower() for g in authelia_groups.split(',')]:
+                    inferred_role = 'administrador'
+
                 if not user:
                     # Auto-creación de sombra de usuario si viene de SSO confiable
                     user = User(
                         username=authelia_user,
-                        nombre=request.headers.get(os.getenv('AUTHELIA_HEADER_EMAIL', 'Remote-Email'), authelia_user),
-                        role='usuario',
+                        nombre=authelia_name,
+                        role=inferred_role,
                         auth_source='sso'
                     )
                     db.session.add(user)
                     db.session.commit()
+                else:
+                    # Actualizar nombre y rol si cambiaron en el SSO
+                    user.nombre = authelia_name
+                    user.role = inferred_role
+                    db.session.commit()
                 
                 login_user(user)
-                add_audit_log("login sso", status="success", detail=f"Usuario {authelia_user} ha iniciado sesión vía SSO/Authelia")
+                add_audit_log("login sso", status="success", detail=f"Usuario {authelia_user} ({authelia_name}) ha iniciado sesión vía SSO/Authelia")
                 return redirect(url_for('core.index'))
 
             
@@ -80,10 +101,25 @@ def login():
                 return redirect(url_for('auth.login'))
 
         # --- CHEQUEO AUTOMÁTICO DE SSO (GET REQUEST) ---
-        authelia_user = request.headers.get(os.getenv('AUTHELIA_HEADER_USER', 'Remote-User'))
+        header_user = os.getenv('AUTHELIA_HEADER_USER', 'Remote-Email')
+        authelia_user = request.headers.get(header_user)
         if os.getenv('AUTHELIA_ENABLED', 'false').lower() == 'true' and authelia_user:
             user = User.query.filter_by(username=authelia_user).first()
             if user:
+                # Actualizar metadatos también en el chequeo pasivo
+                header_name = os.getenv('AUTHELIA_HEADER_NAME', 'Remote-Name')
+                header_groups = os.getenv('AUTHELIA_HEADER_GROUPS', 'Remote-Groups')
+                
+                user.nombre = request.headers.get(header_name, user.nombre)
+                
+                # Re-validar rol
+                authelia_groups = request.headers.get(header_groups, '')
+                if 'administrador' in [g.strip().lower() for g in authelia_groups.split(',')]:
+                    user.role = 'administrador'
+                else:
+                    user.role = 'usuario'
+                    
+                db.session.commit()
                 login_user(user)
                 return redirect(url_for('core.index'))
 

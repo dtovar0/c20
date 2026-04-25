@@ -73,33 +73,69 @@ def check_single_instance():
 def handle_stale_tasks(app):
     """Detecta y limpia tareas que se quedaron colgadas más de X min (configurable via ENV)"""
     with app.app_context():
-        timeout_min = int(os.getenv('PSX_STALE_TASK_TIMEOUT', 60))
-        limit = datetime.datetime.now() - datetime.timedelta(minutes=timeout_min)
-        stale_tasks = PSX5KTask.query.filter(
-            PSX5KTask.estado == 'Ejecutando',
-            PSX5KTask.fecha_inicio < limit
-        ).all()
-
+        # 1. Configuración de tiempos
+        notify_timeout = int(os.getenv('PSX_NOTIFY_TASK_TIMEOUT', 60))
+        kill_timeout = int(os.getenv('PSX_KILL_TASK_TIMEOUT', 90))
         
-        for task in stale_tasks:
-            if task.id in notified_stale_tasks:
-                continue
+        now = datetime.datetime.now()
+        limit_notify = now - datetime.timedelta(minutes=notify_timeout)
+        limit_kill = now - datetime.timedelta(minutes=kill_timeout)
 
-            print(f"🕒 ALERTA DE TIEMPO: Tarea ID {task.id} ha superado los {timeout_min} min de ejecución.")
-            
-            # Notificamos al administrador
-            admin = User.query.filter_by(role='administrador').first()
-            if admin and admin.username:
-                send_notification_by_slug(
-                    slug='error', 
-                    target_email=admin.username,
-                    context={'usuario': 'SYSTEM_WATCHDOG', 'ip': 'LOCAL_WORKER', 'error': f'DEMORA_DETECTADA_ID_{task.id} (>{timeout_min}min)'}
-                )
-            
-            add_audit_log("alerta sistema", status="warning", detail=f"Demora: {task.id} - Excedió {timeout_min} min (Sigue en curso)", user_override="SYSTEM")
-            
-            # Marcamos como notificada para no repetir en el próximo ciclo
-            notified_stale_tasks.add(task.id)
+        # 2. Buscar tareas en ejecución
+        executing_tasks = PSX5KTask.query.filter(PSX5KTask.estado == 'Ejecutando').all()
+        
+        for task in executing_tasks:
+            # Caso A: MATAR TAREA (Kill Timeout excedido)
+            if task.fecha_inicio < limit_kill:
+                print(f"💀 HARD KILL: Tarea ID {task.id} excedió el límite crítico de {kill_timeout} min. Abortando.")
+                
+                # Cambiamos estado para liberar el worker
+                task.estado = 'Error'
+                task.fecha_fin = now
+                
+                # Notificación Crítica
+                admin = User.query.filter_by(role='administrador').first()
+                if admin and admin.username:
+                    send_notification_by_slug(
+                        slug='error', 
+                        target_email=admin.username,
+                        context={
+                            'usuario': 'SYSTEM_WATCHDOG', 
+                            'ip': 'LOCAL_WORKER', 
+                            'error': f'TAREA_ABORTADA_TIMEOUT_ID_{task.id} (>{kill_timeout}min)'
+                        }
+                    )
+                
+                add_audit_log("tarea terminada", status="error", detail=f"ID: {task.id} - Abortada por tiempo excesivo (>{kill_timeout}min)", user_override="SYSTEM")
+                
+                # Limpiar de la lista de notificados
+                if task.id in notified_stale_tasks:
+                    notified_stale_tasks.remove(task.id)
+                
+                db.session.commit()
+                continue # Pasar a la siguiente tarea
+
+            # Caso B: AVISO DE DEMORA (Notify Timeout excedido)
+            if task.fecha_inicio < limit_notify:
+                if task.id in notified_stale_tasks:
+                    continue
+
+                print(f"🕒 ALERTA DE TIEMPO: Tarea ID {task.id} ha superado los {notify_timeout} min de ejecución.")
+                
+                # Notificamos al administrador
+                admin = User.query.filter_by(role='administrador').first()
+                if admin and admin.username:
+                    send_notification_by_slug(
+                        slug='error', 
+                        target_email=admin.username,
+                        context={'usuario': 'SYSTEM_WATCHDOG', 'ip': 'LOCAL_WORKER', 'error': f'DEMORA_DETECTADA_ID_{task.id} (>{notify_timeout}min)'}
+                    )
+                
+                add_audit_log("alerta sistema", status="warning", detail=f"Demora: {task.id} - Excedió {notify_timeout} min (Sigue en curso)", user_override="SYSTEM")
+                
+                # Marcamos como notificada para no repetir en el próximo ciclo
+                notified_stale_tasks.add(task.id)
+                db.session.commit()
 
 
 def handle_user_hygiene(app):
