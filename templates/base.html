@@ -49,7 +49,7 @@
             <header class="h-16 border-b border-panel-border bg-panel-fill/80 backdrop-blur-md sticky top-0 z-30 flex items-center justify-between px-6 transition-colors">
                 <div class="flex items-center gap-4">
                     <!-- Hamburger Button -->
-                    <button id="sidebarToggle" class="p-2 hover:bg-surface-container rounded-base transition-colors group">
+                    <button id="sidebarToggle" class="w-10 h-10 flex items-center justify-center hover:bg-surface-container rounded-base transition-colors group">
                         <svg class="w-6 h-6 text-secondary group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                         </svg>
@@ -66,9 +66,9 @@
 
                 <div class="flex items-center gap-4">
                     <!-- Search -->
-                    <div class="hidden sm:flex items-center bg-input-bg px-5 py-3 rounded-2xl gap-3 border border-panel-border focus-within:border-input-focus transition-all shadow-sm group">
+                    <div class="hidden sm:flex items-center h-12 bg-input-bg px-5 rounded-2xl gap-3 border border-panel-border focus-within:border-input-focus transition-all shadow-sm group">
                         <svg class="w-4 h-4 text-label/60 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        <input type="text" id="systemSearch" placeholder="Historial de números..." class="bg-transparent border-none focus:ring-0 text-input text-sm font-bold w-64 outline-none placeholder:text-label/60">
+                        <input type="text" id="systemSearch" placeholder="Historial de números..." class="bg-transparent border-none focus:ring-0 text-input text-sm font-bold w-64 outline-none placeholder:text-label/60 p-0">
                         <!-- History Action Button -->
                         <button id="deepHistorySearchBtn" class="p-1 hover:bg-primary/20 text-label/40 hover:text-primary rounded-lg transition-all group/btn" title="Búsqueda Profunda en Historial PSX5K">
                             <svg class="w-5 h-5 group-hover/btn:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5-5 5M6 7l5 5-5 5"></path></svg>
@@ -77,11 +77,11 @@
 
                     <!-- Notifications -->
                     <div class="relative items-center flex">
-                        <button id="notificationBtn" class="relative p-2 hover:bg-surface-container rounded-base transition-all group active:scale-95">
+                        <button id="notificationBtn" class="relative w-10 h-10 flex items-center justify-center hover:bg-surface-container rounded-base transition-all group active:scale-95">
                             <svg class="w-5 h-5 text-secondary group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                             </svg>
-                            <span id="notificationBadge" class="hidden absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-gradient-to-br from-rose-500 to-pink-600 rounded-full border-2 border-bg shadow-[0_0_10px_rgba(244,63,94,0.4)] flex items-center justify-center text-[12px] font-black text-white transition-all duration-300 group-hover:scale-110 active:scale-90 z-10">0</span>
+                            <span id="notificationBadge" class="hidden absolute top-0.5 right-0.5 min-w-[18px] h-[18px] px-1 bg-gradient-to-br from-rose-500 to-pink-600 rounded-full border-2 border-bg shadow-[0_0_10px_rgba(244,63,94,0.4)] flex items-center justify-center text-[12px] font-black text-white transition-all duration-300 group-hover:scale-110 active:scale-90 z-10">0</span>
                         </button>
 
                         <!-- Notification Dropdown -->
@@ -112,12 +112,12 @@
                     </div>
 
                     <!-- Theme Toggle (6 Themes) -->
-                    <button id="themeToggle" class="p-2 hover:bg-surface-container rounded-base transition-all group flex items-center justify-center relative overflow-hidden active:scale-95" data-nx-tooltip="Cambiar Tema">
+                    <button id="themeToggle" class="w-10 h-10 flex items-center justify-center hover:bg-surface-container rounded-base transition-all group relative overflow-hidden active:scale-95" data-nx-tooltip="Cambiar Tema">
                         <svg class="w-5 h-5 text-label/60 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path></svg>
                     </button>
 
                     <!-- User Settings -->
-                    <button id="settingsBtn" class="p-2 hover:bg-surface-container rounded-base transition-all group active:scale-95" data-nx-tooltip="Ajustes de Interfaz">
+                    <button id="settingsBtn" class="w-10 h-10 flex items-center justify-center hover:bg-surface-container rounded-base transition-all group active:scale-95" data-nx-tooltip="Ajustes de Interfaz">
                         <svg class="w-5 h-5 text-label/60 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -144,10 +144,18 @@
                         </button>
                     </div>
 
-                    <!-- Tabs Navigation -->
-                    <div class="p-2 flex gap-2 border-b border-panel-border bg-surface-container/10">
-                        <button onclick="switchSettingsTab('general')" id="tabBtnGeneral" class="flex-1 py-3 px-4 rounded-xl bg-primary text-white text-[12px] font-black uppercase tracking-widest transition-all shadow-lg shadow-primary/20">Generales</button>
-                        <button onclick="switchSettingsTab('colors')" id="tabBtnColors" class="flex-1 py-3 px-4 rounded-xl bg-transparent text-label/40 hover:bg-surface-container/30 text-[12px] font-black uppercase tracking-widest transition-all">Colores & Estados</button>
+                    <!-- Integrated Tab Navigation Header (PSX5K Style) -->
+                    <div class="flex items-center gap-2 bg-panel-header/20 p-2 border-b border-panel-border relative z-10 px-8">
+                        <button onclick="switchSettingsTab('general')" id="tabBtnGeneral" 
+                            class="flex-1 py-3 px-4 rounded-xl text-[12px] font-black uppercase tracking-widest transition-all duration-300
+                                   bg-primary text-white shadow-lg shadow-primary/20">
+                            Generales
+                        </button>
+                        <button onclick="switchSettingsTab('colors')" id="tabBtnColors" 
+                            class="flex-1 py-3 px-4 rounded-xl text-[12px] font-black uppercase tracking-widest transition-all duration-300
+                                   bg-transparent text-label/40 hover:bg-surface-container/30">
+                            Colores & Estados
+                        </button>
                     </div>
 
                     <!-- Tab: Generales -->
@@ -282,7 +290,7 @@
                             <div class="p-4 bg-primary/5 border border-primary/20 rounded-2xl flex gap-3 items-center">
                                 <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                 <p class="text-[11px] text-primary font-bold leading-tight italic">
-                                    * Estos colores afectarán a las gráficas desarrolladas en ApexCharts y terminales tácticas en tiempo real.
+                                    * Estos colores afectarán a las gráficas y terminales tácticas en tiempo real.
                                 </p>
                             </div>
                         </div>
