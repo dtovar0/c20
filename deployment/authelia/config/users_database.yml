@@ -1,0 +1,13 @@
+###############################################################
+#             AUTHELIA USER DATABASE (LOCAL)                  #
+###############################################################
+
+users:
+  admin:
+    displayname: "Administrador Nexus"
+    # Password: password (encriptado con argon2id)
+    password: "$argon2id$v=19$m=65536,t=3,p=4$OGZkZlFidXNoUWFmS2t4RQ$nTh+UaXNoV8XG83L1vO7YpP7W6zXN8J3mQ"
+    email: admin@example.com
+    groups:
+      - admins
+      - users

@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  authelia:
+    container_name: authelia
+    image: authelia/authelia:latest
+    restart: unless-stopped
+    volumes:
+      - ./config:/config
+    networks:
+      - nexus-network
+    environment:
+      - TZ=America/Mexico_City
+    expose:
+      - 9091
+
+  redis:
+    container_name: authelia-redis
+    image: redis:alpine
+    restart: unless-stopped
+    networks:
+      - nexus-network
+    expose:
+      - 6379
+
+networks:
+  nexus-network:
+    driver: bridge
