@@ -3,7 +3,9 @@ import sys
 import time
 import datetime
 import signal
+import threading
 from dotenv import load_dotenv
+
 
 # Configuración de PATH y Raíz
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -39,8 +41,11 @@ from app.modules.notifications.services import send_notification_by_slug
 from app.modules.auth.models import User
 from app.modules.audit.services import add_audit_log
 
-# Configuración Global
+# Estado compartido para el Watchdog (Tareas ya notificadas para evitar spam)
+notified_stale_tasks = set()
+
 LOCK_FILE = os.path.join(PROJECT_ROOT, "psx5k_worker.pid") # Movido a la raíz para consistencia
+
 SLEEP_IDLE = 10  # Segundos a esperar si no hay tareas
 SLEEP_BETWEEN = 2 # Segundos entre tareas para no saturar DB
 
@@ -66,27 +71,36 @@ def check_single_instance():
             os.remove(LOCK_FILE)
 
 def handle_stale_tasks(app):
-    """Detecta y limpia tareas que se quedaron colgadas más de 60 min"""
+    """Detecta y limpia tareas que se quedaron colgadas más de X min (configurable via ENV)"""
     with app.app_context():
-        limit = datetime.datetime.now() - datetime.timedelta(minutes=60)
+        timeout_min = int(os.getenv('PSX_STALE_TASK_TIMEOUT', 60))
+        limit = datetime.datetime.now() - datetime.timedelta(minutes=timeout_min)
         stale_tasks = PSX5KTask.query.filter(
             PSX5KTask.estado == 'Ejecutando',
             PSX5KTask.fecha_inicio < limit
         ).all()
+
         
         for task in stale_tasks:
-            print(f"🚨 Tarea estancada detectada (ID: {task.id}). Cancelando...")
-            task.estado = 'Error'
-            db.session.commit()
+            if task.id in notified_stale_tasks:
+                continue
+
+            print(f"🕒 ALERTA DE TIEMPO: Tarea ID {task.id} ha superado los {timeout_min} min de ejecución.")
             
+            # Notificamos al administrador
             admin = User.query.filter_by(role='administrador').first()
             if admin and admin.username:
                 send_notification_by_slug(
                     slug='error', 
                     target_email=admin.username,
-                    context={'usuario': 'SYSTEM_WATCHDOG', 'ip': 'LOCAL_WORKER', 'error': f'TASK_TIMEOUT_ID_{task.id}'}
+                    context={'usuario': 'SYSTEM_WATCHDOG', 'ip': 'LOCAL_WORKER', 'error': f'DEMORA_DETECTADA_ID_{task.id} (>{timeout_min}min)'}
                 )
-            add_audit_log("tarea terminada", status="error", detail=f"Timeout: {task.id} - Superó 60 min", user_override="SYSTEM")
+            
+            add_audit_log("alerta sistema", status="warning", detail=f"Demora: {task.id} - Excedió {timeout_min} min (Sigue en curso)", user_override="SYSTEM")
+            
+            # Marcamos como notificada para no repetir en el próximo ciclo
+            notified_stale_tasks.add(task.id)
+
 
 def handle_user_hygiene(app):
     """Ejecuta la purga de usuarios inactivos y notifica resultados"""
@@ -125,7 +139,33 @@ def handle_user_hygiene(app):
         except Exception as e:
             print(f"⚠️ [HYGIENE] Error en rutina de limpieza: {e}")
 
+def watchdog_loop(app):
+    """Bucle de monitoreo en segundo plano (Watchdog + Hygiene)"""
+    print("🛰️  Watchdog Thread iniciado (Monitoreo paralelo activo)")
+    
+    # Marcadores de tiempo para tareas periódicas
+    last_hygiene_check = datetime.datetime.now() - datetime.timedelta(hours=23) # Forzar primer check pronto
+    HYGIENE_CHECK_INTERVAL = 86400 # 24 horas
+    
+    while True:
+        try:
+            # 1. Monitorear y limpiar tareas estancadas
+            handle_stale_tasks(app)
+            
+            # 2. Monitorear higiene de usuarios cada 24h
+            now = datetime.datetime.now()
+            if (now - last_hygiene_check).total_seconds() > HYGIENE_CHECK_INTERVAL:
+                handle_user_hygiene(app)
+                last_hygiene_check = now
+            
+            # Dormir 5 minutos antes del próximo escaneo global
+            time.sleep(300)
+        except Exception as e:
+            print(f"⚠️ [WATCHDOG-THREAD] Error crítico: {e}")
+            time.sleep(60)
+
 def process_task_data(task):
+
     """Retorna la lista de números desde archivo o datos directos en DB"""
     if not task.datos: return []
     
@@ -167,32 +207,37 @@ def main():
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
     
-    # Limpieza inicial
+    # Limpieza inicial síncrona
     handle_stale_tasks(app)
-    handle_user_hygiene(app) # Limpieza de inactividad al arrancar
+    
+    # Iniciar Watchdog en paralelo (HILO INDEPENDIENTE) si está habilitado
+    if os.getenv('PSX_WATCHDOG_ENABLED', 'true').lower() == 'true':
+        monitor_thread = threading.Thread(target=watchdog_loop, args=(app,), daemon=True)
+        monitor_thread.start()
+    else:
+        print("ℹ️  Watchdog paralelo deshabilitado por configuración (ENV)")
+
 
     last_health_check = datetime.datetime.now()
-    last_hygiene_check = datetime.datetime.now()
-    
-    HEALTH_CHECK_INTERVAL = int(os.getenv('PSX_WATCHDOG_MIN_INTERVAL', 60)) * 60 # Convertir minutos a segundos
-    HYGIENE_CHECK_INTERVAL = 86400 # 24 horas para purga de usuarios
+    HEALTH_CHECK_INTERVAL = int(os.getenv('PSX_WATCHDOG_MIN_INTERVAL', 60)) * 60 
 
     while True:
         try:
-            # Monitorear tareas colgadas en cada ciclo
-            handle_stale_tasks(app)
-            
-            # Monitorear higiene de usuarios cada 24h
-            now = datetime.datetime.now()
-            if (now - last_hygiene_check).total_seconds() > HYGIENE_CHECK_INTERVAL:
-                handle_user_hygiene(app)
-                last_hygiene_check = now
             
             with app.app_context():
-                # Buscar una tarea pendiente
+                # 1. Validar que no haya tareas activas (Ejecutando) en todo el sistema
+                # Esto previene colisiones incluso si el lock fallara o hay tareas huérfanas
+                is_running = PSX5KTask.query.filter_by(estado='Ejecutando').first()
+                if is_running:
+                    # Si ya hay una en curso, esperamos a que termine o que el Watchdog la limpie
+                    time.sleep(SLEEP_IDLE)
+                    continue
+
+                # 2. Buscar una tarea pendiente
                 task = PSX5KTask.query.filter(
                     PSX5KTask.estado.in_(['Pendiente', 'Programada'])
                 ).order_by(PSX5KTask.id.asc()).first()
+
 
                 # --- LÓGICA DE MONITOREO INTEGRADA ---
                 now = datetime.datetime.now()
@@ -274,7 +319,11 @@ def main():
                     task.estado = 'Error'
                     db.session.commit()
                     add_audit_log("tarea terminada", status="error", detail=f"ID: {task.id} - Abortada: Sin registros válidos", user_override=task.job.usuario)
+                    # Limpiar de la lista de notificados si existía
+                    if task.id in notified_stale_tasks:
+                        notified_stale_tasks.remove(task.id)
                     continue
+
 
                 # Ejecutar comando PSX
                 try:
@@ -301,7 +350,13 @@ def main():
                         send_notification_by_slug(slug='error', target_email=target,
                                                 context={'usuario': task.job.usuario, 'ip': 'PSX_NODE', 'error': str(task_err)[:100]})
                         print(f"📧 Correo de error enviado satisfactoriamente a: {target}")
+
+                    # Limpiar de la lista de notificados si existía
+                    if task.id in notified_stale_tasks:
+                        notified_stale_tasks.remove(task.id)
+
                     continue
+
                
                 # Resultados Detallados
                 detail.ok = results.get("ok", 0)
@@ -334,6 +389,11 @@ def main():
                 task.fecha_fin = datetime.datetime.now()
                 # task.datos = None  # Se deshabilita la purga por solicitud del usuario
                 db.session.commit()
+                
+                # Limpiar de la lista de notificados si existía
+                if task.id in notified_stale_tasks:
+                    notified_stale_tasks.remove(task.id)
+
                 
                 add_audit_log("tarea terminada", status="success", detail=f"ID: {task.id} | OK: {detail.ok} | FAIL: {detail.fail}", user_override=task.job.usuario)
                 

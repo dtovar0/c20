@@ -64,7 +64,9 @@ def run_health_check():
 
         # 5. Worker
         print("\n⚙️  5. ESTADO DEL WORKER DAEMON")
-        lock_file = "/tmp/psx5k_worker.pid"
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        lock_file = os.path.join(project_root, "psx5k_worker.pid")
+
         if os.path.exists(lock_file):
             with open(lock_file, 'r') as f:
                 pid = f.read().strip()
