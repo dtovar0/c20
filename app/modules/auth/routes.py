@@ -18,6 +18,26 @@ def login():
             password = request.form.get("password")
             auth_type = request.form.get("auth_type", "directory")
             
+            # --- MODO SSO / AUTHELIA (AUTO-DETECT) ---
+            authelia_user = request.headers.get(os.getenv('AUTHELIA_HEADER_USER', 'Remote-User'))
+            if os.getenv('AUTHELIA_ENABLED', 'false').lower() == 'true' and authelia_user:
+                user = User.query.filter_by(username=authelia_user).first()
+                if not user:
+                    # Auto-creación de sombra de usuario si viene de SSO confiable
+                    user = User(
+                        username=authelia_user,
+                        nombre=request.headers.get(os.getenv('AUTHELIA_HEADER_EMAIL', 'Remote-Email'), authelia_user),
+                        role='usuario',
+                        auth_source='sso'
+                    )
+                    db.session.add(user)
+                    db.session.commit()
+                
+                login_user(user)
+                add_audit_log("login sso", status="success", detail=f"Usuario {authelia_user} ha iniciado sesión vía SSO/Authelia")
+                return redirect(url_for('core.index'))
+
+            
             # --- MODO DIRECTORIO (LDAP) ---
             if auth_type == "directory":
                 from app.modules.auth.services import authenticate_user_ldap
@@ -59,7 +79,16 @@ def login():
                 flash("Credenciales locales incorrectas", "error")
                 return redirect(url_for('auth.login'))
 
-        return render_template("login.html")
+        # --- CHEQUEO AUTOMÁTICO DE SSO (GET REQUEST) ---
+        authelia_user = request.headers.get(os.getenv('AUTHELIA_HEADER_USER', 'Remote-User'))
+        if os.getenv('AUTHELIA_ENABLED', 'false').lower() == 'true' and authelia_user:
+            user = User.query.filter_by(username=authelia_user).first()
+            if user:
+                login_user(user)
+                return redirect(url_for('core.index'))
+
+        return render_template("login.html", authelia_url=os.getenv('AUTHELIA_URL', '#'))
+
     except Exception as e:
         from flask import current_app
         current_app.logger.error(f"Error en login: {e}")
