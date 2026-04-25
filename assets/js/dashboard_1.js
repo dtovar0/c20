@@ -155,29 +155,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Update Volume Chart Breakdown
                 if (volumeChart) {
-                    volumeChart.updateSeries([{
-                        name: 'Registros',
-                        data: [s.breakdown.ok, s.breakdown.fail, s.breakdown.force, s.breakdown.dup]
-                    }]);
+                    const hasData = s.volume_today > 0;
+                    const volumeContent = document.getElementById('volumeContent');
+                    const emptyMessage = document.getElementById('noDataVolume');
+
+                    if (hasData) {
+                        if (volumeContent) volumeContent.classList.remove('opacity-0', 'pointer-events-none');
+                        if (emptyMessage) emptyMessage.classList.add('hidden');
+                        volumeChart.updateSeries([{
+                            name: 'Registros',
+                            data: [s.breakdown.ok, s.breakdown.fail, s.breakdown.force, s.breakdown.dup]
+                        }]);
+                    } else {
+                        if (volumeContent) volumeContent.classList.add('opacity-0', 'pointer-events-none');
+                        if (emptyMessage) emptyMessage.classList.remove('hidden');
+                    }
                 }
 
                 // Update History Chart (Last 7 Tasks)
-                if (historyChart && s.last_7_tasks) {
-                    const okData = s.last_7_tasks.map(t => t.ok);
-                    const failData = s.last_7_tasks.map(t => t.fail);
-                    const forceData = s.last_7_tasks.map(t => t.force);
-                    const dupData = s.last_7_tasks.map(t => t.dup);
-                    const categories = s.last_7_tasks.map(t => `#${t.id.toString().padStart(4, '0')}`);
+                if (historyChart) {
+                    const hasHistory = s.last_7_tasks && s.last_7_tasks.length > 0;
+                    const historyContent = document.getElementById('historyContent');
+                    const emptyHistory = document.getElementById('noDataHistory');
 
-                    historyChart.updateOptions({
-                        xaxis: { categories: categories }
-                    });
-                    historyChart.updateSeries([
-                        { name: 'OK', data: okData },
-                        { name: 'FAIL', data: failData },
-                        { name: 'FORCE', data: forceData },
-                        { name: 'DUP', data: dupData }
-                    ]);
+                    if (hasHistory) {
+                        if (historyContent) historyContent.classList.remove('opacity-0', 'pointer-events-none');
+                        if (emptyHistory) emptyHistory.classList.add('hidden');
+
+                        const okData = s.last_7_tasks.map(t => t.ok);
+                        const failData = s.last_7_tasks.map(t => t.fail);
+                        const forceData = s.last_7_tasks.map(t => t.force);
+                        const dupData = s.last_7_tasks.map(t => t.dup);
+                        const categories = s.last_7_tasks.map(t => `#${t.id.toString().padStart(4, '0')}`);
+
+                        historyChart.updateOptions({
+                            xaxis: { categories: categories }
+                        });
+                        historyChart.updateSeries([
+                            { name: 'OK', data: okData },
+                            { name: 'FAIL', data: failData },
+                            { name: 'FORCE', data: forceData },
+                            { name: 'DUP', data: dupData }
+                        ]);
+                    } else {
+                        if (historyContent) historyContent.classList.add('opacity-0', 'pointer-events-none');
+                        if (emptyHistory) emptyHistory.classList.remove('hidden');
+                    }
                 }
 
                 if (activeEl) {

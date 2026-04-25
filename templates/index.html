@@ -21,7 +21,7 @@
                 </div>
                 <div class="flex flex-col">
                     <span class="text-sm font-bold text-label/60 tracking-tight uppercase">Total Tareas</span>
-                    <h3 class="text-3xl font-black text-body-text tracking-tighter mt-1" id="kpiTotalTasks">1,248</h3>
+                    <h3 class="text-3xl font-black text-body-text tracking-tighter mt-1" id="kpiTotalTasks">--</h3>
                 </div>
             </div>
         </div>
@@ -37,7 +37,7 @@
                 </div>
                 <div class="flex flex-col">
                     <span class="text-sm font-bold text-label/60 tracking-tight uppercase">Tareas Pendientes</span>
-                    <h3 class="text-3xl font-black text-body-text tracking-tighter mt-1" id="kpiPendingTasks">12</h3>
+                    <h3 class="text-3xl font-black text-body-text tracking-tighter mt-1" id="kpiPendingTasks">--</h3>
                 </div>
             </div>
         </div>
@@ -53,7 +53,7 @@
                 </div>
                 <div class="flex flex-col">
                     <span class="text-sm font-bold text-label/60 tracking-tight uppercase">Tareas Programadas</span>
-                    <h3 class="text-3xl font-black text-body-text tracking-tighter mt-1" id="kpiScheduledTasks">42</h3>
+                    <h3 class="text-3xl font-black text-body-text tracking-tighter mt-1" id="kpiScheduledTasks">--</h3>
                 </div>
             </div>
         </div>
@@ -69,7 +69,7 @@
                 </div>
                 <div class="flex flex-col">
                     <span class="text-sm font-bold text-label/60 tracking-tight uppercase">Tarea Activa (Global)</span>
-                    <h3 class="text-3xl font-black text-body-text tracking-tighter mt-1" id="kpiActiveTask">PSX-9421</h3>
+                    <h3 class="text-3xl font-black text-body-text tracking-tighter mt-1" id="kpiActiveTask">NINGUNA</h3>
                 </div>
             </div>
         </div>
@@ -79,8 +79,9 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 flex-grow items-stretch">
         <!-- Dashboard Quad-Core (Left Section) -->
         <div class="lg:col-span-2 grid grid-cols-1 gap-8">
-            <div id="cardVolumen" class="kpi-card-premium group">
-                <div class="grid grid-cols-[1fr_4fr] h-full items-center relative z-10 gap-8 p-4">
+            <div id="cardVolumen" class="kpi-card-premium group min-h-[220px]">
+                <!-- Operative Content Grid -->
+                <div id="volumeContent" class="grid grid-cols-[1fr_4fr] h-full items-center relative z-10 gap-8 p-4">
                     <div class="grid grid-rows-[auto_1fr] h-full">
                         <div class="kpi-icon-wrapper bg-sky/10 text-sky shadow-inner">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
@@ -95,10 +96,29 @@
                         <div id="bookingSparkline" class="w-full h-full"></div>
                     </div>
                 </div>
+
+                <!-- Premium No-Data State (Spans Full Width) -->
+                <div id="noDataVolume" class="hidden absolute inset-0 z-20 flex items-center justify-center p-8 animate-in fade-in zoom-in duration-700">
+                    <div class="flex items-center gap-10 max-w-xl">
+                        <div class="w-24 h-24 rounded-[40px] bg-sky/5 border-2 border-sky/10 flex items-center justify-center text-sky/20 relative group shrink-0">
+                            <div class="absolute inset-0 bg-sky/10 blur-2xl rounded-full opacity-30 group-hover:opacity-60 transition-all"></div>
+                            <svg class="w-12 h-12 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        </div>
+                        <div class="text-left">
+                            <h4 class="text-lg font-black text-bi-main uppercase tracking-[0.3em] mb-2 italic">Flujo de Telemetría Cerrado</h4>
+                            <p class="text-xs text-label/40 font-bold uppercase tracking-widest leading-relaxed">El ecosistema operativo se encuentra en estado de reposo.<br>No se detectan transferencias de registros en el periodo actual.</p>
+                            <div class="flex items-center gap-2 mt-4">
+                                <div class="w-2 h-2 rounded-full bg-sky/40 animate-pulse"></div>
+                                <span class="text-[10px] font-black text-sky/40 uppercase tracking-widest">Sincronizando con el nodo...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div id="cardCumplimiento" class="kpi-card-premium group">
-                <div class="grid grid-cols-[1fr_4fr] h-full items-center relative z-10 gap-8 p-4">
+            <div id="cardCumplimiento" class="kpi-card-premium group min-h-[220px]">
+                <!-- History Content Grid -->
+                <div id="historyContent" class="grid grid-cols-[1fr_4fr] h-full items-center relative z-10 gap-8 p-4">
                     <div class="grid grid-rows-[auto_1fr] h-full">
                         <div class="kpi-icon-wrapper bg-primary/10 text-primary shadow-inner">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
@@ -111,6 +131,24 @@
                     </div>
                     <div class="relative w-full h-52 flex items-center justify-center">
                         <div id="onTimeRadial" class="w-full h-full"></div>
+                    </div>
+                </div>
+
+                <!-- Premium No-Data State (Spans Full Width) -->
+                <div id="noDataHistory" class="hidden absolute inset-0 z-20 flex items-center justify-center p-8 animate-in fade-in zoom-in duration-700">
+                    <div class="flex items-center gap-10 max-w-xl">
+                        <div class="w-24 h-24 rounded-[40px] bg-primary/5 border-2 border-primary/10 flex items-center justify-center text-primary/20 relative group shrink-0">
+                            <div class="absolute inset-0 bg-primary/10 blur-2xl rounded-full opacity-30 group-hover:opacity-60 transition-all"></div>
+                            <svg class="w-12 h-12 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        </div>
+                        <div class="text-left">
+                            <h4 class="text-lg font-black text-bi-main uppercase tracking-[0.3em] mb-2 italic">Sin Historial de Ejecución</h4>
+                            <p class="text-xs text-label/40 font-bold uppercase tracking-widest leading-relaxed">No se han registrado ciclos de procesamiento recientemente.<br>El motor de analítica está listo para indexar resultados.</p>
+                            <div class="flex items-center gap-2 mt-4">
+                                <div class="w-2 h-2 rounded-full bg-primary/40 animate-pulse"></div>
+                                <span class="text-[10px] font-black text-primary/40 uppercase tracking-widest">Esperando señal de tareas...</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
