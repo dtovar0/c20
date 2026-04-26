@@ -23,11 +23,26 @@
 
 .dt-container {
     display: grid !important;
-    grid-template-rows: 1fr auto !important; /* La tabla toma todo el espacio, el footer lo que necesite */
+    grid-template-rows: 1fr auto !important;
     height: 100% !important;
     width: 100% !important;
     gap: 0 !important;
     overflow: hidden !important;
+    background: transparent !important;
+    position: relative;
+    /* ESQUINAS TÁCTICAS (HUD STYLE) */
+    background: 
+        linear-gradient(to right, rgb(var(--color-primary)) 2px, transparent 2px) 0 0,
+        linear-gradient(to bottom, rgb(var(--color-primary)) 2px, transparent 2px) 0 0,
+        linear-gradient(to left, rgb(var(--color-primary)) 2px, transparent 2px) 100% 0,
+        linear-gradient(to bottom, rgb(var(--color-primary)) 2px, transparent 2px) 100% 0,
+        linear-gradient(to right, rgb(var(--color-primary)) 2px, transparent 2px) 0 100%,
+        linear-gradient(to top, rgb(var(--color-primary)) 2px, transparent 2px) 0 100%,
+        linear-gradient(to left, rgb(var(--color-primary)) 2px, transparent 2px) 100% 100%,
+        linear-gradient(to top, rgb(var(--color-primary)) 2px, transparent 2px) 100% 100%;
+    background-repeat: no-repeat;
+    background-size: 20px 20px;
+    padding: 2px; /* Espacio para que luzcan las esquinas */
 }
 
 /* El contenedor de la tabla real */
@@ -60,28 +75,7 @@
     z-index: 10 !important;
 }
 
-/* Normalización de Filas (Simetría Total) */
-table.dataTable tbody tr {
-    height: var(--row-h, 52px) !important;
-    box-sizing: border-box !important;
-}
 
-table.dataTable tbody tr td {
-    height: inherit !important;
-    padding: 0 1.25rem !important;
-    vertical-align: middle !important;
-    border-top: 1px solid rgb(var(--color-panel-border) / 0.1) !important;
-}
-
-/* Zebra aplicado al TR para evitar inconsistencias entre celdas */
-table.dataTable tbody tr:nth-child(even) {
-    background-color: color-mix(in srgb, rgb(var(--color-surface-container-bg)), rgb(var(--color-primary)) 5%) !important;
-    box-shadow: inset 3px 0 0 rgb(var(--color-primary) / 0.4) !important;
-}
-
-table.dataTable tbody tr:nth-child(odd) {
-    background-color: transparent !important;
-}
 
 .dt-container .dt-paging .dt-paging-button svg {
     width: 16px !important;
@@ -161,17 +155,6 @@ table.dataTable tbody td,
     vertical-align: middle;
 }
 
-/* 2. Layout Row (Pagination) specific tweaks to act as a <tr> */
-.dt-layout-row:has(.dt-paging) {
-    display: flex !important; /* Overrides for the layout container */
-    align-items: center;
-    justify-content: space-between;
-    background: rgb(var(--color-surface-container-bg)) !important;
-    border-top: 4px solid #ff5722 !important; /* LÍNEA NARANJA DE REFERENCIA */
-    margin: 0 !important;
-    border-radius: 0 !important;
-}
-
 /* 
     === NEXUS PREMIUM SAPPHIRE ZEBRA — v3.0 ===
     Un diseño de alta densidad, simétrico y de lujo técnico.
@@ -208,10 +191,16 @@ table.dataTable thead th,
 
 /* Body & Ghost Row Styling */
 table.dataTable tbody tr,
-.tab-panel-content table tbody tr {
+.tab-panel-content table tbody tr,
+table.dataTable tbody td,
+.tab-panel-content table tbody td,
+.ghost-row,
+.ghost-row td {
     height: var(--row-h, 52px) !important;
     transition: all 0.2s ease;
     background: transparent;
+    border-left: none !important; /* ELIMINAR INDICADORES VERDES */
+    border-right: none !important;
 }
 
 table.dataTable tbody td,
@@ -219,6 +208,7 @@ table.dataTable tbody td,
     padding: 0 1.25rem !important;
     vertical-align: middle !important;
     border-top: 1px solid rgb(var(--color-panel-border) / 0.2) !important;
+    border-bottom: none !important;
     color: rgb(var(--color-text-body) / 0.85);
     font-size: 13px;
     height: inherit !important;
@@ -227,24 +217,32 @@ table.dataTable tbody td,
     white-space: nowrap;
 }
 
+/* Paginación Integrada */
+.dt-layout-row:has(.dt-paging) {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    background: transparent !important;
+    border-top: 1px solid rgb(var(--color-panel-border) / 0.2) !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+}
+
+/* Filas Base */
+table.dataTable tbody tr,
+.tab-panel-content table tbody tr {
+    background: transparent;
+}
+
 /* Zebra Inverso Sapphire */
 table.dataTable tbody tr:nth-child(even),
 .tab-panel-content table tbody tr:nth-child(even) {
     background-color: var(--dt-zebra-bg) !important;
-    box-shadow: inset 4px 0 0 -1px rgb(var(--color-primary) / 0.6) !important;
-}
-
-/* Diagnóstico: Pintamos la última fila de Verde Lima */
-table.dataTable tbody tr:last-child,
-table.dataTable tbody tr.ghost-row:last-of-type {
-    background-color: #32ff7e !important;
-    border-bottom: 4px solid #000 !important;
 }
 
 /* Hover Effect */
 table.dataTable tbody tr:hover td {
     background-color: var(--dt-row-hover) !important;
-    box-shadow: inset 4px 0 0 0 rgb(var(--color-primary)) !important;
 }
 
 /* GHOST ROWS PARITY */

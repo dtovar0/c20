@@ -39,10 +39,6 @@ table.dataTable tbody tr {
     overflow: hidden !important;
 }
 
-table.dataTable tbody tr:nth-child(even) {
-    background-color: color-mix(in srgb, rgb(var(--color-surface-container-bg)), rgb(var(--color-primary)) 5%) !important;
-}
-
 /*
  * ╔══════════════════════════════════════════════════════════════╗
  * ║         NEXUS DESIGN TOKENS — v2.0 "Deep Sapphire"          ║
