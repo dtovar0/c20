@@ -39,7 +39,7 @@
     flex-direction: row !important;
     align-items: center;
     justify-content: space-between;
-    padding: 6px 8px 2px;
+    padding: 6px 8px 12px;
     flex-shrink: 0;
     gap: 8px;
 }
@@ -124,7 +124,7 @@ table.dataTable {
     border-collapse: separate !important;
     border-spacing: 0 4px !important;
     width: 100% !important;
-    margin: 0 0 8px 0 !important;
+    margin: 0 0 40px 0 !important;
 }
 
 table.dataTable thead th {
