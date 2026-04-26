@@ -97,6 +97,81 @@ body {
     box-shadow: 0 0 0 2px rgb(var(--color-primary) / 0.5);
 }
 
+/* === PREMIUM TABLE SYNC === */
+.nexus-table {
+    border-collapse: collapse !important;
+    border-spacing: 0 !important;
+}
+
+.nexus-table thead th {
+    background-color: color-mix(in srgb, rgb(var(--color-surface-container-bg)), black 15%) !important;
+    border-bottom: 2px solid rgb(var(--color-primary) / 0.4) !important;
+    padding: 0 1.25rem !important;
+    color: white !important;
+    font-size: 11px !important;
+    font-weight: 900 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.15em !important;
+    vertical-align: middle !important;
+}
+
+/* === TOTAL SYMMETRY FIX (NO ORANGE) === */
+.dt-container, 
+.dt-layout-row, 
+.dt-layout-cell,
+.dataTables_wrapper,
+table.dataTable {
+    border-top: none !important;
+    border-top-color: transparent !important;
+    box-shadow: none !important;
+}
+
+/* Force Emerald/Primary top border on header ONLY if we want a line there */
+/* In Nexus Audit, we prefer NO top border, just the header background */
+.nexus-table thead th {
+    background-color: #1e293b !important;
+    border-top: none !important;
+    border-bottom: 2px solid rgb(var(--color-primary) / 0.5) !important;
+    padding: 1.25rem !important;
+    color: #ffffff !important;
+    font-size: 10px !important;
+    font-weight: 900 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.2em !important;
+    vertical-align: middle !important;
+}
+
+/* Eliminate the hidden orange line on DataTables scrolling */
+.dataTables_scrollHead, .dataTables_scrollBody {
+    border: none !important;
+}
+
+/* Pagination Border Sync (Emerald) */
+.dt-container .dt-layout-row:last-child {
+    border-top: 1px solid rgb(var(--color-primary) / 0.4) !important;
+    background: rgb(var(--color-surface-container-bg)) !important;
+}
+
+/* Zebra Sync */
+.history-row:nth-child(even) {
+    background-color: color-mix(in srgb, rgb(var(--color-surface-container-bg)), rgb(var(--color-primary)) 4.5%) !important;
+}
+
+/* Force primary on the top layout cell which often has the orange line */
+.dt-layout-row.dt-layout-table .dt-layout-cell {
+    border-top: 1px solid rgb(var(--color-primary) / 0.3) !important;
+}
+
+/* Correcting the pagination border to match */
+.dt-container .dt-layout-row:last-child {
+    border-top: 1px solid rgb(var(--color-primary) / 0.4) !important;
+}
+
+/* Zebra Sync */
+.history-row:nth-child(even) {
+    background-color: color-mix(in srgb, rgb(var(--color-surface-container-bg)), rgb(var(--color-primary)) 4.5%) !important;
+}
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }

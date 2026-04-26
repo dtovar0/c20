@@ -1,6 +1,25 @@
 /**
  * NEXUS PREMIUM GUIDED TOUR - PSX5K TERMINAL (V8)
  */
+
+// === GLOBAL HELPERS & ASSETS ===
+const ico = (svg, color) => `
+    <div class="legend-ico-box" style="display:inline-flex; align-items:center; justify-center; padding: 2px 6px; border-radius: 6px; border: 1px solid ${color}33; background: ${color}11; color: ${color}; margin-right: 8px; vertical-align: middle;">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:14px; height:14px;">${svg}</svg>
+    </div>`;
+
+const dot = (color) => `<div style="width:10px;height:10px;border-radius:50%;background:${color};box-shadow:0 0 6px ${color}40;display:inline-block;vertical-align:middle;margin-right:12px;"></div>`;
+
+// SVGs for tables
+const svgPlus = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>';
+const svgTrash = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>';
+const svgIn = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>';
+const svgInOut = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>';
+const svgSpin = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>';
+const svgCheck = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>';
+const svgWarn = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>';
+const svgClock = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>';
+
 class PSXNexusTour {
     constructor(steps) {
         this.steps = steps;
@@ -112,15 +131,24 @@ class PSXNexusTour {
             // Build table if present in step
             let tableHTML = '';
             if (step.table) {
-                const rows = step.table.map(row => `
-                    <tr>
-                        <td>${row.val}</td>
-                        <td>${row.desc}</td>
-                    </tr>
-                `).join('');
+                const headerRow = step.table_headers 
+                    ? `<tr>${step.table_headers.map(h => {
+                        const isDesc = h.toLowerCase() === 'descripción';
+                        return `<th ${isDesc ? 'colspan="2"' : ''}>${h}</th>`;
+                    }).join('')}</tr>` 
+                    : '';
+                
+                const rows = step.table.map(row => {
+                    return `<tr>${row.map(cell => {
+                        const content = typeof cell === 'object' ? cell.text : cell;
+                        const colSpan = typeof cell === 'object' ? cell.colspan : 1;
+                        return `<td ${colSpan > 1 ? `colspan="${colSpan}"` : ''}>${content}</td>`;
+                    }).join('')}</tr>`;
+                }).join('');
+                
                 tableHTML = `
                     <table class="nx-tour-table">
-                        <thead><tr><th>Elemento</th><th>Descripción</th></tr></thead>
+                        ${headerRow ? `<thead>${headerRow}</thead>` : ''}
                         <tbody>${rows}</tbody>
                     </table>`;
             }
@@ -145,17 +173,25 @@ class PSXNexusTour {
             `;
 
             const stepWidth = 420;
-            // POSICIÓN ABSOLUTA = Viewport Pos + Scroll
-            let stepTop = rect.bottom + window.scrollY + 30;
-            let stepLeft = rect.left + window.scrollX + (rect.width / 2) - (stepWidth / 2);
+            // POSICIÓN POR DEFECTO (LATERAL IZQUIERDA)
+            let stepLeft = (rect.left + window.scrollX) - stepWidth - 40;
+            let stepTop = (rect.top + window.scrollY) + (rect.height / 2) - 150;
 
-            // Screen bounds protection
-            if (stepLeft < 20) stepLeft = 20;
-            if (stepLeft + stepWidth > window.innerWidth - 20) stepLeft = window.innerWidth - stepWidth - 20;
-            
-            // If at bottom of screen, show above target
+            // MANEJO DE POSICIONAMIENTO PERSONALIZADO
+            if (step.placement === 'bottom') {
+                stepLeft = (rect.left + window.scrollX) + (rect.width / 2) - (stepWidth / 2);
+                stepTop = (rect.bottom + window.scrollY) + 20;
+            } else {
+                // Lógica de volteo lateral (fallback si no cabe a la izquierda)
+                if (stepLeft < 20) {
+                    stepLeft = (rect.right + window.scrollX) + 40;
+                }
+            }
+
+            // Screen bounds protection vertical
+            if (stepTop < window.scrollY + 20) stepTop = window.scrollY + 20;
             if (stepTop + 400 > document.documentElement.scrollHeight) {
-                stepTop = Math.max(20, (rect.top + window.scrollY) - 420);
+                stepTop = document.documentElement.scrollHeight - 420;
             }
 
             this.stepEl.style.width = `${stepWidth}px`;
@@ -183,28 +219,31 @@ window.logAuditTour = new PSXNexusTour([
         type: 'Filtros Rápidos',
         target: '#logFiltersContainer',
         title: 'Estado de Evento',
+        table_headers: ['Icono', 'Descripción'],
         content: 'Filtra rápidamente por la respuesta del nodo. Usa los iconos para aislar estados específicos:',
         table: [
-            { val: '<div class="p-1 bg-panel-fill/20 text-slate-600 rounded-md inline-block"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg></div>', desc: '<b>Limpiar (Reset)</b> — Elimina los filtros activos.' },
-            { val: '<div class="p-1 bg-emerald-500/10 text-emerald-600 rounded-md inline-block"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg></div>', desc: '<b>Éxito (OK)</b> — Registro procesado correctamente.' },
-            { val: '<div class="p-1 bg-rose-500/10 text-rose-600 rounded-md inline-block"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg></div>', desc: '<b>Error (FAIL)</b> — El nodo rechazó la transacción.' },
-            { val: '<div class="p-1 bg-amber-500/10 text-amber-600 rounded-md inline-block"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg></div>', desc: '<b>Duplicado (DUP)</b> — Registro ignorado por repetición.' }
+            [ico('<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>', '#64748b'), '<b>Limpiar (Reset)</b> — Elimina los filtros activos.'],
+            [ico('<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>', '#10b981'), '<b>Éxito (OK)</b> — Registro procesado correctamente.'],
+            [ico('<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path>', '#f43f5e'), '<b>Error (FAIL)</b> — El nodo rechazó la transacción.'],
+            [ico('<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path>', '#f59e0b'), '<b>Duplicado (DUP)</b> — Registro ignorado por repetición.']
         ]
     },
     {
         type: 'Herramientas de Acción',
         target: '#logActionsContainer',
         title: 'Gestión de Datos',
+        table_headers: ['Icono', 'Descripción'],
         content: 'Acciones operativas disponibles para el manejo de resultados:',
         table: [
-            { val: '<div class="p-1 bg-slate-500/10 text-slate-600 rounded-md inline-block"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>', desc: '<b>Ayuda</b> — Inicia este tour guiado.' },
-            { val: '<div class="p-1 bg-slate-500/10 text-slate-600 rounded-md inline-block"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg></div>', desc: '<b>Descargar</b> — Exporta CSV de registros duplicados.' },
-            { val: '<div class="p-1 bg-sky-500/10 text-sky-500 rounded-md inline-block"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg></div>', desc: '<b>Procesar</b> — Reintenta el lote de duplicados.' }
+            [ico('<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>', '#64748b'), '<b>Ayuda</b> — Inicia este tour guiado.'],
+            [ico('<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>', '#64748b'), '<b>Descargar</b> — Exporta CSV de registros.'],
+            [ico('<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>', '#0ea5e9'), '<b>Procesar</b> — Reintenta el lote.']
         ]
     },
     {
         type: 'Rejilla Técnica',
         target: '#historyTable thead',
+        placement: 'bottom',
         title: 'Encabezados de Auditoría',
         content: 'Haz clic en cualquier encabezado para **ordenar** la tabla. Cada columna ofrece datos específicos sobre la ruta y el tiempo de respuesta del nodo.'
     }
@@ -217,20 +256,6 @@ window.startLogTour = function() {
 
 // === INSTANCE & FLOW TRIGGER ===
 (function() {
-    // Inline Icon Helpers
-    const ico = (svg, color) => `<svg class="w-4 h-4 inline-block align-middle mr-1" style="color:${color}" fill="none" stroke="currentColor" viewBox="0 0 24 24">${svg}</svg>`;
-    const dot = (color) => `<div style="width:10px;height:10px;border-radius:50%;background:${color};box-shadow:0 0 6px ${color}40;display:inline-block;vertical-align:middle;"></div>`;
-    
-    // SVGs for tables
-    const svgPlus = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>';
-    const svgTrash = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>';
-    const svgIn = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>';
-    const svgInOut = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>';
-    const svgSpin = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>';
-    const svgCheck = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>';
-    const svgWarn = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>';
-    const svgClock = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>';
-
     window.psxTour = new PSXNexusTour([
         {
             type: 'Botón',
@@ -278,23 +303,27 @@ window.startLogTour = function() {
             type: 'Columna + Iconos',
             target: '#colGraphHeader',
             title: 'Métricas de Avance',
+            table_headers: ['Indicador', 'Significado'],
             content: 'Barra de progreso que muestra los resultados por bloque según la respuesta del nodo.<br><br><b style="color:#2563eb">Porcentaje</b> = % de registros procesados &nbsp;|&nbsp; <b>OK</b> / <b style="color:#f43f5e">FAIL</b> + <b style="color:#f59e0b">DUP</b> + <b style="color:#8b5cf6">FORCE-OK</b>',
             table: [
-                { val: `${dot('#2563eb')} Azul`, desc: '<b>OK</b> — Procesamiento exitoso' },
-                { val: `${dot('#f43f5e')} Rojo`, desc: '<b>FAIL</b> — Error reportado por el nodo' },
-                { val: `${dot('#8b5cf6')} Púrpura`, desc: '<b>FORCE</b> — Validación forzada' },
-                { val: `${dot('#f59e0b')} Ámbar`, desc: '<b>DUP</b> — Registro duplicado ignorado' }
+                [`${dot('#2563eb')} Azul`, '<b>OK</b> — Procesamiento exitoso'],
+                [`${dot('#f43f5e')} Rojo`, '<b>FAIL</b> — Error reportado por el nodo'],
+                [`${dot('#8b5cf6')} Púrpura`, '<b>FORCE</b> — Validación forzada'],
+                [`${dot('#f59e0b')} Ámbar`, '<b>DUP</b> — Registro duplicado ignorado']
             ]
         },
         {
             type: 'Columna + Iconos',
             target: '#colStatusHeader',
             title: 'Estatus Operativo',
+            table_headers: ['Tipo', 'Descripción'],
             content: 'Tríada de indicadores que resume el ciclo de vida del proceso.',
             table: [
-                { val: 'Operación', desc: `${ico(svgPlus, '#2563eb')} Alta / ${ico(svgTrash, '#f43f5e')} Baja` },
-                { val: 'Modo', desc: `${ico(svgIn, '#0ea5e9')} Solo Llamadas / ${ico(svgInOut, '#6366f1')} Llamadas y Recibe` },
-                { val: 'Estado', desc: `${ico(svgSpin, '#2563eb')} Ejecutando / ${ico(svgCheck, '#10b981')} Éxito / ${ico(svgWarn, '#f43f5e')} Error / ${ico(svgClock, '#f59e0b')} Espera` }
+                ['<b>Operación</b>', `${ico(svgPlus, '#2563eb')} Alta`, `${ico(svgTrash, '#f43f5e')} Baja`],
+                ['<b>Modo</b>', { text: `${ico(svgIn, '#0ea5e9')} Solo Llamadas`, colspan: 2 }],
+                ['', { text: `${ico(svgInOut, '#6366f1')} Llamadas y Recibe`, colspan: 2 }],
+                ['<b>Estado</b>', `${ico(svgSpin, '#2563eb')} Ejecutando`, `${ico(svgCheck, '#10b981')} Éxito`],
+                ['', `${ico(svgWarn, '#f43f5e')} Error`, `${ico(svgClock, '#f59e0b')} Espera`]
             ]
         },
         {

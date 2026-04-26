@@ -29,10 +29,6 @@ html, body {
     border-top: 2px solid rgb(var(--color-primary)) !important; /* Señal visual de fijación */
 }
 
-/* Señal de Cache: Si no ves esto naranja, no se han cargado los cambios */
-table.dataTable thead th {
-    border-top: 4px solid #ff5722 !important; 
-}
 
 table.dataTable tbody tr {
     height: var(--row-h, 52px) !important;

@@ -149,14 +149,14 @@ function initPSXDataTable() {
             },
             { 
                 data: 'routing_label', 
-                width: '180px',
+                width: '150px',
                 render: (data) => `<div class="flex items-center h-full"><span class="nx-badge nx-badge-cyan font-mono" style="font-size:11px;">${data || '-'}</span></div>`
             },
             { 
                 data: 'resumen', 
-                width: '120px', 
+                width: '130px', 
                 orderable: false, 
-                visible: false,
+                visible: true,
                 render: (data, type, row) => {
                     const state = (row.estado || '').toLowerCase();
                     if (state === 'programada' || state === 'pendiente') {
@@ -172,7 +172,7 @@ function initPSXDataTable() {
                                 </div>`;
                     }
                     return `<div class="flex items-center justify-center h-full min-w-0 overflow-hidden">${generateTaskGraphic(data)}</div>`;
-                } 
+                }
             },
             { 
                 data: null, 

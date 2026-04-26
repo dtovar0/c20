@@ -149,14 +149,19 @@ class GlobalNexusTour {
             `;
 
             const stepWidth = 400;
-            let stepTop = rect.bottom + 30;
-            let stepLeft = rect.left + (rect.width / 2) - (stepWidth / 2);
+            // POSICIÓN LATERAL (IZQUIERDA)
+            let stepLeft = (rect.left + window.scrollX) - stepWidth - 40;
+            let stepTop = (rect.top + window.scrollY) + (rect.height / 2) - 150;
 
-            // Bounds protection
-            if (stepLeft < 20) stepLeft = 20;
-            if (stepLeft + stepWidth > window.innerWidth - 20) stepLeft = window.innerWidth - stepWidth - 20;
-            if (stepTop + 300 > window.innerHeight) {
-                stepTop = Math.max(20, rect.top - 320);
+            // Si no hay espacio a la izquierda, ponerlo a la derecha
+            if (stepLeft < 20) {
+                stepLeft = (rect.right + window.scrollX) + 40;
+            }
+
+            // Screen bounds protection vertical
+            if (stepTop < window.scrollY + 20) stepTop = window.scrollY + 20;
+            if (stepTop + 400 > document.documentElement.scrollHeight) {
+                stepTop = document.documentElement.scrollHeight - 420;
             }
 
             this.stepEl.style.width = `${stepWidth}px`;
@@ -180,6 +185,12 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const steps = [
         {
+            type: 'Menu',
+            target: '#sidebar',
+            title: 'Módulos Nexus',
+            content: 'Accede a todas las herramientas: Terminal PSX5K, Gestión de Usuarios, Auditorías y Configuración del Sistema.'
+        },
+        {
             type: 'Navegación',
             target: '#sidebarToggle',
             title: 'Botón de Menú',
@@ -195,13 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
             type: 'Topbar',
             target: '#systemSearch',
             title: 'Búsqueda Inteligente',
-            content: 'Realiza búsquedas globales en el historial. Encuentra números de ticket o usuarios de forma instantánea.'
-        },
-        {
-            type: 'Personalización',
-            target: '#themeToggle',
-            title: 'Selector de Temas',
-            content: 'Personaliza tu experiencia visual. Alterna entre <b>6 temas premium</b> (Claro, Oscuro, Cibernético, etc.) con un solo clic.'
+            content: 'Realiza búsquedas globales en el historial o comandos. Encuentra números de ticket o usuarios de forma instantánea.'
         },
         {
             type: 'Alertas',
@@ -210,47 +215,29 @@ document.addEventListener('DOMContentLoaded', () => {
             content: 'Mantente informado sobre el estado de tus tareas. Verás una alerta aquí cuando un proceso finalice o requiera tu atención.'
         },
         {
-            type: 'Panel de Control',
-            target: '#settingsBtn',
-            title: 'Configuración Personal',
-            content: 'Abre este panel para ajustar la frecuencia de refresco, activar notificaciones de escritorio o <b>reiniciar este tour</b>.'
+            type: 'Personalización',
+            target: '#themeToggle',
+            title: 'Selector de Temas',
+            content: 'Personaliza tu experiencia visual. Alterna entre <b>6 temas premium</b> (Sapphire, Emerald, Crimson, etc.) con un solo clic.'
         }
     ];
 
     // Add dashboard specific steps
     if (isDashboard) {
         steps.push({
-            type: 'Dashboard',
-            target: '#dashboardWrapper .grid-cols-1.md\\:grid-cols-2',
-            title: 'Indicadores KPI',
-            content: 'Resumen ejecutivo de tu operación: tareas totales, pendientes, programadas y la ejecución activa en tiempo real.'
-        });
-        steps.push({
-            type: 'Analítica',
-            target: '#cardVolumen',
-            title: 'Volumen Operativo',
-            content: 'Visualiza la carga de trabajo diaria mediante gráficos dinámicos. Identifica picos de actividad de forma visual.'
-        });
-        steps.push({
-            type: 'Analítica',
-            target: '#cardCumplimiento',
-            title: 'Cumplimiento (SLA)',
-            content: 'Monitoriza el porcentaje de éxito y eficiencia de las tareas. Asegura que tu operación se mantenga en niveles óptimos.'
-        });
-        steps.push({
-            type: 'Monitoreo',
-            target: '#activityContainer',
-            title: 'Monitor de Actividad',
-            content: 'Feed transaccional en tiempo real. Aquí podrás auditar los últimos eventos de seguridad y operación en la plataforma.'
+            type: 'Panel de Control',
+            target: '#mainContent',
+            title: 'Área de Trabajo',
+            content: 'Zona principal donde se despliegan tus módulos y herramientas operativas según la sección seleccionada.'
         });
     }
 
-    // Add sidebar final step
+    // Add final configuration step
     steps.push({
-        type: 'Menú',
-        target: '#sidebar nav',
-        title: 'Módulos Nexus',
-        content: 'Accede a todas las herramientas: Terminal PSX5K, Gestión de Usuarios, Auditorías y Configuración del Sistema.'
+        type: 'Configuración Personal',
+        target: '#settingsBtn',
+        title: 'Ajustes de Interfaz',
+        content: 'Abre este panel para ajustar la frecuencia de refresco, activar notificaciones de escritorio o personalizar los colores de los estados.'
     });
 
     window.platformTour = new GlobalNexusTour(steps);

@@ -86,13 +86,10 @@ function initUsersDataTable() {
             { 
                 data: 'nombre', 
                 width: '220px',
-                render: (data) => `
-                    <div class="flex items-center gap-3 overflow-hidden">
-                        <div class="w-8 h-8 rounded-full bg-primary/10 flex-shrink-0 flex items-center justify-center text-[11px] font-black text-primary border border-primary/20">
-                            ${(data || '?').charAt(0).toUpperCase()}
-                        </div>
-                        <span class="text-[12px] font-black text-label uppercase tracking-tighter truncate">${data || '-'}</span>
-                    </div>`
+                render: (data) => {
+                    const display = data && data !== 'None' ? data : 'Sin Nombre';
+                    return `<div class="flex items-center h-full px-2 text-[12px] font-black text-label uppercase tracking-tighter truncate">${display}</div>`;
+                }
             },
             { 
                 data: 'username', 
@@ -109,11 +106,11 @@ function initUsersDataTable() {
                 }
             },
             { 
-                data: 'profile', 
+                data: 'role', 
                 width: '150px', 
                 render: (data) => {
-                    const profile = String(data).toLowerCase();
-                    const isAdm = profile.includes('admin');
+                    const role = String(data).toLowerCase();
+                    const isAdm = role.includes('admin');
                     const cls = isAdm ? 'nx-badge-violet' : 'nx-badge-sky';
                     const label = isAdm ? 'Administrador' : 'Usuario';
                     return `<div class="flex items-center h-full"><span class="nx-badge ${cls}">${label}</span></div>`;

@@ -70,7 +70,7 @@
                                 <th id="colUserHeader" class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Usuario</th>
                                 <th id="colOrigenHeader" class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Origen / Segmento</th>
                                 <th id="colLabelHeader" class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Routing Label</th>
-                                <th id="colGraphHeader" class="px-5 py-4 bg-slate-900/50 border-y border-panel-border text-center hidden">Gráfica</th>
+                                <th id="colGraphHeader" class="px-5 py-4 bg-slate-900/50 border-y border-panel-border text-center">Gráfica</th>
                                 <th id="colStatusHeader" class="px-5 py-4 bg-slate-900/50 border-y border-panel-border text-center">Estatus</th>
                                 <th id="colSearchHeader" class="px-5 py-4 bg-slate-900/50 border-y border-panel-border text-center">
                                     <svg class="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
@@ -651,5 +651,5 @@
 
 <script src="{{ url_for('core.serve_assets', filename='js/psx5k.js') }}"></script>
 <script src="/assets/js/psx-wizard.js"></script>
-<script src="/assets/js/psx-tour.js"></script>
+<script src="/assets/js/psx-tour.js?v={{ range(1000, 9999) | random }}"></script>
 {% endblock %}

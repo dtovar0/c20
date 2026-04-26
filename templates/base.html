@@ -326,7 +326,7 @@
 
     <!-- Scripts Globales -->
     <script src="{{ url_for('core.serve_assets', filename='js/interface-settings.js') }}"></script>
-    <script src="{{ url_for('core.serve_assets', filename='js/platform-tour.js') }}"></script>
+    <script src="{{ url_for('core.serve_assets', filename='js/platform-tour.js') }}?v={{ range(1000, 9999) | random }}"></script>
     {% block scripts %}{% endblock %}
 </body>
 </html>

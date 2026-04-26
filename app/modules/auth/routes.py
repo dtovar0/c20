@@ -222,7 +222,7 @@ def list_users():
         
         user_list.append({
             "id": u.id,
-            "name": u.username,
+            "username": u.username,
             "nombre": u.nombre,
             "role": u.role,
             "source": u.auth_source or 'local',

@@ -58,6 +58,15 @@ function switchTab(tabId) {
 }
 
 /**
+ * Returns optimal pageLength based on viewport height for detail view.
+ */
+function getPageLength() {
+    const h = window.innerHeight;
+    if (h < 900) return 9;
+    return 10;
+}
+
+/**
  * DATATABLES INTEGRATION
  */
 function initHistoryDataTable() {
@@ -66,7 +75,7 @@ function initHistoryDataTable() {
 
     historyDataTable = tableEl.DataTable({
         autoWidth: false,
-        pageLength: 10,
+        pageLength: getPageLength(),
         pagingType: 'simple',
         order: [[3, 'desc']], // Order by time by default
         layout: {
@@ -87,6 +96,25 @@ function initHistoryDataTable() {
         },
         drawCallback: function(settings) {
             renderGhostRows(settings, 4);
+        },
+        initComplete: function() {
+            // Wrap table in .nx-table-scroll
+            const cell = $(this.api().table().container()).find('.dt-layout-row.dt-layout-table .dt-layout-cell');
+            const tbl  = cell.children('table');
+            if (tbl.length && !cell.children('.nx-table-scroll').length) {
+                tbl.wrap('<div class="nx-table-scroll"></div>');
+            }
+            
+            const api = this.api();
+            let resizeTimer;
+            $(window).on('resize.dtDetail', function() {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function() {
+                    const newLen = getPageLength();
+                    if (api.page.len() !== newLen) api.page.len(newLen).draw();
+                    else api.draw(false);
+                }, 200);
+            });
         }
     });
 
@@ -170,7 +198,7 @@ function renderGhostRows(settings, columns) {
     let ghostHtml = '';
     for (let i = 0; i < ghostCount; i++) {
         ghostHtml += `
-            <tr class="ghost-row pointer-events-none select-none">
+            <tr class="history-row ghost-row pointer-events-none select-none">
                 <td><div></div></td>
                 ${Array(columns - 1).fill(0).map(() => `
                     <td><div></div></td>
