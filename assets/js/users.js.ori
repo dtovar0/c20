@@ -1,14 +1,4 @@
 /**
- * Returns optimal pageLength based on viewport height.
- *   < 900px → 8 rows   >= 900px → 10 rows
- */
-function getPageLength() {
-    const h = window.innerHeight;
-    if (h < 900) return 8;
-    return 10;
-}
-
-/**
  * MODULE: Local User Management (DataTables Powered)
  * Logic for fetching, rendering, and managing users from the real database.
  */
@@ -137,7 +127,7 @@ function initUsersDataTable() {
             }
         ],
         autoWidth: false,
-        pageLength: getPageLength(),
+        pageLength: 8,
         pagingType: 'simple',
         order: [[1, 'asc']], // Sort by Name by default to avoid arrow on checkbox column
         layout: {
@@ -149,37 +139,14 @@ function initUsersDataTable() {
         language: {
             zeroRecords: "No se encontraron usuarios",
             info: "Mostrando _START_-_END_ de _TOTAL_ registros",
-            infoEmpty: "Mostrando 0-0 de 0 registros",
-            infoFiltered: "(filtrado de _MAX_ registros totales)",
             paginate: {
                 previous: '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>',
                 next: '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>'
             }
         },
         drawCallback: function(settings) {
-            const api = new $.fn.dataTable.Api(settings);
-            const visibleCols = api.columns(':visible').count();
-            renderGhostRows(settings, visibleCols);
             updateUserActions();
-        },
-        initComplete: function() {
-            // Wrap table in .nx-table-scroll for height measurement
-            const cell = $(this.api().table().container()).find('.dt-layout-row.dt-layout-table .dt-layout-cell');
-            const tbl  = cell.children('table');
-            if (tbl.length && !cell.children('.nx-table-scroll').length) {
-                tbl.wrap('<div class="nx-table-scroll"></div>');
-            }
-            // Resize: recalculate pageLength and row heights
-            const api = this.api();
-            let resizeTimer;
-            $(window).on('resize.dtPageLen', function() {
-                clearTimeout(resizeTimer);
-                resizeTimer = setTimeout(function() {
-                    const newLen = getPageLength();
-                    if (api.page.len() !== newLen) api.page.len(newLen).draw();
-                    else api.draw(false);
-                }, 200);
-            });
+            renderGhostRows(settings, 6); // 6 columns now
         },
         createdRow: function(row, data) {
             $(row).addClass('transition-colors duration-200 group cursor-pointer');
@@ -240,61 +207,42 @@ function updateUserActions() {
 
 
 /**
- * Sizes all rows equally to fill the table wrapper, then adds ghost rows.
- * rowH = floor( (wrapperHeight - borderGaps) / (pageLen + 1) )
+ * Renders ghost (skeleton) rows to fill the table container dynamically
  */
 function renderGhostRows(settings, columns) {
-    const api     = new $.fn.dataTable.Api(settings);
-    const info    = api.page.info();
-    const tbody   = $(settings.nTBody);
-    const pageLen = api.page.len();
-
-    // 1. Cleanup
+    const api = new $.fn.dataTable.Api(settings);
+    const info = api.page.info();
+    const tbody = $(settings.nTBody);
+    
+    // 1. CLEANUP: Remove any existing ghost rows and the empty message
     tbody.find('.ghost-row').remove();
     tbody.find('.dataTables_empty').closest('tr').remove();
 
-    // 2. Calculate row height using the wrapper's offsetHeight
-    const container  = api.table().container();
-    const scrollWrap = $(container).find('.nx-table-scroll');
-    let rowH = 52;
-    if (scrollWrap.length && scrollWrap[0].offsetHeight > 0) {
-        const totalRows = pageLen + 1; // +1 for thead
-        const gapTotal  = (totalRows - 1) * 4; // border-spacing-y: 4px per gap
-        const usableH   = scrollWrap[0].offsetHeight - gapTotal;
-        if (usableH > 0) rowH = Math.max(40, Math.floor(usableH / totalRows));
-    }
+    const rowsOnPage = info.end - info.start;
+    const targetTotal = api.page.len(); 
+    const ghostCount = targetTotal - rowsOnPage;
 
-    // 3. Apply rowH to thead
-    const thead = $(api.table().header());
-    thead.find('tr').css('height', rowH + 'px');
-    thead.find('th').css('height', rowH + 'px');
-
-    // 4. Apply rowH to real tbody rows
-    tbody.find('tr:not(.ghost-row)').css('height', rowH + 'px');
-    tbody.find('tr:not(.ghost-row) td').css('height', rowH + 'px');
-
-    // 5. Ghost rows to fill remaining slots
-    const realRows   = info.end - info.start;
-    const ghostCount = pageLen - realRows;
     if (ghostCount <= 0) return;
 
     let ghostHtml = '';
     for (let i = 0; i < ghostCount; i++) {
         ghostHtml += `
-            <tr class="ghost-row pointer-events-none select-none" style="opacity:0.25;height:${rowH}px;">
-                <td style="height:${rowH}px;background:rgb(var(--color-surface-container-bg)/0.08);border-top:1px solid rgb(var(--color-panel-border)/0.15);border-left:3px solid transparent;padding:0 1rem 0 0.875rem;">
-                    <div style="height:6px;width:40px;background:rgb(var(--color-label)/0.08);border-radius:999px;margin:auto;"></div>
+            <tr class="ghost-row animate-pulse pointer-events-none select-none opacity-40">
+                <td class="bg-surface-container/5 border-y border-l border-panel-border/10 rounded-l-2xl">
+                    <div class="h-4 w-4 bg-label/10 rounded mx-auto"></div>
                 </td>
                 ${Array(columns - 2).fill(0).map(() => `
-                    <td style="height:${rowH}px;background:rgb(var(--color-surface-container-bg)/0.08);border-top:1px solid rgb(var(--color-panel-border)/0.15);padding:0 1.25rem;">
-                        <div style="height:4px;width:60%;background:rgb(var(--color-label)/0.05);border-radius:999px;"></div>
+                    <td class="bg-surface-container/5 border-y border-panel-border/10">
+                        <div class="h-1 w-full bg-label/5 rounded-full"></div>
                     </td>
                 `).join('')}
-                <td style="height:${rowH}px;background:rgb(var(--color-surface-container-bg)/0.08);border-top:1px solid rgb(var(--color-panel-border)/0.15);padding:0 1.25rem;">
-                    <div style="height:4px;width:40%;background:rgb(var(--color-label)/0.05);border-radius:999px;"></div>
+                <td class="bg-surface-container/5 border-y border-r border-panel-border/10 rounded-r-2xl">
+                    <div class="h-1 w-full bg-label/5 rounded-full"></div>
                 </td>
-            </tr>`;
+            </tr>
+        `;
     }
+    
     tbody.append(ghostHtml);
 }
 

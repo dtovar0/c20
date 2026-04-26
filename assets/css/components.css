@@ -1,35 +1,64 @@
-/* Symmetric adaptive rows: all rows share the available height equally */
-#tab-panel-audit table thead tr,
-#tab-panel-usuario table thead tr,
-#auditTableBody tr,
-#usersTableBody tr {
-    height: 1px !important; /* Browser distributes table height evenly across all rows */
-}
-
+/* Thead height is set dynamically by renderGhostRows via JS */
 #tab-panel-audit table thead th,
 #tab-panel-usuario table thead th {
-    padding-top: 8px !important;
-    padding-bottom: 8px !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
 }
+/* === DATATABLES OVERFLOW RESET — must come before all DT rules === */
+/* DT 2.x injects overflow:auto on .dt-layout-cell via its own CDN CSS.
+   This resets it globally so no scroll appears inside the table panel. */
+.dt-container,
+.dt-layout-row,
+.dt-layout-cell {
+    overflow: visible !important;
+}
+
+/* Reset overflow:auto injected by DT 2.x CDN CSS */
+.dt-container, .dt-layout-row, .dt-layout-cell { overflow: visible; }
+
 /* === NEXUS DATATABLES INTEGRATION === */
+
 .dt-container {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 !important;
+    min-height: 0 !important;
+    width: 100%;
+    overflow: visible;
 }
 
 .dt-layout-row.dt-layout-table {
-    flex-grow: 1;
-    min-height: 0;
-    overflow: hidden;
+    flex: 1 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100%;
 }
 
 .dt-layout-row.dt-layout-table > .dt-layout-cell {
-    height: 100%;
+    flex: 1 !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    width: 100%;
 }
 
-/* Hide all non-table DataTables UI rows by default */
-.dt-layout-row:not(.dt-layout-table) {
+/* Table wrapper: no scroll — rows are sized to fit exactly */
+.nx-table-scroll {
+    flex: 1 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+}
+
+/* thead: normal flow, not sticky — no scroll means no need for sticky */
+table.dataTable thead {
+    position: static !important;
+}
+
+/* Hide DT's built-in search/length controls (we use custom inputs) */
+.dt-layout-row:not(.dt-layout-table):not(:has(.dt-paging)):not(:has(.dt-info)) {
     display: none !important;
 }
 
@@ -39,10 +68,17 @@
     flex-direction: row !important;
     align-items: center;
     justify-content: space-between;
-    padding: 6px 8px 12px;
-    flex-shrink: 0;
+    padding: 6px 12px 0;
     gap: 8px;
-}
+    flex-shrink: 0 !important;
+    overflow: visible !important;
+    margin-top: 4px;
+    border-top: 1px solid rgb(var(--color-panel-border) / 0.5);
+    background: rgb(var(--color-panel-fill) / 0.6);
+    backdrop-filter: blur(8px);
+    border-radius: 0 0 1rem 1rem;
+    position: relative;
+    z-index: 2;
 
 .dt-layout-row:has(.dt-paging) .dt-layout-cell {
     flex: none;
@@ -121,56 +157,61 @@
 }
 
 table.dataTable {
-    border-collapse: separate !important;
-    border-spacing: 0 4px !important;
+    border-collapse: collapse !important;
+    border-spacing: 0 !important;
     width: 100% !important;
-    margin: 0 0 40px 0 !important;
+    margin: 0 !important;
 }
 
 table.dataTable thead th {
     background-color: rgba(15, 23, 42, 0.5) !important;
-    border: 1px solid rgb(var(--color-panel-border)) !important;
+    border-top: 1px solid rgb(var(--color-panel-border)) !important;
+    border-bottom: 1px solid rgb(var(--color-panel-border)) !important;
+    border-left: none !important;
+    border-right: none !important;
     color: white !important;
     font-size: 11px !important;
     font-weight: 900 !important;
     text-transform: uppercase !important;
     letter-spacing: 0.2rem !important;
-    padding: 1rem 1.25rem !important;
+    padding: 0 1.25rem !important;
+    border-radius: 0 !important;
 }
 
-table.dataTable thead th:first-child { border-radius: 1rem 0 0 1rem !important; border-left: 1px solid rgb(var(--color-panel-border)) !important; }
-table.dataTable thead th:last-child { border-radius: 0 1rem 1rem 0 !important; border-right: 1px solid rgb(var(--color-panel-border)) !important; }
+table.dataTable thead th:first-child {
+    border-left: 3px solid transparent !important;
+    padding-left: 1rem !important;
+}
 
 table.dataTable tbody tr {
     background-color: transparent !important;
-    transition: all 0.3s ease !important;
+    transition: background-color 0.15s ease !important;
+}
+
+table.dataTable tbody tr:nth-child(even) td {
+    background-color: rgb(var(--color-surface-container-bg) / 0.5) !important;
+}
+
+table.dataTable tbody tr:nth-child(odd) td {
+    background-color: transparent !important;
 }
 
 table.dataTable tbody td {
-    background-color: rgb(var(--color-surface-container-bg) / 0.3) !important;
-    border-top: 1px solid rgb(var(--color-panel-border)) !important;
-    border-bottom: 1px solid rgb(var(--color-panel-border)) !important;
+    border-top: 1px solid rgb(var(--color-panel-border) / 0.4) !important;
+    border-bottom: none !important;
+    border-left: none !important;
+    border-right: none !important;
     padding: 0 1.25rem !important;
     height: 52px !important;
     color: var(--color-body-text) !important;
     font-size: 12px !important;
     font-weight: 700 !important;
-    transition: all 0.3s ease !important;
-}
-
-table.dataTable tbody td:first-child { 
-    border-left: 1px solid rgb(var(--color-panel-border)) !important; 
-    border-radius: 1rem 0 0 1rem !important; 
-}
-
-table.dataTable tbody td:last-child { 
-    border-right: 1px solid rgb(var(--color-panel-border)) !important; 
-    border-radius: 0 1rem 1rem 0 !important; 
+    transition: background-color 0.15s ease !important;
+    border-radius: 0 !important;
 }
 
 table.dataTable tbody tr:hover td {
-    background-color: rgb(var(--color-primary) / 0.05) !important;
-    border-color: rgb(var(--color-primary) / 0.3) !important;
+    background-color: rgb(var(--color-primary) / 0.06) !important;
 }
 
 /* Esconder el wrapper de DataTables que a veces añade padding */
@@ -1016,20 +1057,13 @@ input[name="db_engine"]:checked + label .w-5.h-5 .bg-primary {
 }
 
 /* MODULE: PSX5K TERMINAL */
-#auditTableBody td:first-child {
-    cursor: pointer;
-}
-#auditTableBody tr {
-    transition: background-color 0.15s ease;
-}
-#auditTableBody tr:hover {
-    background-color: rgba(var(--color-primary), 0.02);
-}
-#auditTableBody tr.nexus-row-selected {
-    background-color: transparent !important;
-}
 #auditTableBody tr.nexus-row-selected td {
-    background-color: transparent !important;
+    background-color: rgb(var(--color-primary) / 0.08) !important;
+}
+
+/* MODULE: LOCAL USERS TABLE */
+#usersTableBody tr.bg-primary\/5 td {
+    background-color: rgb(var(--color-primary) / 0.08) !important;
 }
 .nx-label-strip {
     color: rgb(var(--color-label-text));

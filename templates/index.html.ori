@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block content %}
-<div id="dashboardWrapper" class="w-full h-full flex flex-col space-y-8 animate-fade-in p-6 overflow-hidden">
+<div id="dashboardWrapper" class="h-full flex flex-col space-y-8 animate-fade-in p-6">
     <!-- Quick Stats -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <!-- Card 1: Total Tareas (Primary) -->
@@ -76,7 +76,7 @@
     </div>
 
     <!-- Main Grid Content -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 flex-grow min-h-0 items-stretch">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 flex-grow items-stretch">
         <!-- Dashboard Quad-Core (Left Section) -->
         <div class="lg:col-span-2 grid grid-cols-1 gap-8">
             <div id="cardVolumen" class="kpi-card-premium group min-h-[220px]">

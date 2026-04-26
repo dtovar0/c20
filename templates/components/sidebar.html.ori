@@ -1,4 +1,4 @@
-<aside id="sidebar" class="flex-shrink-0 w-64 bg-panel-fill border-r border-panel-border transition-all duration-300 fixed inset-y-0 left-0 z-40 -translate-x-full lg:relative lg:translate-x-0" style="height:100dvh;">
+<aside id="sidebar" class="flex-shrink-0 w-64 min-w-64 bg-panel-fill border-r border-panel-border transition-all duration-300 fixed inset-y-0 left-0 z-40 -translate-x-full lg:translate-x-0 lg:static lg:inset-0">
     <div class="h-full flex flex-col">
         <!-- Brand / Logo -->
         <div class="h-16 px-6 border-b border-panel-border flex items-center justify-between mb-4 flex-shrink-0">

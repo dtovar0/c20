@@ -30,23 +30,21 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.5/css/dataTables.dataTables.min.css">
     <script src="https://cdn.datatables.net/2.0.5/js/dataTables.min.js"></script>
-</head>
 
-<body class="bg-bg text-text overflow-hidden"
-      data-brand-bg="{{ sys_config.bg_color if sys_config else '' }}" 
-      data-brand-text="{{ sys_config.text_color if sys_config else '' }}"
-      data-pref-notifications="{{ 'true' if current_user.pref_notifications else 'false' }}"
-      data-pref-email="{{ 'true' if current_user.pref_email_notifications else 'false' }}"
-      data-pref-refresh="{{ current_user.pref_refresh_interval or 60 }}"
-      data-pref-tour="{{ 'true' if current_user.pref_tour_enabled else 'false' }}"
-      data-pref-colors='{{ current_user.pref_status_colors or "" }}'>
-    <!-- Root flex container: sidebar + main, fills full viewport height -->
-    <div class="flex overflow-hidden h-full">
+    <body class="bg-bg text-text h-full overflow-hidden" 
+          data-brand-bg="{{ sys_config.bg_color if sys_config else '' }}" 
+          data-brand-text="{{ sys_config.text_color if sys_config else '' }}"
+          data-pref-notifications="{{ 'true' if current_user.pref_notifications else 'false' }}"
+          data-pref-email="{{ 'true' if current_user.pref_email_notifications else 'false' }}"
+          data-pref-refresh="{{ current_user.pref_refresh_interval or 60 }}"
+          data-pref-tour="{{ 'true' if current_user.pref_tour_enabled else 'false' }}"
+          data-pref-colors='{{ current_user.pref_status_colors or "" }}'>
+    <div class="flex h-full overflow-hidden">
         <!-- Sidebar -->
         {% include 'components/sidebar.html' %}
 
         <!-- Main Wrapper -->
-        <div id="mainContent" class="flex-1 flex flex-col min-w-0 bg-bg overflow-hidden">
+        <div id="mainContent" class="flex-grow flex flex-col h-full min-w-0 bg-bg">
             <!-- Topbar -->
             <header class="h-16 border-b border-panel-border bg-panel-fill/80 backdrop-blur-md sticky top-0 z-30 flex items-center justify-between px-6 transition-colors">
                 <div class="flex items-center gap-4">
@@ -318,7 +316,7 @@
             </div>
             
             <!-- Main Content Area -->
-            <main class="flex-1 overflow-hidden min-h-0">
+            <main class="flex-grow flex flex-col min-h-0 overflow-hidden">
                 {% block content %}{% endblock %}
             </main>
         </div>
