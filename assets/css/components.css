@@ -245,6 +245,33 @@ table.dataTable tbody tr:hover td {
     background-color: var(--dt-row-hover) !important;
 }
 
+/* 
+    === ADAPTATIVE BADGE SYSTEM ===
+    Sincronizado con tokens.css para visibilidad perfecta en Light/Dark
+*/
+.nx-badge {
+    padding: 0.25rem 0.75rem;
+    font-size: 10px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    border: 1px solid transparent;
+    border-radius: 0.5rem;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.nx-badge-primary { background: rgb(var(--badge-primary-bg)) !important; color: rgb(var(--badge-primary-text)) !important; border-color: rgb(var(--badge-primary-text) / 0.2) !important; }
+.nx-badge-success { background: rgb(var(--badge-success-bg)) !important; color: rgb(var(--badge-success-text)) !important; border-color: rgb(var(--badge-success-text) / 0.2) !important; }
+.nx-badge-error   { background: rgb(var(--badge-error-bg)) !important;   color: rgb(var(--badge-error-text)) !important;   border-color: rgb(var(--badge-error-text) / 0.2) !important;   }
+.nx-badge-warning { background: rgb(var(--badge-warning-bg)) !important; color: rgb(var(--badge-warning-text)) !important; border-color: rgb(var(--badge-warning-text) / 0.2) !important; }
+.nx-badge-violet  { background: rgb(var(--badge-violet-bg)) !important;  color: rgb(var(--badge-violet-text)) !important;  border-color: rgb(var(--badge-violet-text) / 0.2) !important;  }
+.nx-badge-sky     { background: rgb(var(--badge-sky-bg)) !important;     color: rgb(var(--badge-sky-text)) !important;     border-color: rgb(var(--badge-sky-text) / 0.2) !important;     }
+.nx-badge-slate   { background: rgb(var(--badge-slate-bg)) !important;   color: rgb(var(--badge-slate-text)) !important;   border-color: rgb(var(--badge-slate-text) / 0.2) !important;   }
+.nx-badge-cyan    { background: rgb(var(--badge-cyan-bg)) !important;    color: rgb(var(--badge-cyan-text)) !important;    border-color: rgb(var(--badge-cyan-text) / 0.2) !important;    }
+
 /* GHOST ROWS PARITY */
 .ghost-row {
     opacity: 0.35;

@@ -85,54 +85,49 @@ function initUsersDataTable() {
             },
             { 
                 data: 'nombre', 
-                width: 'auto',
+                width: '220px',
                 render: (data) => `
                     <div class="flex items-center gap-3 overflow-hidden">
-                        <div class="w-8 h-8 rounded-full bg-primary/10 flex-shrink-0 flex items-center justify-center text-[12px] font-black text-primary border border-primary/20">
+                        <div class="w-8 h-8 rounded-full bg-primary/10 flex-shrink-0 flex items-center justify-center text-[11px] font-black text-primary border border-primary/20">
                             ${(data || '?').charAt(0).toUpperCase()}
                         </div>
                         <span class="text-[12px] font-black text-label uppercase tracking-tighter truncate">${data || '-'}</span>
                     </div>`
             },
-            { data: 'name', width: '220px', render: (data) => `<div class="flex items-center h-full text-[12px] font-mono text-label/40 truncate">${data}</div>` },
+            { 
+                data: 'username', 
+                width: '150px',
+                render: (data) => `<div class="flex items-center h-full font-mono text-[12px] font-black text-primary/80 uppercase tracking-widest">${data}</div>`
+            },
             { 
                 data: 'source', 
-                width: '100px',
+                width: '140px',
                 render: (data) => {
-                    const isLdap = data.toLowerCase() === 'ldap';
-                    const sourceClass = isLdap ? 'bg-primary/10 text-primary border-primary/20' : 'bg-label/5 text-label/40 border-panel-border';
-                    return `
-                        <div class="flex items-center h-full">
-                            <span class="px-2 py-0.5 rounded-lg border text-[12px] font-black uppercase tracking-widest ${sourceClass}">${data}</span>
-                        </div>`;
+                    const isLdap = String(data).toLowerCase() === 'ldap';
+                    const cls = isLdap ? 'nx-badge-primary' : 'nx-badge-slate';
+                    return `<div class="flex items-center h-full"><span class="nx-badge ${cls}">${data}</span></div>`;
                 }
             },
             { 
-                data: 'role', 
-                width: '140px',
+                data: 'profile', 
+                width: '150px', 
                 render: (data) => {
-                    const isAdmin = data.toLowerCase().includes('admin');
-                    const roleIcon = isAdmin 
-                        ? '<svg class="w-3 h-3 text-primary flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/></svg>'
-                        : '<svg class="w-3 h-3 text-label/40 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/></svg>';
-                    return `
-                        <div class="flex items-center h-full gap-2 overflow-hidden">
-                            ${roleIcon}
-                            <span class="text-[12px] font-bold text-label/60 uppercase tracking-widest truncate">${data}</span>
-                        </div>`;
+                    const profile = String(data).toLowerCase();
+                    const isAdm = profile.includes('admin');
+                    const cls = isAdm ? 'nx-badge-violet' : 'nx-badge-sky';
+                    const label = isAdm ? 'Administrador' : 'Usuario';
+                    return `<div class="flex items-center h-full"><span class="nx-badge ${cls}">${label}</span></div>`;
                 }
             },
             { 
                 data: 'status', 
-                width: '100px',
-                className: 'text-right',
+                width: '110px', 
                 render: (data) => {
-                    const statusClass = {
-                        active: 'bg-green-500/10 text-green-500',
-                        inactive: 'bg-label/10 text-label/40',
-                        suspended: 'bg-red-500/10 text-red-500'
-                    }[data.toLowerCase()] || 'bg-label/10 text-label/40';
-                    return `<div class="flex items-center justify-end h-full"><span class="px-3 py-0.5 rounded-full text-[12px] font-black uppercase tracking-widest ${statusClass}">${data}</span></div>`;
+                    const status = String(data).toLowerCase();
+                    const isActive = status === 'activo' || status === 'active';
+                    const cls = isActive ? 'nx-badge-success' : 'nx-badge-error';
+                    const label = isActive ? 'Activo' : 'Inactivo';
+                    return `<div class="flex items-center justify-center h-full"><span class="nx-badge ${cls}"><div class="w-1.5 h-1.5 rounded-full ${isActive ? 'bg-emerald-500' : 'bg-rose-500'}"></div>${label}</span></div>`;
                 }
             }
         ],

@@ -55,30 +55,31 @@ function initAuditDataTable() {
                 data: 'action', 
                 width: '170px',
                 render: (data) => {
-                    const actionColors = {
-                        'tarea creada': 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-                        'tarea terminada': 'bg-violet-500/10 text-violet-400 border-violet-500/20',
-                        'tarea iniciada': 'bg-primary/10 text-primary border-primary/20',
-                        'LOGIN': 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
-                        'LOGOUT': 'bg-slate-500/10 text-slate-400 border-slate-500/20',
-                        'SET_IDENTITY': 'bg-amber-500/10 text-amber-400 border-amber-500/20'
-                    };
-                    const actionClass = actionColors[data] || 'bg-primary/5 text-primary/70 border-primary/20';
-                    return `<div class="flex items-center h-full"><div class="inline-flex px-3 py-1 text-[12px] font-black tracking-widest uppercase border rounded-lg ${actionClass} truncate">${data}</div></div>`;
+                    const action = String(data).toLowerCase();
+                    let cls = 'nx-badge-primary';
+                    let label = String(data).toUpperCase();
+
+                    if (action.includes('login')) cls = 'nx-badge-cyan';
+                    else if (action.includes('logout')) cls = 'nx-badge-slate';
+                    else if (action.includes('creada')) cls = 'nx-badge-success';
+                    else if (action.includes('terminada')) cls = 'nx-badge-violet';
+                    else if (action.includes('iniciada')) cls = 'nx-badge-primary';
+                    else if (action.includes('identity')) cls = 'nx-badge-warning';
+
+                    return `<div class="flex items-center h-full"><span class="nx-badge ${cls}">${label}</span></div>`;
                 }
             },
             { 
                 data: 'status', 
                 width: '100px',
                 render: (data) => {
-                    const statusColors = {
-                        'success': 'text-emerald-400',
-                        'error': 'text-rose-400',
-                        'warning': 'text-amber-400',
-                        'info': 'text-primary'
-                    };
-                    const colorClass = statusColors[data.toLowerCase()] || statusColors['info'];
-                    return `<div class="flex items-center justify-center h-full"><span class="text-[12px] font-black tracking-widest uppercase ${colorClass}">${data}</span></div>`;
+                    const status = String(data).toLowerCase();
+                    let cls = 'nx-badge-primary';
+                    if (status.includes('success')) cls = 'nx-badge-success';
+                    else if (status.includes('error')) cls = 'nx-badge-error';
+                    else if (status.includes('warning')) cls = 'nx-badge-warning';
+                    
+                    return `<div class="flex items-center justify-center h-full"><span class="nx-badge ${cls}">${data.toUpperCase()}</span></div>`;
                 }
             },
             { data: 'detail', width: 'auto', render: (data) => `<div class="flex items-center h-full text-[12px] font-bold text-label/60 line-clamp-1 min-w-0 overflow-hidden text-ellipsis" title="${data || ''}">${data || '-'}</div>` },

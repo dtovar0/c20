@@ -94,6 +94,16 @@ table.dataTable tbody tr {
 
   --color-header-bg: #2563eb;          /* Blue-600: coherente con primario */
   --color-header-text: #ffffff;
+
+  /* BADGE ADAPTATIVO — MODO CLARO (Contraste AA/AAA) */
+  --badge-primary-bg: 37 99 235 / 0.1;   --badge-primary-text: 29 78 216;
+  --badge-success-bg: 5 150 105 / 0.1;   --badge-success-text: 4 120 87;
+  --badge-error-bg: 225 29 72 / 0.1;     --badge-error-text: 190 18 60;
+  --badge-warning-bg: 217 119 6 / 0.1;   --badge-warning-text: 180 83 9;
+  --badge-violet-bg: 124 58 237 / 0.1;   --badge-violet-text: 109 40 217;
+  --badge-sky-bg: 14 165 233 / 0.1;      --badge-sky-text: 3 105 161;
+  --badge-slate-bg: 71 85 105 / 0.1;     --badge-slate-text: 51 65 85;
+  --badge-cyan-bg: 8 145 178 / 0.1;      --badge-cyan-text: 21 94 117;
   --color-panel-header-bg: 226 232 240; /* Slate-200: cohesivo con nueva paleta */
 
   --color-panel-fill: 255 255 255;
@@ -243,8 +253,18 @@ table.dataTable tbody tr {
    CLASE .dark — Mirror del media query para control JS
 ══════════════════════════════════════════════════════════════ */
 html.dark {
-  --color-body-bg: #030712;               /* Gray-950: profundidad real */
-  --color-body-text: #e2e8f0;             /* Slate-200: neutro */
+  --color-body-bg: #0f172a;            /* Slate-900: profundidad real */
+  --color-body-text: #f1f5f9;          /* Slate-100: claridad suave */
+
+  /* BADGE ADAPTATIVO — MODO OSCURO (Brillo Neón) */
+  --badge-primary-bg: 37 99 235 / 0.15;  --badge-primary-text: 96 165 250;
+  --badge-success-bg: 16 185 129 / 0.15; --badge-success-text: 52 211 153;
+  --badge-error-bg: 244 63 94 / 0.15;    --badge-error-text: 251 113 133;
+  --badge-warning-bg: 245 158 11 / 0.15; --badge-warning-text: 251 191 36;
+  --badge-violet-bg: 139 92 246 / 0.15;  --badge-violet-text: 167 139 250;
+  --badge-sky-bg: 56 189 248 / 0.15;     --badge-sky-text: 125 211 252;
+  --badge-slate-bg: 148 163 184 / 0.15;  --badge-slate-text: 203 213 225;
+  --badge-cyan-bg: 34 211 238 / 0.15;     --badge-cyan-text: 103 232 249;
   --color-header-bg: #1e3a8a;
   --color-header-text: #e2e8f0;
   --color-panel-header-bg: 37 99 235 / 0.15;
