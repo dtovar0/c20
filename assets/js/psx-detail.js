@@ -144,37 +144,40 @@ function renderGhostRows(settings, columns) {
     const api = new $.fn.dataTable.Api(settings);
     const info = api.page.info();
     const tbody = $(settings.nTBody);
+    const pageLen = api.page.len();
     
+    // 1. Cleanup
+    tbody.find('.ghost-row').remove();
     tbody.find('.dataTables_empty').closest('tr').remove();
-    const rowsOnPage = info.end - info.start;
-    const targetTotal = 10;
-    const ghostCount = targetTotal - rowsOnPage;
 
+    // 2. Calculate row height based on the GRID SCOPE
+    const container = api.table().container();
+    const gridH = $(container).height();
+    let rowH = 50;
+    
+    if (gridH > 0) {
+        const totalRows  = pageLen;
+        rowH = Math.max(40, Math.floor((gridH - 52) / (totalRows + 1)) - 1);
+    }
+    
+    $(container).css('--row-h', rowH + 'px');
+
+    // 3. Ghost Row injection
+    const realRows   = info.end - info.start;
+    const ghostCount = pageLen - realRows;
     if (ghostCount <= 0) return;
 
     let ghostHtml = '';
     for (let i = 0; i < ghostCount; i++) {
         ghostHtml += `
-            <tr class="animate-pulse pointer-events-none select-none opacity-20">
-                <td class="bg-panel-fill/5 border-y border-l border-panel-border/10 rounded-l-2xl py-6 px-5">
-                    <div class="h-2 w-24 bg-label/10 rounded-full"></div>
-                </td>
-                <td class="bg-panel-fill/5 border-y border-panel-border/10 py-6 px-5">
-                    <div class="h-1.5 w-full bg-label/5 rounded-full"></div>
-                </td>
-                <td class="bg-panel-fill/5 border-y border-panel-border/10 py-6 px-5">
-                    <div class="h-8 w-8 bg-label/5 rounded-lg mx-auto"></div>
-                </td>
-                <td class="bg-panel-fill/5 border-y border-r border-panel-border/10 rounded-r-2xl py-6 px-5">
-                    <div class="h-1.5 w-12 bg-label/5 rounded-full ml-auto"></div>
-                </td>
-            </tr>
-        `;
+            <tr class="ghost-row pointer-events-none select-none">
+                <td><div></div></td>
+                ${Array(columns - 1).fill(0).map(() => `
+                    <td><div></div></td>
+                `).join('')}
+            </tr>`;
     }
-    
-    setTimeout(() => {
-        tbody.append(ghostHtml);
-    }, 0);
+    tbody.append(ghostHtml);
 }
 
 function reprocessDuplicates(taskId) {

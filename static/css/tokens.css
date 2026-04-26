@@ -5,6 +5,44 @@ html, body {
   padding: 0;
 }
 
+/* === FORCED NUCLEAR GRID REFACTOR v3 === */
+.dt-container {
+    display: grid !important;
+    grid-template-rows: 1fr auto !important;
+    height: 100% !important;
+    grid-gap: 0 !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+}
+
+.dt-layout-row.dt-layout-table {
+    grid-row: 1 !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.dt-layout-row:has(.dt-paging) {
+    grid-row: 2 !important;
+    height: 52px !important;
+    background: rgb(var(--color-surface-container-bg)) !important;
+    border-top: 2px solid rgb(var(--color-primary)) !important; /* Señal visual de fijación */
+}
+
+/* Señal de Cache: Si no ves esto naranja, no se han cargado los cambios */
+table.dataTable thead th {
+    border-top: 4px solid #ff5722 !important; 
+}
+
+table.dataTable tbody tr {
+    height: var(--row-h, 52px) !important;
+    overflow: hidden !important;
+}
+
+table.dataTable tbody tr:nth-child(even) {
+    background-color: color-mix(in srgb, rgb(var(--color-surface-container-bg)), rgb(var(--color-primary)) 5%) !important;
+}
+
 /*
  * ╔══════════════════════════════════════════════════════════════╗
  * ║         NEXUS DESIGN TOKENS — v2.0 "Deep Sapphire"          ║

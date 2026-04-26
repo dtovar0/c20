@@ -16,103 +16,71 @@
 /* Reset overflow:auto injected by DT 2.x CDN CSS */
 .dt-container, .dt-layout-row, .dt-layout-cell { overflow: visible; }
 
-/* === NEXUS DATATABLES INTEGRATION === */
+/* 
+   === NEXUS NUCLEAR GRID CONTROL ===
+   Previene huecos, desbordamientos y asimetrías de forma estricta.
+*/
 
 .dt-container {
-    display: flex !important;
-    flex-direction: column !important;
-    flex: 1 !important;
-    min-height: 0 !important;
-    width: 100%;
-    overflow: visible;
+    display: grid !important;
+    grid-template-rows: 1fr auto !important; /* La tabla toma todo el espacio, el footer lo que necesite */
+    height: 100% !important;
+    width: 100% !important;
+    gap: 0 !important;
+    overflow: hidden !important;
 }
 
+/* El contenedor de la tabla real */
 .dt-layout-row.dt-layout-table {
-    flex: 1 !important;
-    min-height: 0 !important;
-    overflow: hidden !important;
+    grid-row: 1 !important;
     display: flex !important;
     flex-direction: column !important;
-    width: 100%;
+    min-height: 0 !important;
+    overflow: hidden !important; /* Bloquea que los registros bajen de la paginación */
 }
 
 .dt-layout-row.dt-layout-table > .dt-layout-cell {
     flex: 1 !important;
-    min-height: 0 !important;
     display: flex !important;
     flex-direction: column !important;
-    overflow: hidden !important;
-    width: 100%;
-}
-
-/* Table wrapper: no scroll — rows are sized to fit exactly */
-.nx-table-scroll {
-    flex: 1 !important;
     min-height: 0 !important;
     overflow: hidden !important;
 }
 
-/* thead: normal flow, not sticky — no scroll means no need for sticky */
-table.dataTable thead {
-    position: static !important;
-}
-
-/* Hide DT's built-in search/length controls (we use custom inputs) */
-.dt-layout-row:not(.dt-layout-table):not(:has(.dt-paging)):not(:has(.dt-info)) {
-    display: none !important;
-}
-
-/* Show ONLY the row that contains pagination — safe for all tables */
+/* El contenedor de la paginación */
 .dt-layout-row:has(.dt-paging) {
+    grid-row: 2 !important;
     display: flex !important;
-    flex-direction: row !important;
     align-items: center;
     justify-content: space-between;
-    padding: 6px 12px 0;
-    gap: 8px;
-    flex-shrink: 0 !important;
-    overflow: visible !important;
-    margin-top: 4px;
-    border-top: 1px solid rgb(var(--color-panel-border) / 0.5);
-    background: rgb(var(--color-panel-fill) / 0.6);
-    backdrop-filter: blur(8px);
-    border-radius: 0 0 1rem 1rem;
-    position: relative;
-    z-index: 2;
-
-.dt-layout-row:has(.dt-paging) .dt-layout-cell {
-    flex: none;
-}
-
-.dt-info {
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: rgb(var(--color-label-text));
-    opacity: 0.4;
-}
-
-.dt-paging {
-    display: flex;
-    gap: 6px;
-}
-
-.dt-container .dt-paging .dt-paging-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px !important;
-    height: 32px !important;
-    padding: 0 !important;
-    border-radius: 10px !important;
+    height: 52px !important;
+    padding: 0 1.25rem !important;
     background: rgb(var(--color-surface-container-bg)) !important;
-    border: 1px solid rgb(var(--color-surface-container-border)) !important;
-    color: rgb(var(--color-label-text)) !important;
-    cursor: pointer;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-    margin: 0 2px;
+    border-top: 1px solid rgb(var(--color-panel-border) / 0.4) !important;
+    z-index: 10 !important;
+}
+
+/* Normalización de Filas (Simetría Total) */
+table.dataTable tbody tr {
+    height: var(--row-h, 52px) !important;
+    box-sizing: border-box !important;
+}
+
+table.dataTable tbody tr td {
+    height: inherit !important;
+    padding: 0 1.25rem !important;
+    vertical-align: middle !important;
+    border-top: 1px solid rgb(var(--color-panel-border) / 0.1) !important;
+}
+
+/* Zebra aplicado al TR para evitar inconsistencias entre celdas */
+table.dataTable tbody tr:nth-child(even) {
+    background-color: color-mix(in srgb, rgb(var(--color-surface-container-bg)), rgb(var(--color-primary)) 5%) !important;
+    box-shadow: inset 3px 0 0 rgb(var(--color-primary) / 0.4) !important;
+}
+
+table.dataTable tbody tr:nth-child(odd) {
+    background-color: transparent !important;
 }
 
 .dt-container .dt-paging .dt-paging-button svg {
@@ -156,62 +124,140 @@ table.dataTable thead {
     filter: grayscale(1);
 }
 
-table.dataTable {
-    border-collapse: collapse !important;
-    border-spacing: 0 !important;
+table.dataTable,
+.tab-panel-content table {
+    border-collapse: collapse; /* Removi !important para permitir override por clases de Tailwind como border-separate */
+    border-spacing: 0;
     width: 100% !important;
     margin: 0 !important;
 }
 
-table.dataTable thead th {
-    background-color: rgba(15, 23, 42, 0.5) !important;
-    border-top: 1px solid rgb(var(--color-panel-border)) !important;
-    border-bottom: 1px solid rgb(var(--color-panel-border)) !important;
-    border-left: none !important;
-    border-right: none !important;
-    color: white !important;
-    font-size: 11px !important;
-    font-weight: 900 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.2rem !important;
+/* Solo aplicar collapse forzado si no tiene la clase border-separate explícita */
+table.dataTable:not(.border-separate),
+.tab-panel-content table:not(.border-separate) {
+    border-collapse: collapse !important;
+    border-spacing: 0 !important;
+}
+
+/* 
+   === NEXUS SYMMETRIC GRID SYSTEM ===
+   Architecture for High-Density Professional Tables
+*/
+
+/* 1. Base Row Definition (The ADN) */
+table.dataTable thead th,
+table.dataTable tbody td,
+.dt-layout-row:has(.dt-paging) {
+    box-sizing: border-box !important;
+    height: var(--row-h, 52px) !important;
     padding: 0 1.25rem !important;
-    border-radius: 0 !important;
-}
-
-table.dataTable thead th:first-child {
-    border-left: 3px solid transparent !important;
-    padding-left: 1rem !important;
-}
-
-table.dataTable tbody tr {
-    background-color: transparent !important;
-    transition: background-color 0.15s ease !important;
-}
-
-table.dataTable tbody tr:nth-child(even) td {
-    background-color: rgb(var(--color-surface-container-bg) / 0.5) !important;
-}
-
-table.dataTable tbody tr:nth-child(odd) td {
-    background-color: transparent !important;
-}
-
-table.dataTable tbody td {
+    font-size: 12px !important;
+    font-weight: 700 !important;
     border-top: 1px solid rgb(var(--color-panel-border) / 0.4) !important;
     border-bottom: none !important;
     border-left: none !important;
     border-right: none !important;
-    padding: 0 1.25rem !important;
-    height: 52px !important;
-    color: var(--color-body-text) !important;
-    font-size: 12px !important;
-    font-weight: 700 !important;
-    transition: background-color 0.15s ease !important;
+    display: table-cell; /* For real table elements */
+    vertical-align: middle;
+}
+
+/* 2. Layout Row (Pagination) specific tweaks to act as a <tr> */
+.dt-layout-row:has(.dt-paging) {
+    display: flex !important; /* Overrides for the layout container */
+    align-items: center;
+    justify-content: space-between;
+    background: rgb(var(--color-surface-container-bg)) !important;
+    border-top: 4px solid #ff5722 !important; /* LÍNEA NARANJA DE REFERENCIA */
+    margin: 0 !important;
     border-radius: 0 !important;
 }
 
+/* 
+    === NEXUS PREMIUM SAPPHIRE ZEBRA — v3.0 ===
+    Un diseño de alta densidad, simétrico y de lujo técnico.
+*/
+
+:root {
+    --dt-row-hover: rgb(var(--color-primary) / 0.1);
+    --dt-zebra-bg: color-mix(in srgb, rgb(var(--color-surface-container-bg)), rgb(var(--color-primary)) 4.5%);
+}
+
+/* Base Table Parity */
+table.dataTable, 
+.tab-panel-content table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    margin: 0 !important;
+    table-layout: fixed !important;
+}
+
+/* Header Styling */
+table.dataTable thead th,
+.tab-panel-content table thead th {
+    height: var(--row-h, 52px) !important;
+    background-color: color-mix(in srgb, rgb(var(--color-surface-container-bg)), black 15%) !important;
+    border-bottom: 2px solid rgb(var(--color-primary) / 0.4) !important;
+    padding: 0 1.25rem !important;
+    color: white !important;
+    font-size: 11px !important;
+    font-weight: 900 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.15em !important;
+    vertical-align: middle !important;
+}
+
+/* Body & Ghost Row Styling */
+table.dataTable tbody tr,
+.tab-panel-content table tbody tr {
+    height: var(--row-h, 52px) !important;
+    transition: all 0.2s ease;
+    background: transparent;
+}
+
+table.dataTable tbody td,
+.tab-panel-content table tbody td {
+    padding: 0 1.25rem !important;
+    vertical-align: middle !important;
+    border-top: 1px solid rgb(var(--color-panel-border) / 0.2) !important;
+    color: rgb(var(--color-text-body) / 0.85);
+    font-size: 13px;
+    height: inherit !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Zebra Inverso Sapphire */
+table.dataTable tbody tr:nth-child(even),
+.tab-panel-content table tbody tr:nth-child(even) {
+    background-color: var(--dt-zebra-bg) !important;
+    box-shadow: inset 4px 0 0 -1px rgb(var(--color-primary) / 0.6) !important;
+}
+
+/* Diagnóstico: Pintamos la última fila de Verde Lima */
+table.dataTable tbody tr:last-child,
+table.dataTable tbody tr.ghost-row:last-of-type {
+    background-color: #32ff7e !important;
+    border-bottom: 4px solid #000 !important;
+}
+
+/* Hover Effect */
 table.dataTable tbody tr:hover td {
-    background-color: rgb(var(--color-primary) / 0.06) !important;
+    background-color: var(--dt-row-hover) !important;
+    box-shadow: inset 4px 0 0 0 rgb(var(--color-primary)) !important;
+}
+
+/* GHOST ROWS PARITY */
+.ghost-row {
+    opacity: 0.35;
+    pointer-events: none;
+}
+
+.ghost-row td div {
+    background: rgb(var(--color-label) / 0.1);
+    height: 6px;
+    width: 60%;
+    border-radius: 99px;
 }
 
 /* Esconder el wrapper de DataTables que a veces añade padding */

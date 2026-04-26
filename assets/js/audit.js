@@ -144,27 +144,21 @@ function renderGhostRows(settings, columns) {
     tbody.find('.ghost-row').remove();
     tbody.find('.dataTables_empty').closest('tr').remove();
 
-    // 2. Calculate row height using the wrapper's offsetHeight
-    const container  = api.table().container();
-    const scrollWrap = $(container).find('.nx-table-scroll');
-    let rowH = 52;
-    if (scrollWrap.length && scrollWrap[0].offsetHeight > 0) {
-        const totalRows = pageLen + 1; // +1 for thead
-        const gapTotal  = (totalRows - 1) * 4; // border-spacing-y: 4px per gap
-        const usableH   = scrollWrap[0].offsetHeight - gapTotal;
-        if (usableH > 0) rowH = Math.max(40, Math.floor(usableH / totalRows));
+    // 2. Calculate row height based on the GRID SCOPE
+    const container = api.table().container();
+    const gridH = $(container).height(); 
+    let rowH = 50;
+    
+    if (gridH > 0) {
+        const totalRows  = pageLen;
+        // Restamos el footer y aplicamos un offset de -1px para compensar bordes
+        rowH = Math.max(40, Math.floor((gridH - 52) / (totalRows + 1)) - 1);
     }
+    
+    // Set the variable for CSS (Matches Header, Body and Pagination)
+    $(container).css('--row-h', rowH + 'px');
 
-    // 3. Apply rowH to thead
-    const thead = $(api.table().header());
-    thead.find('tr').css('height', rowH + 'px');
-    thead.find('th').css('height', rowH + 'px');
-
-    // 4. Apply rowH to real tbody rows
-    tbody.find('tr:not(.ghost-row)').css('height', rowH + 'px');
-    tbody.find('tr:not(.ghost-row) td').css('height', rowH + 'px');
-
-    // 5. Ghost rows to fill remaining slots
+    // 3. Ghost Row injection (simplified)
     const realRows   = info.end - info.start;
     const ghostCount = pageLen - realRows;
     if (ghostCount <= 0) return;
@@ -172,18 +166,11 @@ function renderGhostRows(settings, columns) {
     let ghostHtml = '';
     for (let i = 0; i < ghostCount; i++) {
         ghostHtml += `
-            <tr class="ghost-row pointer-events-none select-none" style="opacity:0.25;height:${rowH}px;">
-                <td style="height:${rowH}px;background:rgb(var(--color-surface-container-bg)/0.08);border-top:1px solid rgb(var(--color-panel-border)/0.15);border-left:3px solid transparent;padding:0 1rem 0 0.875rem;">
-                    <div style="height:6px;width:40px;background:rgb(var(--color-label)/0.08);border-radius:999px;margin:auto;"></div>
-                </td>
-                ${Array(columns - 2).fill(0).map(() => `
-                    <td style="height:${rowH}px;background:rgb(var(--color-surface-container-bg)/0.08);border-top:1px solid rgb(var(--color-panel-border)/0.15);padding:0 1.25rem;">
-                        <div style="height:4px;width:60%;background:rgb(var(--color-label)/0.05);border-radius:999px;"></div>
-                    </td>
+            <tr class="ghost-row pointer-events-none select-none">
+                <td><div></div></td>
+                ${Array(columns - 1).fill(0).map(() => `
+                    <td><div></div></td>
                 `).join('')}
-                <td style="height:${rowH}px;background:rgb(var(--color-surface-container-bg)/0.08);border-top:1px solid rgb(var(--color-panel-border)/0.15);padding:0 1.25rem;">
-                    <div style="height:4px;width:40%;background:rgb(var(--color-label)/0.05);border-radius:999px;"></div>
-                </td>
             </tr>`;
     }
     tbody.append(ghostHtml);
