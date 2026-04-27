@@ -43,6 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
             { name: 'OK', data: [] },
             { name: 'Error', data: [] },
             { name: 'Pendiente', data: [] },
+            { name: 'Programada', data: [] },
             { name: 'Activa', data: [] }
         ],
         chart: {
@@ -63,6 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
             window.nexusSettings?.statusColors?.ok || '#22c55e', 
             window.nexusSettings?.statusColors?.fail || '#ef4444', 
             window.nexusSettings?.statusColors?.dup || '#f59e0b', 
+            '#6366f1', // Indigo for Scheduled
             window.nexusSettings?.statusColors?.force || '#3b82f6'
         ],
         dataLabels: { enabled: false },
@@ -362,6 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         { name: 'OK', data: u.ok },
                         { name: 'Error', data: u.fail },
                         { name: 'Pendiente', data: u.pending },
+                        { name: 'Programada', data: u.scheduled },
                         { name: 'Activa', data: u.active }
                     ], true);
                     mirrorChartApex.updateOptions({
