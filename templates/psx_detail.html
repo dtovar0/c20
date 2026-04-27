@@ -295,29 +295,54 @@
                                     </div>
 
                                     <!-- Status Grid -->
-                                    <div class="grid grid-cols-3 gap-4">
-                                        <div class="bg-emerald-500/5 border border-emerald-500/10 rounded-2xl p-5 text-center transition-all">
-                                            <p class="text-[10px] font-black uppercase tracking-widest text-emerald-500/60 mb-2">Éxito</p>
-                                            <p class="text-2xl font-black text-emerald-500 tabular-nums">{{ task.resumen.ok }}</p>
-                                        </div>
-                                        <div class="bg-amber-500/5 border border-amber-500/10 rounded-2xl p-5 text-center transition-all">
-                                            {% if task.job.force %}
-                                                <p class="text-[10px] font-black uppercase tracking-widest text-sky-500/60 mb-2">Forzado</p>
-                                                <p class="text-2xl font-black text-sky-500 tabular-nums">{{ task.resumen.force_ok }}</p>
-                                            {% else %}
-                                                <p class="text-[10px] font-black uppercase tracking-widest text-amber-500/60 mb-2">Dup</p>
-                                                <p class="text-2xl font-black text-amber-500 tabular-nums">{{ task.resumen.dup or 0 }}</p>
-                                            {% endif %}
-                                        </div>
-                                        <div class="bg-rose-500/5 border border-rose-500/10 rounded-2xl p-5 text-center transition-all">
-                                            <p class="text-[10px] font-black uppercase tracking-widest text-rose-500/60 mb-2">Falla</p>
-                                            <p class="text-2xl font-black text-rose-500 tabular-nums">{{ task.resumen.fail }}</p>
-                                        </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        {% if task.job.tarea == 'add' %}
+                                            <div class="bg-emerald-500/5 border border-emerald-500/10 rounded-2xl p-5 text-center transition-all" title="Registros insertados con éxito">
+                                                <p class="text-[10px] font-black uppercase tracking-widest text-emerald-500/60 mb-2">Éxito</p>
+                                                <p class="text-2xl font-black text-emerald-500 tabular-nums">{{ task.resumen.ok }}</p>
+                                            </div>
+                                            <div class="bg-amber-500/5 border border-amber-500/10 rounded-2xl p-5 text-center transition-all" title="Registros duplicados o ya existentes">
+                                                {% if task.job.run_force %}
+                                                    <p class="text-[10px] font-black uppercase tracking-widest text-sky-500/60 mb-2">Forzado</p>
+                                                    <p class="text-2xl font-black text-sky-500 tabular-nums">{{ task.resumen.force_ok }}</p>
+                                                {% else %}
+                                                    <p class="text-[10px] font-black uppercase tracking-widest text-amber-500/60 mb-2">Dup</p>
+                                                    <p class="text-2xl font-black text-amber-500 tabular-nums">{{ task.resumen.dup or 0 }}</p>
+                                                {% endif %}
+                                            </div>
+                                            <div class="bg-rose-500/5 border border-rose-500/10 rounded-2xl p-5 text-center transition-all" title="Errores técnicos en la ejecución">
+                                                <p class="text-[10px] font-black uppercase tracking-widest text-rose-500/60 mb-2">Falla</p>
+                                                <p class="text-2xl font-black text-rose-500 tabular-nums">{{ task.resumen.fail }}</p>
+                                            </div>
+                                        {% elif task.job.tarea == 'delete' %}
+                                            <div class="bg-indigo-500/5 border border-indigo-500/10 rounded-2xl p-5 text-center transition-all" title="Registros eliminados o no encontrados">
+                                                <p class="text-[10px] font-black uppercase tracking-widest text-indigo-500/60 mb-2">Del</p>
+                                                <p class="text-2xl font-black text-indigo-500 tabular-nums">{{ task.resumen.del or 0 }}</p>
+                                            </div>
+                                            <div class="bg-teal-500/5 border border-teal-500/10 rounded-2xl p-5 text-center transition-all" title="Eliminados con validación de existencia">
+                                                <p class="text-[10px] font-black uppercase tracking-widest text-teal-500/60 mb-2">DelCheck</p>
+                                                <p class="text-2xl font-black text-teal-500 tabular-nums">{{ task.resumen.delcheck or 0 }}</p>
+                                            </div>
+                                            <div class="bg-rose-500/5 border border-rose-500/10 rounded-2xl p-5 text-center transition-all" title="Errores técnicos en la ejecución">
+                                                <p class="text-[10px] font-black uppercase tracking-widest text-rose-500/60 mb-2">Falla</p>
+                                                <p class="text-2xl font-black text-rose-500 tabular-nums">{{ task.resumen.fail }}</p>
+                                            </div>
+                                        {% else %}
+                                            <!-- Fallback general -->
+                                            <div class="bg-emerald-500/5 border border-emerald-500/10 rounded-2xl p-5 text-center transition-all">
+                                                <p class="text-[10px] font-black uppercase tracking-widest text-emerald-500/60 mb-2">Éxito</p>
+                                                <p class="text-2xl font-black text-emerald-500 tabular-nums">{{ task.resumen.ok }}</p>
+                                            </div>
+                                            <div class="bg-rose-500/5 border border-rose-500/10 rounded-2xl p-5 text-center transition-all">
+                                                <p class="text-[10px] font-black uppercase tracking-widest text-rose-500/60 mb-2">Falla</p>
+                                                <p class="text-2xl font-black text-rose-500 tabular-nums">{{ task.resumen.fail }}</p>
+                                            </div>
+                                        {% endif %}
                                     </div>
 
                                     <!-- Procedural Efficiency -->
                                     {% set total_p = task.resumen.total if task.resumen.total > 0 else 1 %}
-                                    {% set effective_ok = (task.resumen.ok + task.resumen.force_ok + (task.resumen.dup or 0)) %}
+                                    {% set effective_ok = (task.resumen.ok + task.resumen.force_ok + (task.resumen.dup or 0) + (task.resumen.del or 0) + (task.resumen.delcheck or 0)) %}
                                     {% set percent = (effective_ok / total_p * 100) | round(1) %}
                                     
                                     {% if percent >= 98 %} {% set p_color = 'bg-emerald-500' %} {% set p_glow = 'shadow-emerald-500/50' %}
@@ -471,19 +496,27 @@
                                             <div class="flex items-center justify-center">
                                                 <div class="status-marker hidden">{{ item.estado }}</div>
                                                 {% if 'OK' in item.estado %}
-                                                <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="color:#10b981;background:rgba(16,185,129,0.15);border-color:rgba(16,185,129,0.3)">
+                                                <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="color:#10b981;background:rgba(16,185,129,0.15);border-color:rgba(16,185,129,0.3)" title="Éxito">
                                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                                 </div>
                                                 {% elif 'FAIL' in item.estado or 'ERROR' in item.estado %}
-                                                <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="color:#f43f5e;background:rgba(244,63,94,0.15);border-color:rgba(244,63,94,0.3)">
+                                                <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="color:#f43f5e;background:rgba(244,63,94,0.15);border-color:rgba(244,63,94,0.3)" title="Error">
                                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
                                                 </div>
+                                                {% elif 'DELCHECK' in item.estado %}
+                                                <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="color:#14b8a6;background:rgba(20,184,166,0.15);border-color:rgba(20,184,166,0.3)" title="Eliminado con Validación">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                </div>
+                                                {% elif 'DEL' in item.estado %}
+                                                <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="color:#6366f1;background:rgba(99,102,241,0.15);border-color:rgba(99,102,241,0.3)" title="Eliminado">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                                </div>
                                                 {% elif 'DUP' in item.estado %}
-                                                <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="color:#f59e0b;background:rgba(245,158,11,0.15);border-color:rgba(245,158,11,0.3)">
+                                                <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="color:#f59e0b;background:rgba(245,158,11,0.15);border-color:rgba(245,158,11,0.3)" title="Duplicado o No encontrado">
                                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
                                                 </div>
                                                 {% else %}
-                                                <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="color:rgb(var(--color-label-text));background:rgb(var(--color-panel-fill)/0.3);border-color:rgb(var(--color-panel-border)/0.3)">
+                                                <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="color:rgb(var(--color-label-text));background:rgb(var(--color-panel-fill)/0.3);border-color:rgb(var(--color-panel-border)/0.3)" title="Indefinido">
                                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4"></path></svg>
                                                 </div>
                                                 {% endif %}

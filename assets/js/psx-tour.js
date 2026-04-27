@@ -19,6 +19,7 @@ const svgSpin = '<path stroke-linecap="round" stroke-linejoin="round" stroke-wid
 const svgCheck = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>';
 const svgWarn = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>';
 const svgClock = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>';
+const svgDelCheck = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>';
 
 class PSXNexusTour {
     constructor(steps) {
@@ -172,7 +173,7 @@ class PSXNexusTour {
                 </div>
             `;
 
-            const stepWidth = 420;
+            const stepWidth = 550;
             // POSICIÓN POR DEFECTO (LATERAL IZQUIERDA)
             let stepLeft = (rect.left + window.scrollX) - stepWidth - 40;
             let stepTop = (rect.top + window.scrollY) + (rect.height / 2) - 150;
@@ -223,8 +224,10 @@ window.logAuditTour = new PSXNexusTour([
         content: 'Filtra rápidamente por la respuesta del nodo. Usa los iconos para aislar estados específicos:',
         table: [
             [ico('<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>', '#64748b'), '<b>Limpiar (Reset)</b> — Elimina los filtros activos.'],
-            [ico('<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>', '#10b981'), '<b>Éxito (OK)</b> — Registro procesado correctamente.'],
-            [ico('<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path>', '#f43f5e'), '<b>Error (FAIL)</b> — El nodo rechazó la transacción.'],
+            [ico(svgCheck, '#10b981'), '<b>Éxito (OK)</b> — Registro procesado correctamente.'],
+            [ico(svgDelCheck, '#14b8a6'), '<b>DelCheck</b> — Eliminado con validación exitosa.'],
+            [ico(svgTrash, '#6366f1'), '<b>Del</b> — Eliminado o no encontrado.'],
+            [ico(svgWarn, '#f43f5e'), '<b>Error (FAIL)</b> — El nodo rechazó la transacción.'],
             [ico('<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path>', '#f59e0b'), '<b>Duplicado (DUP)</b> — Registro ignorado por repetición.']
         ]
     },
@@ -315,13 +318,15 @@ window.startLogTour = function() {
             type: 'Columna + Iconos',
             target: '#colGraphHeader',
             title: 'Métricas de Avance',
-            table_headers: ['Indicador', 'Significado'],
-            content: 'Barra de progreso que muestra los resultados por bloque según la respuesta del nodo.<br><br><b style="color:#2563eb">Porcentaje</b> = % de registros procesados &nbsp;|&nbsp; <b>OK</b> / <b style="color:#f43f5e">FAIL</b> + <b style="color:#f59e0b">DUP</b> + <b style="color:#8b5cf6">FORCE-OK</b>',
+            table_headers: ['Indicador', 'Estado', 'Significado'],
+            content: 'Barras de progreso proporcionales según el tipo de tarea (Alta vs Baja).<br><br><b style="color:#2563eb">Porcentaje</b> = % de registros procesados exitosamente.',
             table: [
-                [`${dot('#2563eb')} Azul`, '<b>OK</b>', 'Procesamiento exitoso'],
+                [`${dot('#2563eb')} Azul`, '<b>OK</b>', 'Procesamiento exitoso (Alta)'],
+                [`${dot('#6366f1')} Índigo`, '<b>DEL</b>', 'Eliminación sencilla (Baja)'],
+                [`${dot('#14b8a6')} Teal`, '<b>DELCHECK</b>', 'Eliminación con confirmación (Baja)'],
                 [`${dot('#f43f5e')} Rojo`, '<b>FAIL</b>', 'Error reportado por el nodo'],
-                [`${dot('#8b5cf6')} Púrpura`, '<b>FORCE</b>', 'Validación forzada'],
-                [`${dot('#f59e0b')} Ámbar`, '<b>DUP</b>', 'Registro duplicado ignorado']
+                [`${dot('#8b5cf6')} Púrpura`, '<b>FORCE</b>', 'Validación forzada (Alta)'],
+                [`${dot('#f59e0b')} Ámbar`, '<b>DUP</b>', 'Registro duplicado ignorado (Alta)']
             ]
         },
         {

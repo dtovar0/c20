@@ -62,3 +62,13 @@ Si un usuario desactiva `pref_tour_enabled`, el asistente de bienvenida no volve
 
 ### Impacto
 Experiencia de usuario (UX) y personalización del panel de control.
+
+---
+
+## Módulo: Authelia SSO
+
+### Regla: Identidad Visual Premium
+El portal de Authelia debe reflejar la identidad visual de Nexus (Modo Premium) mediante la inyección del tema `nexus_premium.css`. Esto garantiza una transición visual fluida entre el portal SSO y el sistema Nexus.
+
+### Impacto
+Portal de Login y flujo de autenticación SSO.

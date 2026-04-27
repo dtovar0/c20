@@ -12,7 +12,9 @@ window.nexusSettings = {
         ok: '#2563eb',
         fail: '#f43f5e',
         force: '#8b5cf6',
-        dup: '#f59e0b'
+        dup: '#f59e0b',
+        del: '#6366f1',
+        delcheck: '#14b8a6'
     },
     initialized: false
 };
@@ -142,18 +144,22 @@ function initSettingsUI() {
                 if ($('#colorFail').length) $('#colorFail').val(colors.fail);
                 if ($('#colorForce').length) $('#colorForce').val(colors.force);
                 if ($('#colorDup').length) $('#colorDup').val(colors.dup);
+                if ($('#colorDel').length) $('#colorDel').val(colors.del || '#6366f1');
+                if ($('#colorDelCheck').length) $('#colorDelCheck').val(colors.delcheck || '#14b8a6');
 
                 // Initial preview sync
                 updateIconPreview('previewIconOk', colors.ok);
                 updateIconPreview('previewIconFail', colors.fail);
                 updateIconPreview('previewIconForce', colors.force);
                 updateIconPreview('previewIconDup', colors.dup);
+                updateIconPreview('previewIconDel', colors.del || '#6366f1');
+                updateIconPreview('previewIconDelCheck', colors.delcheck || '#14b8a6');
             }, 50);
         }
     });
 
     // Real-time Preview Listeners
-    ['Ok', 'Fail', 'Force', 'Dup'].forEach(status => {
+    ['Ok', 'Fail', 'Force', 'Dup', 'Del', 'DelCheck'].forEach(status => {
         const picker = document.getElementById(`color${status}`);
         if (picker) {
             picker.addEventListener('input', (e) => {
@@ -181,7 +187,9 @@ function initSettingsUI() {
                     ok: document.getElementById('colorOk').value,
                     fail: document.getElementById('colorFail').value,
                     force: document.getElementById('colorForce').value,
-                    dup: document.getElementById('colorDup').value
+                    dup: document.getElementById('colorDup').value,
+                    del: document.getElementById('colorDel').value,
+                    delcheck: document.getElementById('colorDelCheck').value
                 }
             };
 

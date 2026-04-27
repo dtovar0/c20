@@ -75,6 +75,8 @@ class PSX5KDetail(db.Model):
     fail = db.Column(db.Integer, default=0)
     force_ok = db.Column(db.Integer, default=0)
     dup = db.Column(db.Integer, default=0)
+    del_ = db.Column(db.Integer, name='del', default=0)
+    delcheck = db.Column(db.Integer, default=0)
 
     def to_dict(self):
         return {
@@ -82,7 +84,9 @@ class PSX5KDetail(db.Model):
             "ok": self.ok,
             "fail": self.fail,
             "force_ok": self.force_ok,
-            "dup": self.dup
+            "dup": self.dup,
+            "del": self.del_,
+            "delcheck": self.delcheck
         }
 
 class PSX5KHistory(db.Model):

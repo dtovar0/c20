@@ -152,7 +152,8 @@ def logout():
 def index():
     try:
         config = AuthConfig.query.first()
-        return render_template("auth.html", config=config)
+        sso_enabled = os.getenv('AUTHELIA_ENABLED', 'false').lower() == 'true'
+        return render_template("auth.html", config=config, sso_enabled=sso_enabled)
     except Exception as e:
         current_app.logger.error(f"Error en auth.index: {e}")
         return render_template("auth.html", config=None)

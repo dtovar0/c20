@@ -18,35 +18,76 @@ let psxDataTable;
 /**
  * GENERA UNA GRÁFICA DE SEGMENTOS REAL
  */
-function generateTaskGraphic(resumen) {
+function generateTaskGraphic(resumen, taskType, runForce) {
     if (!resumen || resumen.total === 0) {
         return `<div class="h-1.5 w-24 bg-panel-border/20 rounded-full"></div>`;
     }
 
     const c = window.nexusSettings.statusColors;
-    const processed = resumen.ok + resumen.fail + resumen.force_ok + resumen.dup;
-    const rawPct = (processed / resumen.total) * 100;
-    const totalPct = Math.min(rawPct, 100);
+    const colorDel = c.del || '#6366f1';      // Indigo (Fallack)
+    const colorDelCheck = c.delcheck || '#14b8a6'; // Teal (Fallback)
 
-    // Normalize segments proportionally within 100%
-    const scale = processed > 0 ? totalPct / rawPct : 0;
-    const okPct = ((resumen.ok / resumen.total) * 100) * scale;
-    const failPct = ((resumen.fail / resumen.total) * 100) * scale;
-    const forcePct = ((resumen.force_ok / resumen.total) * 100) * scale;
-    const dupPct = ((resumen.dup / resumen.total) * 100) * scale;
-    const pendingPct = Math.max(0, 100 - (okPct + failPct + forcePct + dupPct));
+    let processed = 0;
+    let segmentsHtml = '';
+    let totalPct = 0;
+
+    if (taskType === 'add') {
+        processed = resumen.ok + resumen.fail + (runForce ? resumen.force_ok : resumen.dup);
+        const rawPct = (processed / resumen.total) * 100;
+        totalPct = Math.min(rawPct, 100);
+        const scale = processed > 0 ? totalPct / rawPct : 0;
+
+        const okPct = ((resumen.ok / resumen.total) * 100) * scale;
+        const failPct = ((resumen.fail / resumen.total) * 100) * scale;
+        const secondPct = runForce 
+            ? ((resumen.force_ok / resumen.total) * 100) * scale
+            : ((resumen.dup / resumen.total) * 100) * scale;
+        
+        segmentsHtml = `
+            <div class="h-full transition-all duration-700 ease-out" style="width:${okPct}%;background:${c.ok}" title="OK: ${resumen.ok}"></div>
+            <div class="h-full transition-all duration-700 ease-out" style="width:${failPct}%;background:${c.fail}" title="FAIL: ${resumen.fail}"></div>
+            <div class="h-full transition-all duration-700 ease-out" style="width:${secondPct}%;background:${runForce ? (c.force || '#8b5cf6') : (c.dup || '#f59e0b')}" title="${runForce ? 'FORCED' : 'DUP'}: ${runForce ? resumen.force_ok : resumen.dup}"></div>
+        `;
+    } else if (taskType === 'delete') {
+        processed = (resumen.del || 0) + (resumen.delcheck || 0) + resumen.fail;
+        const rawPct = (processed / resumen.total) * 100;
+        totalPct = Math.min(rawPct, 100);
+        const scale = processed > 0 ? totalPct / rawPct : 0;
+
+        const delPct = (((resumen.del || 0) / resumen.total) * 100) * scale;
+        const delCheckPct = (((resumen.delcheck || 0) / resumen.total) * 100) * scale;
+        const failPct = ((resumen.fail / resumen.total) * 100) * scale;
+
+        segmentsHtml = `
+            <div class="h-full transition-all duration-700 ease-out" style="width:${delPct}%;background:${colorDel}" title="DEL: ${resumen.del || 0}"></div>
+            <div class="h-full transition-all duration-700 ease-out" style="width:${delCheckPct}%;background:${colorDelCheck}" title="DELCHECK: ${resumen.delcheck || 0}"></div>
+            <div class="h-full transition-all duration-700 ease-out" style="width:${failPct}%;background:${c.fail}" title="FAIL: ${resumen.fail}"></div>
+        `;
+    } else {
+        // Fallback general (Add style logic as default)
+        processed = resumen.ok + resumen.fail + resumen.force_ok + resumen.dup;
+        const rawPct = (processed / resumen.total) * 100;
+        totalPct = Math.min(rawPct, 100);
+        const scale = processed > 0 ? totalPct / rawPct : 0;
+
+        const okPct = ((resumen.ok / resumen.total) * 100) * scale;
+        const failPct = ((resumen.fail / resumen.total) * 100) * scale;
+        segmentsHtml = `
+            <div class="h-full transition-all duration-700 ease-out" style="width:${okPct}%;background:${c.ok}" title="OK: ${resumen.ok}"></div>
+            <div class="h-full transition-all duration-700 ease-out" style="width:${failPct}%;background:${c.fail}" title="FAIL: ${resumen.fail}"></div>
+        `;
+    }
+
+    const pendingPct = Math.max(0, 100 - totalPct);
 
     return `
         <div class="flex flex-col gap-1.5 w-full max-w-[130px] mx-auto">
             <div class="h-4 w-full rounded-lg overflow-hidden flex shadow-inner border border-white/5" style="background:rgba(148,163,184,0.15)">
-                <div class="h-full transition-all duration-700 ease-out" style="width:${okPct}%;background:${c.ok}" title="OK: ${resumen.ok}"></div>
-                <div class="h-full transition-all duration-700 ease-out" style="width:${failPct}%;background:${c.fail}" title="FAIL: ${resumen.fail}"></div>
-                <div class="h-full transition-all duration-700 ease-out" style="width:${forcePct}%;background:${c.force}" title="FORCED: ${resumen.force_ok}"></div>
-                <div class="h-full transition-all duration-700 ease-out" style="width:${dupPct}%;background:${c.dup}" title="DUP: ${resumen.dup}"></div>
+                ${segmentsHtml}
                 <div class="h-full bg-transparent" style="width:${pendingPct}%"></div>
             </div>
             <div class="flex justify-between items-center px-0.5">
-                <span class="text-[12px] font-black" style="color:${c.ok}">${Math.round(totalPct)}%</span>
+                <span class="text-[12px] font-black" style="color:${taskType === 'delete' ? colorDelCheck : c.ok}">${Math.round(totalPct)}%</span>
                 <span class="text-[12px] font-bold text-label/30">${processed}/${resumen.total}</span>
             </div>
         </div>
@@ -228,7 +269,7 @@ function initPSXDataTable() {
                                     <span class="text-[11px] font-black uppercase tracking-[0.15em]">Descartada</span>
                                 </div>`;
                     }
-                    return `<div class="flex items-center justify-center h-full min-w-0 overflow-hidden">${generateTaskGraphic(data)}</div>`;
+                    return `<div class="flex items-center justify-center h-full min-w-0 overflow-hidden">${generateTaskGraphic(data, row.tarea, row.run_force)}</div>`;
                 }
             },
             { 

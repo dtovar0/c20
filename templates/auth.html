@@ -37,6 +37,7 @@
                 <span>LDAP Auth</span>
             </button>
 
+            {% if not sso_enabled %}
             <!-- Roles Tab (Standby) -->
             <button onclick="switchTab('roles')" id="tab-trigger-roles"
                 class="tab-trigger w-60 relative py-3.5 flex items-center justify-center gap-3 rounded-xl text-[12px] font-black uppercase tracking-[0.25em] transition-all duration-300 z-10 text-tab-inactive-text bg-tab-inactive border border-panel-border active:scale-95">
@@ -47,6 +48,7 @@
                 </svg>
                 <span>Roles</span>
             </button>
+            {% endif %}
         </div>
     </div>
 
@@ -172,6 +174,7 @@
                     </div>
                 </div>
 
+                {% if not sso_enabled %}
                 <div class="flex items-center gap-3">
                     <button onclick="if(validateNexusForm('tab-panel-ldap')) saveAuthConfig('tab-panel-ldap')"
                         class="nexus-btn-save">
@@ -181,10 +184,33 @@
                         Guardar
                     </button>
                 </div>
+                {% endif %}
             </header>
 
             <!-- PANEL BODY -->
             <main class="flex-grow p-6 overflow-hidden">
+                {% if sso_enabled %}
+                <!-- Premium Authelia Message -->
+                <div class="flex flex-col items-center justify-center h-full text-center p-12">
+                    <div class="w-24 h-24 bg-primary/10 rounded-3xl flex items-center justify-center mb-8 border border-primary/10 shadow-2xl animate-float">
+                        <svg class="w-12 h-12 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-3xl font-black text-white uppercase tracking-tighter italic mb-4">Authelia SSO Activo</h2>
+                    <p class="text-label/60 text-lg font-bold max-w-lg mx-auto leading-relaxed">
+                        El sistema está utilizando <span class="text-primary italic">Authelia Portal</span> como proveedor de identidad principal. La configuración del directorio se gestiona externamente para garantizar la máxima seguridad y persistencia de sesión.
+                    </p>
+                    <div class="mt-10 flex gap-4">
+                        <div class="px-6 py-3 bg-primary/10 border border-primary/20 rounded-2xl">
+                            <span class="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Estado: Protegido</span>
+                        </div>
+                        <div class="px-6 py-3 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl">
+                            <span class="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-500 italic">Premium SSO Enabled</span>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full min-h-0">
                     <!-- Vertical Panel A (LDAP Configuration) -->
                     <div class="tab-panel-inner flex flex-col h-full overflow-y-auto custom-scrollbar">
@@ -342,12 +368,15 @@
                         </div>
                     </div>
                 </div>
+                {% endif %}
             </main>
         </div>
 
+        {% if not sso_enabled %}
         <!-- Tab Panel: Roles -->
         <div id="tab-panel-roles"
             class="tab-panel tab-panel-content hidden flex-grow flex flex-col animate-in fade-in duration-500 rounded-2xl overflow-hidden border border-panel-border shadow-2xl shadow-primary/5">
+
             <!-- PANEL HEADER -->
             <header class="bg-panel-header border-b border-panel-border px-6 py-3 flex items-center justify-between">
                 <div class="flex items-center gap-4">
@@ -418,6 +447,7 @@
             <input type="hidden" id="ldap_group_user" value="{{ config.ldap_group_user if config else '' }}">
 
         </div>
+        {% endif %}
 
     </div>
 </div>
