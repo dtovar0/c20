@@ -397,9 +397,15 @@ def create_task():
         }), 201
         
     except Exception as e:
+        import traceback
         db.session.rollback()
-        current_app.logger.error(f"Error form tarea PSX: {e}")
-        return jsonify({"status": "error", "message": "Ocurrió un error interno al procesar la tarea. Consulte logs para más detalles."}), 500
+        error_details = traceback.format_exc()
+        current_app.logger.error(f"Error form tarea PSX: {e}\n{error_details}")
+        return jsonify({
+            "status": "error", 
+            "message": f"Error interno: {str(e)}",
+            "debug": error_details if current_app.debug or True else None
+        }), 500
 
 def allowed_file(filename):
     return '.' in filename and \

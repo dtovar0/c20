@@ -42,9 +42,9 @@ def extract_records(accion_tipo, datos, upload_folder):
     
     elif accion_tipo == 'Archivo':
         file_path = os.path.join(upload_folder, datos)
-        if not os.path.exists(file_path):
+        if not (os.path.exists(file_path) and os.path.isfile(file_path)):
             alt_path = os.path.join('/home/dtovar/bayblade/c20/uploads/psx5k', datos)
-            if os.path.exists(alt_path):
+            if os.path.exists(alt_path) and os.path.isfile(alt_path):
                 file_path = alt_path
             else:
                 return []
