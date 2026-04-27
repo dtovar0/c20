@@ -130,10 +130,12 @@ function syncPreview() {
         const dateStr = now.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
         
         return text
+            .replace(/{nombre}/g, 'DOMINGO TOVAR')
             .replace(/{usuario}/g, 'ADMIN_NEXUS')
             .replace(/{evento}/g, currentTemplateSlug.toUpperCase() + '_TRIGGERED')
             .replace(/{hora}/g, `${dateStr} @ ${timeStr}`)
             .replace(/{ip}/g, '189.210.45.' + Math.floor(Math.random() * 255))
+            .replace(/{base_url}/g, 'https://nexus-portal.ai')
             .replace(/{url}/g, 'https://nexus-portal.ai/api/psx/detail/000420 [EJEMPLO]')
             .replace(/{correo}/g, 'security-ops@nexus-group.ai');
     };
