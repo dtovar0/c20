@@ -20,11 +20,11 @@ def run_load_test(count=100, chunks=5):
         # 1. Crear el Job Maestro
         job = PSX5KJob(
             usuario="LOAD_TESTER",
-            tarea="add",
+            tarea=random.choice(["add", "delete"]),
             accion_tipo="Manual",
             datos_tipo="Rango",
             routing_label="TEST_ROUTE",
-            force=False
+            run_force=False
         )
         db.session.add(job)
         db.session.flush() # Para obtener el ID

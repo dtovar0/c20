@@ -41,7 +41,7 @@ def migrate_db():
             except Exception as e:
                 print(f"❌ Error al validar password_hash: {e}")
 
-            # 5. Columnas de preferencias
+            # 5. Columnas de preferencias en USERS
             pref_columns = [
                 ("pref_notifications", "TINYINT(1) DEFAULT 1"),
                 ("pref_refresh_interval", "INT DEFAULT 60"),
@@ -57,16 +57,17 @@ def migrate_db():
                 except Exception as e:
                     pass
 
-            # 6. Reordenamiento visual estético final
-            try:
-                conn.execute(text("ALTER TABLE users MODIFY COLUMN pref_notifications TINYINT(1) DEFAULT 1 AFTER created_at;"))
-                conn.execute(text("ALTER TABLE users MODIFY COLUMN pref_refresh_interval INT DEFAULT 60 AFTER pref_notifications;"));
-                conn.execute(text("ALTER TABLE users MODIFY COLUMN pref_tour_enabled TINYINT(1) DEFAULT 1 AFTER pref_refresh_interval;"))
-                conn.execute(text("ALTER TABLE users MODIFY COLUMN pref_email_notifications TINYINT(1) DEFAULT 1 AFTER pref_tour_enabled;"))
-                conn.execute(text("ALTER TABLE users MODIFY COLUMN pref_status_colors TEXT DEFAULT NULL AFTER pref_email_notifications;"))
-                print("✅ Reordenamiento estético de columnas completado.")
-            except Exception as e:
-                print(f"ℹ️ Error al reordenar columnas: {e}")
+            # 6. Columnas de PSX5K_DETAILS (del / delcheck)
+            psx_columns = [
+                ("del", "INTEGER DEFAULT 0"),
+                ("delcheck", "INTEGER DEFAULT 0")
+            ]
+            for col_name, col_type in psx_columns:
+                try:
+                    conn.execute(text(f"ALTER TABLE psx5k_details ADD COLUMN {col_name} {col_type};"))
+                    print(f"✅ Columna psx5k_details.{col_name} agregada.")
+                except Exception as e:
+                    pass
 
             conn.commit()
 
