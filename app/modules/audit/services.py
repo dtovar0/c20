@@ -8,7 +8,7 @@ def add_audit_log(action, status='info', detail=None, user_override=None):
     Registra un evento en la tabla de auditoría.
     """
     try:
-        user_name = user_override or (current_user.username if current_user.is_authenticated else 'SYSTEM')
+        user_name = user_override or (current_user.email if current_user.is_authenticated else 'SYSTEM')
         
         # Intentar obtener IP, si falla es porque es un proceso interno (Backend)
         ip = 'INTERNAL'

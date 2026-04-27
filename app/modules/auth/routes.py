@@ -34,7 +34,7 @@ def login():
                 header_groups = os.getenv('AUTHELIA_HEADER_GROUPS', 'Remote-Groups')
                 
                 print("DEBUG: Buscando usuario en DB...")
-                user = User.query.filter_by(username=authelia_user).first()
+                user = User.query.filter_by(email=authelia_user).first()
                 authelia_name = request.headers.get(header_name, authelia_user)
                 authelia_groups = request.headers.get(header_groups, '')
                 
@@ -46,7 +46,7 @@ def login():
                 if not user:
                     print("DEBUG: Usuario nuevo. Creando registro...")
                     user = User(
-                        username=authelia_user,
+                        email=authelia_user,
                         nombre=authelia_name,
                         role=inferred_role,
                         auth_source='sso'
@@ -59,7 +59,7 @@ def login():
                     user.role = inferred_role
                     db.session.commit()
                 
-                print(f"DEBUG: Procediendo a login_user para {user.username}")
+                print(f"DEBUG: Procediendo a login_user para {user.email}")
                 login_user(user)
                 print("DEBUG: Registro en auditoría...")
                 add_audit_log("login sso", status="success", detail=f"Usuario {authelia_user} ha iniciado sesión vía SSO")
@@ -68,25 +68,25 @@ def login():
 
         # 3. LOGIN TRADICIONAL (Solo si es POST)
         if request.method == "POST":
-            username = request.form.get("username")
+            email = request.form.get("email")
             password = request.form.get("password")
             auth_type = request.form.get("auth_type", "directory")
             
             if auth_type == "directory":
                 from app.modules.auth.services import authenticate_user_ldap
-                ldap_result = authenticate_user_ldap(username, password)
+                ldap_result = authenticate_user_ldap(email, password)
                 if ldap_result.get("status") == "success":
                     user = ldap_result["user"]
                     login_user(user)
-                    add_audit_log("login usuario", status="success", detail=f"Usuario {username} vía DIRECTORIO")
+                    add_audit_log("login usuario", status="success", detail=f"Usuario {email} vía DIRECTORIO")
                     return redirect(url_for('core.index'))
                 else:
                     flash(f"Error: {ldap_result.get('message')}", "error")
             else:
-                user = User.query.filter_by(username=username).first()
+                user = User.query.filter_by(email=email).first()
                 if user and user.check_password(password):
                     login_user(user)
-                    add_audit_log("login usuario", status="success", detail=f"Usuario {username} ha iniciado sesión LOCALMENTE")
+                    add_audit_log("login usuario", status="success", detail=f"Usuario {email} ha iniciado sesión LOCALMENTE")
                     return redirect(url_for('core.index'))
                 flash("Credenciales incorrectas", "error")
 
@@ -122,9 +122,9 @@ def purge_users():
 @auth_bp.route("/logout")
 @login_required
 def logout():
-    user_name = current_user.username
+    user_email = current_user.email
     logout_user()
-    add_audit_log("logout", status="success", detail=f"User {user_name} has logged out")
+    add_audit_log("logout", status="success", detail=f"Usuario {user_email} ha cerrado sesión")
     
     # --- LOGOUT COORDINADO CON AUTHELIA (SSO) ---
     if os.getenv('AUTHELIA_ENABLED', 'false').lower() == 'true':
@@ -186,7 +186,7 @@ def list_users():
     query = User.query
     if search:
         query = query.filter(
-            (User.username.ilike(f'%{search}%')) | 
+            (User.email.ilike(f'%{search}%')) | 
             (User.nombre.ilike(f'%{search}%')) | 
             (User.role.ilike(f'%{search}%')) |
             (User.auth_source.ilike(f'%{search}%'))
@@ -200,7 +200,8 @@ def list_users():
         
         user_list.append({
             "id": u.id,
-            "username": u.username,
+            "email": u.email,
+            "username": u.email, # Keep temporarily for JS compatibility during transition if needed, or just remove
             "nombre": u.nombre,
             "role": u.role,
             "source": u.auth_source or 'local',
@@ -218,11 +219,15 @@ def create_user():
             return jsonify({"status": "error", "message": "Faltan datos"}), 400
             
         # Validar si ya existe
-        if User.query.filter_by(username=data['username']).first():
-            return jsonify({"status": "error", "message": "El nombre de usuario ya existe"}), 400
+        target_email = data.get('email')
+        if not target_email:
+            return jsonify({"status": "error", "message": "Email es requerido"}), 400
+
+        if User.query.filter_by(email=target_email).first():
+            return jsonify({"status": "error", "message": "Este email ya está registrado"}), 400
             
         new_user = User(
-            username=data['username'],
+            email=target_email,
             nombre=data.get('nombre', ''),
             role=data['role'],
             is_active=True
@@ -232,7 +237,7 @@ def create_user():
         db.session.add(new_user)
         db.session.commit()
         
-        add_audit_log("usuario creado", status="success", detail=f"Se creó el usuario: {data['username']}")
+        add_audit_log("usuario creado", status="success", detail=f"Se creó el usuario: {target_email}")
         
         return jsonify({"status": "success", "message": "Usuario creado"})
     except Exception as e:
@@ -268,7 +273,8 @@ def update_user():
         if not user:
             return jsonify({"status": "error", "message": "Usuario no encontrado"}), 404
             
-        if "username" in data: user.username = data["username"]
+        target_email = data.get('email')
+        if target_email: user.email = target_email
         if "nombre" in data: user.nombre = data["nombre"]
         if "role" in data: user.role = data["role"]
         

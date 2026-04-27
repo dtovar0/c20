@@ -14,19 +14,19 @@ def reset_admin():
         print("🔐 NEXUS - RESTABLECIMIENTO DE USUARIO ADMINISTRADOR")
         print("="*60)
 
-        username = input("Introduce el username (por defecto 'admin'): ") or 'admin'
-        admin = User.query.filter_by(username=username).first()
+        email = input("Introduce el email (por defecto 'admin'): ") or 'admin'
+        admin = User.query.filter_by(email=email).first()
 
         if not admin:
-            print(f"❌ El usuario '{username}' no existe.")
-            create = input(f"¿Deseas crear al usuario '{username}' como administrador? (si/no): ")
+            print(f"❌ El usuario '{email}' no existe.")
+            create = input(f"¿Deseas crear al usuario '{email}' como administrador? (si/no): ")
             if create.lower() == 'si':
-                admin = User(username=username, nombre=username, role='administrador')
+                admin = User(email=email, nombre=email, role='administrador')
                 password = input("Introduce la nueva contraseña: ")
                 admin.set_password(password)
                 db.session.add(admin)
                 db.session.commit()
-                print(f"✅ Usuario '{username}' creado exitosamente.")
+                print(f"✅ Usuario '{email}' creado exitosamente.")
             else:
                 return
         else:
@@ -34,7 +34,7 @@ def reset_admin():
             admin.set_password(password)
             admin.auth_source = 'local' # Forzar origen local para recuperar acceso manual
             db.session.commit()
-            print(f"✅ Contraseña y origen de autenticación para '{username}' actualizados exitosamente.")
+            print(f"✅ Contraseña y origen de autenticación para '{email}' actualizados exitosamente.")
 
         print("="*60 + "\n")
 

@@ -19,7 +19,7 @@ def list_audit():
     try:
         # If not admin, filter by current username
         if current_user.role != 'administrador':
-            query = AuditLog.query.filter_by(user=current_user.username)
+            query = AuditLog.query.filter_by(user=current_user.email)
         else:
             query = AuditLog.query
 

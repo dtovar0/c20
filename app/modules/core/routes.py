@@ -11,7 +11,7 @@ core_bp = Blueprint("core", __name__, url_prefix="/")
 def index():
     try:
         # Obtener los últimos 12 logs de auditoría del usuario actual (2 páginas de 6)
-        recent_activity = AuditLog.query.filter_by(user=current_user.username)\
+        recent_activity = AuditLog.query.filter_by(user=current_user.email)\
                                         .order_by(AuditLog.timestamp.desc())\
                                         .limit(12).all()
         return render_template("index.html", activity=recent_activity)

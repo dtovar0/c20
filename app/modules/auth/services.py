@@ -17,7 +17,7 @@ if os.getenv('DEBUG_LDAP') == 'true':
         ldap3_logger.addHandler(fh)
         ldap3_logger.addHandler(logging.StreamHandler())
 
-def authenticate_user_ldap(username, password):
+def authenticate_user_ldap(email, password):
     """
     Autentica un usuario contra LDAP y sincroniza su perfil local.
     """
@@ -49,7 +49,7 @@ def authenticate_user_ldap(username, password):
         # 2. Construir el User DN para el Bind
         # Algunos servidores requieren el DN completo, otros solo el CN/UID
         # 2. Construir filtro según el Atributo de Usuario configurado
-        user_filter = f"({config.ldap_user_attr}={username})"
+        user_filter = f"({config.ldap_user_attr}={email})"
         
         # 3. Conexión de búsqueda
         with Connection(server, user=config.ldap_user, password=config.ldap_pass, auto_bind=True, auto_referrals=False) as conn:
@@ -58,13 +58,13 @@ def authenticate_user_ldap(username, password):
             if not conn.entries:
                 # ... (resto del código igual)
                 # PROTOCOLO DE PURGA: Si el LDAP está arriba pero el usuario no existe, lo borramos localmente
-                local_user = User.query.filter_by(username=username).first()
+                local_user = User.query.filter_by(email=email).first()
                 if local_user:
                     from app.modules.audit.services import add_audit_log
                     db.session.delete(local_user)
                     db.session.commit()
-                    add_audit_log("usuario borrado", status="warning", detail=f"Sincronía LDAP: Usuario {username} purgado por no existir en origen")
-                    print(f"🗑️ Usuario {username} purgado localmente (Eliminado de LDAP).")
+                    add_audit_log("usuario borrado", status="warning", detail=f"Sincronía LDAP: Usuario {email} purgado por no existir en origen")
+                    print(f"🗑️ Usuario {email} purgado localmente (Eliminado de LDAP).")
                 
                 return {"status": "error", "message": "Usuario no encontrado en el directorio corporativo"}
             
@@ -80,18 +80,17 @@ def authenticate_user_ldap(username, password):
                 
             # Login Exitoso en LDAP -> Sincronizar Localmente
             try:
-                # Extraer valores limpios (.value)
-                # Ojo: Mapeo Invertido solicitado (nombre -> cn, username -> mail)
-                nombre = str(user_entry.cn.value) if 'cn' in user_entry and user_entry.cn else username
-                ldap_username = str(user_entry.mail.value) if 'mail' in user_entry and user_entry.mail else username
+                # Mapeo: nombre -> displayName/cn, email -> mail
+                nombre = str(user_entry.displayName.value) if 'displayName' in user_entry and user_entry.displayName else (str(user_entry.cn.value) if 'cn' in user_entry and user_entry.cn else email)
+                ldap_email = str(user_entry.mail.value) if 'mail' in user_entry and user_entry.mail else email
                 
-                local_user = User.query.filter_by(username=ldap_username).first()
+                local_user = User.query.filter_by(email=ldap_email).first()
                 if not local_user:
-                    local_user = User.query.filter_by(username=username).first()
+                    local_user = User.query.filter_by(email=email).first()
                 
                 if not local_user:
                     local_user = User(
-                        username=ldap_username,
+                        email=ldap_email,
                         nombre=nombre,
                         role='usuario',
                         auth_source='ldap',
@@ -101,9 +100,9 @@ def authenticate_user_ldap(username, password):
                     local_user.password_hash = None
                     db.session.add(local_user)
                     from app.modules.audit.services import add_audit_log
-                    add_audit_log("usuario creado", status="success", detail=f"Sincronía LDAP: Shadow user '{ldap_username}' generado (Origen: mail)")
+                    add_audit_log("usuario creado", status="success", detail=f"Sincronía LDAP: Shadow user '{ldap_email}' generado (Origen: mail)")
                 else:
-                    local_user.username = ldap_username
+                    local_user.email = ldap_email
                     local_user.nombre = nombre
                     local_user.auth_source = 'ldap'
                 
@@ -176,12 +175,12 @@ def purge_inactive_users(days=30):
         ).all()
         
         count = len(inactive_users)
-        purged_names = [user.username for user in inactive_users]
+        purged_names = [user.email for user in inactive_users]
         
         for user in inactive_users:
-            username = user.username
+            email = user.email
             db.session.delete(user)
-            add_audit_log("usuario purgado", status="warning", detail=f"Inactividad > {days} días: Usuario {username} eliminado automáticamente")
+            add_audit_log("usuario purgado", status="warning", detail=f"Inactividad > {days} días: Usuario {email} eliminado automáticamente")
             
         db.session.commit()
         return {"status": "success", "purged_count": count, "purged_names": purged_names}

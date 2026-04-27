@@ -29,14 +29,14 @@ def export_config():
         data = {
             "version": "1.0",
             "timestamp": datetime.now().isoformat(),
-            "export_by": current_user.username,
+            "export_by": current_user.email,
             "payload": {
                 "system_config": SystemConfig.query.first().to_dict() if SystemConfig.query.first() else {},
                 "auth_config": AuthConfig.query.first().to_dict() if AuthConfig.query.first() else {},
                 "smtp_config": SMTPConfig.query.first().to_dict() if SMTPConfig.query.first() else {},
                 "users": [
                     {
-                        "username": u.username,
+                        "email": u.email,
                         "nombre": u.nombre,
                         "password_hash": u.password_hash,
                         "role": u.role,
@@ -57,7 +57,7 @@ def export_config():
         
         # Audit Log
         audit = AuditLog(
-            user=current_user.username,
+            user=current_user.email,
             action="EXPORT_CONFIG_ZIP",
             ip_address=request.remote_addr,
             status="success",
@@ -143,10 +143,10 @@ def import_config():
         # 5. Restore Local Users (Only if not exist to prevent collision with current admin)
         users_data = payload.get("users", [])
         for u_data in users_data:
-            exists = User.query.filter_by(username=u_data['username']).first()
+            exists = User.query.filter_by(email=u_data.get('email', u_data.get('username'))).first()
             if not exists:
                 user = User(
-                    username=u_data['username'],
+                    email=u_data.get('email', u_data.get('username')),
                     nombre=u_data.get('nombre'),
                     password_hash=u_data.get('password_hash'),
                     role=u_data.get('role', 'usuario'),
@@ -157,7 +157,7 @@ def import_config():
 
         # Audit Log
         audit = AuditLog(
-            user=current_user.username,
+            user=current_user.email,
             action="IMPORT_CONFIG",
             ip_address=request.remote_addr,
             status="success",
@@ -230,7 +230,7 @@ def save():
         
         # Add Audit Log Entry
         audit = AuditLog(
-            user=current_user.username,
+            user=current_user.email,
             action="SET_IDENTITY",
             ip_address=request.remote_addr,
             status="success",

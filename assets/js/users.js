@@ -84,7 +84,7 @@ function initUsersDataTable() {
                 }
             },
             { 
-                data: 'username', 
+                data: 'email', 
                 width: '180px',
                 render: (data) => `<div class="flex items-center h-full font-mono text-[11px] font-black text-primary/80 uppercase tracking-widest truncate">${data}</div>`
             },
@@ -295,7 +295,7 @@ function modifyUser() {
         const form = document.getElementById('form-modify-user');
         if (form) {
             form.elements['user_id'].value = user.id;
-            form.elements['username'].value = user.username;
+            form.elements['email'].value = user.username;
             form.elements['nombre'].value = user.nombre;
             
             const isAdmin = user.role.toLowerCase() === 'admin';

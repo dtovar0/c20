@@ -100,7 +100,7 @@ def create_app():
             # Crear usuario inicial si no existe ninguno
             from app.modules.auth.models import User
             if not User.query.first():
-                admin = User(username='admin', nombre='admin', role='administrador')
+                admin = User(email='admin', nombre='admin', role='administrador')
                 admin.set_password('admin123')
                 db.session.add(admin)
                 db.session.commit()

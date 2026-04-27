@@ -27,7 +27,7 @@ def list_tasks():
         # 1. Filtro de Seguridad: No-admins solo ven sus propias tareas
         is_admin = current_user.role == 'administrador'
         if not is_admin:
-            query = query.filter(PSX5KJob.usuario == current_user.username)
+            query = query.filter(PSX5KJob.usuario == current_user.email)
             
         tasks = query.order_by(PSX5KJob.created_at.desc(), PSX5KTask.id.desc()).all()
         
@@ -66,21 +66,21 @@ def get_stats():
     Retorna estadísticas de tareas filtradas por el usuario actual
     """
     try:
-        username = current_user.username
+        email = current_user.email
         from .models import PSX5KJob
         
         # 1. Total de tareas del usuario (Fragmentos)
-        total_tareas = PSX5KTask.query.join(PSX5KJob).filter(PSX5KJob.usuario == username).count()
+        total_tareas = PSX5KTask.query.join(PSX5KJob).filter(PSX5KJob.usuario == email).count()
         
         # 2. Tareas Pendientes (Programada o Pendiente)
         pendientes = PSX5KTask.query.join(PSX5KJob).filter(
-            PSX5KJob.usuario == username,
+            PSX5KJob.usuario == email,
             PSX5KTask.estado.in_(['Programada', 'Pendiente'])
         ).count()
         
         # 3. Tareas Programadas (Estado Pendiente según solicitud del usuario)
         programadas = PSX5KTask.query.join(PSX5KJob).filter(
-            PSX5KJob.usuario == username,
+            PSX5KJob.usuario == email,
             PSX5KTask.estado == 'Pendiente'
         ).count()
         
@@ -96,7 +96,7 @@ def get_stats():
         volumen_hoy = db.session.query(func.sum(PSX5KDetail.total)).join(
             PSX5KTask, PSX5KTask.id == PSX5KDetail.id
         ).join(PSX5KJob).filter(
-            PSX5KJob.usuario == username,
+            PSX5KJob.usuario == email,
             PSX5KTask.fecha_inicio >= today
         ).scalar() or 0
         
@@ -108,7 +108,7 @@ def get_stats():
             func.sum(PSX5KDetail.dup),
             func.sum(PSX5KDetail.total)
         ).join(PSX5KTask, PSX5KTask.id == PSX5KDetail.id).join(PSX5KJob).filter(
-            PSX5KJob.usuario == username,
+            PSX5KJob.usuario == email,
             PSX5KTask.estado == 'Terminada',
             PSX5KTask.fecha_inicio >= today
         ).first()
@@ -124,7 +124,7 @@ def get_stats():
 
         # 6. Total de tareas TERMINADAS
         total_procesadas = PSX5KTask.query.join(PSX5KJob).filter(
-            PSX5KJob.usuario == username,
+            PSX5KJob.usuario == email,
             PSX5KTask.estado == 'Terminada'
         ).count()
 
@@ -153,7 +153,7 @@ def get_stats():
                         "dup": t.resumen.dup if t.resumen else 0,
                         "total": t.resumen.total if t.resumen else 0
                     } for t in sorted(PSX5KTask.query.join(PSX5KJob).filter(
-                        PSX5KJob.usuario == username,
+                        PSX5KJob.usuario == email,
                         PSX5KTask.estado == 'Terminada'
                     ).order_by(PSX5KTask.fecha_fin.desc()).limit(7).all(), key=lambda x: x.fecha_fin)
                 ]
@@ -340,7 +340,7 @@ def create_task():
         # --- NUEVA LÓGICA: CREAR JOB MAESTRO ---
         from .models import PSX5KJob
         new_job = PSX5KJob(
-            usuario=current_user.username,
+            usuario=current_user.email,
             tarea=raw_tarea,
             accion_tipo=raw_accion,
             datos_tipo=raw_origen,
@@ -406,10 +406,10 @@ def upload_file():
         if file and allowed_file(file.filename):
             # 1. Generar Etiqueta Operativa: usuario_fecha_hora_original
             timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-            username = current_user.username if current_user.is_authenticated else "anon"
+            email = current_user.email if current_user.is_authenticated else "anon"
             clean_filename = secure_filename(file.filename)
             
-            nexus_filename = f"{username}_{timestamp}_{clean_filename}"
+            nexus_filename = f"{email}_{timestamp}_{clean_filename}"
             
             # 2. Asegurar que el directorio existe
             if not os.path.exists(UPLOAD_FOLDER):
@@ -615,7 +615,7 @@ def update_or_reprocess_job(job_id):
         if finished and action == 'modify':
             origin_task_id = data.get('origin_task_id')
             new_job = PSX5KJob(
-                usuario=current_user.username,
+                usuario=current_user.email,
                 tarea=data.get('tarea', job.tarea),
                 accion_tipo=data.get('accion_tipo', job.accion_tipo),
                 datos_tipo=job.datos_tipo,

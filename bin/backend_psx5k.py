@@ -16,23 +16,22 @@ load_dotenv(dotenv_path=os.path.join(PROJECT_ROOT, '.env'))
 # Configuración de notificaciones
 ADMIN_EMAIL = os.getenv('NOTIFICATION_ADMIN_EMAIL', 'admin@example.com')
 
-def get_notification_target(username):
+def get_notification_target(email):
     """Resuelve el destinatario de la notificación consultando preferencias en DB."""
-    if not username: return ADMIN_EMAIL
+    if not email: return ADMIN_EMAIL
     
     # Intentar buscar al usuario en la base de datos para ver sus preferencias
-    user = User.query.filter_by(username=username).first()
+    user = User.query.filter_by(email=email).first()
     if user:
         if not user.pref_email_notifications:
-            print(f"🔇 Notificaciones por correo desactivadas para el usuario: {username}")
+            print(f"🔇 Notificaciones por correo desactivadas para el usuario: {email}")
             return None
         
-        # Si el username es un correo, lo usamos, si no, intentamos resolver
-        if '@' in user.username: return user.username
+        # Si el email es un correo, lo usamos, si no, intentamos resolver
+        if '@' in user.email: return user.email
         
-    # Fallback: Si no existe el usuario o no tiene correo en username, usamos el ADMIN_EMAIL
-    # pero solo si el contexto lo permite (aquí retornamos ADMIN si username no es correo)
-    if '@' in username: return username
+    # Fallback: Si no existe el usuario o no tiene correo en email, usamos el ADMIN_EMAIL
+    if '@' in email: return email
     return ADMIN_EMAIL
 
 from app import create_app, db
@@ -95,10 +94,10 @@ def handle_stale_tasks(app):
                 
                 # Notificación Crítica
                 admin = User.query.filter_by(role='administrador').first()
-                if admin and admin.username:
+                if admin and admin.email:
                     send_notification_by_slug(
                         slug='error', 
-                        target_email=admin.username,
+                        target_email=admin.email,
                         context={
                             'usuario': 'SYSTEM_WATCHDOG', 
                             'ip': 'LOCAL_WORKER', 
@@ -124,10 +123,10 @@ def handle_stale_tasks(app):
                 
                 # Notificamos al administrador
                 admin = User.query.filter_by(role='administrador').first()
-                if admin and admin.username:
+                if admin and admin.email:
                     send_notification_by_slug(
                         slug='error', 
-                        target_email=admin.username,
+                        target_email=admin.email,
                         context={'usuario': 'SYSTEM_WATCHDOG', 'ip': 'LOCAL_WORKER', 'error': f'DEMORA_DETECTADA_ID_{task.id} (>{notify_timeout}min)'}
                     )
                 
@@ -162,10 +161,10 @@ def handle_user_hygiene(app):
                 
                 # 2. Notificación Email
                 admin = User.query.filter_by(role='administrador').first()
-                if admin and admin.username:
+                if admin and admin.email:
                     send_notification_by_slug(
                         slug='info', 
-                        target_email=admin.username,
+                        target_email=admin.email,
                         context={
                             'usuario': 'SYSTEM_WORKER', 
                             'ip': 'DAEMON_PROCESS', 
@@ -307,10 +306,10 @@ def main():
 
                         # 3. Notificación por Correo
                         admin = User.query.filter_by(role='administrador').first()
-                        if admin and admin.username:
+                        if admin and admin.email:
                             send_notification_by_slug(
                                 slug='error', 
-                                target_email=admin.username,
+                                target_email=admin.email,
                                 context={'usuario': 'SYSTEM_WORKER', 'ip': os.getenv('PSX_IP', 'PSX_NODE'), 'error': f'CONECTIVIDAD FALLIDA: {msg}'}
                             )
                         
