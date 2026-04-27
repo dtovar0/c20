@@ -84,6 +84,10 @@ def handle_stale_tasks(app):
         executing_tasks = PSX5KTask.query.filter(PSX5KTask.estado == 'Ejecutando').all()
         
         for task in executing_tasks:
+            # Validar que tenga fecha de inicio para evitar errores de comparación
+            if not task.fecha_inicio:
+                continue
+
             # Caso A: MATAR TAREA (Kill Timeout excedido)
             if task.fecha_inicio < limit_kill:
                 print(f"💀 HARD KILL: Tarea ID {task.id} excedió el límite crítico de {kill_timeout} min. Abortando.")

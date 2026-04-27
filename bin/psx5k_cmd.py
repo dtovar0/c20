@@ -125,17 +125,19 @@ def psx5k_cmd(line_task, line_number, line_type=None, routing_label=None, force=
             stats["total"] += 1
             try:
                 if line_task == 'add':
-                    # Verificar existencia previa (Omitir si force está activo Y PSX_SURE_CHECK es false)
+                    # Control de validación previa de existencia
                     SURE_CHECK = os.getenv('PSX_SURE_CHECK', 'true').lower() == 'true'
+                    EXISTENCE_CHECK = os.getenv('PSX_EXISTENCE_CHECK', 'true').lower() == 'true'
                     
-                    if SURE_CHECK or not force:
+                    found = False
+                    if EXISTENCE_CHECK or (SURE_CHECK or not force):
                         cmd.sendline(f'show subscriber Subscriber_Id {number} Country_Id 52')
                         cmd.expect(EXPECT)
                         result = cmd.before
                         found = 'ERR_REC_NOT_FOUND' not in result
                     else:
-                        # En modo force y sin SURE_CHECK, procedemos directo
-                        found = True 
+                        # Si se deshabilita el check de existencia, asumimos que no está o que no importa
+                        found = False
 
                     if not found or force:
                         # Modo Inserción o Sobreescritura Forzada
@@ -176,12 +178,14 @@ def psx5k_cmd(line_task, line_number, line_type=None, routing_label=None, force=
                         stats["logs"].append(f"[DUP] {number} - Registro ya existente")
 
                 elif line_task == 'delete':
+                    # Para borrar no validamos previo, solo enviamos y si no hay excepción, es OK
                     cmd.sendline(f'delete subscriber Subscriber_Id {number} Country_Id 52')
                     cmd.expect(EXPECT)
                     cmd.sendline(f'delete destination National_Id {number} Country_Id 52')
                     cmd.expect(EXPECT)
+                    
                     stats["ok"] += 1
-                    stats["logs"].append(f"[DEL] {number} - Eliminado")
+                    stats["logs"].append(f"[DEL] {number} - Procesado")
 
             except Exception as e:
                 stats["fail"] += 1

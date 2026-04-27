@@ -143,10 +143,10 @@ def import_config():
         # 5. Restore Local Users (Only if not exist to prevent collision with current admin)
         users_data = payload.get("users", [])
         for u_data in users_data:
-            exists = User.query.filter_by(email=u_data.get('email', u_data.get('username'))).first()
+            exists = User.query.filter_by(email=u_data.get('email')).first()
             if not exists:
                 user = User(
-                    email=u_data.get('email', u_data.get('username')),
+                    email=u_data.get('email'),
                     nombre=u_data.get('nombre'),
                     password_hash=u_data.get('password_hash'),
                     role=u_data.get('role', 'usuario'),
