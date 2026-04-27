@@ -176,6 +176,9 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
+                    <button id="helpNotificationTourBtn" class="p-2.5 hover:bg-primary/20 text-primary rounded-xl transition-all border border-primary/20 hover:border-primary/50" title="Ver Guía de Plantillas">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </button>
                     <button onclick="saveTemplate()" class="nexus-btn-save">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
                         Guardar
@@ -186,7 +189,7 @@
             <main class="flex-grow p-6 overflow-hidden">
                 <div class="grid grid-cols-1 lg:grid-cols-[1fr_2fr_2fr] gap-6 h-full max-h-full">
                     <!-- Column 1: Template Presets (20%) -->
-                    <div class="flex flex-col h-full min-h-0 overflow-hidden gap-4">
+                    <div id="tour-template-library" class="flex flex-col h-full min-h-0 overflow-hidden gap-4">
                         <div class="flex flex-col flex-grow bg-[rgb(var(--color-ntf-panel-bg))] border-2 border-dashed border-panel-border rounded-[1.5rem] relative overflow-hidden shadow-inner">
                             <div class="flex-grow overflow-y-auto custom-scrollbar p-5">
                                 <p class="text-[12px] font-black text-primary uppercase tracking-[0.25em] mb-4 italic">Librería de Plantillas</p>
@@ -269,7 +272,7 @@
                     </div>
 
                     <!-- Column 2: Nexus Code Editor (40%) -->
-                    <div class="flex flex-col h-full min-h-0 overflow-hidden gap-4">
+                    <div id="tour-template-editor" class="flex flex-col h-full min-h-0 overflow-hidden gap-4">
                         <div class="flex flex-col flex-grow bg-[rgb(var(--color-ntf-panel-bg))] border-2 border-dashed border-panel-border rounded-[1.5rem] group focus-within:border-primary/40 transition-all p-0 overflow-hidden min-h-0 shadow-inner">
                             <!-- Header -->
                             <div class="flex items-center justify-between h-16 px-6 border-b border-panel-border/50 bg-black/5 flex-shrink-0">
@@ -363,7 +366,7 @@ Estado: CRÍTICO</textarea>
                     </div>
 
                     <!-- Column 3: High-Fidelity Visualizer (40%) -->
-                    <div class="flex flex-col h-full min-h-0 overflow-hidden gap-4">
+                    <div id="tour-template-preview" class="flex flex-col h-full min-h-0 overflow-hidden gap-4">
                         <div class="flex flex-col flex-grow bg-[rgb(var(--color-ntf-panel-bg))] border-2 border-dashed border-panel-border rounded-[1.5rem] group transition-all p-0 overflow-hidden min-h-0 shadow-inner">
                             <!-- TECHNICAL HEADER -->
                             <div class="flex items-center justify-between h-16 px-6 border-b border-panel-border/50 bg-black/5 flex-shrink-0">
@@ -468,4 +471,5 @@ Estado: CRÍTICO</div>
     </div>
 </div>
 <script src="{{ url_for('core.serve_assets', filename='js/notifications.js') }}"></script>
+<script src="{{ url_for('core.serve_assets', filename='js/notifications-tour.js') }}?v={{ range(1000, 9999) | random }}"></script>
 {% endblock %}
