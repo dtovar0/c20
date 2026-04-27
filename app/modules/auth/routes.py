@@ -29,9 +29,11 @@ def login():
             authelia_user = request.headers.get(header_user)
             
             if authelia_user:
+                print(f"DEBUG: Usuario detectado -> {authelia_user}")
                 header_name = os.getenv('AUTHELIA_HEADER_NAME', 'Remote-Name')
                 header_groups = os.getenv('AUTHELIA_HEADER_GROUPS', 'Remote-Groups')
                 
+                print("DEBUG: Buscando usuario en DB...")
                 user = User.query.filter_by(username=authelia_user).first()
                 authelia_name = request.headers.get(header_name, authelia_user)
                 authelia_groups = request.headers.get(header_groups, '')
@@ -42,6 +44,7 @@ def login():
                     inferred_role = 'administrador'
 
                 if not user:
+                    print("DEBUG: Usuario nuevo. Creando registro...")
                     user = User(
                         username=authelia_user,
                         nombre=authelia_name,
@@ -51,12 +54,16 @@ def login():
                     db.session.add(user)
                     db.session.commit()
                 else:
+                    print("DEBUG: Usuario existente. Actualizando metadatos...")
                     user.nombre = authelia_name
                     user.role = inferred_role
                     db.session.commit()
                 
+                print(f"DEBUG: Procediendo a login_user para {user.username}")
                 login_user(user)
+                print("DEBUG: Registro en auditoría...")
                 add_audit_log("login sso", status="success", detail=f"Usuario {authelia_user} ha iniciado sesión vía SSO")
+                print("DEBUG: Redirigiendo a index...")
                 return redirect(url_for('core.index'))
 
         # 3. LOGIN TRADICIONAL (Solo si es POST)
