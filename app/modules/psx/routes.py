@@ -354,13 +354,22 @@ def create_task():
         created_ids = []
         raw_estado = data.get('estado', 'Pendiente')
         from datetime import datetime
+        import pytz
+        
         raw_fecha_inicio = None
         if data.get('fecha_inicio'):
-            # Convert ISO string from JS to Python datetime
             try:
-                raw_fecha_inicio = datetime.fromisoformat(data['fecha_inicio'].replace('Z', '+00:00'))
+                # 1. Parse UTC ISO string from JS
+                utc_dt = datetime.fromisoformat(data['fecha_inicio'].replace('Z', '+00:00'))
+                
+                # 2. Convert to App Local TZ (America/Mexico_City)
+                app_tz = pytz.timezone(os.getenv('TZ_APP', 'America/Mexico_City'))
+                local_dt = utc_dt.astimezone(app_tz)
+                
+                # 3. Make it naive local for DB comparison consistency
+                raw_fecha_inicio = local_dt.replace(tzinfo=None)
             except Exception as e:
-                current_app.logger.error(f"Error parsing date {data['fecha_inicio']}: {e}")
+                current_app.logger.error(f"Error parsing/converting date {data['fecha_inicio']}: {e}")
 
         for i, chunk in enumerate(chunks):
             task_data_value = ",".join(chunk)
@@ -582,6 +591,19 @@ def update_or_reprocess_job(job_id):
     job = PSX5KJob.query.get_or_404(job_id)
     data = request.json
     action = data.get('action') # 'modify' or 'cancel'
+
+    # Parsing common de fecha para programación
+    parsed_scheduled_time = None
+    if data.get('is_scheduled') and data.get('scheduled_time'):
+        from datetime import datetime
+        import pytz
+        try:
+            # Parse UTC ISO and convert to Local
+            utc_dt = datetime.fromisoformat(data['scheduled_time'].replace('Z', '+00:00'))
+            app_tz = pytz.timezone(os.getenv('TZ_APP', 'America/Mexico_City'))
+            parsed_scheduled_time = utc_dt.astimezone(app_tz).replace(tzinfo=None)
+        except Exception as e:
+            current_app.logger.error(f"Error parsing date in update: {e}")
     
     # Determinar si editamos o clonamos
     # Si alguna tarea está en 'Ejecutando', bloqueamos
@@ -616,7 +638,7 @@ def update_or_reprocess_job(job_id):
                 
                 if t.estado in ['Cancelada', 'Error', 'Terminada']:
                     t.estado = 'Pendiente' if not data.get('is_scheduled') else 'Programada'
-                    t.fecha_inicio = data.get('scheduled_time') if data.get('is_scheduled') else None
+                    t.fecha_inicio = parsed_scheduled_time if data.get('is_scheduled') else None
                     updated_count += 1
             
             db.session.commit()
@@ -653,7 +675,7 @@ def update_or_reprocess_job(job_id):
                     chunk_total=old_task.chunk_total,
                     datos=task_data, 
                     estado='Pendiente' if not data.get('is_scheduled') else 'Programada',
-                    fecha_inicio=data.get('scheduled_time') if data.get('is_scheduled') else None
+                    fecha_inicio=parsed_scheduled_time if data.get('is_scheduled') else None
                 )
                 db.session.add(new_task)
                 db.session.flush()
@@ -680,7 +702,7 @@ def update_or_reprocess_job(job_id):
                             t.datos = ",".join([r.numero for r in recovery])
                             
                     t.estado = 'Pendiente' if not data.get('is_scheduled') else 'Programada'
-                    t.fecha_inicio = data.get('scheduled_time') if data.get('is_scheduled') else None
+                    t.fecha_inicio = parsed_scheduled_time if data.get('is_scheduled') else None
             
             db.session.commit()
             add_audit_log("tarea modificada", status="info", detail=f"Job ID: {job_id} actualizado. Label: {old_label} -> {job.routing_label}")
