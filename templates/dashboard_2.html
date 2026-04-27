@@ -162,37 +162,45 @@
                             <div class="h-full grid grid-rows-10 divide-y divide-panel-border/30 animate-in fade-in duration-500">
                                 {% for log in activity %}
                                     {% set action_lower = log.action | lower %}
+                                    {% set action_upper = log.action | upper %}
                                     {% set badge_color = 'bg-primary/20 text-primary border-primary/30' %}
-                                    {% if 'login' in action_lower or 'cre' in action_lower %}{% set badge_color = 'bg-sky/20 text-sky border-sky/30' %}
-                                    {% elif 'error' in action_lower or 'err' in action_lower or 'fallo' in action_lower %}{% set badge_color = 'bg-peach/20 text-peach border-peach/30' %}
-                                    {% elif 'exit' in action_lower or 'complet' in action_lower or 'ok' in action_lower %}{% set badge_color = 'bg-success/20 text-success border-success/30' %}
-                                    {% elif 'logou' in action_lower %}{% set badge_color = 'bg-violet/20 text-violet border-violet/30' %}
+                                    {% if 'ACCESO' in action_upper or 'login' in action_lower %}{% set badge_color = 'bg-sky/20 text-sky border-sky/30' %}
+                                    {% elif 'ERROR' in action_upper or 'FALLO' in action_upper or 'ABORTADA' in action_upper %}{% set badge_color = 'bg-peach/20 text-peach border-peach/30' %}
+                                    {% elif 'ÉXITO' in action_upper or 'complet' in action_lower or 'ok' in action_lower %}{% set badge_color = 'bg-success/20 text-success border-success/30' %}
+                                    {% elif 'CIERRE' in action_upper or 'logou' in action_lower %}{% set badge_color = 'bg-violet/20 text-violet border-violet/30' %}
+                                    {% elif 'EJECUCIÓN' in action_upper or 'OPERACIÓN' in action_upper %}{% set badge_color = 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30' %}
                                     {% endif %}
 
-                                    <div class="px-4 flex items-center hover:bg-primary/5 transition-all duration-300 group cursor-default border-l-2 border-transparent hover:border-primary/40 min-h-0">
+                                    <div class="px-4 py-3 flex items-center hover:bg-primary/5 transition-all duration-300 group cursor-default border-l-2 border-transparent hover:border-primary/40 min-h-0">
                                         <div class="w-full flex items-center gap-3">
-                                            <div class="w-8 h-8 rounded-lg bg-panel-fill border border-panel-border shadow-sm flex items-center justify-center flex-shrink-0 group-hover:border-primary/40 transition-all relative overflow-hidden">
+                                            <div class="w-10 h-10 rounded-xl bg-panel-fill border border-panel-border shadow-sm flex items-center justify-center flex-shrink-0 group-hover:border-primary/40 transition-all relative overflow-hidden">
                                                 <div class="absolute inset-0 bg-primary/5"></div>
-                                                <span class="text-[10px] font-black text-primary">{{ log.user[:2].upper() }}</span>
+                                                <span class="text-[12px] font-black text-primary">{{ log.user[:2].upper() }}</span>
                                             </div>
                                             
                                             <div class="flex-grow flex items-center justify-between min-w-0">
-                                                <div class="flex flex-col min-w-0 gap-0.5">
-                                                    <span class="text-[8px] font-black text-label/40 uppercase tracking-wider leading-none">{{ log.user }}</span>
-                                                    <div class="flex items-center gap-2 min-w-0">
-                                                        <span class="px-1.5 py-0.5 rounded-md text-[8px] font-black uppercase tracking-tight border {{ badge_color }} shadow-sm flex-shrink-0">
-                                                            {{ log.action.split(' ')[0] }}
-                                                        </span>
-                                                        <p class="text-[10px] lg:text-[11px] font-bold text-body-text/80 truncate leading-none group-hover:text-primary transition-colors" title="{{ log.action }}">
-                                                            {{ ' '.join(log.action.split(' ')[1:]) }}
-                                                        </p>
+                                                <div class="flex flex-col min-w-0 gap-1">
+                                                    <div class="flex items-center gap-2">
+                                                        <span class="text-[9px] font-black text-label/30 uppercase tracking-widest leading-none">{{ log.user }}</span>
+                                                        <span class="w-1 h-1 rounded-full bg-label/20"></span>
+                                                        <span class="text-[9px] font-bold text-label/25 uppercase leading-none">{{ log.timestamp.strftime('%H:%M') }}</span>
                                                     </div>
-                                                </div>
-                                                
-                                                <div class="flex items-center gap-3 flex-shrink-0 ml-2">
-                                                    <span class="text-[9px] font-bold text-label/25 uppercase leading-none group-hover:text-primary/40 transition-colors">
-                                                        {{ log.timestamp.strftime('%H:%M') }}
-                                                    </span>
+                                                    
+                                                    <div class="flex flex-col gap-0.5">
+                                                        <div class="flex items-center gap-2 min-w-0">
+                                                            <span class="px-1.5 py-0.5 rounded-md text-[8px] font-black uppercase tracking-tight border {{ badge_color }} shadow-sm flex-shrink-0">
+                                                                {{ log.action.split(' ')[0] }}
+                                                            </span>
+                                                            <p class="text-[11px] font-black text-body-text/90 truncate leading-none group-hover:text-primary transition-colors" title="{{ log.action }}">
+                                                                {{ ' '.join(log.action.split(' ')[1:]) }}
+                                                            </p>
+                                                        </div>
+                                                        {% if log.detail %}
+                                                            <p class="text-[10px] font-medium text-label/50 truncate pl-1 border-l border-panel-border/40 ml-1 mt-0.5" title="{{ log.detail }}">
+                                                                {{ log.detail }}
+                                                            </p>
+                                                        {% endif %}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
