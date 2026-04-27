@@ -295,7 +295,7 @@ function modifyUser() {
         const form = document.getElementById('form-modify-user');
         if (form) {
             form.elements['user_id'].value = user.id;
-            form.elements['username'].value = user.name;
+            form.elements['username'].value = user.username;
             form.elements['nombre'].value = user.nombre;
             
             const isAdmin = user.role.toLowerCase() === 'admin';
@@ -316,7 +316,7 @@ function deleteUser() {
         if (count === 1) {
             const targetId = Array.from(selectedUsers)[0];
             const user = usersDataTable.rows().data().toArray().find(u => u.id === targetId);
-            displayEl.textContent = user ? user.name : 'Identidad Seleccionada';
+            displayEl.textContent = user ? user.nombre : 'Identidad Seleccionada';
             displayEl.classList.add('text-white/90');
         } else {
             displayEl.textContent = `${count} Usuarios`;
