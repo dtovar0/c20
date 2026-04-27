@@ -246,6 +246,7 @@ def get_global_stats():
             func.sum(PSX5KDetail.dup).label('dup')
         ).join(PSX5KDetail, PSX5KTask.id == PSX5KDetail.id)\
          .filter(PSX5KTask.fecha_inicio >= seven_days_ago)\
+         .filter(PSX5KTask.fecha_inicio <= datetime.now())\
          .group_by('day')\
          .order_by('day').limit(7).all()
         

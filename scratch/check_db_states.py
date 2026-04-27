@@ -7,28 +7,18 @@ sys.path.insert(0, PROJECT_ROOT)
 load_dotenv(os.path.join(PROJECT_ROOT, '.env'))
 
 from app import create_app, db
-from app.modules.psx.models import PSX5KTask, PSX5KJob
-from sqlalchemy import text, func
+from app.modules.psx.models import PSX5KTask
+from datetime import datetime
 
 app = create_app()
 with app.app_context():
-    print("Reparando esquema: Ampliando columna 'estado' a 50 caracteres...")
-    db.session.execute(text("ALTER TABLE psx5k_tasks MODIFY COLUMN estado VARCHAR(50)"))
-    db.session.commit()
+    now = datetime.now()
+    print(f"Server Time (Local): {now}")
     
-    print("Normalizando estados antiguos...")
-    
-    # Terminada -> Completado
-    count_c = PSX5KTask.query.filter_by(estado='Terminada').update({PSX5KTask.estado: 'Completado'})
-    
-    # Error -> Terminado con Errores
-    count_e = PSX5KTask.query.filter_by(estado='Error').update({PSX5KTask.estado: 'Terminado con Errores'})
-    
-    db.session.commit()
-    print(f"Sincronizados: {count_c} completadas, {count_e} errores.")
-    
-    # Resumen Final
-    new_stats = db.session.query(PSX5KTask.estado, func.count(PSX5KTask.id)).group_by(PSX5KTask.estado).all()
-    print("\nResumen Final de Estados en la DB:")
-    for state, count in new_stats:
-        print(f" - {state}: {count}")
+    tasks = db.session.query(PSX5KTask.id, PSX5KTask.fecha_inicio).order_by(PSX5KTask.fecha_inicio.desc()).limit(10).all()
+    print("\nÚltimas 10 tareas por fecha_inicio (DESC):")
+    for tid, f in tasks:
+        print(f" - ID: {tid} | Fecha: {f}")
+
+    future_tasks = PSX5KTask.query.filter(PSX5KTask.fecha_inicio > now).count()
+    print(f"\nTareas con fecha mayor a 'now' del servidor: {future_tasks}")
