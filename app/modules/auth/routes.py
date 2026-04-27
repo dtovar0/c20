@@ -14,49 +14,50 @@ def login():
         if current_user.is_authenticated:
             return redirect(url_for('core.index'))
             
+        # --- MODO SSO / AUTHELIA (AUTO-DETECT) ---
+        header_user = os.getenv('AUTHELIA_HEADER_USER', 'Remote-Email')
+        header_name = os.getenv('AUTHELIA_HEADER_NAME', 'Remote-Name')
+        header_groups = os.getenv('AUTHELIA_HEADER_GROUPS', 'Remote-Groups')
+        
+        authelia_user = request.headers.get(header_user)
+        
+        if os.getenv('AUTHELIA_ENABLED', 'false').lower() == 'true' and authelia_user:
+            user = User.query.filter_by(username=authelia_user).first()
+            
+            # Obtener metadatos adicionales del header
+            authelia_name = request.headers.get(header_name, authelia_user)
+            authelia_groups = request.headers.get(header_groups, '')
+            
+            # Lógica de Roles (Admin si está en grupo administrador)
+            inferred_role = 'usuario'
+            if 'administrador' in [g.strip().lower() for g in authelia_groups.split(',')]:
+                inferred_role = 'administrador'
+
+            if not user:
+                # Auto-creación de sombra de usuario si viene de SSO confiable
+                user = User(
+                    username=authelia_user,
+                    nombre=authelia_name,
+                    role=inferred_role,
+                    auth_source='sso'
+                )
+                db.session.add(user)
+                db.session.commit()
+            else:
+                # Actualizar nombre y rol si cambiaron en el SSO
+                user.nombre = authelia_name
+                user.role = inferred_role
+                db.session.commit()
+            
+            login_user(user)
+            add_audit_log("login sso", status="success", detail=f"Usuario {authelia_user} ({authelia_name}) ha iniciado sesión vía SSO/Authelia")
+            return redirect(url_for('core.index'))
+
+        # --- LOGIN TRADICIONAL (FORMULARIO) ---
         if request.method == "POST":
             username = request.form.get("username")
             password = request.form.get("password")
             auth_type = request.form.get("auth_type", "directory")
-            
-            # --- MODO SSO / AUTHELIA (AUTO-DETECT) ---
-            header_user = os.getenv('AUTHELIA_HEADER_USER', 'Remote-Email')
-            header_name = os.getenv('AUTHELIA_HEADER_NAME', 'Remote-Name')
-            header_groups = os.getenv('AUTHELIA_HEADER_GROUPS', 'Remote-Groups')
-            
-            authelia_user = request.headers.get(header_user)
-            
-            if os.getenv('AUTHELIA_ENABLED', 'false').lower() == 'true' and authelia_user:
-                user = User.query.filter_by(username=authelia_user).first()
-                
-                # Obtener metadatos adicionales del header
-                authelia_name = request.headers.get(header_name, authelia_user)
-                authelia_groups = request.headers.get(header_groups, '')
-                
-                # Lógica de Roles (Admin si está en grupo administrador)
-                inferred_role = 'usuario'
-                if 'administrador' in [g.strip().lower() for g in authelia_groups.split(',')]:
-                    inferred_role = 'administrador'
-
-                if not user:
-                    # Auto-creación de sombra de usuario si viene de SSO confiable
-                    user = User(
-                        username=authelia_user,
-                        nombre=authelia_name,
-                        role=inferred_role,
-                        auth_source='sso'
-                    )
-                    db.session.add(user)
-                    db.session.commit()
-                else:
-                    # Actualizar nombre y rol si cambiaron en el SSO
-                    user.nombre = authelia_name
-                    user.role = inferred_role
-                    db.session.commit()
-                
-                login_user(user)
-                add_audit_log("login sso", status="success", detail=f"Usuario {authelia_user} ({authelia_name}) ha iniciado sesión vía SSO/Authelia")
-                return redirect(url_for('core.index'))
 
             
             # --- MODO DIRECTORIO (LDAP) ---
