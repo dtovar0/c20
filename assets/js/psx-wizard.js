@@ -1091,7 +1091,7 @@ async function openModifyModal(taskId) {
         } else if (['activa', 'programada', 'pendiente'].includes(stateLower)) {
             btnCancel.classList.remove('hidden');
             btnModify.classList.remove('hidden');
-        } else if (['terminada', 'error', 'cancelada'].includes(stateLower)) {
+        } else if (['terminada', 'completada', 'error', 'cancelada'].includes(stateLower)) {
             btnActivate.classList.remove('hidden');
             btnModify.classList.remove('hidden');
         } else {

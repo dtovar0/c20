@@ -62,7 +62,7 @@ function initAuditDataTable() {
                     if (action.includes('login')) cls = 'nx-badge-cyan';
                     else if (action.includes('logout')) cls = 'nx-badge-slate';
                     else if (action.includes('creada')) cls = 'nx-badge-success';
-                    else if (action.includes('terminada')) cls = 'nx-badge-violet';
+                    else if (action.includes('terminada') || action.includes('completada')) cls = 'nx-badge-violet';
                     else if (action.includes('iniciada')) cls = 'nx-badge-primary';
                     else if (action.includes('identity')) cls = 'nx-badge-warning';
 

@@ -168,7 +168,7 @@
 
                                     {% if 'operación' in action_lower or 'ejecución' in action_lower or 'tarea' in action_lower %}
                                         {% set icon = 'fas fa-bolt' %}
-                                        {% if 'éxito' in action_lower or 'terminada' in action_lower %}{% set color_class = 'text-success' %}{% set bg_class = 'bg-success/10' %}{% set border_class = 'border-success/20' %}
+                                        {% if 'éxito' in action_lower or 'terminada' in action_lower or 'completada' in action_lower %}{% set color_class = 'text-success' %}{% set bg_class = 'bg-success/10' %}{% set border_class = 'border-success/20' %}
                                         {% elif 'error' in action_lower or 'abort' in action_lower %}{% set icon = 'fas fa-exclamation-triangle' %}{% set color_class = 'text-peach' %}{% set bg_class = 'bg-peach/10' %}{% set border_class = 'border-peach/20' %}
                                         {% else %}{% set color_class = 'text-sky' %}{% set bg_class = 'bg-sky/10' %}{% set border_class = 'border-sky/20' %}
                                         {% endif %}
