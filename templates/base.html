@@ -131,7 +131,7 @@
 
             <!-- Settings Modal -->
             <div id="settingsModal" class="nexus-modal hidden fixed inset-0 z-[100] items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
-                <div class="nexus-modal-content w-full max-w-lg bg-panel-fill border border-panel-border rounded-3xl shadow-2xl overflow-hidden flex flex-col h-[680px] max-h-[90vh]">
+                <div class="nexus-modal-content w-full max-w-lg bg-panel-fill border border-panel-border rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
                     <!-- Header -->
                     <div class="p-6 border-b border-panel-border flex items-center justify-between bg-surface-container/30">
                         <div class="flex items-center gap-4">
@@ -163,7 +163,7 @@
                     </div>
 
                     <!-- TAB CONTENT WRAPPER -->
-                    <div class="flex-grow">
+                    <div class="flex-grow overflow-y-auto custom-scrollbar">
                         <!-- Tab: Generales -->
                         <div id="tabContentGeneral" class="p-8 space-y-6">
                             <!-- Notification Toggle (Desktop) -->
@@ -238,25 +238,25 @@
                                     <tbody class="divide-y divide-panel-border/20">
                                         <!-- OK Row -->
                                         <tr class="group hover:bg-primary/5 transition-colors">
-                                            <td class="px-6 py-4">
+                                            <td class="px-6 py-2">
                                                 <span class="text-xs font-black text-label uppercase tracking-widest">OK</span>
                                             </td>
-                                            <td class="px-6 py-4 text-center">
+                                            <td class="px-6 py-2 text-center">
                                                 <input type="color" id="colorOk" value="#2563eb" class="w-10 h-10 bg-transparent border-none cursor-pointer rounded-xl overflow-hidden shadow-lg shadow-black/10 hover:scale-110 transition-transform">
                                             </td>
-                                            <td class="px-6 py-4 flex justify-center">
+                                            <td class="px-6 py-2 flex justify-center">
                                                 <div id="previewIconOk" class="w-11 h-8 rounded-lg bg-primary/20 text-primary flex items-center justify-center font-black text-[10px] ring-1 ring-primary/20 shadow-sm uppercase tracking-tighter">OK</div>
                                             </td>
                                         </tr>
                                         <!-- ERROR Row -->
                                         <tr class="group hover:bg-rose-500/5 transition-colors">
-                                            <td class="px-6 py-4">
+                                            <td class="px-6 py-2">
                                                 <span class="text-xs font-black text-label uppercase tracking-widest">Error</span>
                                             </td>
-                                            <td class="px-6 py-4 text-center">
+                                            <td class="px-6 py-2 text-center">
                                                 <input type="color" id="colorFail" value="#f43f5e" class="w-10 h-10 bg-transparent border-none cursor-pointer rounded-xl overflow-hidden shadow-lg shadow-black/10 hover:scale-110 transition-transform">
                                             </td>
-                                            <td class="px-6 py-4 flex justify-center">
+                                            <td class="px-6 py-2 flex justify-center">
                                                 <div id="previewIconFail" class="w-11 h-8 rounded-lg bg-rose-500/20 text-rose-500 flex items-center justify-center ring-1 ring-rose-500/20 shadow-sm">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                                                 </div>
@@ -264,13 +264,13 @@
                                         </tr>
                                         <!-- FORCE Row -->
                                         <tr class="group hover:bg-violet-500/5 transition-colors">
-                                            <td class="px-6 py-4">
+                                            <td class="px-6 py-2">
                                                 <span class="text-xs font-black text-label uppercase tracking-widest">Force</span>
                                             </td>
-                                            <td class="px-6 py-4 text-center">
+                                            <td class="px-6 py-2 text-center">
                                                 <input type="color" id="colorForce" value="#8b5cf6" class="w-10 h-10 bg-transparent border-none cursor-pointer rounded-xl overflow-hidden shadow-lg shadow-black/10 hover:scale-110 transition-transform">
                                             </td>
-                                            <td class="px-6 py-4 flex justify-center">
+                                            <td class="px-6 py-2 flex justify-center">
                                                 <div id="previewIconForce" class="w-11 h-8 rounded-lg bg-violet-500/20 text-violet-500 flex items-center justify-center ring-1 ring-violet-500/20 shadow-sm">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                                                 </div>
@@ -278,13 +278,13 @@
                                         </tr>
                                         <!-- DUP Row -->
                                         <tr class="group hover:bg-amber-500/5 transition-colors">
-                                            <td class="px-6 py-4">
+                                            <td class="px-6 py-2">
                                                 <span class="text-xs font-black text-label uppercase tracking-widest">DUP</span>
                                             </td>
-                                            <td class="px-6 py-4 text-center">
+                                            <td class="px-6 py-2 text-center">
                                                 <input type="color" id="colorDup" value="#f59e0b" class="w-10 h-10 bg-transparent border-none cursor-pointer rounded-xl overflow-hidden shadow-lg shadow-black/10 hover:scale-110 transition-transform">
                                             </td>
-                                            <td class="px-6 py-4 flex justify-center">
+                                            <td class="px-6 py-2 flex justify-center">
                                                 <div id="previewIconDup" class="w-11 h-8 rounded-lg bg-amber-500/20 text-amber-500 flex items-center justify-center font-black text-[10px] ring-1 ring-amber-500/20 shadow-sm uppercase tracking-tighter">DUP</div>
                                             </td>
                                         </tr>
