@@ -267,7 +267,7 @@
                                             d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
                                         </path>
                                     </svg>
-                                    <input type="text" id="ldap_user" value="{{ config.ldap_user if config else '' }}"
+                                    <input type="text" id="ntf_ldap_identity" value="{{ config.ldap_user if config else '' }}"
                                         placeholder="cn=admin,dc=ejemplo,dc=com" autocomplete="off"
                                         class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3.5 text-sm font-bold text-input outline-none transition-all focus:border-input-focus focus:ring-4 focus:ring-primary/10">
                                 </div>
@@ -284,7 +284,7 @@
                                             d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
                                         </path>
                                     </svg>
-                                    <input type="password" id="ldap_pass"
+                                    <input type="password" id="ntf_ldap_credential"
                                         value="{{ config.ldap_pass if config else '' }}" placeholder="********"
                                         autocomplete="new-password"
                                         class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-12 py-3.5 text-sm font-bold text-input outline-none transition-all focus:border-input-focus focus:ring-4 focus:ring-primary/10">
