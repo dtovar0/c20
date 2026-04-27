@@ -11,4 +11,5 @@ instance/
 .pytest_cache/
 secret.key
 *.zip
+deployment/
 # === FIN GITIGNORE ===
