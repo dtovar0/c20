@@ -183,9 +183,9 @@ document.addEventListener('DOMContentLoaded', () => {
             intersect: false,
             followCursor: true,
             custom: function({ series, seriesIndex, dataPointIndex, w }) {
-                const color = w.config.colors[0];
-                const cat = w.globals.categoryLabels[dataPointIndex] || w.globals.labels[dataPointIndex] || dataPointIndex;
-                const val = series[0][dataPointIndex];
+                const color = (w.config.colors && w.config.colors[0]) ? w.config.colors[0] : '#6366f1';
+                const cat = (w.globals.categoryLabels && w.globals.categoryLabels[dataPointIndex]) ? w.globals.categoryLabels[dataPointIndex] : (w.globals.labels ? w.globals.labels[dataPointIndex] : dataPointIndex);
+                const val = (series[0] && series[0][dataPointIndex] !== undefined) ? series[0][dataPointIndex] : 0;
                 
                 return `
                     <div class="bg-panel-fill/95 backdrop-blur-xl border border-white/10 p-4 rounded-xl shadow-2xl min-w-[150px]">
@@ -378,28 +378,28 @@ document.addEventListener('DOMContentLoaded', () => {
                     const days = data.stats.daily_tasks.map(d => d.day);
                     const counts = data.stats.daily_tasks.map(d => d.count);
                     demandChartApex.updateOptions({
+                        series: [{
+                            name: 'Operaciones',
+                            data: counts
+                        }],
                         xaxis: { categories: days },
                         yaxis: { show: true, forceNiceScale: true }
-                    });
-                    demandChartApex.updateSeries([{
-                        name: 'Operaciones',
-                        data: counts
-                    }], true);
+                    }, false, true); // true to redraw
                 }
 
                 // Sync Daily Analysis (Stacked Status)
                 if (data.stats.analysis_daily && aiPulseChartApex) {
                     const an = data.stats.analysis_daily;
-                    aiPulseChartApex.updateSeries([
-                        { name: 'OK', data: an.ok },
-                        { name: 'Error', data: an.fail },
-                        { name: 'Force', data: an.force },
-                        { name: 'Dup', data: an.dup }
-                    ], true);
                     aiPulseChartApex.updateOptions({
+                        series: [
+                            { name: 'OK', data: an.ok },
+                            { name: 'Error', data: an.fail },
+                            { name: 'Force', data: an.force },
+                            { name: 'Dup', data: an.dup }
+                        ],
                         xaxis: { categories: an.days },
                         yaxis: { show: true, forceNiceScale: true }
-                    });
+                    }, false, true);
                 }
 
                 // Sync Today Status Distribution (Donut)
