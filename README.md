@@ -67,4 +67,13 @@ NEXUS es una plataforma de gestión centralizada diseñada para el monitoreo y a
 ## 🚧 Desarrollos Pendientes (Roadmap)
 
 *   [ ] **Activación del Centro de Ayuda**: Habilitación visual de la documentación integrada para usuarios y administradores.
-*   [ ] **Habilitación de API REST**: Apertura de endpoints tácticos para integraciones externas y automatización programática.
+*   [x] **Habilitación de API REST (v1)**: Apertura de endpoints tácticos para integraciones externas.
+
+### 🔑 Uso de la API Táctica
+La API está protegida por un Token estático definido en el archivo `.env`.
+*   **Header Obligatorio**: `X-API-TOKEN: <tu_token>`
+*   **Endpoint Base**: `/api/v1/`
+*   **Endpoints Disponibles**:
+    *   `GET /status`: Verifica el estado de la API.
+    *   `GET /tasks`: Lista las últimas 20 tareas procesadas.
+    *   `GET /tasks/<id>`: Obtiene el detalle técnico de una tarea.

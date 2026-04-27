@@ -78,6 +78,7 @@ def create_app():
     from app.modules.notifications.routes import notifications_bp
     from app.modules.auth.routes import auth_bp
     from app.modules.psx.routes import psx_bp
+    from app.modules.api import api_bp
     
     app.register_blueprint(core_bp)
     app.register_blueprint(settings_bp)
@@ -85,6 +86,7 @@ def create_app():
     app.register_blueprint(notifications_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(psx_bp)
+    app.register_blueprint(api_bp)
 
     # Sincronizar Modelos (Importar antes de crear tablas)
     from app.modules.settings.models import SystemConfig
