@@ -333,12 +333,22 @@ Estado: CRÍTICO</textarea>
                         <!-- Footer Fijo Col 2 -->
                         <div class="h-24 p-4 bg-panel-border/5 border border-panel-border rounded-[1.5rem] flex-shrink-0 overflow-hidden">
                             <p class="text-[12px] font-black text-label/40 uppercase tracking-[0.2em] mb-3 px-1 italic">Atajos Rápidos</p>
-                            <div class="flex flex-wrap gap-2">
-                                <button onclick="insertVariable('{usuario}')" class="chip-premium">👤 {usuario}</button>
-                                <button onclick="insertVariable('{evento}')" class="chip-premium"># {evento}</button>
-                                <button onclick="insertVariable('{hora}')" class="chip-premium">⏰ {hora}</button>
-                                <button onclick="insertVariable('{ip}')" class="chip-premium">🌐 {ip}</button>
-                                <button onclick="insertVariable('{correo}')" class="chip-premium">📧 {correo}</button>
+                            <div class="flex flex-wrap gap-3 px-1">
+                                <button onclick="insertVariable('{usuario}')" class="w-10 h-10 flex items-center justify-center rounded-xl bg-primary/5 border border-primary/10 text-primary hover:bg-primary/20 hover:border-primary/30 transition-all active:scale-90 shadow-sm" data-nx-tooltip="Insertar Usuario">
+                                    <i class="fas fa-user text-sm"></i>
+                                </button>
+                                <button onclick="insertVariable('{evento}')" class="w-10 h-10 flex items-center justify-center rounded-xl bg-sky-500/5 border border-sky-500/10 text-sky-400 hover:bg-sky-500/20 hover:border-sky-500/30 transition-all active:scale-90 shadow-sm" data-nx-tooltip="Insertar Evento">
+                                    <i class="fas fa-hashtag text-sm"></i>
+                                </button>
+                                <button onclick="insertVariable('{hora}')" class="w-10 h-10 flex items-center justify-center rounded-xl bg-violet-500/5 border border-violet-500/10 text-violet-400 hover:bg-violet-500/20 hover:border-violet-500/30 transition-all active:scale-90 shadow-sm" data-nx-tooltip="Insertar Hora">
+                                    <i class="fas fa-clock text-sm"></i>
+                                </button>
+                                <button onclick="insertVariable('{ip}')" class="w-10 h-10 flex items-center justify-center rounded-xl bg-emerald-500/5 border border-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 hover:border-emerald-500/30 transition-all active:scale-90 shadow-sm" data-nx-tooltip="Insertar Dirección IP">
+                                    <i class="fas fa-globe text-sm"></i>
+                                </button>
+                                <button onclick="insertVariable('{correo}')" class="w-10 h-10 flex items-center justify-center rounded-xl bg-indigo-500/5 border border-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 hover:border-indigo-500/30 transition-all active:scale-90 shadow-sm" data-nx-tooltip="Insertar Correo">
+                                    <i class="fas fa-envelope text-sm"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
