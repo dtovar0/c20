@@ -441,9 +441,15 @@ def main():
                 # Notificación de término al propietario
                 target = get_notification_target(task.job.usuario)
                 if target:
+                    base_url = os.getenv('BASE_URL', 'http://10.224.2.146')
+                    task_url = f"{base_url}/api/psx/detail/{task.id}"
                     send_notification_by_slug(slug='terminado', target_email=target, 
-                                            context={'usuario': task.job.usuario, 'hora': task.fecha_fin.strftime('%H:%M:%S')})
-                    print(f"📧 Correo de término enviado satisfactoriamente a: {target}")
+                                            context={
+                                                'usuario': task.job.usuario, 
+                                                'hora': task.fecha_fin.strftime('%H:%M:%S'),
+                                                'url': task_url
+                                            })
+                    print(f"📧 Correo de término enviado satisfactoriamente a: {target} | URL: {task_url}")
 
             time.sleep(SLEEP_BETWEEN)
 
