@@ -133,7 +133,7 @@ class PSXNexusTour {
             if (step.table) {
                 const headerRow = step.table_headers 
                     ? `<tr>${step.table_headers.map(h => {
-                        const isDesc = h.toLowerCase() === 'descripción';
+                        const isDesc = h.toLowerCase() === 'descripción' || h.toLowerCase() === 'significado';
                         return `<th ${isDesc ? 'colspan="2"' : ''}>${h}</th>`;
                     }).join('')}</tr>` 
                     : '';
@@ -318,10 +318,10 @@ window.startLogTour = function() {
             table_headers: ['Indicador', 'Significado'],
             content: 'Barra de progreso que muestra los resultados por bloque según la respuesta del nodo.<br><br><b style="color:#2563eb">Porcentaje</b> = % de registros procesados &nbsp;|&nbsp; <b>OK</b> / <b style="color:#f43f5e">FAIL</b> + <b style="color:#f59e0b">DUP</b> + <b style="color:#8b5cf6">FORCE-OK</b>',
             table: [
-                [`${dot('#2563eb')} Azul`, '<b>OK</b> — Procesamiento exitoso'],
-                [`${dot('#f43f5e')} Rojo`, '<b>FAIL</b> — Error reportado por el nodo'],
-                [`${dot('#8b5cf6')} Púrpura`, '<b>FORCE</b> — Validación forzada'],
-                [`${dot('#f59e0b')} Ámbar`, '<b>DUP</b> — Registro duplicado ignorado']
+                [`${dot('#2563eb')} Azul`, '<b>OK</b>', 'Procesamiento exitoso'],
+                [`${dot('#f43f5e')} Rojo`, '<b>FAIL</b>', 'Error reportado por el nodo'],
+                [`${dot('#8b5cf6')} Púrpura`, '<b>FORCE</b>', 'Validación forzada'],
+                [`${dot('#f59e0b')} Ámbar`, '<b>DUP</b>', 'Registro duplicado ignorado']
             ]
         },
         {
