@@ -257,7 +257,6 @@ function loadTemplate(type) {
                 
                 syncPreview();
                 updateLineNumbers();
-                updatePreviewIcon(type);
                 showToast(`Cargada plantilla: ${type.toUpperCase()} (Base de Datos)`, 'info');
             }
         })
@@ -298,7 +297,6 @@ function loadTemplate(type) {
                 subjectInput.value = subject;
                 syncPreview();
                 updateLineNumbers();
-                updatePreviewIcon(type);
                 
                 const friendlyNames = {
                     'test': 'TEST SYSTEM',
@@ -346,43 +344,4 @@ function saveTemplate() {
         console.error('Error:', error);
         showToast('Error de red al guardar plantilla', 'error');
     });
-}
-
-function updatePreviewIcon(type) {
-    const container = document.getElementById('livePreviewIconContainer');
-    const iconWrapper = document.getElementById('livePreviewIcon');
-    if (!container || !iconWrapper) return;
-
-    // Reset classes
-    container.className = "w-16 h-16 rounded-[1.5rem] flex items-center justify-center shadow-inner border transition-all duration-500";
-    
-    let iconSvg = "";
-    
-    switch(type) {
-        case 'inicio':
-            container.classList.add('bg-emerald-500/10', 'text-emerald-500', 'border-emerald-500/10');
-            iconSvg = '<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path></svg>';
-            break;
-        case 'guardado':
-            container.classList.add('bg-amber-500/10', 'text-amber-500', 'border-amber-500/10');
-            iconSvg = '<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>';
-            break;
-        case 'terminado':
-            container.classList.add('bg-sky-500/10', 'text-sky-500', 'border-sky-500/10');
-            iconSvg = '<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
-            break;
-        case 'error':
-            container.classList.add('bg-rose-500/20', 'text-rose-500', 'border-rose-500/20');
-            iconSvg = '<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
-            break;
-        case 'usuario_creado':
-            container.classList.add('bg-violet-500/20', 'text-violet-500', 'border-violet-500/20');
-            iconSvg = '<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>';
-            break;
-        default:
-            container.classList.add('bg-primary/10', 'text-primary', 'border-primary/10');
-            iconSvg = '<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
-    }
-    
-    iconWrapper.innerHTML = iconSvg;
 }
