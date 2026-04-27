@@ -404,6 +404,8 @@ def main():
                 detail.fail = results.get("fail", 0)
                 detail.force_ok = results.get("force_ok", 0)
                 detail.dup = results.get("dup", 0)
+                detail.del_ = results.get("del", 0)
+                detail.delcheck = results.get("delcheck", 0)
                 
                 # Historial detallado
                 for log_entry in results.get('logs', []):
@@ -436,7 +438,7 @@ def main():
                     notified_stale_tasks.remove(task.id)
 
                 
-                add_audit_log(f"OPERACIÓN FINALIZADA [ÉXITO] (PSX-{task.id})", status="success", detail=f"OK: {detail.ok} | FAIL: {detail.fail} | DUP: {detail.dup} | FORCE: {detail.force_ok}", user_override=task.job.usuario)
+                add_audit_log(f"OPERACIÓN FINALIZADA [ÉXITO] (PSX-{task.id})", status="success", detail=f"OK: {detail.ok} | FAIL: {detail.fail} | DUP: {detail.dup} | FORCE: {detail.force_ok} | DEL: {detail.del_} | DELCHECK: {detail.delcheck}", user_override=task.job.usuario)
                 
                 # Notificación de término al propietario
                 target = get_notification_target(task.job.usuario)

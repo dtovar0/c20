@@ -99,6 +99,7 @@ def psx5k_cmd(line_task, line_number, line_type=None, routing_label=None, force=
     """
     stats = {
         "total": 0, "ok": 0, "dup": 0, "force_ok": 0, "fail": 0,
+        "del": 0, "delcheck": 0,
         "logs": [], "full_flow": ""
     }
     stream = StreamLog()
@@ -194,19 +195,22 @@ def psx5k_cmd(line_task, line_number, line_type=None, routing_label=None, force=
 
                 # CASO B: ELIMINAR (DELETE)
                 elif line_task == 'delete':
+                    # Intento de borrado
+                    cmd.sendline(f'delete subscriber Subscriber_Id {number} Country_Id 52')
+                    cmd.expect(EXPECT_PROMPTS)
+                    cmd.sendline(f'delete destination National_Id {number} Country_Id 52')
+                    cmd.expect(EXPECT_PROMPTS)
+                    
                     if found:
-                        # Intento de borrado
-                        cmd.sendline(f'delete subscriber Subscriber_Id {number} Country_Id 52')
-                        cmd.expect(EXPECT_PROMPTS)
-                        cmd.sendline(f'delete destination National_Id {number} Country_Id 52')
-                        cmd.expect(EXPECT_PROMPTS)
-                        
-                        stats["ok"] += 1
-                        stats["logs"].append(f"[DEL] {number} - Eliminado")
+                        if EXISTENCE_CHECK:
+                            stats["delcheck"] += 1
+                            stats["logs"].append(f"[DELCHECK] {number} - Eliminado")
+                        else:
+                            stats["del"] += 1
+                            stats["logs"].append(f"[DEL] {number} - Eliminado")
                     else:
-                        # Si EXISTENCE_CHECK estaba activo y no se encontró
-                        stats["dup"] += 1
-                        stats["logs"].append(f"[SKIP] {number} - No encontrado")
+                        stats["del"] += 1
+                        stats["logs"].append(f"[DEL] {number} - No encontrado")
 
             except Exception as e:
                 stats["fail"] += 1
