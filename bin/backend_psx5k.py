@@ -344,10 +344,10 @@ def main():
                                             context={'usuario': task.job.usuario, 'hora': task.fecha_inicio.strftime('%H:%M:%S')})
                     print(f"📧 Correo de inicio enviado satisfactoriamente a: {target}")
                 
-                add_audit_log(f"EJECUCIÓN INICIADA (PSX-{task.id})", status="info", detail=f"Proceso: {task.job.tarea} | Usuario: {task.job.usuario} | Registros: {len(ani_list)}", user_override=task.job.usuario)
-
                 # Procesar datos
                 ani_list = process_task_data(task)
+                
+                add_audit_log(f"EJECUCIÓN INICIADA (PSX-{task.id})", status="info", detail=f"Proceso: {task.job.tarea} | Usuario: {task.job.usuario} | Registros: {len(ani_list)}", user_override=task.job.usuario)
                 
                 if os.getenv('DEBUG_PSX', 'false').lower() == 'true':
                     print(f"🔍 DEBUG: [Task:{task.job.tarea}] [ANIs:{len(ani_list)}] [Type:{task.job.accion_tipo}] [Route:{task.job.routing_label}] [Force:{task.job.run_force}]")
