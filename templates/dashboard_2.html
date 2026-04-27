@@ -178,7 +178,7 @@
                                         {% set icon = 'fas fa-edit' %}{% set color_class = 'text-indigo-400' %}{% set bg_class = 'bg-indigo-400/10' %}{% set border_class = 'border-indigo-400/20' %}
                                     {% endif %}
 
-                                    <div class="px-4 py-2.5 hover:bg-white/[0.02] transition-all duration-500 group relative overflow-hidden group">
+                                    <div class="px-4 py-2 hover:bg-white/[0.02] transition-all duration-500 group relative overflow-hidden group">
                                         <!-- Glow Effect on Hover -->
                                         <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.01] to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
                                         
@@ -189,7 +189,7 @@
                                             </div>
                                             
                                             <!-- Content -->
-                                            <div class="flex-grow min-w-0 flex flex-col gap-1.5">
+                                            <div class="flex-grow min-w-0 flex flex-col gap-1">
                                                 <div class="flex items-center justify-between gap-2">
                                                     <span class="{{ color_class }} text-[10px] font-black uppercase tracking-widest leading-none truncate">
                                                         {{ log.action }}
