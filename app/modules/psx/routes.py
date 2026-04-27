@@ -318,6 +318,41 @@ def create_task():
     
     data = request.json
     try:
+        # --- AUTO-MIGRACIÓN RÁPIDA (Para asegurar job_id en servidores remotos) ---
+        from sqlalchemy import text
+        try:
+            # Intentar ver si la columna existe (MySQL style)
+            db.session.execute(text("SELECT job_id FROM psx5k_tasks LIMIT 1"))
+        except Exception:
+            db.session.rollback()
+            current_app.logger.warning("Auto-Migración: La columna job_id no existe. Intentando crearla...")
+            try:
+                # 1. Asegurar que existe psx5k_jobs
+                db.session.execute(text("""
+                    CREATE TABLE IF NOT EXISTS psx5k_jobs (
+                        id INT AUTO_INCREMENT PRIMARY KEY,
+                        usuario VARCHAR(100) NOT NULL,
+                        tarea VARCHAR(50),
+                        accion_tipo VARCHAR(50),
+                        datos_tipo VARCHAR(50),
+                        routing_label VARCHAR(100),
+                        archivo_origen VARCHAR(255),
+                        run_force BOOLEAN DEFAULT FALSE,
+                        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                    )
+                """))
+                # 2. Añadir job_id a psx5k_tasks
+                db.session.execute(text("ALTER TABLE psx5k_tasks ADD COLUMN job_id INT"))
+                # 3. Añadir fecha_inicio a psx5k_tasks
+                db.session.execute(text("ALTER TABLE psx5k_tasks ADD COLUMN fecha_inicio DATETIME"))
+                db.session.commit()
+                current_app.logger.info("Auto-Migración: Columna job_id y tabla psx5k_jobs creadas con éxito.")
+            except Exception as migrate_err:
+                db.session.rollback()
+                current_app.logger.error(f"Fallo en Auto-Migración: {migrate_err}")
+                # No detenemos el flujo, si falla aquí probablemente falle la inserción después con el error real
+        # -------------------------------------------------------------------------
+
         raw_tarea = data.get('tarea') # add / delete
         raw_accion = data.get('accion_tipo', 'N/A') # Modo: call_in / call_inout
         raw_origen = data.get('datos_tipo', 'Manual') # Procedencia: Manual / Archivo
