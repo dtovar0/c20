@@ -225,7 +225,16 @@ def get_global_stats():
         .group_by('day')\
         .order_by('day').all()
         
-        daily_tasks = [{"day": d.day.strftime('%d %b'), "count": d.count} for d in daily_query]
+        # Mapa de meses para traducción manual
+        meses_es = {'Jan': 'Ene', 'Feb': 'Feb', 'Mar': 'Mar', 'Apr': 'Abr', 'May': 'May', 'Jun': 'Jun', 
+                    'Jul': 'Jul', 'Aug': 'Ago', 'Sep': 'Sep', 'Oct': 'Oct', 'Nov': 'Nov', 'Dec': 'Dic'}
+
+        def format_date_es(d):
+            day_num = d.strftime('%d')
+            month_abbr = d.strftime('%b')
+            return f"{day_num} {meses_es.get(month_abbr, month_abbr)}"
+
+        daily_tasks = [{"day": format_date_es(d.day), "count": d.count} for d in daily_query]
 
         # 8. Análisis Diario (Agregación de psx5k_details por día)
         from .models import PSX5KDetail
@@ -241,7 +250,7 @@ def get_global_stats():
          .order_by('day').limit(7).all()
         
         analysis_daily = {
-            "days": [d.day.strftime('%d %b') for d in analysis_query],
+            "days": [format_date_es(d.day) for d in analysis_query],
             "ok": [int(d.ok or 0) for d in analysis_query],
             "fail": [int(d.fail or 0) for d in analysis_query],
             "force": [int(d.force or 0) for d in analysis_query],
