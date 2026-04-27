@@ -40,8 +40,8 @@ from app.modules.notifications.services import send_notification_by_slug
 from app.modules.auth.models import User
 from app.modules.audit.services import add_audit_log
 
-# Estado compartido para el Watchdog (Tareas ya notificadas para evitar spam)
-notified_stale_tasks = set()
+# Estado compartido para el Watchdog (Tarea ID -> Ultima notificación timestamp)
+notified_stale_tasks = {}
 
 LOCK_FILE = os.path.join(PROJECT_ROOT, "psx5k_worker.pid") # Movido a la raíz para consistencia
 
@@ -113,15 +113,21 @@ def handle_stale_tasks(app):
                 
                 # Limpiar de la lista de notificados
                 if task.id in notified_stale_tasks:
-                    notified_stale_tasks.remove(task.id)
+                    del notified_stale_tasks[task.id]
                 
                 db.session.commit()
                 continue # Pasar a la siguiente tarea
 
             # Caso B: AVISO DE DEMORA (Notify Timeout excedido)
             if task.fecha_inicio < limit_notify:
-                if task.id in notified_stale_tasks:
-                    continue
+                # Intervalo para repetir la notificación (default 30 min)
+                notify_again_interval = int(os.getenv('PSX_NOTIFY_AGAIN_INTERVAL', 30))
+                last_notify = notified_stale_tasks.get(task.id)
+                
+                if last_notify:
+                    # Si ya se notificó, verificar si ya pasó el intervalo para volver a avisar
+                    if (now - last_notify).total_seconds() < (notify_again_interval * 60):
+                        continue
 
                 print(f"🕒 ALERTA DE TIEMPO: Tarea ID {task.id} ha superado los {notify_timeout} min de ejecución.")
                 
@@ -136,8 +142,8 @@ def handle_stale_tasks(app):
                 
                 add_audit_log(f"ALERTA DE DEMORA (PSX-{task.id})", status="warning", detail=f"Tiempo de ejecución >{notify_timeout} min (Aún en curso) | Proceso: {task.job.tarea}", user_override="SYSTEM")
                 
-                # Marcamos como notificada para no repetir en el próximo ciclo
-                notified_stale_tasks.add(task.id)
+                # Marcamos/Actualizamos el timestamp de última notificación
+                notified_stale_tasks[task.id] = now
                 db.session.commit()
 
 
@@ -362,7 +368,7 @@ def main():
                     add_audit_log(f"OPERACIÓN FINALIZADA [VACÍO] (PSX-{task.id})", status="error", detail=f"No se detectaron registros válidos en el origen de datos.", user_override=task.job.usuario)
                     # Limpiar de la lista de notificados si existía
                     if task.id in notified_stale_tasks:
-                        notified_stale_tasks.remove(task.id)
+                        del notified_stale_tasks[task.id]
                     continue
 
 
@@ -394,7 +400,7 @@ def main():
 
                     # Limpiar de la lista de notificados si existía
                     if task.id in notified_stale_tasks:
-                        notified_stale_tasks.remove(task.id)
+                        del notified_stale_tasks[task.id]
 
                     continue
 
@@ -435,7 +441,7 @@ def main():
                 
                 # Limpiar de la lista de notificados si existía
                 if task.id in notified_stale_tasks:
-                    notified_stale_tasks.remove(task.id)
+                    del notified_stale_tasks[task.id]
 
                 
                 add_audit_log(f"OPERACIÓN FINALIZADA [ÉXITO] (PSX-{task.id})", status="success", detail=f"OK: {detail.ok} | FAIL: {detail.fail} | DUP: {detail.dup} | FORCE: {detail.force_ok} | DEL: {detail.del_} | DELCHECK: {detail.delcheck}", user_override=task.job.usuario)
