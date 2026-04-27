@@ -123,6 +123,9 @@ class NotificationNexusTour {
             } else if (step.position === 'left') {
                 stepLeft = (rect.left + window.scrollX) - stepWidth - 40;
                 stepTop = (rect.top + window.scrollY) + (rect.height / 2) - 150;
+            } else if (step.position === 'top') {
+                stepLeft = (rect.left + window.scrollX) + (rect.width / 2) - (stepWidth / 2);
+                stepTop = (rect.top + window.scrollY) - 300;
             } else {
                 // Default: Bottom
                 stepLeft = (rect.left + window.scrollX) + (rect.width / 2) - (stepWidth / 2);
@@ -181,7 +184,7 @@ class NotificationNexusTour {
             target: '#tour-template-shortcuts',
             title: 'Atajos Rápidos',
             content: 'Utiliza estos botones para insertar etiquetas inteligentes como <b>{nombre}, {evento} o {hora}</b>. El sistema las sustituirá por datos reales al enviar.',
-            position: 'left'
+            position: 'top'
         },
         {
             type: 'Vista Previa Reacción',
