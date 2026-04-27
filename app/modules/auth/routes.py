@@ -11,6 +11,10 @@ auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     try:
+        # 1. Si ya está logueado, ir al inicio
+        if current_user.is_authenticated:
+            return redirect(url_for('core.index'))
+            
         # --- DEBUG DE CABECERAS (SI ESTÁ HABILITADO) ---
         if os.getenv('DEBUG_AUTH', 'false').lower() == 'true':
             print("\n" + "="*50)
@@ -19,126 +23,73 @@ def login():
                 print(f"  {header}: {value}")
             print("="*50 + "\n")
 
-        if current_user.is_authenticated:
-            return redirect(url_for('core.index'))
+        # 2. INTENTO DE SSO / AUTHELIA (Soporta GET y POST)
+        if os.getenv('AUTHELIA_ENABLED', 'false').lower() == 'true':
+            header_user = os.getenv('AUTHELIA_HEADER_USER', 'Remote-Email')
+            authelia_user = request.headers.get(header_user)
             
-        # --- MODO SSO / AUTHELIA (AUTO-DETECT) ---
-        header_user = os.getenv('AUTHELIA_HEADER_USER', 'Remote-Email')
-        header_name = os.getenv('AUTHELIA_HEADER_NAME', 'Remote-Name')
-        header_groups = os.getenv('AUTHELIA_HEADER_GROUPS', 'Remote-Groups')
-        
-        authelia_user = request.headers.get(header_user)
-        
-        if os.getenv('AUTHELIA_ENABLED', 'false').lower() == 'true' and authelia_user:
-            user = User.query.filter_by(username=authelia_user).first()
-            
-            # Obtener metadatos adicionales del header
-            authelia_name = request.headers.get(header_name, authelia_user)
-            authelia_groups = request.headers.get(header_groups, '')
-            
-            # Lógica de Roles (Admin si está en grupo administrador)
-            inferred_role = 'usuario'
-            if 'administrador' in [g.strip().lower() for g in authelia_groups.split(',')]:
-                inferred_role = 'administrador'
+            if authelia_user:
+                header_name = os.getenv('AUTHELIA_HEADER_NAME', 'Remote-Name')
+                header_groups = os.getenv('AUTHELIA_HEADER_GROUPS', 'Remote-Groups')
+                
+                user = User.query.filter_by(username=authelia_user).first()
+                authelia_name = request.headers.get(header_name, authelia_user)
+                authelia_groups = request.headers.get(header_groups, '')
+                
+                # Lógica de Roles
+                inferred_role = 'usuario'
+                if authelia_groups and 'administrador' in [g.strip().lower() for g in authelia_groups.split(',')]:
+                    inferred_role = 'administrador'
 
-            if not user:
-                # Auto-creación de sombra de usuario si viene de SSO confiable
-                user = User(
-                    username=authelia_user,
-                    nombre=authelia_name,
-                    role=inferred_role,
-                    auth_source='sso'
-                )
-                db.session.add(user)
-                db.session.commit()
-            else:
-                # Actualizar nombre y rol si cambiaron en el SSO
-                user.nombre = authelia_name
-                user.role = inferred_role
-                db.session.commit()
-            
-            login_user(user)
-            add_audit_log("login sso", status="success", detail=f"Usuario {authelia_user} ({authelia_name}) ha iniciado sesión vía SSO/Authelia")
-            return redirect(url_for('core.index'))
+                if not user:
+                    user = User(
+                        username=authelia_user,
+                        nombre=authelia_name,
+                        role=inferred_role,
+                        auth_source='sso'
+                    )
+                    db.session.add(user)
+                    db.session.commit()
+                else:
+                    user.nombre = authelia_name
+                    user.role = inferred_role
+                    db.session.commit()
+                
+                login_user(user)
+                add_audit_log("login sso", status="success", detail=f"Usuario {authelia_user} ha iniciado sesión vía SSO")
+                return redirect(url_for('core.index'))
 
-        # --- LOGIN TRADICIONAL (FORMULARIO) ---
+        # 3. LOGIN TRADICIONAL (Solo si es POST)
         if request.method == "POST":
             username = request.form.get("username")
             password = request.form.get("password")
             auth_type = request.form.get("auth_type", "directory")
-
             
-            # --- MODO DIRECTORIO (LDAP) ---
             if auth_type == "directory":
                 from app.modules.auth.services import authenticate_user_ldap
                 ldap_result = authenticate_user_ldap(username, password)
-                
                 if ldap_result.get("status") == "success":
                     user = ldap_result["user"]
-                    
-                    if not getattr(user, 'is_active', True):
-                        flash("Tu cuenta ha sido deshabilitada por el administrador", "error")
-                        return redirect(url_for('auth.login'))
-                        
-                    print(f"✅ LOGUEANDO USUARIO LDAP: {user.username} - ID EN DB: {user.id}")
                     login_user(user)
-                    add_audit_log("login usuario", status="success", detail=f"Usuario {username} ha iniciado sesión vía DIRECTORIO")
+                    add_audit_log("login usuario", status="success", detail=f"Usuario {username} vía DIRECTORIO")
                     return redirect(url_for('core.index'))
                 else:
-                    flash(f"Error de Directorio: {ldap_result.get('message')}", "error")
-                    return redirect(url_for('auth.login'))
-                
-            # --- MODO LOCAL ---
+                    flash(f"Error: {ldap_result.get('message')}", "error")
             else:
                 user = User.query.filter_by(username=username).first()
-                
                 if user and user.check_password(password):
-                    if not getattr(user, 'is_active', True):
-                        flash("Tu cuenta ha sido deshabilitada por el administrador", "error")
-                        return redirect(url_for('auth.login'))
-                        
-                    # Actualizar telemetría de sesión
-                    from datetime import datetime
-                    user.last_login_at = datetime.now()
-                    db.session.commit()
-                    
                     login_user(user)
                     add_audit_log("login usuario", status="success", detail=f"Usuario {username} ha iniciado sesión LOCALMENTE")
                     return redirect(url_for('core.index'))
-                
-                flash("Credenciales locales incorrectas", "error")
-                return redirect(url_for('auth.login'))
+                flash("Credenciales incorrectas", "error")
 
-        # --- CHEQUEO AUTOMÁTICO DE SSO (GET REQUEST) ---
-        header_user = os.getenv('AUTHELIA_HEADER_USER', 'Remote-Email')
-        authelia_user = request.headers.get(header_user)
-        if os.getenv('AUTHELIA_ENABLED', 'false').lower() == 'true' and authelia_user:
-            user = User.query.filter_by(username=authelia_user).first()
-            if user:
-                # Actualizar metadatos también en el chequeo pasivo
-                header_name = os.getenv('AUTHELIA_HEADER_NAME', 'Remote-Name')
-                header_groups = os.getenv('AUTHELIA_HEADER_GROUPS', 'Remote-Groups')
-                
-                user.nombre = request.headers.get(header_name, user.nombre)
-                
-                # Re-validar rol
-                authelia_groups = request.headers.get(header_groups, '')
-                if 'administrador' in [g.strip().lower() for g in authelia_groups.split(',')]:
-                    user.role = 'administrador'
-                else:
-                    user.role = 'usuario'
-                    
-                db.session.commit()
-                login_user(user)
-                return redirect(url_for('core.index'))
-
-        return render_template("login.html", authelia_url=os.getenv('AUTHELIA_URL', '#'))
+        # 4. FALLBACK: Mostrar formulario de login manual
+        return render_template("login.html", sso_enabled=os.getenv('AUTHELIA_ENABLED', 'false').lower() == 'true')
 
     except Exception as e:
         from flask import current_app
         current_app.logger.error(f"Error en login: {e}")
-        flash("Error inesperado en el servicio de autenticación", "error")
-        return redirect(url_for('auth.login'))
+        return render_template("login.html", error="Error en el servicio de autenticación")
 
 @auth_bp.route("/users/purge", methods=["POST"])
 @login_required
@@ -165,12 +116,13 @@ def logout():
     
     # --- LOGOUT COORDINADO CON AUTHELIA (SSO) ---
     if os.getenv('AUTHELIA_ENABLED', 'false').lower() == 'true':
-        slo_url = os.getenv('AUTHELIA_SLO_URL', 'https://auth.vivaro.com:9091/logout')
-        # Redirigimos al login para romper el bucle
-        redirect_url = f"{slo_url}?rd={request.host_url}auth/login"
-        return redirect(redirect_url)
+        slo_url = os.getenv('AUTHELIA_SLO_URL')
+        if slo_url:
+            # Redirigimos al login para romper el bucle
+            redirect_url = f"{slo_url}?rd={request.host_url}auth/login"
+            return redirect(redirect_url)
         
-    flash("You have been logged out.", "info")
+    flash("Has cerrado sesión correctamente.", "info")
     return redirect(url_for('auth.login'))
 
 @auth_bp.route("/")
