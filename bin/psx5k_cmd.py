@@ -1,54 +1,18 @@
 import pexpect
 import sys
-import re
 import os
-import datetime
 import shutil
 from dotenv import load_dotenv
 
 # Cargar variables de entorno
 load_dotenv()
 
-def test_connectivity():
-    """
-    Verifica si el servidor PSX responde a SSH.
-    Retorna (True, message) o (False, error).
-    """
-    PSX_IP = os.getenv('PSX_IP')
-    PSX_USER = os.getenv('PSX_USER')
-    PSX_PASS = os.getenv('PSX_PASS')
-    PSX_PORT = os.getenv('PSX_PORT', '22')
-
-    if not all([PSX_IP, PSX_USER, PSX_PASS]):
-        return False, "Faltan credenciales en .env"
-
-    ssh_path = shutil.which('ssh')
-    if not ssh_path:
-        return False, "Binario 'ssh' no encontrado en el sistema (PATH)."
-
-    try:
-        cmd = pexpect.spawn(f'{ssh_path} -o StrictHostKeyChecking=no -p {PSX_PORT} {PSX_USER}@{PSX_IP}', timeout=10, encoding='utf-8', codec_errors='replace')
-        idx = cmd.expect(['Password:', pexpect.EOF, pexpect.TIMEOUT])
-        
-        if idx == 0: # Password:
-            cmd.sendline(PSX_PASS)
-            idx2 = cmd.expect(['\r\n>', 'Permission denied', pexpect.TIMEOUT])
-            if idx2 == 0:
-                cmd.sendline('exit')
-                return True, "Conexión exitosa"
-            else:
-                return False, "Error de autenticación o timeout en password"
-        elif idx == 1:
-            return False, "Conexión rechazada o cerrada por el host"
-        else:
-            return False, "Timeout al intentar conectar"
-            
-    except Exception as e:
-        return False, str(e)
-
+# Configuraciones globales desde ENV
 DEBUG_PSX_ENABLED = os.getenv('DEBUG_PSX', 'false').lower() == 'true'
+EXPECT_PROMPTS = ['Password:', '\r\n>', 'PSXMASTER>', 'PSX>', pexpect.TIMEOUT, pexpect.EOF]
 
 class StreamLog:
+    """Wrapper para capturar el flujo de salida sin saturar consola (a menos que se active DEBUG)"""
     def __init__(self):
         self.content = ""
     def write(self, s):
@@ -58,148 +22,204 @@ class StreamLog:
     def flush(self):
         sys.stdout.flush()
 
-def psx5k_cmd(line_task, line_number, line_type=None, routing_label=None, force=False):
+def _check_psx_error(output):
     """
-    Función de ejecución para nodo PSX5K (Standalone para validación).
-    
-    line_task     = str ('add'/'del')
-    line_number   = list [8147777000, ...]
-    line_type     = str ('call_in'/'call_inout')
-    routing_label = str (opcional)
-    force         = bool (True para sobreescribir registros existentes)
+    Analiza la salida de PSX en busca de patrones de error comunes.
+    Retorna (True, error_msg) si hay error, (False, None) si parece exitoso.
     """
-    
-    # Obtener credenciales del entorno (Obligatorios en .env)
+    error_patterns = [
+        ('ERR_REC_NOT_FOUND', "Registro no encontrado"),
+        ('is not present in table', "Referencia inválida (Foreign Key)"),
+        ('already exists', "El registro ya existe"),
+        ('syntax error', "Error de sintaxis en comando"),
+        ('Permission denied', "Permiso denegado en PSX"),
+        ('Invalid command', "Comando no reconocido"),
+        ('Database is locked', "Base de datos PSX ocupada/bloqueada")
+    ]
+    for pattern, msg in error_patterns:
+        if pattern in output:
+            return True, msg
+    return False, None
+
+def _get_psx_connection(timeout=15):
+    """
+    Helper interno para establecer conexión SSH básica.
+    No entra en PSXMASTER, solo el túnel y login.
+    """
     PSX_IP = os.getenv('PSX_IP')
     PSX_USER = os.getenv('PSX_USER')
     PSX_PASS = os.getenv('PSX_PASS')
     PSX_PORT = os.getenv('PSX_PORT', '22')
 
     if not all([PSX_IP, PSX_USER, PSX_PASS]):
-        raise EnvironmentError("Faltan configuraciones críticas de PSX en el archivo .env (PSX_IP, PSX_USER, PSX_PASS)")
+        return None, "Faltan credenciales críticas en .env"
 
-    EXPECT = ['Password:', '\r\n>', 'PSXMASTER>']
-    
-    # Acumuladores de estado para reporte
-    stats = {
-        "total": 0,
-        "ok": 0,
-        "dup": 0,
-        "force_ok": 0,
-        "fail": 0,
-        "logs": [],
-        "full_flow": ""
-    }
-
-    stream = StreamLog()
+    ssh_path = shutil.which('ssh')
+    if not ssh_path:
+        return None, "Binario 'ssh' no encontrado en el sistema."
 
     try:
-        print(f"🚀 Conectando a PSX ({PSX_IP}) para tarea: {line_task.upper()} (Force: {force})...")
-        
-        ssh_path = shutil.which('ssh')
-        if not ssh_path:
-            raise FileNotFoundError("El ejecutable 'ssh' no fue encontrado. Asegúrate de que OpenSSH esté instalado y en el PATH.")
-
-        # 1. Establecer Conexión SSH
-        cmd = pexpect.spawn(f'{ssh_path} -o StrictHostKeyChecking=no -p {PSX_PORT} {PSX_USER}@{PSX_IP}', timeout=30, encoding='utf-8', codec_errors='replace')
+        connection_str = f'{ssh_path} -o StrictHostKeyChecking=no -p {PSX_PORT} {PSX_USER}@{PSX_IP}'
+        cmd = pexpect.spawn(connection_str, timeout=timeout, encoding='utf-8', codec_errors='replace')
         cmd.setecho(False)
-        cmd.delaybeforesend = 0.8
+        cmd.delaybeforesend = 0.5
         
-        # Flujo de Login (Sin loggear para proteger credenciales)
-        idx = cmd.expect(EXPECT)
+        idx = cmd.expect(EXPECT_PROMPTS)
+        
         if idx == 0: # Password:
             cmd.sendline(PSX_PASS)
-            cmd.expect(EXPECT)
+            idx2 = cmd.expect(EXPECT_PROMPTS)
+            if idx2 in [1, 2, 3]: # Alguno de los prompts
+                return cmd, "OK"
+            else:
+                return None, "Fallo de autenticación o Prompt no reconocido"
+        elif idx in [1, 2, 3]: # Entró directo (ej. por llaves, aunque pida pass en env)
+            return cmd, "OK"
+        else:
+            return None, "Timeout o Conexión rechazada"
             
-        # ACTIVAR LOG después del login exitoso
+    except Exception as e:
+        return None, str(e)
+
+def test_connectivity():
+    """
+    Verifica si el servidor PSX responde a SSH.
+    Retorna (True, message) o (False, error).
+    """
+    cmd, msg = _get_psx_connection()
+    if cmd:
+        cmd.sendline('exit')
+        cmd.close()
+        return True, "Conexión exitosa"
+    return False, msg
+
+def psx5k_cmd(line_task, line_number, line_type=None, routing_label=None, force=False):
+    """
+    Motor de ejecución PSX5K optimizado.
+    """
+    stats = {
+        "total": 0, "ok": 0, "dup": 0, "force_ok": 0, "fail": 0,
+        "logs": [], "full_flow": ""
+    }
+    stream = StreamLog()
+    
+    # 1. Establecer Conexión
+    cmd, msg = _get_psx_connection(timeout=30)
+    if not cmd:
+        stats["fail"] = len(line_number)
+        stats["logs"].append(f"CRITICAL: {msg}")
+        return stats
+
+    try:
+        # Activar log para capturar el flujo operativo
         cmd.logfile = stream
 
-        # Entrar a la instancia PSXMASTER
+        # 2. Entrar a la instancia PSXMASTER
         cmd.sendline('s t i PSXMASTER')
-        cmd.expect(EXPECT)
-        
-        # 2. Procesar Números (ANI)
+        idx = cmd.expect(EXPECT_PROMPTS)
+        if idx != 2: # No llegamos al prompt PSXMASTER>
+            raise ConnectionError(f"No se pudo activar instancia PSXMASTER. Prompt actual: {cmd.before}")
+
+        # 3. Procesar Números (ANI)
         for number in line_number:
-            if DEBUG_PSX_ENABLED:
-                print(f"\n🔍 [DEBUG] Procesando ANI: {number}")
             stats["total"] += 1
             try:
-                if line_task == 'add':
-                    # Control de validación previa de existencia
-                    SURE_CHECK = os.getenv('PSX_SURE_CHECK', 'true').lower() == 'true'
-                    EXISTENCE_CHECK = os.getenv('PSX_EXISTENCE_CHECK', 'true').lower() == 'true'
-                    
-                    found = False
-                    if EXISTENCE_CHECK or (SURE_CHECK or not force):
-                        cmd.sendline(f'show subscriber Subscriber_Id {number} Country_Id 52')
-                        cmd.expect(EXPECT)
-                        result = cmd.before
-                        found = 'ERR_REC_NOT_FOUND' not in result
-                    else:
-                        # Si se deshabilita el check de existencia, asumimos que no está o que no importa
-                        found = False
+                # Flags de control
+                SURE_CHECK = os.getenv('PSX_SURE_CHECK', 'true').lower() == 'true'
+                EXISTENCE_CHECK = os.getenv('PSX_EXISTENCE_CHECK', 'true').lower() == 'true'
+                
+                # --- PASO 1: VALIDACIÓN DE EXISTENCIA (SHOW) ---
+                found = False
+                # Siempre validamos si EXISTENCE_CHECK está activo, o si es un ADD sin FORCE
+                if EXISTENCE_CHECK or (line_task == 'add' and (SURE_CHECK or not force)):
+                    cmd.sendline(f'show subscriber Subscriber_Id {number} Country_Id 52')
+                    cmd.expect(EXPECT_PROMPTS)
+                    found = 'ERR_REC_NOT_FOUND' not in cmd.before
+                else:
+                    # Si no hay check de existencia activo (ej. en delete), asumimos que debemos intentar la operación
+                    if line_task == 'delete':
+                        found = True 
 
+                # --- PASO 2: EJECUCIÓN SEGÚN EL TIPO ---
+                
+                # CASO A: AÑADIR (ADD)
+                if line_task == 'add':
                     if not found or force:
-                        # Modo Inserción o Sobreescritura Forzada
                         is_force = found and force
                         msg_prefix = "[OK]" if not found else "[FORCE-OK]"
                         
                         if line_type == 'call_in':
+                            # Registro de Subscriber
                             cmd.sendline(f"put subscriber Subscriber_Id {number} Country_Id 52 Orig_Entity_Routing_Profile_Id 911 Is_Destination 1")
-                            cmd.expect(EXPECT)
+                            cmd.expect(EXPECT_PROMPTS)
+                            err, err_msg = _check_psx_error(cmd.before)
+                            if err: raise Exception(f"Error Subscriber: {err_msg}")
+                            
+                            # Registro de Destination
                             cmd.sendline(f"put destination National_Id {number} Country_Id 52 Custom_Script_Id BLOCKING Is_Subscriber 1")
-                            cmd.expect(EXPECT)
+                            cmd.expect(EXPECT_PROMPTS)
+                            err, err_msg = _check_psx_error(cmd.before)
+                            if err: raise Exception(f"Error Destination: {err_msg}")
+
                             if is_force: stats["force_ok"] += 1
                             else: stats["ok"] += 1
                             stats["logs"].append(f"{msg_prefix} {number} - call_in")
                             
                         elif line_type == 'call_inout':
+                            # Registro de Subscriber
                             cmd.sendline(f"put subscriber Subscriber_Id {number} Country_Id 52 Orig_Entity_Routing_Profile_Id 911 Is_Destination 1")
-                            cmd.expect(EXPECT)
+                            cmd.expect(EXPECT_PROMPTS)
+                            err, err_msg = _check_psx_error(cmd.before)
+                            if err: raise Exception(f"Error Subscriber: {err_msg}")
+
+                            # Registro de Destination con Routing Label
                             cmd.sendline(f"put destination National_Id {number} Country_Id 52 Custom_Script_Id \"\" Element_Attributes 0x20 Routing_Label_Id {routing_label} Is_Subscriber 1")
-                            cmd.expect(EXPECT)
+                            cmd.expect(EXPECT_PROMPTS)
                             
-                            # Validar si el routing_label era válido
                             if 'is not present in table "routing_label"' in cmd.before:
-                                # Rollback si falló el label
                                 cmd.sendline(f'delete subscriber Subscriber_Id {number} Country_Id 52')
-                                cmd.expect(EXPECT)
-                                cmd.sendline(f'delete destination National_Id {number} Country_Id 52')
-                                cmd.expect(EXPECT)
+                                cmd.expect(EXPECT_PROMPTS)
                                 stats["fail"] += 1
                                 stats["logs"].append(f"[FAIL] {number} - Routing Label Inválido")
                             else:
+                                err, err_msg = _check_psx_error(cmd.before)
+                                if err: raise Exception(f"Error Destination: {err_msg}")
+                                
                                 if is_force: stats["force_ok"] += 1
                                 else: stats["ok"] += 1
                                 stats["logs"].append(f"{msg_prefix} {number} - call_inout")
                     else:
-                        # Registro existente y no se pidió forzar
                         stats["dup"] += 1
-                        stats["logs"].append(f"[DUP] {number} - Registro ya existente")
+                        stats["logs"].append(f"[DUP] {number} - Ya existe")
 
+                # CASO B: ELIMINAR (DELETE)
                 elif line_task == 'delete':
-                    # Para borrar no validamos previo, solo enviamos y si no hay excepción, es OK
-                    cmd.sendline(f'delete subscriber Subscriber_Id {number} Country_Id 52')
-                    cmd.expect(EXPECT)
-                    cmd.sendline(f'delete destination National_Id {number} Country_Id 52')
-                    cmd.expect(EXPECT)
-                    
-                    stats["ok"] += 1
-                    stats["logs"].append(f"[DEL] {number} - Procesado")
+                    if found:
+                        # Intento de borrado
+                        cmd.sendline(f'delete subscriber Subscriber_Id {number} Country_Id 52')
+                        cmd.expect(EXPECT_PROMPTS)
+                        cmd.sendline(f'delete destination National_Id {number} Country_Id 52')
+                        cmd.expect(EXPECT_PROMPTS)
+                        
+                        stats["ok"] += 1
+                        stats["logs"].append(f"[DEL] {number} - Eliminado")
+                    else:
+                        # Si EXISTENCE_CHECK estaba activo y no se encontró
+                        stats["dup"] += 1
+                        stats["logs"].append(f"[SKIP] {number} - No encontrado")
 
             except Exception as e:
                 stats["fail"] += 1
                 stats["logs"].append(f"[ERROR] {number}: {str(e)}")
 
-        # 3. Cerrar Sesión
+        # 4. Cerrar Sesión
         cmd.sendline('exit')
         cmd.expect(pexpect.EOF)
-        print("\n✅ Sesión PSX finalizada.")
         
     except Exception as e:
-        stats["fail"] = stats["total"] - stats["ok"] - stats["dup"] - stats["force_ok"]
+        stats["fail"] = stats["total"] - (stats["ok"] + stats["dup"] + stats["force_ok"])
         stats["logs"].append(f"CRITICAL ERROR: {str(e)}")
-        print(f"\n❌ Error Crítico: {str(e)}")
+        if DEBUG_PSX_ENABLED: print(f"❌ Error Crítico: {str(e)}")
 
     stats["full_flow"] = stream.content
     return stats
