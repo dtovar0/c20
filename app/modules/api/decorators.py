@@ -5,6 +5,13 @@ import os
 def api_key_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
+        # 1. Global Master Switch
+        if os.getenv('ENABLE_API', 'true').lower() != 'true':
+            return jsonify({
+                "status": "error",
+                "message": "NEXUS API is currently disabled by administrator."
+            }), 503
+
         # Allow disabling API temporarily if token is not set or empty
         system_token = os.getenv('API_TOKEN')
         
