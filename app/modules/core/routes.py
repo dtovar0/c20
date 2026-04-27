@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, send_from_directory, current_app
 from flask_login import login_required, current_user
+from app import db
 from app.decorators import admin_required
 from app.modules.audit.models import AuditLog
 import os
@@ -29,7 +30,8 @@ def dashboard_2():
         is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
         
         # Vista Táctica: Últimos 20 logs únicamente, divididos en 2 páginas de 10
-        pagination = AuditLog.query.order_by(AuditLog.timestamp.desc()).limit(20).from_self().paginate(page=page, per_page=10, error_out=False)
+        subq = db.session.query(AuditLog.id).order_by(AuditLog.timestamp.desc()).limit(20).subquery()
+        pagination = AuditLog.query.filter(AuditLog.id.in_(db.session.query(subq))).order_by(AuditLog.timestamp.desc()).paginate(page=page, per_page=10, error_out=False)
             
         return render_template("dashboard_2.html", 
                                activity=pagination.items, 
