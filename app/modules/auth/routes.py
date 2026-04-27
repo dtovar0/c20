@@ -55,11 +55,12 @@ def login():
                     db.session.add(user)
                     db.session.commit()
                     # Notificar bienvenida SSO
-                    base_url = os.getenv('BASE_URL', request.host_url.rstrip('/'))
-                    send_notification_by_slug('usuario_creado', authelia_user, context={
-                        'nombre': authelia_name,
-                        'base_url': base_url
-                    })
+                    if os.getenv('NOTIFY_USER_CREATED', 'true').lower() == 'true':
+                        base_url = os.getenv('BASE_URL', request.host_url.rstrip('/'))
+                        send_notification_by_slug('usuario_creado', authelia_user, context={
+                            'nombre': authelia_name,
+                            'base_url': base_url
+                        })
                 else:
                     print("DEBUG: Usuario existente. Actualizando metadatos...")
                     user.nombre = authelia_name
@@ -245,11 +246,12 @@ def create_user():
         db.session.commit()
         
         # Notificar bienvenida Manual
-        base_url = os.getenv('BASE_URL', request.host_url.rstrip('/'))
-        send_notification_by_slug('usuario_creado', target_email, context={
-            'nombre': data.get('nombre', ''),
-            'base_url': base_url
-        })
+        if os.getenv('NOTIFY_USER_CREATED', 'true').lower() == 'true':
+            base_url = os.getenv('BASE_URL', request.host_url.rstrip('/'))
+            send_notification_by_slug('usuario_creado', target_email, context={
+                'nombre': data.get('nombre', ''),
+                'base_url': base_url
+            })
 
         add_audit_log("usuario creado", status="success", detail=f"Se creó el usuario: {target_email}")
         

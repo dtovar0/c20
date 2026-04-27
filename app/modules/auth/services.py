@@ -147,8 +147,8 @@ def authenticate_user_ldap(email, password):
                     db.session.commit()
                     db.session.refresh(local_user)
 
-                # Notificar bienvenida LDAP (Solo si es nuevo)
-                if is_new:
+                # Notificar bienvenida LDAP (Solo si es nuevo y habilitado)
+                if is_new and os.getenv('NOTIFY_USER_CREATED', 'true').lower() == 'true':
                     base_url = os.getenv('BASE_URL', 'http://10.224.2.146')
                     send_notification_by_slug('usuario_creado', ldap_email, context={
                         'nombre': nombre,
