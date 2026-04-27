@@ -295,18 +295,18 @@
         <form id="form-add-user">
             <div class="modal-body space-y-5">
                 <div class="space-y-1.5 group">
-                    <label class="text-[12px] font-black uppercase tracking-widest text-label/60 ml-1 group-focus-within:text-primary transition-colors">Nombre Completo</label>
+                    <label class="text-[12px] font-black uppercase tracking-widest text-label/60 ml-1 group-focus-within:text-primary transition-colors">Identificador / Email (Login)</label>
                     <div class="relative">
-                        <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/60 transition-colors group-focus-within:text-primary z-10 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                        <input type="text" name="nombre" required placeholder="Juan Perez" data-validation-type="text" autocomplete="off"
+                        <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/60 transition-colors group-focus-within:text-primary z-10 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        <input type="text" name="username" required placeholder="juan.perez@nexus.com" data-validation-type="text" autocomplete="off"
                                class="premium-validate w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-11 pr-4 py-3.5 text-sm font-bold text-input outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all">
                     </div>
                 </div>
                 <div class="space-y-1.5 group">
-                    <label class="text-[12px] font-black uppercase tracking-widest text-label/60 ml-1 group-focus-within:text-primary transition-colors">Identificador / Email</label>
+                    <label class="text-[12px] font-black uppercase tracking-widest text-label/60 ml-1 group-focus-within:text-primary transition-colors">Nombre Completo</label>
                     <div class="relative">
-                        <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/60 transition-colors group-focus-within:text-primary z-10 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                        <input type="text" name="username" required placeholder="juan.perez@nexus.com" data-validation-type="text" autocomplete="off"
+                        <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/60 transition-colors group-focus-within:text-primary z-10 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        <input type="text" name="nombre" required placeholder="Juan Perez" data-validation-type="text" autocomplete="off"
                                class="premium-validate w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-11 pr-4 py-3.5 text-sm font-bold text-input outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all">
                     </div>
                 </div>
@@ -375,19 +375,19 @@
             <input type="hidden" name="user_id">
             <div class="modal-body space-y-5">
                 <div class="space-y-1.5 group">
-                    <label class="text-[12px] font-black uppercase tracking-widest text-label/60 ml-1 group-focus-within:text-primary transition-colors">Nombre Completo</label>
-                    <div class="relative">
-                        <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/60 transition-colors group-focus-within:text-primary z-10 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                        <input type="text" name="nombre" required placeholder="Juan Perez" data-validation-type="text" autocomplete="off"
-                               class="premium-validate w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-11 pr-4 py-3.5 text-sm font-bold text-input outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all">
-                    </div>
-                </div>
-                <div class="space-y-1.5 group">
                     <label class="text-[12px] font-black uppercase tracking-widest text-label/60 ml-1 group-focus-within:text-primary transition-colors">Identificador / Email (No editable)</label>
                     <div class="relative">
                         <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/30 transition-colors z-10 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                         <input type="text" name="username" readonly placeholder="juan.perez@nexus.com" data-validation-type="text" autocomplete="off"
                                class="premium-validate w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-11 pr-4 py-3.5 text-sm font-bold text-input opacity-60 cursor-not-allowed outline-none transition-all">
+                    </div>
+                </div>
+                <div class="space-y-1.5 group">
+                    <label class="text-[12px] font-black uppercase tracking-widest text-label/60 ml-1 group-focus-within:text-primary transition-colors">Nombre Completo</label>
+                    <div class="relative">
+                        <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-label/60 transition-colors group-focus-within:text-primary z-10 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        <input type="text" name="nombre" required placeholder="Juan Perez" data-validation-type="text" autocomplete="off"
+                               class="premium-validate w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-11 pr-4 py-3.5 text-sm font-bold text-input outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all">
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
