@@ -155,76 +155,76 @@
                             <svg class="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                         </a>
                     </div>
-                    
-                    <!-- Compact Tactical List container -->
-                    <div class="flex-grow overflow-hidden custom-scrollbar" id="activityLogsContainer">
-                        {% if activity %}
-                            <div class="h-full grid grid-rows-10 divide-y divide-panel-border/30 animate-in fade-in duration-500">
-                                {% for log in activity %}
-                                    {% set action_lower = log.action | lower %}
-                                    {% set action_upper = log.action | upper %}
-                                    {% set badge_color = 'border-primary/30 text-primary bg-primary/5' %}
-                                    {% set icon = 'fa-bolt' %}
-                                    {% if 'ACCESO' in action_upper or 'login' in action_lower %}
-                                        {% set badge_color = 'border-sky-500/30 text-sky-400 bg-sky-500/5' %}
-                                        {% set icon = 'fa-user-check' %}
-                                    {% elif 'ERROR' in action_upper or 'FALLO' in action_upper or 'ABORTADA' in action_upper %}
-                                        {% set badge_color = 'border-rose-500/30 text-rose-400 bg-rose-500/5' %}
-                                        {% set icon = 'fa-exclamation-triangle' %}
-                                    {% elif 'ÉXITO' in action_upper or 'complet' in action_lower or 'ok' in action_lower %}
-                                        {% set badge_color = 'border-emerald-500/30 text-emerald-400 bg-emerald-500/5' %}
-                                        {% set icon = 'fa-check-circle' %}
-                                    {% elif 'CIERRE' in action_upper or 'logou' in action_lower %}
-                                        {% set badge_color = 'border-violet-500/30 text-violet-400 bg-violet-500/5' %}
-                                        {% set icon = 'fa-sign-out-alt' %}
-                                    {% elif 'EJECUCIÓN' in action_upper or 'OPERACIÓN' in action_upper %}
-                                        {% set badge_color = 'border-indigo-500/30 text-indigo-400 bg-indigo-500/5' %}
-                                        {% set icon = 'fa-terminal' %}
-                                    {% endif %}
+                        <!-- Compact Tactical List container -->
+                        <div class="flex-grow overflow-y-auto custom-scrollbar" id="activityLogsContainer">
+                            {% if activity %}
+                                <div class="flex flex-col divide-y divide-panel-border/30 animate-in fade-in duration-700">
+                                    {% for log in activity %}
+                                        {% set action_lower = log.action | lower %}
+                                        {% set action_upper = log.action | upper %}
+                                        {% set badge_color = 'border-primary/40 text-primary bg-primary/10' %}
+                                        {% set icon = 'fa-bolt' %}
+                                        
+                                        {% if 'ACCESO' in action_upper or 'login' in action_lower %}
+                                            {% set badge_color = 'border-sky-500/40 text-sky-400 bg-sky-500/10' %}
+                                            {% set icon = 'fa-user-check' %}
+                                        {% elif 'ERROR' in action_upper or 'FALLO' in action_upper or 'ABORTADA' in action_upper %}
+                                            {% set badge_color = 'border-rose-500/40 text-rose-400 bg-rose-500/10' %}
+                                            {% set icon = 'fa-skull' %}
+                                        {% elif 'ÉXITO' in action_upper or 'complet' in action_lower or 'ok' in action_lower %}
+                                            {% set badge_color = 'border-emerald-500/40 text-emerald-400 bg-emerald-500/10' %}
+                                            {% set icon = 'fa-check-circle' %}
+                                        {% elif 'CIERRE' in action_upper or 'logou' in action_lower %}
+                                            {% set badge_color = 'border-violet-500/40 text-violet-400 bg-violet-500/10' %}
+                                            {% set icon = 'fa-sign-out-alt' %}
+                                        {% elif 'EJECUCIÓN' in action_upper or 'OPERACIÓN' in action_upper or 'tarea' in action_lower %}
+                                            {% set badge_color = 'border-indigo-500/40 text-indigo-400 bg-indigo-500/10' %}
+                                            {% set icon = 'fa-terminal' %}
+                                        {% endif %}
 
-                                    <div class="px-5 py-4 flex items-start gap-4 hover:bg-white/[0.02] transition-all duration-300 group cursor-default border-b border-white/[0.03]">
-                                        <!-- Action Type Indicator (Replacing Avatar) -->
-                                        <div class="flex-shrink-0 w-10 h-10 rounded-xl border flex items-center justify-center shadow-lg transition-transform group-hover:scale-105 {{ badge_color }}">
-                                            <i class="fas {{ icon }} text-xs opacity-80"></i>
-                                        </div>
+                                        <div class="px-5 py-4 flex items-start gap-4 hover:bg-white/[0.04] transition-all duration-300 group cursor-default">
+                                            <!-- Action Type Indicator -->
+                                            <div class="flex-shrink-0 w-10 h-10 rounded-xl border flex items-center justify-center shadow-lg transition-transform group-hover:scale-105 {{ badge_color }}">
+                                                <i class="fas {{ icon }} text-xs"></i>
+                                            </div>
 
-                                        <div class="flex-grow min-w-0 flex flex-col gap-1.5">
-                                            <!-- Top Meta -->
-                                            <div class="flex items-center justify-between">
-                                                <div class="flex items-center gap-2">
-                                                    <span class="text-[10px] font-black tracking-[0.1em] text-white/40 uppercase">{{ log.user.split('@')[0] }}</span>
-                                                    <span class="w-1 h-1 rounded-full bg-white/10"></span>
-                                                    <span class="px-1.5 py-0.5 rounded bg-white/[0.03] border border-white/[0.05] text-[8px] font-bold text-white/30 uppercase tracking-tighter">
-                                                        {{ log.action.split(' ')[0] }}
+                                            <div class="flex-grow min-w-0 flex flex-col gap-1.5">
+                                                <div class="flex items-center justify-between">
+                                                    <div class="flex items-center gap-2">
+                                                        <span class="text-[10px] font-black tracking-widest text-white/50 uppercase">{{ log.user.split('@')[0] }}</span>
+                                                        <span class="w-1 h-1 rounded-full bg-white/20"></span>
+                                                        <span class="px-1.5 py-0.5 rounded bg-white/[0.05] border border-white/10 text-[8px] font-black text-white/40 uppercase tracking-tighter">
+                                                            {{ log.action.split(' ')[0] or 'OP' }}
+                                                        </span>
+                                                    </div>
+                                                    <span class="text-[9px] font-semibold text-white/30 tabular-nums">
+                                                        {{ log.timestamp.strftime('%H:%M:%S') }}
                                                     </span>
                                                 </div>
-                                                <span class="text-[9px] font-medium text-white/20 tabular-nums">
-                                                    {{ log.timestamp.strftime('%H:%M:%S') }}
-                                                </span>
-                                            </div>
 
-                                            <!-- Main Message -->
-                                            <div class="flex flex-col">
-                                                <h4 class="text-[11px] font-bold text-white/90 leading-tight group-hover:text-primary transition-colors">
-                                                    {{ ' '.join(log.action.split(' ')[1:]) }}
-                                                </h4>
-                                                {% if log.detail %}
-                                                    <p class="text-[10px] text-white/40 leading-relaxed mt-0.5 line-clamp-1 font-medium italic underline underline-offset-4 decoration-white/5" title="{{ log.detail }}">
-                                                        {{ log.detail }}
-                                                    </p>
-                                                {% endif %}
+                                                <div class="flex flex-col">
+                                                    <h4 class="text-[12px] font-bold text-white/95 leading-tight group-hover:text-primary transition-colors">
+                                                        {{ ' '.join(log.action.split(' ')[1:]) or log.action }}
+                                                    </h4>
+                                                    {% if log.detail %}
+                                                        <p class="text-[10px] text-white/50 leading-relaxed mt-1 line-clamp-2 font-medium italic italic opacity-80" title="{{ log.detail }}">
+                                                            {{ log.detail }}
+                                                        </p>
+                                                    {% endif %}
+                                                </div>
                                             </div>
                                         </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="flex flex-col items-center justify-center h-full py-20">
+                                    <div class="w-16 h-16 rounded-3xl bg-white/[0.02] border-2 border-dashed border-white/10 flex items-center justify-center mb-4">
+                                        <i class="fas fa-history text-xl text-white/10"></i>
                                     </div>
-                                {% endfor %}
-                            </div>
-                        {% else %}
-                            <div class="h-full flex flex-col items-center justify-center py-20 opacity-20">
-                                <div class="w-12 h-12 rounded-full border-2 border-dashed border-label mb-4"></div>
-                                <span class="text-[9px] font-black uppercase tracking-widest text-center italic">Waiting for activity...</span>
-                            </div>
-                        {% endif %}
-                    </div>
+                                    <span class="text-[10px] font-black uppercase tracking-widest text-white/20 italic text-center">No Activity Found</span>
+                                </div>
+                            {% endif %}
+                        </div>
                     
                     <div class="border-t border-panel-border bg-panel-header/20 p-3 flex items-center justify-between z-10 backdrop-blur-sm" id="activityPaginationFooter">
                         <span class="text-[9px] font-black text-label/40 uppercase tracking-tighter" id="paginationInfo">Pág. {{ pagination.page }} de {{ pagination.pages }}</span>
