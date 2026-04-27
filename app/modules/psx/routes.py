@@ -198,19 +198,21 @@ def get_global_stats():
 
         status_breakdown = db.session.query(
             PSX5KJob.usuario,
-            func.count(case((PSX5KTask.estado.in_(['Completado', 'Terminado con Errores']), 1))),
+            func.count(case((PSX5KTask.estado == 'Completado', 1))),
+            func.count(case((PSX5KTask.estado == 'Terminado con Errores', 1))),
             func.count(case((PSX5KTask.estado == 'Pendiente', 1))),
             func.count(case((PSX5KTask.estado == 'Programada', 1))),
             func.count(case((PSX5KTask.estado == 'Ejecutando', 1)))
         ).join(PSX5KTask).filter(PSX5KJob.usuario.in_(top_usernames)).group_by(PSX5KJob.usuario).all()
 
-        # Formatear para ApexCharts: Series por estado (Dashboard 2 Unificado)
+        # Formatear para ApexCharts: Series por estado (Desglose Detallado)
         top_users_data = {
             "users": [u[0] for u in status_breakdown],
-            "finished": [u[1] for u in status_breakdown],
-            "pending": [u[2] for u in status_breakdown],
-            "scheduled": [u[3] for u in status_breakdown],
-            "active": [u[4] for u in status_breakdown]
+            "ok": [u[1] for u in status_breakdown],
+            "fail": [u[2] for u in status_breakdown],
+            "pending": [u[3] for u in status_breakdown],
+            "scheduled": [u[4] for u in status_breakdown],
+            "active": [u[5] for u in status_breakdown]
         }
 
         # 7. Tareas por Día (Últimos 7 días para gráfica de tendencia)

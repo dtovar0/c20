@@ -40,7 +40,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1. Tareas por Usuario (Top 5 Stacked Columns)
     const optionsMirror = {
         series: [
-            { name: 'Terminadas', data: [] },
+            { name: 'Completadas', data: [] },
+            { name: 'Con Errores', data: [] },
             { name: 'Pendiente', data: [] },
             { name: 'Programada', data: [] },
             { name: 'Activa', data: [] }
@@ -60,10 +61,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         },
         colors: [
-            window.nexusSettings?.statusColors?.ok || '#22c55e', // Green for Finished
-            window.nexusSettings?.statusColors?.dup || '#f59e0b', // Amber for Pending
-            '#6366f1', // Indigo for Scheduled
-            window.nexusSettings?.statusColors?.force || '#3b82f6' // Blue for Active
+            window.nexusSettings?.statusColors?.ok || '#22c55e', // Green
+            window.nexusSettings?.statusColors?.fail || '#ef4444', // Red
+            window.nexusSettings?.statusColors?.dup || '#f59e0b', // Amber
+            '#6366f1', // Indigo
+            window.nexusSettings?.statusColors?.force || '#3b82f6' // Blue
         ],
         dataLabels: { enabled: false },
         xaxis: {
@@ -359,7 +361,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (data.stats.top_users && mirrorChartApex) {
                     const u = data.stats.top_users;
                     mirrorChartApex.updateSeries([
-                        { name: 'Terminadas', data: u.finished },
+                        { name: 'Completadas', data: u.ok },
+                        { name: 'Con Errores', data: u.fail },
                         { name: 'Pendiente', data: u.pending },
                         { name: 'Programada', data: u.scheduled },
                         { name: 'Activa', data: u.active }
