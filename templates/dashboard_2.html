@@ -12,7 +12,7 @@
 <div id="dashboardWrapper2" class="w-full h-full flex flex-col space-y-6 overflow-hidden relative p-6">
     
     <!-- Top KPI Row (Global Admin Portfolio) -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 flex-shrink-0">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 flex-shrink-0">
         <!-- Card 1: Usuarios (Primary) -->
         <div class="flex flex-col rounded-[22px] overflow-hidden bg-panel-fill shadow-sm border border-panel-border transition-all hover:shadow-md cursor-default">
             <div class="bg-primary py-3 text-center">
@@ -43,6 +43,17 @@
             <div class="px-4 py-5 flex flex-col items-center justify-center relative">
                 <h3 class="text-3xl lg:text-4xl font-black text-peach tracking-tighter" id="globalKpiPending">--</h3>
                 <p class="text-[11px] font-bold text-label/40 uppercase mt-2">En cola de espera</p>
+            </div>
+        </div>
+
+        <!-- Card: Tareas Programadas (Indigo) -->
+        <div class="flex flex-col rounded-[22px] overflow-hidden bg-panel-fill shadow-sm border border-panel-border transition-all hover:shadow-md cursor-default">
+            <div class="bg-indigo-500 py-3 text-center">
+                <span class="text-[12px] font-bold text-white uppercase tracking-[0.15em]">Tareas Programadas</span>
+            </div>
+            <div class="px-4 py-5 flex flex-col items-center justify-center relative">
+                <h3 class="text-3xl lg:text-4xl font-black text-indigo-500 tracking-tighter" id="globalKpiScheduled">--</h3>
+                <p class="text-[11px] font-bold text-label/40 uppercase mt-2">Ejecución diferida</p>
             </div>
         </div>
 

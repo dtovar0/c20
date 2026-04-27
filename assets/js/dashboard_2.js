@@ -345,12 +345,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 const usersEl = document.getElementById('globalKpiUsers');
                 const tasksEl = document.getElementById('globalKpiTasks');
                 const pendingEl = document.getElementById('globalKpiPending');
+                const scheduledEl = document.getElementById('globalKpiScheduled');
                 const queueEl = document.getElementById('globalKpiQueue');
                 const activeEl = document.getElementById('globalKpiActive');
                 
                 if (usersEl) usersEl.textContent = s.users.toLocaleString();
                 if (tasksEl) tasksEl.textContent = s.tasks.toLocaleString();
                 if (pendingEl) pendingEl.textContent = s.pending.toLocaleString();
+                if (scheduledEl) scheduledEl.textContent = s.scheduled.toLocaleString();
                 if (queueEl) queueEl.textContent = s.queue.toLocaleString();
                 
                 // Sync Top Users Chart (Stacked Breakdown)
