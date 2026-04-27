@@ -134,11 +134,18 @@ def handle_stale_tasks(app):
                 # Notificamos al administrador
                 admin = User.query.filter_by(role='administrador').first()
                 if admin and admin.email:
-                    send_notification_by_slug(
-                        slug='error', 
-                        target_email=admin.email,
-                        context={'usuario': 'SYSTEM_WATCHDOG', 'ip': 'LOCAL_WORKER', 'error': f'DEMORA_DETECTADA_ID_{task.id} (>{notify_timeout}min)'}
-                    )
+                    print(f"📧 [WATCHDOG] Intentando enviar correo a: {admin.email}")
+                    try:
+                        success = send_notification_by_slug(
+                            slug='error', 
+                            target_email=admin.email,
+                            context={'usuario': 'SYSTEM_WATCHDOG', 'ip': 'LOCAL_WORKER', 'error': f'DEMORA_DETECTADA_ID_{task.id} (>{notify_timeout}min)'}
+                        )
+                        print(f"📧 [WATCHDOG] Resultado del envío: {'EXITOSO' if success else 'FALLIDO'}")
+                    except Exception as e:
+                        print(f"❌ [WATCHDOG] Excepción al enviar correo: {e}")
+                else:
+                    print("⚠️ [WATCHDOG] No se encontró administrador o email para notificar.")
                 
                 add_audit_log(f"ALERTA DE DEMORA (PSX-{task.id})", status="warning", detail=f"Tiempo de ejecución >{notify_timeout} min (Aún en curso) | Proceso: {task.job.tarea}", user_override="SYSTEM")
                 
@@ -203,8 +210,9 @@ def watchdog_loop(app):
                 handle_user_hygiene(app)
                 last_hygiene_check = now
             
-            # Dormir 5 minutos antes del próximo escaneo global
-            time.sleep(300)
+            # Intervalo de escaneo del watchdog (configurable, default 60s)
+            watchdog_loop_interval = int(os.getenv('PSX_WATCHDOG_LOOP_INTERVAL', 60))
+            time.sleep(watchdog_loop_interval)
         except Exception as e:
             print(f"⚠️ [WATCHDOG-THREAD] Error crítico: {e}")
             time.sleep(60)

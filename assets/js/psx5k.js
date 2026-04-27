@@ -263,6 +263,12 @@ function initPSXDataTable() {
                                     <span class="text-[11px] font-black uppercase tracking-[0.15em]">En Cola</span>
                                 </div>`;
                     }
+                    if (state === 'ejecutando') {
+                        return `<div class="flex items-center justify-center gap-1.5 text-primary/70 animate-pulse py-2">
+                                    <svg class="w-3.5 h-3.5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                    <span class="text-[11px] font-black uppercase tracking-[0.15em]">Ejecutando</span>
+                                </div>`;
+                    }
                     if (state === 'cancelada' || state === 'abortada') {
                         return `<div class="flex items-center justify-center gap-1.5 opacity-40 text-rose-500/60 py-2">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
