@@ -27,12 +27,12 @@ window.switchSettingsTab = function(tab) {
         const content = document.getElementById(`tabContent${t.charAt(0).toUpperCase() + t.slice(1)}`);
         
         if (t === tab) {
-            btn.classList.add('bg-primary', 'text-white', 'shadow-lg', 'shadow-primary/20');
-            btn.classList.remove('bg-transparent', 'text-label/40', 'hover:bg-surface-container/30');
+            btn.classList.add('border-2', 'border-primary', 'bg-primary/5', 'text-primary');
+            btn.classList.remove('bg-transparent', 'border-transparent', 'text-label/40', 'hover:bg-surface-container/30');
             content.classList.remove('hidden');
         } else {
-            btn.classList.remove('bg-primary', 'text-white', 'shadow-lg', 'shadow-primary/20');
-            btn.classList.add('bg-transparent', 'text-label/40', 'hover:bg-surface-container/30');
+            btn.classList.remove('border-2', 'border-primary', 'bg-primary/5', 'text-primary');
+            btn.classList.add('bg-transparent', 'border-transparent', 'text-label/40', 'hover:bg-surface-container/30');
             content.classList.add('hidden');
         }
     });
