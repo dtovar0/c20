@@ -236,6 +236,8 @@ function initPSXDataTable() {
                 width: '120px',
                 orderable: false,
                 render: (data, type, row) => {
+                    if (type === 'filter' || type === 'sort') return data; // Returns 'estado' text
+                    
                     const isAdd = row.tarea === 'add';
                     const actionStyle = isAdd 
                         ? 'color:#2563eb;background:rgba(37,99,235,0.1);border-color:rgba(37,99,235,0.2)' 
