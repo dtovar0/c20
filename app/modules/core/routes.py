@@ -11,14 +11,20 @@ core_bp = Blueprint("core", __name__, url_prefix="/")
 @login_required
 def index():
     try:
-        # Obtener los últimos 12 logs de auditoría del usuario actual (2 páginas de 6)
-        recent_activity = AuditLog.query.filter_by(user=current_user.email)\
-                                        .order_by(AuditLog.timestamp.desc())\
-                                        .limit(12).all()
-        return render_template("index.html", activity=recent_activity)
+        from flask import request
+        page = request.args.get('page', 1, type=int)
+        
+        # Vista Táctica de Usuario: Últimos 20 logs únicamente, divididos en 2 páginas de 10
+        subq = db.session.query(AuditLog.id).filter_by(user=current_user.email)\
+                                            .order_by(AuditLog.timestamp.desc()).limit(20).subquery()
+        pagination = AuditLog.query.filter(AuditLog.id.in_(db.session.query(subq)))\
+                                   .order_by(AuditLog.timestamp.desc())\
+                                   .paginate(page=page, per_page=10, error_out=False)
+                                   
+        return render_template("index.html", activity=pagination.items, pagination=pagination)
     except Exception as e:
         current_app.logger.error(f"Error en index: {e}")
-        return render_template("index.html", activity=[])
+        return render_template("index.html", activity=[], pagination=None)
 
 @core_bp.route("/dashboard-2")
 @login_required

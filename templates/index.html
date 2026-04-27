@@ -152,130 +152,105 @@
                     </div>
                 </div>
             </div>
-        </div>
-
         <!-- Activity Monitor (Right Column) -->
-        <div class="lg:col-span-1 flex flex-col bg-panel-fill border border-panel-border shadow-2xl shadow-primary/5 rounded-2xl pt-6 px-8 pb-8 relative overflow-hidden group h-full">
+        <div class="lg:col-span-1 flex flex-col bg-panel-fill border border-panel-border shadow-2xl shadow-primary/5 rounded-2xl pt-6 px-0 pb-0 relative overflow-hidden group h-full">
             <div class="absolute -right-12 -top-12 w-48 h-48 bg-primary/5 blur-3xl rounded-full group-hover:bg-primary/10 transition-all"></div>
             
-            <!-- Header (Ultra-Compact Padding) -->
-            <div class="flex items-center justify-between pb-4 mb-4 border-b border-primary/10 dark:border-primary/30 relative z-10">
+            <!-- Header -->
+            <div class="flex items-center justify-between pb-4 mb-0 px-8 border-b border-primary/10 dark:border-primary/30 relative z-10 transition-colors">
                 <div class="flex items-center gap-4">
-                    <h2 class="text-xs font-black text-label/80 uppercase tracking-[0.3em]">Monitoreo de Actividad</h2>
-                    <div class="monitor-status-dot bg-success"></div>
+                    <div class="w-2 h-2 rounded-full bg-success animate-pulse"></div>
+                    <h2 class="text-[11px] font-black text-label/80 uppercase tracking-[0.3em]">Live Activity</h2>
                 </div>
-                <!-- Audit Link Button (Minimal) -->
-                <a href="{{ url_for('audit.index') }}" class="group/btn w-8 h-8 flex items-center justify-center rounded-lg bg-surface-container/20 hover:bg-primary/10 border border-panel-border hover:border-primary/30 transition-all active:scale-95 shadow-sm" title="Ver Auditoría Completa">
-                    <svg class="w-4 h-4 text-primary transition-transform group-hover/btn:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                <!-- Audit Link Button -->
+                <a href="{{ url_for('audit.index') }}" class="group/btn w-8 h-8 flex items-center justify-center rounded-xl bg-surface-container/20 hover:bg-primary/10 border border-panel-border hover:border-primary/30 transition-all active:scale-95 shadow-sm" title="Ver Historial Completo">
+                    <svg class="w-3.5 h-3.5 text-primary transition-transform group-hover/btn:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                 </a>
             </div>
- 
-            <!-- Body: Activity (Minimalist High-Impact Feed) -->
-            <div class="relative z-10 flex-grow overflow-hidden">
-                <div id="activityContainer" class="flex flex-col h-full justify-start relative z-10">
+            
+            <!-- Body: Activity (Shared Premium Component) -->
+            <div class="flex-grow overflow-hidden custom-scrollbar bg-surface/20 relative z-10" id="activityLogsContainer">
+                {% if activity %}
+                    <div class="flex flex-col divide-y divide-panel-border/20 animate-in fade-in slide-in-from-right-4 duration-700">
+                        {% for log in activity %}
+                            {% set action_lower = log.action | lower %}
+                            {% set icon = 'fas fa-fingerprint' %}
+                            {% set color_class = 'text-primary' %}
+                            {% set bg_class = 'bg-primary/10' %}
+                            {% set border_class = 'border-primary/20' %}
 
-                    {% if activity %}
-                        <!-- Page 1 Container -->
-                        <div id="activityPage1" class="activity-page flex flex-col space-y-1 transition-all duration-300">
-                        {% for log in activity[:6] %}
-                            <div class="group/row hover:bg-white/5 transition-all duration-300 cursor-default flex items-center py-2.5 px-2 rounded-2xl">
-                                <!-- High-Impact Icon Column -->
-                                <div class="w-14 h-14 flex-shrink-0 flex items-center justify-center">
-                                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-sm
-                                        {% if 'LOGIN' in log.action.upper() %} bg-primary/15 text-primary
-                                        {% elif 'TAREA' in log.action.upper() %} bg-sky/15 text-sky
-                                        {% elif 'IDENTITY' in log.action.upper() or 'USER' in log.action.upper() %} bg-violet/15 text-violet
-                                        {% else %} bg-slate-500/15 text-label/60 {% endif %}">
-                                        
-                                        {% if 'LOGIN' in log.action.upper() %}
-                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-4.586l4.293-4.293A6 6 0 0115 3a6 6 0 015 5.5V9z"></path></svg>
-                                        {% elif 'TAREA' in log.action.upper() %}
-                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
-                                        {% elif 'IDENTITY' in log.action.upper() or 'USER' in log.action.upper() %}
-                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                                        {% else %}
-                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                                        {% endif %}
+                            {% if 'operación' in action_lower or 'ejecución' in action_lower or 'tarea' in action_lower %}
+                                {% set icon = 'fas fa-bolt' %}
+                                {% if 'éxito' in action_lower or 'terminada' in action_lower %}{% set color_class = 'text-success' %}{% set bg_class = 'bg-success/10' %}{% set border_class = 'border-success/20' %}
+                                {% elif 'error' in action_lower or 'abort' in action_lower %}{% set icon = 'fas fa-exclamation-triangle' %}{% set color_class = 'text-peach' %}{% set bg_class = 'bg-peach/10' %}{% set border_class = 'border-peach/20' %}
+                                {% else %}{% set color_class = 'text-sky' %}{% set bg_class = 'bg-sky/10' %}{% set border_class = 'border-sky/20' %}
+                                {% endif %}
+                            {% elif 'acceso' in action_lower or 'login' in action_lower or 'logout' in action_lower %}
+                                {% set icon = 'fas fa-shield-alt' %}{% set color_class = 'text-violet' %}{% set bg_class = 'bg-violet/10' %}{% set border_class = 'border-violet/20' %}
+                            {% elif 'modificación' in action_lower or 'creación' in action_lower or 'modific' in action_lower or 'crea' in action_lower %}
+                                {% set icon = 'fas fa-edit' %}{% set color_class = 'text-indigo-400' %}{% set bg_class = 'bg-indigo-400/10' %}{% set border_class = 'border-indigo-400/20' %}
+                            {% endif %}
+
+                            <div class="px-4 py-2 hover:bg-white/[0.02] transition-all duration-500 group relative overflow-hidden">
+                                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.01] to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                                <div class="flex items-start gap-3 relative z-10">
+                                    <div class="w-9 h-9 rounded-xl {{ bg_class }} border {{ border_class }} flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110 duration-500 shadow-inner">
+                                        <i class="{{ icon }} {{ color_class }} text-[13px]"></i>
                                     </div>
-                                </div>
-                                <div class="flex-grow pl-5 pr-4">
-                                    <div class="flex flex-col justify-center">
-                                        <p class="text-[14px] font-black text-body-text tracking-tight uppercase group-hover/row:text-primary transition-colors">{{ log.action }}</p>
-                                        <p class="text-[12px] text-label/70 mt-0.5 leading-tight italic truncate">{{ log.detail if log.detail else 'Finalizado.' }}</p>
+                                    <div class="flex-grow min-w-0 flex flex-col gap-1">
+                                        <div class="flex items-center justify-between gap-2">
+                                            <span class="{{ color_class }} text-[10px] font-black uppercase tracking-widest leading-none truncate">
+                                                {{ log.action }}
+                                            </span>
+                                            <span class="text-[9px] font-black text-label/90 uppercase tracking-tighter tabular-nums">
+                                                {{ log.timestamp.strftime('%H:%M') }}
+                                            </span>
+                                        </div>
+                                        <p class="text-[10px] font-bold text-body-text/80 truncate leading-snug group-hover:text-body-text transition-colors px-1" title="{{ log.detail }}">
+                                            {{ log.detail if log.detail else 'Sin detalles' }}
+                                        </p>
                                     </div>
-                                </div>
-                                <div class="w-16 text-right shrink-0">
-                                    <span class="text-[12px] font-black text-label/80">{{ log.timestamp.strftime('%H:%M') }}</span>
                                 </div>
                             </div>
                         {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="h-full flex flex-col items-center justify-center p-10 opacity-30">
+                        <div class="w-16 h-16 rounded-full border-2 border-dashed border-label/20 flex items-center justify-center mb-6">
+                            <i class="fas fa-satellite-dish text-2xl animate-pulse"></i>
                         </div>
+                        <span class="text-[10px] font-black uppercase tracking-[0.3em] text-center italic">Escaneando Actividad...</span>
+                    </div>
+                {% endif %}
+            </div>
 
-                        <!-- Page 2 Container (Hidden by default) -->
-                        <div id="activityPage2" class="activity-page hidden flex flex-col space-y-1 transition-all duration-300">
-                        {% for log in activity[6:12] %}
-                            <div class="group/row hover:bg-white/5 transition-all duration-300 cursor-default flex items-center py-2.5 px-2 rounded-2xl">
-                                <!-- Same high-impact logic -->
-                                <div class="w-14 h-14 flex-shrink-0 flex items-center justify-center">
-                                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-sm
-                                        {% if 'LOGIN' in log.action.upper() %} bg-primary/15 text-primary
-                                        {% elif 'TAREA' in log.action.upper() %} bg-sky/15 text-sky
-                                        {% elif 'IDENTITY' in log.action.upper() or 'USER' in log.action.upper() %} bg-violet/15 text-violet
-                                        {% else %} bg-slate-500/15 text-label/60 {% endif %}">
-                                        
-                                        {% if 'LOGIN' in log.action.upper() %}
-                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-4.586l4.293-4.293A6 6 0 0115 3a6 6 0 015 5.5V9z"></path></svg>
-                                        {% elif 'TAREA' in log.action.upper() %}
-                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
-                                        {% elif 'IDENTITY' in log.action.upper() or 'USER' in log.action.upper() %}
-                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                                        {% else %}
-                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="flex-grow pl-5 pr-4">
-                                    <div class="flex flex-col justify-center">
-                                        <p class="text-[14px] font-black text-body-text tracking-tight uppercase group-hover/row:text-primary transition-colors">{{ log.action }}</p>
-                                        <p class="text-[12px] text-label/70 mt-0.5 leading-tight italic truncate">{{ log.detail if log.detail else 'Finalizado.' }}</p>
-                                    </div>
-                                </div>
-                                <div class="w-16 text-right shrink-0">
-                                    <span class="text-[12px] font-black text-label/80">{{ log.timestamp.strftime('%H:%M') }}</span>
-                                </div>
-                            </div>
-                        {% endfor %}
-                        </div>
+            <!-- Footer Pagination (Shared High Fidelity) -->
+            <div class="border-t border-panel-border bg-panel-header/20 p-3 flex items-center justify-between z-10 backdrop-blur-sm" id="activityPaginationFooter">
+                <span class="text-[9px] font-black text-label/40 uppercase tracking-tighter" id="paginationInfo">Pág. {{ pagination.page if pagination else 1 }} de {{ pagination.pages if pagination else 1 }}</span>
+                <div class="flex items-center gap-1.5">
+                    {% if pagination and pagination.has_prev %}
+                        <button onclick="changeActivityPage({{ pagination.prev_num }})" class="w-7 h-7 flex items-center justify-center rounded-lg bg-surface-container border border-panel-border text-label/60 hover:text-primary transition-all active:scale-95">
+                            <i class="fas fa-chevron-left text-[10px]"></i>
+                        </button>
                     {% else %}
-                        <div class="h-full flex flex-col items-center justify-center py-24 opacity-20">
-                            <svg class="w-14 h-14 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                            <p class="text-xs font-black uppercase tracking-[0.3em]">Cero Actividad</p>
+                        <div class="w-7 h-7 flex items-center justify-center rounded-lg bg-surface-container/50 border border-panel-border/30 opacity-30">
+                            <i class="fas fa-chevron-left text-[10px]"></i>
+                        </div>
+                    {% endif %}
+
+                    {% if pagination and pagination.has_next %}
+                        <button onclick="changeActivityPage({{ pagination.next_num }})" class="w-7 h-7 flex items-center justify-center rounded-lg bg-surface-container border border-panel-border text-label/60 hover:text-primary transition-all active:scale-95">
+                            <i class="fas fa-chevron-right text-[10px]"></i>
+                        </button>
+                    {% else %}
+                        <div class="w-7 h-7 flex items-center justify-center rounded-lg bg-surface-container/50 border border-panel-border/30 opacity-30">
+                            <i class="fas fa-chevron-right text-[10px]"></i>
                         </div>
                     {% endif %}
                 </div>
             </div>
-
-            <!-- Pagination Footer (Balanced for 2 pages of 6) -->
-            <div class="mt-4 pt-4 border-t border-primary/8 dark:border-primary/20 flex items-center justify-between relative z-10">
-                <div class="flex items-center gap-3">
-                    <span class="text-[12px] font-black text-label/40 uppercase tracking-widest">Página</span>
-                    <div class="flex items-center gap-1.5" id="activityPaginator">
-                        <button onclick="changeActivityPage(1)" id="btnPage1" class="w-7 h-7 flex items-center justify-center bg-primary text-white text-[12px] font-black rounded-lg shadow-lg shadow-primary/20 transition-all">1</button>
-                        {% if activity|length > 6 %}
-                        <button onclick="changeActivityPage(2)" id="btnPage2" class="w-7 h-7 flex items-center justify-center text-label/60 text-[12px] font-black hover:bg-surface-container rounded-lg cursor-pointer transition-all">2</button>
-                        {% endif %}
-                    </div>
-                </div>
-                
-                <div class="flex items-center gap-2">
-                    <button onclick="changeActivityPage(1)" class="w-9 h-9 flex items-center justify-center border border-panel-border rounded-xl text-label/40 hover:text-primary transition-all active:scale-95">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                    </button>
-                    <button onclick="changeActivityPage(2)" class="w-9 h-9 flex items-center justify-center border border-panel-border rounded-xl text-label/60 hover:text-primary hover:border-primary/50 transition-all active:scale-95">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                    </button>
-                </div>
-            </div>
+        </div>
+  </div>
 
 <!-- Dashboard Logic Assets -->
 <script src="{{ url_for('core.serve_assets', filename='js/dashboard.js') }}"></script>

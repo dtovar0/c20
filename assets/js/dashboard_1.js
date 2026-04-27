@@ -2,6 +2,38 @@
  * Dashboard 1: ApexCharts High Fidelity Logic
  * Powered by Nexus Design Tokens
  */
+ 
+async function changeActivityPage(page) {
+    const container = document.getElementById('activityLogsContainer');
+    if (!container) return;
+
+    container.style.opacity = '0.5';
+    container.style.pointerEvents = 'none';
+
+    try {
+        const response = await fetch(`/?page=${page}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        
+        if (response.ok) {
+            const html = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            
+            const newLogs = doc.getElementById('activityLogsContainer');
+            const newFooter = doc.getElementById('activityPaginationFooter');
+            
+            if (newLogs) container.innerHTML = newLogs.innerHTML;
+            const footer = document.getElementById('activityPaginationFooter');
+            if (footer && newFooter) footer.innerHTML = newFooter.innerHTML;
+        }
+    } catch (err) {
+        console.error("Error updating activity:", err);
+    } finally {
+        container.style.opacity = '1';
+        container.style.pointerEvents = 'auto';
+    }
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     const getColors = () => {
