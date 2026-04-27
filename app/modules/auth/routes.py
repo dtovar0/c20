@@ -59,7 +59,9 @@ def login():
                         base_url = os.getenv('BASE_URL', request.host_url.rstrip('/'))
                         send_notification_by_slug('usuario_creado', authelia_user, context={
                             'nombre': authelia_name,
-                            'base_url': base_url
+                            'usuario': authelia_user,
+                            'base_url': base_url,
+                            'url': f"{base_url}/auth/login"
                         })
                 else:
                     print("DEBUG: Usuario existente. Actualizando metadatos...")
@@ -250,7 +252,9 @@ def create_user():
             base_url = os.getenv('BASE_URL', request.host_url.rstrip('/'))
             send_notification_by_slug('usuario_creado', target_email, context={
                 'nombre': data.get('nombre', ''),
-                'base_url': base_url
+                'usuario': target_email,
+                'base_url': base_url,
+                'url': f"{base_url}/auth/login"
             })
 
         add_audit_log("usuario creado", status="success", detail=f"Se creó el usuario: {target_email}")

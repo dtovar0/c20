@@ -152,7 +152,9 @@ def authenticate_user_ldap(email, password):
                     base_url = os.getenv('BASE_URL', 'http://10.224.2.146')
                     send_notification_by_slug('usuario_creado', ldap_email, context={
                         'nombre': nombre,
-                        'base_url': base_url
+                        'usuario': ldap_email,
+                        'base_url': base_url,
+                        'url': f"{base_url}/auth/login"
                     })
 
                 return {"status": "success", "user": local_user}
