@@ -352,6 +352,16 @@ def create_task():
         db.session.flush() # Para obtener el new_job.id
 
         created_ids = []
+        raw_estado = data.get('estado', 'Pendiente')
+        from datetime import datetime
+        raw_fecha_inicio = None
+        if data.get('fecha_inicio'):
+            # Convert ISO string from JS to Python datetime
+            try:
+                raw_fecha_inicio = datetime.fromisoformat(data['fecha_inicio'].replace('Z', '+00:00'))
+            except Exception as e:
+                current_app.logger.error(f"Error parsing date {data['fecha_inicio']}: {e}")
+
         for i, chunk in enumerate(chunks):
             task_data_value = ",".join(chunk)
             
@@ -359,7 +369,9 @@ def create_task():
                 job_id=new_job.id, # Vínculo al maestro
                 chunk_index=i + 1,
                 chunk_total=total_chunks,
-                datos=task_data_value
+                datos=task_data_value,
+                estado=raw_estado,
+                fecha_inicio=raw_fecha_inicio
             )
             db.session.add(new_task)
             db.session.flush()

@@ -780,9 +780,9 @@ async function finalizeScheduleWizard() {
     const taskPayload = {
         tarea: isEliminar ? 'delete' : 'add',
         estado: 'Programada',
-        accion_tipo: isManual ? 'Manual' : 'Archivo',
+        accion_tipo: isEliminar ? 'N/A' : clientMode,
         routing_label: isEliminar ? null : routingLabel,
-        datos_tipo: isEliminar ? 'N/A' : clientMode,
+        datos_tipo: isManual ? 'Manual' : 'Archivo',
         datos: isManual ? manualData : (fileInput.files[0] ? fileInput.files[0].name : ''),
         total_items: isManual ? countRealRecords(manualData) : 0,
         fecha_inicio: scheduledDateTime.toISOString(),

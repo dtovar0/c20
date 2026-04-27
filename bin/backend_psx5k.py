@@ -272,9 +272,11 @@ def main():
                     time.sleep(SLEEP_IDLE)
                     continue
 
-                # 2. Buscar una tarea pendiente
+                # 2. Buscar una tarea pendiente o programada que ya deba iniciar
+                now = datetime.datetime.now()
                 task = PSX5KTask.query.filter(
-                    PSX5KTask.estado.in_(['Pendiente', 'Programada'])
+                    (PSX5KTask.estado == 'Pendiente') | 
+                    ((PSX5KTask.estado == 'Programada') & (PSX5KTask.fecha_inicio <= now))
                 ).order_by(PSX5KTask.id.asc()).first()
 
 
