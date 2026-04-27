@@ -115,16 +115,31 @@ class NotificationNexusTour {
             `;
 
             const stepWidth = 400;
-            let stepLeft = (rect.left + window.scrollX) + (rect.width / 2) - (stepWidth / 2);
-            let stepTop = (rect.bottom + window.scrollY) + 30;
+            let stepLeft, stepTop;
 
-            if (stepTop + 250 > document.documentElement.scrollHeight) {
-                stepTop = (rect.top + window.scrollY) - 280;
+            if (step.position === 'right') {
+                stepLeft = (rect.right + window.scrollX) + 40;
+                stepTop = (rect.top + window.scrollY) + (rect.height / 2) - 150;
+            } else if (step.position === 'left') {
+                stepLeft = (rect.left + window.scrollX) - stepWidth - 40;
+                stepTop = (rect.top + window.scrollY) + (rect.height / 2) - 150;
+            } else {
+                // Default: Bottom
+                stepLeft = (rect.left + window.scrollX) + (rect.width / 2) - (stepWidth / 2);
+                stepTop = (rect.bottom + window.scrollY) + 30;
+                
+                // Adjustment if bottom fails
+                if (stepTop + 250 > document.documentElement.scrollHeight) {
+                    stepTop = (rect.top + window.scrollY) - 280;
+                }
             }
+
+            // Screen bounds protection
             if (stepLeft < 20) stepLeft = 20;
             if (stepLeft + stepWidth > window.innerWidth - 20) {
                 stepLeft = window.innerWidth - stepWidth - 20;
             }
+            if (stepTop < 20) stepTop = 20;
 
             this.stepEl.style.width = `${stepWidth}px`;
             this.stepEl.style.top = `${stepTop}px`;
@@ -151,25 +166,29 @@ class NotificationNexusTour {
             type: 'Librería',
             target: '#tour-template-library',
             title: 'Plantillas Predefinidas',
-            content: 'Selecciona una base de nuestra librería (Test, Inicio, Error, etc.) para cargar su estructura y empezar a editar de forma rápida.'
+            content: 'Selecciona una base de nuestra librería (Test, Inicio, Error, etc.) para cargar su estructura y empezar a editar de forma rápida.',
+            position: 'right'
         },
         {
             type: 'Editor de Contenido',
             target: '#tour-template-editor',
             title: 'Control de Mensaje',
-            content: 'Define el <b>Asunto</b> y el <b>Cuerpo</b> del mensaje. Puedes usar etiquetas dinámicas que el sistema reemplazará automáticamente.'
+            content: 'Define el <b>Asunto</b> y el <b>Cuerpo</b> del mensaje. Puedes usar etiquetas dinámicas que el sistema reemplazará automáticamente.',
+            position: 'left'
         },
         {
             type: 'Vista Previa Reacción',
             target: '#tour-template-preview',
             title: 'Visualización Táctica',
-            content: 'Observa en tiempo real cómo se verá el correo final. El renderizado es <b>exacto</b> a lo que recibirá el usuario.'
+            content: 'Observa en tiempo real cómo se verá el correo final. El renderizado es <b>exacto</b> a lo que recibirá el usuario.',
+            position: 'left'
         },
         {
             type: 'Acción Final',
             target: '#tab-panel-template .nexus-btn-save',
             title: 'Persistencia de Datos',
-            content: 'No olvides <b>Guardar</b> tus cambios. La nueva configuración se aplicará instantáneamente a todas las notificaciones futuras.'
+            content: 'No olvides <b>Guardar</b> tus cambios. La nueva configuración se aplicará instantáneamente a todas las notificaciones futuras.',
+            position: 'left'
         }
     ]);
 
