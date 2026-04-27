@@ -189,9 +189,9 @@
                                             </div>
                                             
                                             <!-- Content -->
-                                            <div class="flex-grow min-w-0 flex flex-col gap-1">
+                                            <div class="flex-grow min-w-0 flex flex-col gap-1.5">
                                                 <div class="flex items-center justify-between gap-2">
-                                                    <span class="text-[11px] font-black {{ color_class }} uppercase tracking-widest leading-none truncate">
+                                                    <span class="px-2 py-0.5 rounded-full {{ bg_class }} border {{ border_class }} {{ color_class }} text-[9px] font-black uppercase tracking-widest leading-none truncate shadow-sm">
                                                         {{ log.action }}
                                                     </span>
                                                     <span class="text-[9px] font-bold text-label/20 uppercase tracking-tighter tabular-nums">
@@ -199,13 +199,13 @@
                                                     </span>
                                                 </div>
                                                 
-                                                <p class="text-[12px] font-bold text-body-text/90 truncate leading-snug group-hover:text-body-text transition-colors" title="{{ log.detail }}">
+                                                <p class="text-[10px] font-bold text-body-text/80 truncate leading-snug group-hover:text-body-text transition-colors px-1" title="{{ log.detail }}">
                                                     {{ log.detail if log.detail else 'Sin detalles' }}
                                                 </p>
                                                 
-                                                <div class="flex items-center gap-2 mt-0.5">
-                                                    <div class="w-1 h-1 rounded-full bg-label/30"></div>
-                                                    <span class="text-[9px] font-black text-label/30 uppercase tracking-widest">{{ log.user }}</span>
+                                                <div class="flex items-center gap-2 mt-0 px-1">
+                                                    <div class="w-1 h-1 rounded-full bg-label/20"></div>
+                                                    <span class="text-[9px] font-black text-label/20 uppercase tracking-widest">{{ log.user }}</span>
                                                 </div>
                                             </div>
                                         </div>
