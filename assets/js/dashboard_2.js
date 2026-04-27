@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
             followCursor: true,
             custom: function({ series, seriesIndex, dataPointIndex, w }) {
                 const color = w.config.colors[0];
-                const cat = w.globals.labels[dataPointIndex];
+                const cat = w.globals.categoryLabels[dataPointIndex] || w.globals.labels[dataPointIndex] || dataPointIndex;
                 const val = series[0][dataPointIndex];
                 
                 return `
@@ -377,14 +377,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (data.stats.daily_tasks && demandChartApex) {
                     const days = data.stats.daily_tasks.map(d => d.day);
                     const counts = data.stats.daily_tasks.map(d => d.count);
-                    demandChartApex.updateSeries([{
-                        name: 'Operaciones',
-                        data: counts
-                    }], true);
                     demandChartApex.updateOptions({
                         xaxis: { categories: days },
                         yaxis: { show: true, forceNiceScale: true }
                     });
+                    demandChartApex.updateSeries([{
+                        name: 'Operaciones',
+                        data: counts
+                    }], true);
                 }
 
                 // Sync Daily Analysis (Stacked Status)
