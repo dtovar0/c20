@@ -144,10 +144,10 @@ function syncPreview() {
     if (editorMode === 'html') {
         preview.innerHTML = mockedText;
         preview.classList.remove('font-mono', 'text-sky-400/90');
-        preview.classList.add('font-sans', 'text-white/90');
+        preview.classList.add('font-sans', 'text-[rgb(var(--color-ntf-text-editor))]/90');
     } else {
         preview.innerText = mockedText;
-        preview.classList.remove('font-sans', 'text-white/90');
+        preview.classList.remove('font-sans', 'text-[rgb(var(--color-ntf-text-editor))]/90');
         preview.classList.add('font-mono', 'text-sky-400/90');
     }
     
