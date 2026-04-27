@@ -65,6 +65,52 @@ function generateTaskGraphic(resumen) {
         }
     });
 
+    // Status Filter Logic
+    const $filterBtn = $('#statusFilterBtn');
+    const $filterDropdown = $('#statusFilterDropdown');
+
+    $filterBtn.on('click', function(e) {
+        e.stopPropagation();
+        const isOpening = $filterDropdown.hasClass('opacity-0');
+        
+        if (isOpening) {
+            $filterDropdown.removeClass('opacity-0 translate-y-4 pointer-events-none').addClass('opacity-100 translate-y-0');
+            $(this).addClass('bg-primary/10 border-primary text-primary');
+        } else {
+            $filterDropdown.addClass('opacity-0 translate-y-4 pointer-events-none').removeClass('opacity-100 translate-y-0');
+            $(this).removeClass('bg-primary/10 border-primary text-primary');
+        }
+    });
+
+    $('.filter-opt').on('click', function() {
+        const status = $(this).data('status');
+        
+        // UI Updates
+        $('.filter-opt').removeClass('active text-primary').addClass('text-label/60');
+        $('.filter-opt i').addClass('opacity-0');
+        $('.filter-opt .w-1.5').removeClass('animate-pulse');
+        
+        $(this).addClass('active text-primary').removeClass('text-label/60');
+        $(this).find('i').removeClass('opacity-0');
+        $(this).find('.w-1.5').addClass('animate-pulse');
+
+        // Apply Filter to DataTables (Column 6 is Status/Icons)
+        if (psxDataTable) {
+            // DataTables column().search() is smart enough to handle base data if defined
+            // but we might need to filter by row.estado
+            psxDataTable.column(6).search(status).draw();
+        }
+
+        // Close dropdown
+        $filterDropdown.addClass('opacity-0 translate-y-4 pointer-events-none').removeClass('opacity-100 translate-y-0');
+        $filterBtn.removeClass('bg-primary/10 border-primary text-primary');
+    });
+
+    $(document).on('click', function() {
+        $filterDropdown.addClass('opacity-0 translate-y-4 pointer-events-none').removeClass('opacity-100 translate-y-0');
+        $filterBtn.removeClass('bg-primary/10 border-primary text-primary');
+    });
+
     // Refresh Action
     $('#refreshAudit').on('click', function() {
         if (psxDataTable) {
@@ -186,7 +232,7 @@ function initPSXDataTable() {
                 }
             },
             { 
-                data: null, 
+                data: 'estado', 
                 width: '120px',
                 orderable: false,
                 render: (data, type, row) => {
