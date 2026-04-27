@@ -179,14 +179,13 @@ def get_global_stats():
         # 2. Tareas totales (Fragmentos en todo el sistema)
         total_tareas = PSX5KTask.query.count()
         
-        # 3. Tareas Pendientes (Global - Fragmentos)
-        pendientes = PSX5KTask.query.filter(
-            PSX5KTask.estado.in_(['Programada', 'Pendiente'])
-        ).count()
+        # 3. Tareas en Espera (Pendientes vs Programadas)
+        pendientes = PSX5KTask.query.filter(PSX5KTask.estado == 'Pendiente').count()
+        programadas = PSX5KTask.query.filter(PSX5KTask.estado == 'Programada').count()
 
-        # 4. TRABAJOS EN COLA (Global - Cuántos Jobs únicos tienen fragmentos pendientes)
+        # 4. TRABAJOS EN COLA (Global - Cuántos Jobs únicos tienen fragmentos activos)
         cola_total = db.session.query(PSX5KTask.job_id).filter(
-            PSX5KTask.estado.in_(['Programada', 'Pendiente'])
+            PSX5KTask.estado.in_(['Programada', 'Pendiente', 'Ejecutando'])
         ).distinct().count()
         
         # 5. Tarea Activa (GLOBAL: La más reciente con estado Ejecutando en todo el sistema)
@@ -286,16 +285,48 @@ def get_global_stats():
             PSX5KTask.estado == 'Completado'
         ).scalar() or 0
 
+        # 11. Volumen de hoy (Suma de registros procesados hoy)
+        volume_today = db.session.query(func.sum(PSX5KDetail.total)).join(
+            PSX5KTask, PSX5KTask.id == PSX5KDetail.id
+        ).join(PSX5KJob).filter(func.date(PSX5KJob.created_at) == today_date).scalar() or 0
+
+        # 12. Breakdown de hoy
+        breakdown_today = db.session.query(
+            func.sum(PSX5KDetail.ok),
+            func.sum(PSX5KDetail.fail),
+            func.sum(PSX5KDetail.force_ok),
+            func.sum(PSX5KDetail.dup)
+        ).join(PSX5KTask, PSX5KTask.id == PSX5KDetail.id)\
+         .join(PSX5KJob).filter(func.date(PSX5KJob.created_at) == today_date).first()
+
+        # 13. Últimas 7 tareas terminadas (Global)
+        last_7 = [
+            {
+                "id": t.id,
+                "ok": t.resumen.ok if t.resumen else 0,
+                "fail": t.resumen.fail if t.resumen else 0,
+                "force": t.resumen.force_ok if t.resumen else 0,
+                "dup": t.resumen.dup if t.resumen else 0
+            } for t in PSX5KTask.query.filter(PSX5KTask.estado == 'Completado').order_by(PSX5KTask.id.desc()).limit(7).all()
+        ]
+
         return jsonify({
             "status": "success",
             "stats": {
-                "users": total_users,
-                "tasks": total_tareas,
+                "total": total_tareas,
                 "pending": pendientes,
-                "queue": int(total_ani_processed), # Reemplazamos queue por total_ani
-                "active_count": activas,
-                "active_id": activa_obj.id if activa_obj else None,
-                "active_name": active_name if activa_obj else None,
+                "scheduled": programadas,
+                "active_task": str(activa_obj.id) if activa_obj else "NINGUNA",
+                "volume_today": int(volume_today),
+                "processed_total": int(total_ani_processed),
+                "breakdown": {
+                    "ok": int(breakdown_today[0] or 0),
+                    "fail": int(breakdown_today[1] or 0),
+                    "force": int(breakdown_today[2] or 0),
+                    "dup": int(breakdown_today[3] or 0)
+                },
+                "last_7_tasks": last_7,
+                # Mantener compatibles gráficas viejas si existen
                 "top_users": top_users_data,
                 "daily_tasks": daily_tasks,
                 "analysis_daily": analysis_daily,
