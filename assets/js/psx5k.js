@@ -216,13 +216,13 @@ function initPSXDataTable() {
                 visible: true,
                 render: (data, type, row) => {
                     const state = (row.estado || '').toLowerCase();
-                    if (state === 'programada' || state === 'pendiente') {
+                    if (state === 'programada') {
                         return `<div class="flex items-center justify-center gap-1.5 opacity-30 italic py-2">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                     <span class="text-[11px] font-black uppercase tracking-[0.15em]">En Cola</span>
                                 </div>`;
                     }
-                    if (state === 'cancelada') {
+                    if (state === 'cancelada' || state === 'abortada') {
                         return `<div class="flex items-center justify-center gap-1.5 opacity-40 text-rose-500/60 py-2">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                                     <span class="text-[11px] font-black uppercase tracking-[0.15em]">Descartada</span>
@@ -263,14 +263,14 @@ function initPSXDataTable() {
 
                     let statusIcon = '';
                     let statusStyle = '';
-                    const state = row.estado.toLowerCase();
-                    if (state === 'ejecutando') {
+                    const stateLower = row.estado.toLowerCase();
+                    if (stateLower === 'ejecutando') {
                         statusIcon = `<svg class="w-3.5 h-3.5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>`;
                         statusStyle = 'color:#2563eb;background:rgba(37,99,235,0.15);border-color:rgba(37,99,235,0.3)';
-                    } else if (state === 'terminada' || state === 'completada') {
+                    } else if (stateLower === 'completada') {
                         statusIcon = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
                         statusStyle = 'color:#10b981;background:rgba(16,185,129,0.15);border-color:rgba(16,185,129,0.3)';
-                    } else if (state === 'error') {
+                    } else if (stateLower === 'error') {
                         statusIcon = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>`;
                         statusStyle = 'color:#f43f5e;background:rgba(244,63,94,0.15);border-color:rgba(244,63,94,0.3)';
                     } else {
