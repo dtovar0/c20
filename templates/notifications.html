@@ -380,12 +380,12 @@ Estado: CRÍTICO</textarea>
                             </div>
 
                             <!-- PREVIEW CONSOLE AREA -->
-                            <div class="flex-grow flex items-start justify-center bg-slate-900/10 relative overflow-y-auto custom-scrollbar p-10 min-h-0">
+                            <div class="flex-grow flex items-stretch justify-center bg-slate-900/10 relative overflow-y-auto custom-scrollbar p-10 min-h-0">
                                  <!-- Fondo de rejilla -->
                                  <div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: radial-gradient(circle, white 1px, transparent 1px); background-size: 20px 20px;"></div>
                                  
                                  <!-- Tarjeta de Notificación Mejorada -->
-                                 <div class="w-full max-w-[480px] bg-[rgb(var(--color-ntf-preview-card))] border border-[rgb(var(--color-ntf-editor-border))] rounded-[2.5rem] p-8 shadow-2xl relative z-10 animate-in slide-in-from-top-4 duration-700">
+                                 <div class="w-full max-w-[480px] h-full bg-[rgb(var(--color-ntf-preview-card))] border border-[rgb(var(--color-ntf-editor-border))] rounded-[2.5rem] p-8 shadow-2xl relative z-10 animate-in slide-in-from-top-4 duration-700 flex flex-col">
                                      <!-- ASUNTO PREVIEW -->
                                      <div class="mb-6 group/prevsub">
                                          <div class="flex items-center gap-2 mb-2 opacity-30">
@@ -397,12 +397,12 @@ Estado: CRÍTICO</textarea>
                                      </div>
                                      
                                      <!-- CUERPO PREVIEW -->
-                                     <div class="group/prevbody">
+                                     <div class="group/prevbody flex-grow flex flex-col min-h-0">
                                          <div class="flex items-center gap-2 mb-2 opacity-30">
                                              <span class="text-[12px] font-black uppercase tracking-[0.2em]">Mensaje</span>
                                              <div class="h-px flex-grow bg-white/20"></div>
                                          </div>
-                                         <div id="livePreviewContent" class="bg-[rgb(var(--color-ntf-editor-input-bg))] rounded-2xl p-6 border border-[rgb(var(--color-ntf-editor-border))] text-[12px] font-bold text-[rgb(var(--color-ntf-text-editor))]/90 leading-relaxed font-mono whitespace-pre-wrap min-h-[140px] shadow-inner group-hover/prevbody:border-primary/20 transition-all transition-all">⚡ ALERTA NEXUS
+                                         <div id="livePreviewContent" class="flex-grow bg-[rgb(var(--color-ntf-editor-input-bg))] rounded-2xl p-6 border border-[rgb(var(--color-ntf-editor-border))] text-[12px] font-bold text-[rgb(var(--color-ntf-text-editor))]/90 leading-relaxed font-mono whitespace-pre-wrap min-h-[140px] shadow-inner group-hover/prevbody:border-primary/20 transition-all">⚡ ALERTA NEXUS
 Evento: INICIO_SESION_EXITOSO
 Usuario: DTOVAR
 Hora: 2026-04-17 18:25:01
