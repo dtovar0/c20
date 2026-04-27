@@ -458,15 +458,23 @@ def create_task():
             db.session.add(new_task)
             db.session.flush()
             
-            # Registro individual en auditoría
-            add_audit_log("tarea creada", status="info", detail=f"Job: {new_job.id} | Task: {new_task.id} | Parte {i+1}/{total_chunks}")
+            # Registro individual en auditoría con más detalle
+            add_audit_log(
+                f"Creación Tarea #{new_task.id}", 
+                status="info", 
+                detail=f"Job: {new_job.id} | Proceso: {raw_tarea} | Parte {i+1}/{total_chunks} | Registros: {len(chunk)}"
+            )
             
             new_detail = PSX5KDetail(id=new_task.id, total=len(chunk), ok=0, fail=0)
             db.session.add(new_detail)
             created_ids.append(new_task.id)
             
         db.session.commit()
-        add_audit_log("tarea creada - batch", status="info", detail=f"Origen: {raw_origen} | {total_chunks} fragmentos (DB-stored)")
+        add_audit_log(
+            f"Lote PSX-{new_job.id} Creado", 
+            status="info", 
+            detail=f"Tarea: {raw_tarea} | Origen: {raw_origen} | {total_chunks} fragmentos generados"
+        )
         
         return jsonify({
             "status": "success",
@@ -700,7 +708,7 @@ def update_or_reprocess_job(job_id):
                     t.estado = 'Cancelada'
                     updated_count += 1
             db.session.commit()
-            add_audit_log("tarea cancelada", status="warning", detail=f"Job ID: {job_id} cancelado por usuario.")
+            add_audit_log(f"OPERACIÓN CANCELADA (JOB-{job_id})", status="warning", detail=f"El usuario '{current_user.email}' ha abortado el job íntegramente.")
             return jsonify({"status": "success", "message": f"Se han cancelado {updated_count} fragmentos."})
 
         if action == 'activate':
@@ -719,7 +727,7 @@ def update_or_reprocess_job(job_id):
                     updated_count += 1
             
             db.session.commit()
-            add_audit_log("tarea reactivada", status="info", detail=f"Job ID: {job_id} reactivado ({updated_count} fragmentos).")
+            add_audit_log(f"OPERACIÓN REACTIVADA (JOB-{job_id})", status="info", detail=f"Se han retornado {updated_count} fragmentos de la tarea a estado PENDIENTE.")
             return jsonify({"status": "success", "message": f"Se han reactivado {updated_count} fragmentos satisfactoriamente."})
 
         # Si el job ya terminó/canceló y se pide modificar -> CLONAMOS (REPROCESO)
@@ -759,7 +767,7 @@ def update_or_reprocess_job(job_id):
                 db.session.add(PSX5KDetail(id=new_task.id, total=0)) # El total se recalcula al iniciar
             
             db.session.commit()
-            add_audit_log("tarea reprogramada", status="info", detail=f"Nuevo Job ID: {new_job.id} basado en {job_id}")
+            add_audit_log(f"RE-PROGRAMACIÓN (PSX-{new_job.id})", status="info", detail=f"Nueva instancia operativa generada basada en el Job Maestro {job_id}")
             return jsonify({"status": "success", "message": "Nueva tarea creada satisfactoriamente.", "new_job_id": new_job.id})
 
         else:
@@ -782,7 +790,7 @@ def update_or_reprocess_job(job_id):
                     t.fecha_inicio = parsed_scheduled_time if data.get('is_scheduled') else None
             
             db.session.commit()
-            add_audit_log("tarea modificada", status="info", detail=f"Job ID: {job_id} actualizado. Label: {old_label} -> {job.routing_label}")
+            add_audit_log(f"MODIFICACIÓN PORTAFOLIO (JOB-{job_id})", status="info", detail=f"Actualización de Label: {old_label} -> {job.routing_label}")
             return jsonify({"status": "success", "message": "Tarea actualizada correctamente."})
 
     except Exception as e:

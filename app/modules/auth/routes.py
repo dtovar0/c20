@@ -62,7 +62,7 @@ def login():
                 print(f"DEBUG: Procediendo a login_user para {user.email}")
                 login_user(user)
                 print("DEBUG: Registro en auditoría...")
-                add_audit_log("login sso", status="success", detail=f"Usuario {authelia_user} ha iniciado sesión vía SSO")
+                add_audit_log(f"ACCESO SSO: {authelia_user}", status="success", detail=f"Sesión iniciada exitosamente vía Portal Authelia")
                 print("DEBUG: Redirigiendo a index...")
                 return redirect(url_for('core.index'))
 
@@ -78,7 +78,7 @@ def login():
                 if ldap_result.get("status") == "success":
                     user = ldap_result["user"]
                     login_user(user)
-                    add_audit_log("login usuario", status="success", detail=f"Usuario {email} vía DIRECTORIO")
+                    add_audit_log(f"ACCESO DIRECTORIO: {email}", status="success", detail=f"Autenticación corporativa exitosa")
                     return redirect(url_for('core.index'))
                 else:
                     flash(f"Error: {ldap_result.get('message')}", "error")
@@ -86,7 +86,7 @@ def login():
                 user = User.query.filter_by(email=email).first()
                 if user and user.check_password(password):
                     login_user(user)
-                    add_audit_log("login usuario", status="success", detail=f"Usuario {email} ha iniciado sesión LOCALMENTE")
+                    add_audit_log(f"ACCESO LOCAL: {email}", status="success", detail=f"Autenticación manual exitosa")
                     return redirect(url_for('core.index'))
                 flash("Credenciales incorrectas", "error")
 
@@ -124,7 +124,7 @@ def purge_users():
 def logout():
     user_email = current_user.email
     logout_user()
-    add_audit_log("logout", status="success", detail=f"Usuario {user_email} ha cerrado sesión")
+    add_audit_log(f"CIERRE DE SESIÓN: {user_email}", status="success", detail=f"El usuario ha finalizado su sesión de forma manual")
     
     # --- LOGOUT COORDINADO CON AUTHELIA (SSO) ---
     if os.getenv('AUTHELIA_ENABLED', 'false').lower() == 'true':

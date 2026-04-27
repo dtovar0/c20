@@ -109,7 +109,7 @@ def handle_stale_tasks(app):
                         }
                     )
                 
-                add_audit_log("tarea terminada", status="error", detail=f"ID: {task.id} - Abortada por tiempo excesivo (>{kill_timeout}min)", user_override="SYSTEM")
+                add_audit_log(f"OPERACIÓN ABORTADA [TIMEOUT] (PSX-{task.id})", status="error", detail=f"Inactividad excedida: >{kill_timeout}min | Usuario: {task.job.usuario}", user_override="SYSTEM")
                 
                 # Limpiar de la lista de notificados
                 if task.id in notified_stale_tasks:
@@ -134,7 +134,7 @@ def handle_stale_tasks(app):
                         context={'usuario': 'SYSTEM_WATCHDOG', 'ip': 'LOCAL_WORKER', 'error': f'DEMORA_DETECTADA_ID_{task.id} (>{notify_timeout}min)'}
                     )
                 
-                add_audit_log("alerta sistema", status="warning", detail=f"Demora: {task.id} - Excedió {notify_timeout} min (Sigue en curso)", user_override="SYSTEM")
+                add_audit_log(f"ALERTA DE DEMORA (PSX-{task.id})", status="warning", detail=f"Tiempo de ejecución >{notify_timeout} min (Aún en curso) | Proceso: {task.job.tarea}", user_override="SYSTEM")
                 
                 # Marcamos como notificada para no repetir en el próximo ciclo
                 notified_stale_tasks.add(task.id)
@@ -344,7 +344,7 @@ def main():
                                             context={'usuario': task.job.usuario, 'hora': task.fecha_inicio.strftime('%H:%M:%S')})
                     print(f"📧 Correo de inicio enviado satisfactoriamente a: {target}")
                 
-                add_audit_log("tarea iniciada", status="info", detail=f"ID: {task.id} - {task.job.tarea}", user_override=task.job.usuario)
+                add_audit_log(f"EJECUCIÓN INICIADA (PSX-{task.id})", status="info", detail=f"Proceso: {task.job.tarea} | Usuario: {task.job.usuario} | Registros: {len(ani_list)}", user_override=task.job.usuario)
 
                 # Procesar datos
                 ani_list = process_task_data(task)
@@ -359,7 +359,7 @@ def main():
                     print(f"⚠️ Tarea {task.id} abortada: No se encontraron registros válidos.")
                     task.estado = 'Error'
                     db.session.commit()
-                    add_audit_log("tarea terminada", status="error", detail=f"ID: {task.id} - Abortada: Sin registros válidos", user_override=task.job.usuario)
+                    add_audit_log(f"OPERACIÓN FINALIZADA [VACÍO] (PSX-{task.id})", status="error", detail=f"No se detectaron registros válidos en el origen de datos.", user_override=task.job.usuario)
                     # Limpiar de la lista de notificados si existía
                     if task.id in notified_stale_tasks:
                         notified_stale_tasks.remove(task.id)
@@ -384,7 +384,7 @@ def main():
                     print(f"❌ Error ejecutando Tarea ID {task.id}: {task_err}")
                     task.estado = 'Error'
                     db.session.commit()
-                    add_audit_log("tarea terminada", status="error", detail=f"ID: {task.id} - Fallo Técnico: {str(task_err)[:100]}", user_override=task.job.usuario)
+                    add_audit_log(f"OPERACIÓN FINALIZADA [ERROR] (PSX-{task.id})", status="error", detail=f"Fallo Técnico: {str(task_err)[:100]}", user_override=task.job.usuario)
                     # Notificación de error al propietario
                     target = get_notification_target(task.job.usuario)
                     if target:
@@ -436,7 +436,7 @@ def main():
                     notified_stale_tasks.remove(task.id)
 
                 
-                add_audit_log("tarea terminada", status="success", detail=f"ID: {task.id} | OK: {detail.ok} | FAIL: {detail.fail}", user_override=task.job.usuario)
+                add_audit_log(f"OPERACIÓN FINALIZADA [ÉXITO] (PSX-{task.id})", status="success", detail=f"OK: {detail.ok} | FAIL: {detail.fail} | DUP: {detail.dup} | FORCE: {detail.force_ok}", user_override=task.job.usuario)
                 
                 # Notificación de término al propietario
                 target = get_notification_target(task.job.usuario)
