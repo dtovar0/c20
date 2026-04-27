@@ -28,8 +28,8 @@ def dashboard_2():
         page = request.args.get('page', 1, type=int)
         is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
         
-        # Paginación Global de Logs: 20 por página
-        pagination = AuditLog.query.order_by(AuditLog.timestamp.desc()).paginate(page=page, per_page=20, error_out=False)
+        # Vista Táctica: Últimos 20 logs únicamente, divididos en 2 páginas de 10
+        pagination = AuditLog.query.order_by(AuditLog.timestamp.desc()).limit(20).from_self().paginate(page=page, per_page=10, error_out=False)
             
         return render_template("dashboard_2.html", 
                                activity=pagination.items, 
