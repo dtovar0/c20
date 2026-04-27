@@ -339,8 +339,12 @@ $(document).on('submit', '#form-add-user', async function(e) {
 
     const formData = new FormData(this);
     const data = Object.fromEntries(formData.entries());
+    
+    // Standardize sensitive fields and remove confirmation from payload
+    if (data.nxp_val) { data.password = data.nxp_val; delete data.nxp_val; }
+    if (data.nxp_confirm) delete data.nxp_confirm;
+
     data.role = data.is_admin ? 'admin' : 'user';
-    delete data.is_admin;
 
     try {
         const response = await fetch('/auth/users/create', {
@@ -393,8 +397,12 @@ $(document).on('submit', '#form-modify-user', async function(e) {
 
     const formData = new FormData(this);
     const data = Object.fromEntries(formData.entries());
+
+    // Standardize sensitive fields and remove confirmation from payload
+    if (data.nxp_val) { data.password = data.nxp_val; delete data.nxp_val; }
+    if (data.nxp_confirm) delete data.nxp_confirm;
+
     data.role = data.is_admin ? 'admin' : 'user';
-    delete data.is_admin;
 
     try {
         const response = await fetch('/auth/users/update', {
