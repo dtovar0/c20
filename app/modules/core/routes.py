@@ -63,3 +63,12 @@ def serve_assets(filename):
     except Exception as e:
         current_app.logger.error(f"Error sirviendo asset {filename}: {e}")
         return "Asset not found", 404
+
+@core_bp.route("/ayuda")
+@login_required
+def help_page():
+    try:
+        return render_template("help.html")
+    except Exception as e:
+        current_app.logger.error(f"Error en help: {e}")
+        return "Internal Error", 500

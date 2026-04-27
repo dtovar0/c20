@@ -1,0 +1,415 @@
+{% extends 'base.html' %}
+
+{% block title %}Centro de Ayuda | Nexus Premium{% endblock %}
+
+{% block breadcrumbs %}
+<span class="text-secondary">Nexus</span>
+<svg class="w-4 h-4 text-label/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+<span class="text-primary">Centro de Ayuda</span>
+{% endblock %}
+
+{% block content %}
+<div id="helpWrapper" class="w-full h-full flex flex-col relative p-6 overflow-hidden">
+    <!-- SEARCH HEADER -->
+    <div class="relative backdrop-blur-lg mb-6 flex items-center justify-between gap-6">
+        <div class="flex-grow max-w-2xl">
+            <div class="relative group">
+                <input type="text" id="docsSearch" onkeyup="filterDocs()" placeholder="¿En qué podemos ayudarte hoy?" 
+                    class="w-full bg-panel-bg/40 border-2 border-panel-border rounded-2xl pl-14 pr-6 py-4 text-sm font-bold text-input outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all">
+                <svg class="w-6 h-6 absolute left-5 top-1/2 -translate-y-1/2 text-label/40 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </div>
+        </div>
+        
+        <div class="flex items-center gap-4 flex-shrink-0">
+            <div class="flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-xl">
+                <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                <span class="text-[12px] font-black text-primary uppercase tracking-[0.1em]">Versión 8.2.0</span>
+            </div>
+            {% if current_user.is_admin %}
+            <div class="flex items-center gap-2 px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-xl">
+                <i class="fas fa-shield-alt text-amber-500 text-[12px]"></i>
+                <span class="text-[12px] font-black text-amber-500 uppercase tracking-[0.1em]">Modo Admin: Desbloqueado</span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- MAIN GRID -->
+    <div class="flex-grow grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-6 overflow-hidden">
+        <!-- Sidebar Navigation -->
+        <div class="flex flex-col gap-4 overflow-y-auto custom-scrollbar pr-2">
+            <label class="text-[11px] font-black text-label/40 uppercase tracking-[0.3em] mb-1 ml-2">Módulos Principales</label>
+            <nav class="space-y-1">
+                <button onclick="scrollToSection('sec-intro')" class="help-nav-btn active group">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Introducción</span>
+                </button>
+                <button onclick="scrollToSection('sec-psx')" class="help-nav-btn group">
+                    <i class="fas fa-terminal"></i>
+                    <span>Terminal PSX5K</span>
+                </button>
+                {% if current_user.is_admin %}
+                <button onclick="scrollToSection('sec-notif')" class="help-nav-btn group border-l-2 border-amber-500/0 hover:border-amber-500/50">
+                    <i class="fas fa-bell text-amber-500/80"></i>
+                    <span>Notificaciones</span>
+                    <span class="ml-auto text-[8px] font-black bg-amber-500/20 text-amber-600 px-1.5 py-0.5 rounded uppercase">Admin</span>
+                </button>
+                <button onclick="scrollToSection('sec-users')" class="help-nav-btn group">
+                    <i class="fas fa-users-cog text-amber-500/80"></i>
+                    <span>Gestión de Cuentas</span>
+                    <span class="ml-auto text-[8px] font-black bg-amber-500/20 text-amber-600 px-1.5 py-0.5 rounded uppercase">Admin</span>
+                </button>
+                {% endif %}
+                <button onclick="scrollToSection('sec-interface')" class="help-nav-btn group">
+                    <i class="fas fa-palette"></i>
+                    <span>Ajustes Visuales</span>
+                </button>
+            </nav>
+
+            <label class="text-[11px] font-black text-label/40 uppercase tracking-[0.3em] mt-6 mb-1 ml-2">Soporte Técnico</label>
+            <div class="p-5 bg-primary/5 rounded-2xl border border-primary/10">
+                <p class="text-[12px] font-bold text-primary mb-3 leading-relaxed">¿No encuentras lo que buscas? Contacta con el equipo de soporte.</p>
+                <a href="mailto:soporte@nexus.premium" class="flex items-center justify-center gap-2 w-full py-2.5 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:opacity-90 transition-all">
+                    <i class="fas fa-paper-plane"></i>
+                    Abrir Ticket
+                </a>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div id="docsContent" class="flex flex-col bg-panel-bg/40 border border-panel-border rounded-3xl overflow-hidden shadow-2xl relative">
+            <div class="flex-grow overflow-y-auto custom-scrollbar p-10 scroll-smooth">
+                
+                <!-- Section: INTRO -->
+                <section id="sec-intro" class="help-section mb-16 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <div class="flex items-center gap-4 mb-8">
+                        <div class="w-14 h-14 rounded-2xl bg-primary/20 flex items-center justify-center text-primary shadow-xl shadow-primary/10 border border-primary/10">
+                            <i class="fas fa-rocket text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-3xl font-black tracking-tighter text-primary uppercase italic">Bienvenido a Nexus</h2>
+                            <p class="text-sm text-label/60 font-bold uppercase tracking-widest">Ecosistema Táctico de Gestión de Activos</p>
+                        </div>
+                    </div>
+                    
+                    <div class="prose prose-invert max-w-none">
+                        <p class="text-lg leading-relaxed text-label/80 mb-6">Nexus es la plataforma definitiva diseñada para la supervisión y control de infraestructuras críticas. Este centro de ayuda le guiará a través de todas las funcionalidades operativas y administrativas.</p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="p-6 bg-white/5 border border-panel-border rounded-2xl">
+                                <h4 class="text-primary font-black uppercase tracking-widest text-sm mb-2">Visión Operativa</h4>
+                                <p class="text-xs font-medium text-label/60 leading-relaxed italic">Monitoreo en tiempo real de tareas, procesos masivos y alertas de sistema.</p>
+                            </div>
+                            <div class="p-6 bg-white/5 border border-panel-border rounded-2xl">
+                                <h4 class="text-secondary font-black uppercase tracking-widest text-sm mb-2">Seguridad Core</h4>
+                                <p class="text-xs font-medium text-label/60 leading-relaxed italic">Auditoría inmutable de cada acción realizada en la plataforma bajo estándar ISO.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: PSX5K -->
+                <section id="sec-psx" class="help-section mb-16">
+                    <div class="flex items-center gap-4 mb-8">
+                        <div class="w-14 h-14 rounded-2xl bg-sky-500/20 flex items-center justify-center text-sky-400 shadow-xl shadow-sky-500/10 border border-sky-500/10">
+                            <i class="fas fa-terminal text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-3xl font-black tracking-tighter text-sky-400 uppercase italic">Terminal PSX5K</h2>
+                            <p class="text-sm text-label/60 font-bold uppercase tracking-widest">Motor de Procesamiento Masivo</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-black/20 rounded-2xl border border-panel-border p-8">
+                            <h3 class="text-lg font-black text-white/90 mb-4 uppercase">¿Cómo cargar tareas?</h3>
+                            <ul class="space-y-4">
+                                <li class="flex gap-4">
+                                    <span class="w-8 h-8 rounded-lg bg-sky-500/10 text-sky-400 flex items-center justify-center font-black flex-shrink-0">1</span>
+                                    <p class="text-sm text-label/80 leading-relaxed">Prepare su archivo en formato <b>CSV o Excel</b> con las columnas requeridas por el sistema.</p>
+                                </li>
+                                <li class="flex gap-4">
+                                    <span class="w-8 h-8 rounded-lg bg-sky-500/10 text-sky-400 flex items-center justify-center font-black flex-shrink-0">2</span>
+                                    <p class="text-sm text-label/80 leading-relaxed">Arrastre el archivo al área de carga o utilice el botón <b>NUEVA TAREA</b> en la esquina superior derecha.</p>
+                                </li>
+                                <li class="flex gap-4">
+                                    <span class="w-8 h-8 rounded-lg bg-sky-500/10 text-sky-400 flex items-center justify-center font-black flex-shrink-0">3</span>
+                                    <p class="text-sm text-label/80 leading-relaxed">Supervise el progreso en el <b>Monitor Visual</b>. Los estados cambiarán dinámicamente de "En Ejecución" a "Completada" o "Error".</p>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Accordion for States -->
+                        <div class="space-y-2">
+                            <button class="faq-trigger w-full flex items-center justify-between p-5 bg-white/5 rounded-xl border border-panel-border hover:bg-white/10 transition-all">
+                                <span class="font-bold text-label/80">Significado de los Estados</span>
+                                <i class="fas fa-chevron-down text-label/40"></i>
+                            </button>
+                            <div class="faq-content hidden p-6 bg-black/10 border-x border-b border-panel-border rounded-b-xl">
+                                <table class="w-full text-left text-xs font-bold text-label/60 uppercase">
+                                    <tr class="border-b border-panel-border/50">
+                                        <td class="py-3 text-amber-500"><i class="fas fa-clock mr-2"></i>Programada</td>
+                                        <td class="py-3 italic">La tarea está en cola de espera para ser procesada.</td>
+                                    </tr>
+                                    <tr class="border-b border-panel-border/50">
+                                        <td class="py-3 text-sky-400"><i class="fas fa-spinner fa-spin mr-2"></i>En Ejecución</td>
+                                        <td class="py-3 italic">El motor táctico está procesando los datos actualmente.</td>
+                                    </tr>
+                                    <tr class="border-b border-panel-border/50">
+                                        <td class="py-3 text-emerald-400"><i class="fas fa-check-circle mr-2"></i>Completada</td>
+                                        <td class="py-3 italic">Tarea finalizada con éxito. Reporte disponible en Auditoría.</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-3 text-red-500"><i class="fas fa-exclamation-triangle mr-2"></i>Error</td>
+                                        <td class="py-3 italic">Fallo detectado. Revise el log detallado para ver el motivo técnico.</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {% if current_user.is_admin %}
+                <!-- Section: NOTIFICATIONS (ADMIN) -->
+                <section id="sec-notif" class="help-section mb-16 border-l-4 border-amber-500/40 pl-8 ml-[-32px]">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-14 h-14 rounded-2xl bg-amber-500/20 flex items-center justify-center text-amber-500 shadow-xl shadow-amber-500/10 border border-amber-500/10">
+                            <i class="fas fa-bell text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-3xl font-black tracking-tighter text-amber-500 uppercase italic leading-tight">Configuración de Alertas</h2>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="text-[10px] font-black bg-amber-500 text-black px-1.5 py-0.5 rounded uppercase tracking-tighter">Administrador</span>
+                                <p class="text-xs text-label/40 font-bold uppercase tracking-widest">Sistema de Mensajería Global</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                        <div class="p-8 bg-black/20 rounded-2xl border border-panel-border">
+                            <h4 class="text-amber-500 font-black uppercase text-sm mb-4">Servidor SMTP</h4>
+                            <p class="text-xs text-label/70 leading-relaxed mb-4 italic">Configure el motor de salida de correos. Nexus soporta conexión segura TLS/SSL y autenticación avanzada.</p>
+                            <div class="space-y-2 text-[11px] font-mono text-amber-500/60">
+                                <p>> Requerido: Host, Puerto, Usuario, Password.</p>
+                                <p>> Recomendado: Puerto 587 con STARTTLS.</p>
+                            </div>
+                        </div>
+                        <div class="p-8 bg-black/20 rounded-2xl border border-panel-border">
+                            <h4 class="text-amber-500 font-black uppercase text-sm mb-4">Diseño de Plantillas</h4>
+                            <p class="text-xs text-label/70 leading-relaxed mb-4 italic">Personalice el cuerpo de los correos corporativos. Utilice el editor de código integrado para inyectar variables dinámicas.</p>
+                            <p class="text-[10px] uppercase font-black text-amber-500/40 underline underline-offset-4 cursor-pointer hover:text-amber-500 transition-all" onclick="window.notificationTour.start()">Ver Guía de Diseño</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: USERS (ADMIN) -->
+                <section id="sec-users" class="help-section mb-16 border-l-4 border-amber-500/40 pl-8 ml-[-32px]">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-14 h-14 rounded-2xl bg-amber-500/20 flex items-center justify-center text-amber-500 shadow-xl shadow-amber-500/10 border border-amber-500/10">
+                            <i class="fas fa-users-cog text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-3xl font-black tracking-tighter text-amber-500 uppercase italic leading-tight">Gestión de Seguridad</h2>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="text-[10px] font-black bg-amber-500 text-black px-1.5 py-0.5 rounded uppercase tracking-tighter">Administrador</span>
+                                <p class="text-xs text-label/40 font-bold uppercase tracking-widest">Identidad y Accesos</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="prose prose-invert max-w-none">
+                        <div class="flex flex-col gap-4">
+                            <div class="bg-white/5 border border-panel-border p-6 rounded-2xl">
+                                <h5 class="text-primary font-black uppercase tracking-widest text-xs mb-3">Roles y Permisos</h5>
+                                <p class="text-xs text-label/60 italic leading-relaxed">Los usuarios pueden ser <b>Operadores</b> (solo PSX5K y Dashboard) o <b>Administradores</b> (acceso total). El bloqueo de cuenta es automático tras 3 intentos fallidos por seguridad.</p>
+                            </div>
+                            <div class="bg-white/5 border border-panel-border p-6 rounded-2xl">
+                                <h5 class="text-primary font-black uppercase tracking-widest text-xs mb-3">Auditoría de Acciones</h5>
+                                <p class="text-xs text-label/60 italic leading-relaxed">Cada cambio en la configuración es registrado con IP, Fecha y Usuario en el módulo de historial global. Nexus no permite la eliminación de logs históricos.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                {% endif %}
+
+                <!-- Section: INTERFACE -->
+                <section id="sec-interface" class="help-section mb-16">
+                    <div class="flex items-center gap-4 mb-8">
+                        <div class="w-14 h-14 rounded-2xl bg-violet-500/20 flex items-center justify-center text-violet-400 shadow-xl shadow-violet-400/10 border border-violet-400/10">
+                            <i class="fas fa-palette text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-3xl font-black tracking-tighter text-violet-400 uppercase italic">Ajustes Visuales</h2>
+                            <p class="text-sm text-label/60 font-bold uppercase tracking-widest">Experiencia de Usuario Personalizada</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <h4 class="text-violet-400 font-black uppercase text-sm mb-4">Tematización Avanzada</h4>
+                            <p class="text-xs text-label/70 leading-relaxed mb-4">Nexus incluye temas premium adaptables. Cambie el color central de la plataforma en cualquier momento desde el selector de la barra superior.</p>
+                        </div>
+                        <div>
+                            <h4 class="text-violet-400 font-black uppercase text-sm mb-4">Terminal Táctica</h4>
+                            <p class="text-xs text-label/70 leading-relaxed mb-4">Puede ajustar el color de los estados representados en las gráficas y terminales mediante el panel de configuración de interfaz.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Footer Sign-off -->
+                <footer class="py-20 border-t border-panel-border/30 flex flex-col items-center">
+                    <img src="/assets/img/Nexus-Logo-F-C.png" class="h-10 opacity-10 mb-6 grayscale" alt="Nexus Logo">
+                    <p class="text-[10px] font-black text-label/20 uppercase tracking-[0.5em]">Nexus Tactical Ecosystem © 2026</p>
+                </footer>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Documentation Specific Styles */
+#docsContent {
+    background: linear-gradient(180deg, rgba(var(--panel-bg-rgb), 0.4) 0%, rgba(var(--panel-bg-rgb), 0.2) 100%);
+    backdrop-filter: blur(20px);
+}
+
+.help-nav-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 14px;
+    font-size: 13px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(var(--label-rgb), 0.4);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid transparent;
+}
+
+.help-nav-btn i {
+    font-size: 14px;
+    opacity: 0.6;
+}
+
+.help-nav-btn:hover {
+    background: rgba(var(--primary-rgb), 0.05);
+    color: rgba(var(--primary-rgb), 0.8);
+    transform: translateX(4px);
+}
+
+.help-nav-btn.active {
+    background: rgba(var(--primary-rgb), 0.1);
+    color: var(--color-primary);
+    border-color: rgba(var(--primary-rgb), 0.2);
+    box-shadow: 0 10px 20px -5px rgba(var(--primary-rgb), 0.1);
+}
+
+.help-section h2 {
+    text-shadow: 0 10px 20px rgba(var(--primary-rgb), 0.1);
+}
+
+.faq-content.active {
+    display: block;
+    animation: slideDown 0.4s ease-out;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Custom Scrollbar for Docs */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(var(--primary-rgb), 0.1);
+    border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(var(--primary-rgb), 0.3);
+}
+
+.scrolled-out {
+    opacity: 0.3;
+    filter: blur(1px);
+    transition: all 0.5s;
+}
+</section>
+
+<script>
+    function scrollToSection(id) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            // Update nav active state
+            document.querySelectorAll('.help-nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('onclick').includes(id)) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+    }
+
+    function filterDocs() {
+        const query = document.getElementById('docsSearch').value.toLowerCase();
+        const sections = document.querySelectorAll('.help-section');
+        
+        sections.forEach(section => {
+            const text = section.innerText.toLowerCase();
+            if (text.includes(query)) {
+                section.style.display = 'block';
+                section.style.opacity = '1';
+                section.style.filter = 'none';
+            } else {
+                section.style.opacity = '0.1';
+                section.style.filter = 'blur(4px)';
+                // section.style.display = 'none'; // Optional: hide completely
+            }
+        });
+    }
+
+    // FAQ Accordion
+    document.querySelectorAll('.faq-trigger').forEach(trigger => {
+        trigger.addEventListener('click', () => {
+            const content = trigger.nextElementSibling;
+            const icon = trigger.querySelector('i');
+            
+            content.classList.toggle('hidden');
+            icon.classList.toggle('fa-chevron-up');
+            icon.classList.toggle('fa-chevron-down');
+        });
+    });
+
+    // Sidebar Intersection Observer to highlight active section on scroll
+    const observerOptions = {
+        root: document.querySelector('#docsContent .overflow-y-auto'),
+        threshold: 0.5
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const id = entry.target.id;
+                document.querySelectorAll('.help-nav-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.getAttribute('onclick').includes(id)) {
+                        btn.classList.add('active');
+                    }
+                });
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.help-section').forEach(section => observer.observe(section));
+</script>
+{% endblock %}

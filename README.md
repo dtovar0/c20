@@ -63,3 +63,8 @@ NEXUS es una plataforma de gestión centralizada diseñada para el monitoreo y a
 *   [Reglas de Negocio](docs/business_rules.md): Lineamientos operativos y de diseño.
 *   [Arquitectura Técnica](docs/ARCHITECTURE.md): Detalles sobre el flujo de datos y base de datos.
 *   [Guía de Estilos](UI_GUIDE.md): Design tokens y componentes reutilizables.
+
+## 🚧 Desarrollos Pendientes (Roadmap)
+
+*   [ ] **Activación del Centro de Ayuda**: Habilitación visual de la documentación integrada para usuarios y administradores.
+*   [ ] **Habilitación de API REST**: Apertura de endpoints tácticos para integraciones externas y automatización programática.
