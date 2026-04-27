@@ -11,6 +11,14 @@ auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     try:
+        # --- DEBUG DE CABECERAS (SI ESTÁ HABILITADO) ---
+        if os.getenv('DEBUG_AUTH', 'false').lower() == 'true':
+            print("\n" + "="*50)
+            print("DEBUG AUTH: REVISANDO CABECERAS ENTRANTES")
+            for header, value in request.headers.items():
+                print(f"  {header}: {value}")
+            print("="*50 + "\n")
+
         if current_user.is_authenticated:
             return redirect(url_for('core.index'))
             
