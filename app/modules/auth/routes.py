@@ -166,7 +166,8 @@ def logout():
     # --- LOGOUT COORDINADO CON AUTHELIA (SSO) ---
     if os.getenv('AUTHELIA_ENABLED', 'false').lower() == 'true':
         slo_url = os.getenv('AUTHELIA_SLO_URL', 'https://auth.vivaro.com:9091/logout')
-        redirect_url = f"{slo_url}?rd={request.host_url}"
+        # Redirigimos al login para romper el bucle
+        redirect_url = f"{slo_url}?rd={request.host_url}auth/login"
         return redirect(redirect_url)
         
     flash("You have been logged out.", "info")
