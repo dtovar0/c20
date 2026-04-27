@@ -258,6 +258,18 @@ window.startLogTour = function() {
 (function() {
     window.psxTour = new PSXNexusTour([
         {
+            type: 'Buscador',
+            target: '#auditSearch',
+            title: 'Buscador Inteligente',
+            content: 'Filtra instantáneamente cualquier registro de la tabla por su ID, usuario o etiqueta. La búsqueda es <b>progresiva</b> y se procesa en tiempo real.'
+        },
+        {
+            type: 'Filtro Especializado',
+            target: '#statusFilterBtn',
+            title: 'Filtro por Categoría',
+            content: 'Segmenta la vista operativa según el estado actual de las tareas: <b>Programadas, En Ejecución, Completadas o Tareas con Errores</b>.'
+        },
+        {
             type: 'Botón',
             target: '#refreshAudit',
             title: 'Tarea Nueva',
@@ -322,8 +334,8 @@ window.startLogTour = function() {
                 ['<b>Operación</b>', `${ico(svgPlus, '#2563eb')} Alta`, `${ico(svgTrash, '#f43f5e')} Baja`],
                 ['<b>Modo</b>', { text: `${ico(svgIn, '#0ea5e9')} Solo Llamadas`, colspan: 2 }],
                 ['', { text: `${ico(svgInOut, '#6366f1')} Llamadas y Recibe`, colspan: 2 }],
-                ['<b>Estado</b>', `${ico(svgSpin, '#2563eb')} Ejecutando`, `${ico(svgCheck, '#10b981')} Éxito`],
-                ['', `${ico(svgWarn, '#f43f5e')} Error`, `${ico(svgClock, '#f59e0b')} Espera`]
+                ['<b>Estado</b>', `${ico(svgSpin, '#2563eb')} En Ejecución`, `${ico(svgCheck, '#10b981')} Completada`],
+                ['', `${ico(svgWarn, '#f43f5e')} Error`, `${ico(svgClock, '#f59e0b')} Programada`]
             ]
         },
         {
