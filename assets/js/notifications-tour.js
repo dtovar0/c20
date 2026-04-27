@@ -177,6 +177,13 @@ class NotificationNexusTour {
             position: 'left'
         },
         {
+            type: 'Variables Dinámicas',
+            target: '#tour-template-shortcuts',
+            title: 'Atajos Rápidos',
+            content: 'Utiliza estos botones para insertar etiquetas inteligentes como <b>{nombre}, {evento} o {hora}</b>. El sistema las sustituirá por datos reales al enviar.',
+            position: 'left'
+        },
+        {
             type: 'Vista Previa Reacción',
             target: '#tour-template-preview',
             title: 'Visualización Táctica',
