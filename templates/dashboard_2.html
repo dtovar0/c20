@@ -166,15 +166,15 @@
                                     {% set bg_class = 'bg-primary/10' %}
                                     {% set border_class = 'border-primary/20' %}
 
-                                    {% if 'operación' in action_lower or 'ejecución' in action_lower %}
+                                    {% if 'operación' in action_lower or 'ejecución' in action_lower or 'tarea' in action_lower %}
                                         {% set icon = 'fas fa-bolt' %}
-                                        {% if 'éxito' in action_lower %}{% set color_class = 'text-success' %}{% set bg_class = 'bg-success/10' %}{% set border_class = 'border-success/20' %}
+                                        {% if 'éxito' in action_lower or 'terminada' in action_lower %}{% set color_class = 'text-success' %}{% set bg_class = 'bg-success/10' %}{% set border_class = 'border-success/20' %}
                                         {% elif 'error' in action_lower or 'abort' in action_lower %}{% set icon = 'fas fa-exclamation-triangle' %}{% set color_class = 'text-peach' %}{% set bg_class = 'bg-peach/10' %}{% set border_class = 'border-peach/20' %}
                                         {% else %}{% set color_class = 'text-sky' %}{% set bg_class = 'bg-sky/10' %}{% set border_class = 'border-sky/20' %}
                                         {% endif %}
-                                    {% elif 'acceso' in action_lower %}
+                                    {% elif 'acceso' in action_lower or 'login' in action_lower or 'logout' in action_lower %}
                                         {% set icon = 'fas fa-shield-alt' %}{% set color_class = 'text-violet' %}{% set bg_class = 'bg-violet/10' %}{% set border_class = 'border-violet/20' %}
-                                    {% elif 'modificación' in action_lower or 'creación' in action_lower %}
+                                    {% elif 'modificación' in action_lower or 'creación' in action_lower or 'modific' in action_lower or 'crea' in action_lower %}
                                         {% set icon = 'fas fa-edit' %}{% set color_class = 'text-indigo-400' %}{% set bg_class = 'bg-indigo-400/10' %}{% set border_class = 'border-indigo-400/20' %}
                                     {% endif %}
 
