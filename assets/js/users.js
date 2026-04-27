@@ -84,17 +84,17 @@ function initUsersDataTable() {
                 }
             },
             { 
-                data: 'email', 
-                width: '180px',
-                render: (data) => `<div class="flex items-center h-full font-mono text-[11px] font-black text-primary/80 uppercase tracking-widest truncate">${data}</div>`
-            },
-            { 
                 data: 'nombre', 
                 width: '190px',
                 render: (data) => {
                     const display = data && data !== 'None' ? data : 'Sin Nombre';
                     return `<div class="flex items-center h-full px-2 text-[12px] font-black text-label uppercase tracking-tighter truncate">${display}</div>`;
                 }
+            },
+            { 
+                data: 'email', 
+                width: '180px',
+                render: (data) => `<div class="flex items-center h-full font-mono text-[11px] font-black text-primary/80 uppercase tracking-widest truncate">${data}</div>`
             },
             { 
                 data: 'source', 
