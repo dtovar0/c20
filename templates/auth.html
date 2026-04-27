@@ -268,7 +268,7 @@
                                         </path>
                                     </svg>
                                     <input type="text" id="ldap_user" value="{{ config.ldap_user if config else '' }}"
-                                        placeholder="cn=admin,dc=ejemplo,dc=com"
+                                        placeholder="cn=admin,dc=ejemplo,dc=com" autocomplete="off"
                                         class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3.5 text-sm font-bold text-input outline-none transition-all focus:border-input-focus focus:ring-4 focus:ring-primary/10">
                                 </div>
                             </div>
@@ -286,6 +286,7 @@
                                     </svg>
                                     <input type="password" id="ldap_pass"
                                         value="{{ config.ldap_pass if config else '' }}" placeholder="********"
+                                        autocomplete="new-password"
                                         class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-12 py-3.5 text-sm font-bold text-input outline-none transition-all focus:border-input-focus focus:ring-4 focus:ring-primary/10">
                                 </div>
                             </div>
