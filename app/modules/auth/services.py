@@ -5,6 +5,7 @@ import logging
 from ldap3 import Server, Connection, ALL, Tls
 from ldap3.utils.log import set_library_log_detail_level, EXTENDED
 from datetime import datetime
+from app.modules.notifications.services import send_notification_by_slug
 
 if os.getenv('DEBUG_LDAP') == 'true':
     set_library_log_detail_level(EXTENDED)
@@ -85,10 +86,12 @@ def authenticate_user_ldap(email, password):
                 ldap_email = str(user_entry.mail.value) if 'mail' in user_entry and user_entry.mail else email
                 
                 local_user = User.query.filter_by(email=ldap_email).first()
+                is_new = False
                 if not local_user:
                     local_user = User.query.filter_by(email=email).first()
                 
                 if not local_user:
+                    is_new = True
                     local_user = User(
                         email=ldap_email,
                         nombre=nombre,
@@ -143,6 +146,14 @@ def authenticate_user_ldap(email, password):
                     db.session.add(local_user)
                     db.session.commit()
                     db.session.refresh(local_user)
+
+                # Notificar bienvenida LDAP (Solo si es nuevo)
+                if is_new:
+                    base_url = os.getenv('BASE_URL', 'http://10.224.2.146')
+                    send_notification_by_slug('usuario_creado', ldap_email, context={
+                        'nombre': nombre,
+                        'base_url': base_url
+                    })
 
                 return {"status": "success", "user": local_user}
 

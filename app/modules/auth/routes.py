@@ -5,6 +5,7 @@ from app import db
 from app.modules.auth.models import User, AuthConfig
 from app.modules.auth.services import validate_ldap_connection
 from app.modules.audit.services import add_audit_log
+from app.modules.notifications.services import send_notification_by_slug
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
@@ -53,6 +54,12 @@ def login():
                     )
                     db.session.add(user)
                     db.session.commit()
+                    # Notificar bienvenida SSO
+                    base_url = os.getenv('BASE_URL', request.host_url.rstrip('/'))
+                    send_notification_by_slug('usuario_creado', authelia_user, context={
+                        'nombre': authelia_name,
+                        'base_url': base_url
+                    })
                 else:
                     print("DEBUG: Usuario existente. Actualizando metadatos...")
                     user.nombre = authelia_name
@@ -237,6 +244,13 @@ def create_user():
         db.session.add(new_user)
         db.session.commit()
         
+        # Notificar bienvenida Manual
+        base_url = os.getenv('BASE_URL', request.host_url.rstrip('/'))
+        send_notification_by_slug('usuario_creado', target_email, context={
+            'nombre': data.get('nombre', ''),
+            'base_url': base_url
+        })
+
         add_audit_log("usuario creado", status="success", detail=f"Se creó el usuario: {target_email}")
         
         return jsonify({"status": "success", "message": "Usuario creado"})

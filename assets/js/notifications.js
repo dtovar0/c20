@@ -286,6 +286,10 @@ function loadTemplate(type) {
                     subject = "✅ NEXUS: PROCESO_FINALIZADO";
                     content = "✅ NEXUS COMPLETADO\nProceso: TAREA_FINALIZADA\nEjecutor: {usuario}\nEstado: ARCHIVOS_SINCRONIZADOS";
                     break;
+                case 'usuario_creado':
+                    subject = "👋 NEXUS: BIENVENIDO AL SISTEMA";
+                    content = "👋 ¡Hola {nombre}!\nTu acceso al Nexus ha sido creado exitosamente.\nPortal: {base_url}\nBienvenido a la red.";
+                    break;
             }
 
             if (content) {
@@ -299,6 +303,7 @@ function loadTemplate(type) {
                     'guardado': 'TAREA NUEVA',
                     'inicio': 'INICIO TAREA',
                     'terminado': 'TAREA TERMINADA',
+                    'usuario_creado': 'BIENVENIDA USUARIO',
                     'error': 'ERROR CRÍTICO'
                 };
                 
