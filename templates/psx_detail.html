@@ -42,7 +42,7 @@
 
     <div class="flex w-full h-screen overflow-hidden relative z-10">
         
-        {% if task.estado|lower in ['terminada', 'error'] %}
+        {% if task.estado|lower in ['terminada', 'terminado', 'error', 'completada', 'completado', 'finalizada', 'finalizado', 'exito'] %}
         <!-- SIDEBAR NAVIGATION (NEXUS STANDARD SYNC) -->
         <aside class="w-72 bg-panel-fill border-r border-panel-border flex flex-col shrink-0 relative z-20 overflow-hidden">
             <!-- 1. BRAND HEADER (ORIGINAL BANNER STYLE) -->
@@ -83,7 +83,7 @@
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                             Estado
                         </span>
-                        <div class="flex items-center gap-2 font-black {% if task.estado|lower == 'terminada' %}text-emerald-500{% elif task.estado|lower == 'error' %}text-rose-500{% else %}text-primary{% endif %} uppercase italic text-sm tracking-tighter">
+                        <div class="flex items-center gap-2 font-black {% if task.estado|lower in ['terminada', 'terminado', 'completada', 'completado', 'finalizada', 'finalizado', 'exito'] %}text-emerald-500{% elif task.estado|lower == 'error' %}text-rose-500{% else %}text-primary{% endif %} uppercase italic text-sm tracking-tighter">
                             <span class="w-1.5 h-1.5 rounded-full bg-current animate-pulse shadow-[0_0_8px_currentColor]"></span>
                             <span>{{ task.estado }}</span>
                         </div>
@@ -103,7 +103,7 @@
                         <span>Dashboard</span>
                     </button>
 
-                    {% if task.estado|lower in ['terminada', 'error'] %}
+                    {% if task.estado|lower in ['terminada', 'terminado', 'error', 'completada', 'completado', 'finalizada', 'finalizado', 'exito'] %}
                     <button onclick="switchTab('logs')" id="tab-trigger-logs" class="nav-item tab-trigger w-full px-4 py-3 text-sm font-bold flex items-center gap-4 transition-all group relative">
                         <svg class="w-5 h-5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
                         <span>Tabla de Datos</span>
@@ -141,7 +141,7 @@
         <main class="flex-1 overflow-y-auto scroll-container p-6">
             <div class="w-full h-full flex flex-col">
 
-            {% if task.estado|lower in ['terminada', 'error'] %}
+            {% if task.estado|lower in ['terminada', 'terminado', 'error', 'completada', 'completado', 'finalizada', 'finalizado', 'exito'] %}
             <!-- DASHBOARD PANEL -->
             <!-- DASHBOARD PANEL -->
             <div id="tab-panel-dashboard" class="tab-panel tab-panel-content w-full h-full active flex flex-col rounded-2xl overflow-hidden border border-panel-border bg-panel-fill shadow-2xl shadow-primary/5 relative">
