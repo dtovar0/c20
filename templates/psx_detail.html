@@ -236,7 +236,7 @@
                                             <!-- Row 3: Routing -->
                                             <div class="flex justify-between items-center group/meta">
                                                 <span class="text-[11px] font-black text-label/40 uppercase tracking-[0.2em]">Etiqueta de Routing</span>
-                                                <span class="px-2 py-0.5 bg-primary/10 border border-primary/20 rounded text-[9px] font-black text-primary uppercase tracking-widest italic">{{ task.routing_label or 'N/A' }}</span>
+                                                <span class="text-[11px] font-black {% if task.routing_label %}text-body-text italic{% else %}text-label/20{% endif %} uppercase tracking-widest">{{ task.routing_label or 'N/A' }}</span>
                                             </div>
 
                                             <!-- Row 4: Sequence -->

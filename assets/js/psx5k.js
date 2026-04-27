@@ -140,17 +140,28 @@ function initPSXDataTable() {
                 render: (data) => {
                     const origin = data.archivo_origen || '-';
                     const segment = data.segmento || '-';
+                    
+                    // Lógica de visualización del badge de segmento: Solo si hay más de 2 splits (Ej: "1/3")
+                    let segmentHtml = '';
+                    if (segment !== '-' && segment.includes('/')) {
+                        const parts = segment.split('/');
+                        const totalSplits = parseInt(parts[1]);
+                        if (!isNaN(totalSplits) && totalSplits > 2) {
+                            segmentHtml = `<span class="nx-badge nx-badge-slate flex-shrink-0" style="padding: 0.15rem 0.6rem; font-size: 9px;" title="${segment}">${segment}</span>`;
+                        }
+                    }
+
                     return `
                     <div class="flex items-center gap-2 overflow-hidden h-full">
                         <span class="text-[11px] font-black text-primary/60 uppercase tracking-tighter truncate max-w-[120px] italic" title="${origin}">${origin}</span>
-                        <span class="nx-badge nx-badge-slate flex-shrink-0" style="padding: 0.15rem 0.6rem; font-size: 9px;" title="${segment}">${segment}</span>
+                        ${segmentHtml}
                     </div>`;
                 }
             },
             { 
                 data: 'routing_label', 
                 width: '150px',
-                render: (data) => `<div class="flex items-center h-full"><span class="nx-badge nx-badge-cyan font-mono" style="font-size:11px;">${data || '-'}</span></div>`
+                render: (data) => `<div class="flex items-center h-full px-2 text-[12px] font-bold text-label/60 font-mono tracking-tighter truncate">${data || '-'}</div>`
             },
             { 
                 data: 'resumen', 
