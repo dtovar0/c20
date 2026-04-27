@@ -87,6 +87,11 @@ def login():
         return render_template("login.html", sso_enabled=os.getenv('AUTHELIA_ENABLED', 'false').lower() == 'true')
 
     except Exception as e:
+        import traceback
+        print("\n" + "!"*50)
+        print(f"ERROR CRÍTICO EN LOGIN: {str(e)}")
+        traceback.print_exc()
+        print("!"*50 + "\n")
         from flask import current_app
         current_app.logger.error(f"Error en login: {e}")
         return render_template("login.html", error="Error en el servicio de autenticación")
