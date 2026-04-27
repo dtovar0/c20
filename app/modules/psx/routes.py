@@ -72,16 +72,16 @@ def get_stats():
         # 1. Total de tareas del usuario (Fragmentos)
         total_tareas = PSX5KTask.query.join(PSX5KJob).filter(PSX5KJob.usuario == email).count()
         
-        # 2. Tareas Pendientes (Programada o Pendiente)
+        # 2. Tareas en Espera 
         pendientes = PSX5KTask.query.join(PSX5KJob).filter(
             PSX5KJob.usuario == email,
-            PSX5KTask.estado.in_(['Programada', 'Pendiente'])
+            PSX5KTask.estado == 'Pendiente'
         ).count()
         
-        # 3. Tareas Programadas (Estado Pendiente según solicitud del usuario)
+        # 3. Tareas Programadas
         programadas = PSX5KTask.query.join(PSX5KJob).filter(
             PSX5KJob.usuario == email,
-            PSX5KTask.estado == 'Pendiente'
+            PSX5KTask.estado == 'Programada'
         ).count()
         
         # 4. Tarea Activa (GLOBAL: La más reciente con estado Ejecutando en todo el sistema)
@@ -103,29 +103,22 @@ def get_stats():
         # Eficiencia (Éxitos / Procesados) de las tareas terminadas hoy
         stats_data = db.session.query(
             func.sum(PSX5KDetail.ok),
-            func.sum(PSX5KDetail.fail),
-            func.sum(PSX5KDetail.force_ok),
-            func.sum(PSX5KDetail.dup),
-            func.sum(PSX5KDetail.total)
+            func.sum(PSX5KDetail.fail)
         ).join(PSX5KTask, PSX5KTask.id == PSX5KDetail.id).join(PSX5KJob).filter(
             PSX5KJob.usuario == email,
-            PSX5KTask.estado == 'Terminada',
+            PSX5KTask.estado.in_(['Completado', 'Terminado con Errores']),
             PSX5KTask.fecha_inicio >= today
         ).first()
 
         s_ok = stats_data[0] or 0
         s_fail = stats_data[1] or 0
-        s_force = stats_data[2] or 0
-        s_dup = stats_data[3] or 0
-        total_p = stats_data[4] or 0
-
-        total_ok_eff = s_ok + s_force + s_dup
-        eficiencia = (total_ok_eff / total_p * 100) if total_p > 0 else 0.0
+        total_p = s_ok + s_fail
+        eficiencia = (s_ok / total_p * 100) if total_p > 0 else 0.0
 
         # 6. Total de tareas TERMINADAS
         total_procesadas = PSX5KTask.query.join(PSX5KJob).filter(
             PSX5KJob.usuario == email,
-            PSX5KTask.estado == 'Terminada'
+            PSX5KTask.estado.in_(['Completado', 'Terminado con Errores'])
         ).count()
 
         return jsonify({
@@ -140,22 +133,18 @@ def get_stats():
                 "efficiency": round(eficiencia, 1),
                 "breakdown": {
                     "ok": int(s_ok),
-                    "fail": int(s_fail),
-                    "force": int(s_force),
-                    "dup": int(s_dup)
+                    "fail": int(s_fail)
                 },
                 "last_7_tasks": [
                     {
                         "id": t.id,
                         "ok": t.resumen.ok if t.resumen else 0,
                         "fail": t.resumen.fail if t.resumen else 0,
-                        "force": t.resumen.force_ok if t.resumen else 0,
-                        "dup": t.resumen.dup if t.resumen else 0,
                         "total": t.resumen.total if t.resumen else 0
                     } for t in sorted(PSX5KTask.query.join(PSX5KJob).filter(
                         PSX5KJob.usuario == email,
-                        PSX5KTask.estado == 'Terminada'
-                    ).order_by(PSX5KTask.fecha_fin.desc()).limit(7).all(), key=lambda x: x.fecha_fin)
+                        PSX5KTask.estado.in_(['Completado', 'Terminado con Errores'])
+                    ).order_by(PSX5KTask.id.desc()).limit(7).all(), key=lambda x: x.id)
                 ]
             }
         })
