@@ -376,6 +376,8 @@ def create_task():
                 db.session.execute(text("ALTER TABLE psx5k_tasks ADD COLUMN job_id INT"))
                 # 3. Añadir fecha_inicio a psx5k_tasks
                 db.session.execute(text("ALTER TABLE psx5k_tasks ADD COLUMN fecha_inicio DATETIME"))
+                # 4. Aumentar tamaño de columna estado
+                db.session.execute(text("ALTER TABLE psx5k_tasks MODIFY COLUMN estado VARCHAR(50)"))
                 db.session.commit()
                 current_app.logger.info("Auto-Migración: Columna job_id y tabla psx5k_jobs creadas con éxito.")
             except Exception as migrate_err:

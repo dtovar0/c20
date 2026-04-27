@@ -8,36 +8,27 @@ load_dotenv(os.path.join(PROJECT_ROOT, '.env'))
 
 from app import create_app, db
 from app.modules.psx.models import PSX5KTask, PSX5KJob
+from sqlalchemy import text, func
 
 app = create_app()
 with app.app_context():
-    last_tasks = PSX5KTask.query.order_by(PSX5KTask.id.desc()).limit(5).all()
-    print("Últimas 5 tareas creadas:")
-    for t in last_tasks:
-        print(f" - ID: {t.id} | Estado: {t.estado} | Job ID: {t.job_id}")
+    print("Reparando esquema: Ampliando columna 'estado' a 50 caracteres...")
+    db.session.execute(text("ALTER TABLE psx5k_tasks MODIFY COLUMN estado VARCHAR(50)"))
+    db.session.commit()
     
-    # Intentar fixear las huerfanas para que sean visibles
-    # Buscamos el admin o el primer usuario
-    from app.modules.auth.models import User
-    admin = User.query.first()
-    if admin:
-        print(f"\nIntentando migrar tareas huérfanas al usuario: {admin.email}")
-        # Crear un Job Genérico para las huerfanas
-        gen_job = PSX5KJob(
-            usuario=admin.email,
-            tarea='legacy',
-            accion_tipo='N/A',
-            datos_tipo='Legacy',
-            archivo_origen='Antiguo sistema'
-        )
-        db.session.add(gen_job)
-        db.session.flush()
-        
-        huerfanas = PSX5KTask.query.filter(PSX5KTask.job_id == None).all()
-        for t in huerfanas:
-            t.job_id = gen_job.id
-        
-        db.session.commit()
-        print(f"¡Migradas {len(huerfanas)} tareas huérfanas al Job #{gen_job.id}!")
-    else:
-        print("\nNo se encontró un usuario para migrar.")
+    print("Normalizando estados antiguos...")
+    
+    # Terminada -> Completado
+    count_c = PSX5KTask.query.filter_by(estado='Terminada').update({PSX5KTask.estado: 'Completado'})
+    
+    # Error -> Terminado con Errores
+    count_e = PSX5KTask.query.filter_by(estado='Error').update({PSX5KTask.estado: 'Terminado con Errores'})
+    
+    db.session.commit()
+    print(f"Sincronizados: {count_c} completadas, {count_e} errores.")
+    
+    # Resumen Final
+    new_stats = db.session.query(PSX5KTask.estado, func.count(PSX5KTask.id)).group_by(PSX5KTask.estado).all()
+    print("\nResumen Final de Estados en la DB:")
+    for state, count in new_stats:
+        print(f" - {state}: {count}")
