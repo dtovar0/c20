@@ -354,20 +354,15 @@ def create_task():
         created_ids = []
         raw_estado = data.get('estado', 'Pendiente')
         from datetime import datetime
-        import pytz
-        
         raw_fecha_inicio = None
         if data.get('fecha_inicio'):
             try:
                 # 1. Parse UTC ISO string from JS
                 utc_dt = datetime.fromisoformat(data['fecha_inicio'].replace('Z', '+00:00'))
                 
-                # 2. Convert to App Local TZ (America/Mexico_City)
-                app_tz = pytz.timezone(os.getenv('TZ_APP', 'America/Mexico_City'))
-                local_dt = utc_dt.astimezone(app_tz)
-                
-                # 3. Make it naive local for DB comparison consistency
-                raw_fecha_inicio = local_dt.replace(tzinfo=None)
+                # 2. Convert to Local System TZ (Set in app/__init__.py)
+                # and make it naive local for DB comparison consistency
+                raw_fecha_inicio = utc_dt.astimezone().replace(tzinfo=None)
             except Exception as e:
                 current_app.logger.error(f"Error parsing/converting date {data['fecha_inicio']}: {e}")
 
@@ -596,12 +591,10 @@ def update_or_reprocess_job(job_id):
     parsed_scheduled_time = None
     if data.get('is_scheduled') and data.get('scheduled_time'):
         from datetime import datetime
-        import pytz
         try:
-            # Parse UTC ISO and convert to Local
+            # Parse UTC ISO and convert to Local System TZ
             utc_dt = datetime.fromisoformat(data['scheduled_time'].replace('Z', '+00:00'))
-            app_tz = pytz.timezone(os.getenv('TZ_APP', 'America/Mexico_City'))
-            parsed_scheduled_time = utc_dt.astimezone(app_tz).replace(tzinfo=None)
+            parsed_scheduled_time = utc_dt.astimezone().replace(tzinfo=None)
         except Exception as e:
             current_app.logger.error(f"Error parsing date in update: {e}")
     
