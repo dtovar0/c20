@@ -159,14 +159,18 @@ def purge_users():
 @auth_bp.route("/logout")
 @login_required
 def logout():
-    try:
-        username = current_user.username
-        logout_user()
-        add_audit_log("logout usuario", status="info", detail=f"Usuario {username} cerró su sesión en el sistema.", user_override=username)
-        return render_template("logout.html")
-    except Exception as e:
-        current_app.logger.error(f"Error en logout: {e}")
-        return redirect(url_for('auth.login'))
+    user_name = current_user.username
+    logout_user()
+    add_audit_log("logout", status="success", detail=f"User {user_name} has logged out")
+    
+    # --- LOGOUT COORDINADO CON AUTHELIA (SSO) ---
+    if os.getenv('AUTHELIA_ENABLED', 'false').lower() == 'true':
+        slo_url = os.getenv('AUTHELIA_SLO_URL', 'https://auth.vivaro.com:9091/logout')
+        redirect_url = f"{slo_url}?rd={request.host_url}"
+        return redirect(redirect_url)
+        
+    flash("You have been logged out.", "info")
+    return redirect(url_for('auth.login'))
 
 @auth_bp.route("/")
 @login_required
