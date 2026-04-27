@@ -32,8 +32,9 @@ def reset_admin():
         else:
             password = input("Introduce la nueva contraseña: ")
             admin.set_password(password)
+            admin.auth_source = 'local' # Forzar origen local para recuperar acceso manual
             db.session.commit()
-            print(f"✅ Contraseña para '{username}' actualizada exitosamente.")
+            print(f"✅ Contraseña y origen de autenticación para '{username}' actualizados exitosamente.")
 
         print("="*60 + "\n")
 
