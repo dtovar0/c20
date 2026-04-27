@@ -302,9 +302,15 @@ def get_global_stats():
         return jsonify({
             "status": "success",
             "stats": {
+                # Dashboard 1 & 2 Shared/Aliases
                 "total": total_tareas,
+                "tasks": total_tareas,
+                "users": total_users,
                 "pending": pendientes,
                 "scheduled": programadas,
+                "queue": int(total_ani_processed), # Dashboard 2 espera queue para total procesado
+                
+                # Dashboard 1 Specific
                 "active_task": str(activa_obj.id) if activa_obj else "NINGUNA",
                 "volume_today": int(volume_today),
                 "processed_total": int(total_ani_processed),
@@ -315,7 +321,10 @@ def get_global_stats():
                     "dup": int(breakdown_today[3] or 0)
                 },
                 "last_7_tasks": last_7,
-                # Mantener compatibles gráficas viejas si existen
+
+                # Dashboard 2 Specific
+                "active_id": activa_obj.id if activa_obj else None,
+                "active_name": active_name if activa_obj else None,
                 "top_users": top_users_data,
                 "daily_tasks": daily_tasks,
                 "analysis_daily": analysis_daily,
