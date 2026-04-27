@@ -121,6 +121,13 @@ def psx5k_cmd(line_task, line_number, line_type=None, routing_label=None, force=
         if idx != 2: # No llegamos al prompt PSXMASTER>
             raise ConnectionError(f"No se pudo activar instancia PSXMASTER. Prompt actual: {cmd.before}")
 
+        # === TEST WATCHDOG POINT ===
+        watchdog_sleep = os.getenv('TEST_WATCHDOG_SLEEP')
+        if watchdog_sleep:
+            import time
+            print(f"DEBUG: [WATCHDOG TEST] Sleeping for {watchdog_sleep}s...")
+            time.sleep(int(watchdog_sleep))
+
         # 3. Procesar Números (ANI)
         for number in line_number:
             stats["total"] += 1
