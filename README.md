@@ -77,3 +77,6 @@ La API está protegida por un Token estático definido en el archivo `.env`.
     *   `GET /status`: Verifica el estado de la API.
     *   `GET /tasks`: Lista las últimas 20 tareas procesadas.
     *   `GET /tasks/<id>`: Obtiene el detalle técnico de una tarea.
+    *   `POST /tasks/upload`: Sube archivos (multipart/form-data) para procesamiento masivo.
+    *   `POST /tasks/create`: Crea o programa una tarea (soporta rangos de ANI y archivos previos).
+    *   `POST /tasks/<id>/cancel`: Cancela una tarea en curso o programada.
