@@ -62,7 +62,7 @@ def clean_database():
 
             print("\n👤 Restaurando usuario 'admin'...")
             admin_user = User(
-                username='admin',
+                email='admin',
                 nombre='Administrador',
                 role='administrador',  
                 auth_source='local',
