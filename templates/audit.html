@@ -18,7 +18,7 @@
 
         <!-- Standard Nexus Table View -->
         <div id="tab-panel-audit"
-            class="tab-panel tab-panel-content flex-1 min-h-0 flex flex-col animate-in fade-in slide-in-from-bottom-2 duration-500 rounded-2xl border border-panel-border shadow-2xl shadow-primary/5 overflow-hidden">
+            class="tab-panel tab-panel-content flex-1 min-h-0 flex flex-col animate-in fade-in slide-in-from-bottom-2 duration-500 rounded-xl border border-panel-border shadow-2xl shadow-primary/5 overflow-hidden">
             <!-- PANEL HEADER -->
             <header class="flex-shrink-0 bg-panel-header border-b border-panel-border px-6 py-6 flex items-center justify-between">
                 <div class="flex items-center gap-4">
@@ -48,10 +48,10 @@
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
                         <input type="text" id="auditSearch" placeholder="Filtrar eventos de auditoría..."
-                            class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3 text-sm font-bold text-input outline-none focus:border-input-focus focus:ring-4 focus:ring-primary/10 transition-all placeholder:text-label/50">
+                            class="w-full bg-input-bg border-2 border-panel-border rounded-xl pl-12 pr-5 py-3 text-sm font-bold text-input outline-none focus:border-input-focus focus:ring-4 focus:ring-primary/10 transition-all placeholder:text-label/50">
                     </div>
                     <button id="refreshAudit"
-                        class="h-12 px-6 rounded-2xl bg-primary text-white font-black text-[12px] uppercase tracking-widest flex items-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/20 group">
+                        class="h-12 px-6 rounded-xl bg-primary text-white font-black text-[12px] uppercase tracking-widest flex items-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/20 group">
                         <svg class="w-5 h-5 group-hover:rotate-180 transition-transform duration-500" fill="none"
                             stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -66,7 +66,7 @@
                         <thead class="sticky top-0 z-20">
                             <tr class="text-[12px] font-black text-white uppercase tracking-[0.2em]">
                                 <th
-                                    class="w-[8%] py-4 bg-slate-900/50 border-y border-panel-border text-center" style="border-left:3px solid transparent;padding:0 1.25rem 0 1rem;">
+                                    class="w-[8%] py-4 bg-slate-900/50 border-y border-panel-border text-center border-l-3 border-l-transparent px-5">
                                     ID</th>
                                 <th class="w-[15%] px-5 py-4 bg-slate-900/50 border-y border-panel-border">Usuario</th>
                                 <th class="w-[22%] px-5 py-4 bg-slate-900/50 border-y border-panel-border">Acción</th>

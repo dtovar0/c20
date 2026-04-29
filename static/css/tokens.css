@@ -173,8 +173,8 @@ table.dataTable tbody tr {
      SPACING & CURVATURE
   ───────────────────────────────────────────── */
   --space-1: 4px;
-  --radius-base: 10px;
-  --radius-panel: 14px;
+  --radius-base: 8px;
+  --radius-panel: 12px;
 
   /* ─────────────────────────────────────────────
      ESCALA TIPOGRÁFICA — Sistema armónico 8pt

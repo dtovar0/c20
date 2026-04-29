@@ -69,7 +69,7 @@
 
                 <div class="flex items-center gap-4">
                     <!-- Standardized Search -->
-                    <div class="hidden sm:flex items-center h-12 bg-input-bg px-4 rounded-2xl gap-3 border-2 border-panel-border focus-within:border-input-focus transition-all shadow-sm group">
+                    <div class="hidden sm:flex items-center h-12 bg-input-bg px-4 rounded-xl gap-3 border-2 border-panel-border focus-within:border-input-focus transition-all shadow-sm group">
                         <svg class="w-4 h-4 text-label/60 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         <input type="text" id="systemSearch" placeholder="Historial psx..." class="bg-transparent border-none focus:ring-0 text-input text-sm font-bold w-64 outline-none placeholder:text-label/50 p-0">
                         <!-- History Action Button -->
@@ -88,7 +88,7 @@
                         </button>
 
                         <!-- Notification Dropdown -->
-                        <div id="notificationDropdown" class="absolute right-0 top-full mt-2 w-80 bg-panel-fill/95 backdrop-blur-xl border border-panel-border rounded-2xl shadow-2xl opacity-0 translate-y-4 pointer-events-none transition-all duration-300 z-50 overflow-hidden">
+                        <div id="notificationDropdown" class="absolute right-0 top-full mt-2 w-80 bg-panel-fill/95 backdrop-blur-xl border border-panel-border rounded-xl shadow-2xl opacity-0 translate-y-4 pointer-events-none transition-all duration-300 z-50 overflow-hidden">
                             <div class="p-4 border-b border-panel-border flex justify-between items-center bg-surface-container/30">
                                 <h3 class="text-[12px] font-black text-label uppercase tracking-widest text-primary/80">Notificaciones</h3>
                                 <div class="flex items-center gap-3">
@@ -131,7 +131,7 @@
 
             <!-- Settings Modal -->
             <div id="settingsModal" class="nexus-modal hidden fixed inset-0 z-[100] items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
-                <div class="nexus-modal-content w-full max-w-lg bg-panel-fill border border-panel-border rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+                <div class="nexus-modal-content w-full max-w-lg bg-panel-fill border border-panel-border rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
                     <!-- Header -->
                     <div class="p-6 border-b border-panel-border flex items-center justify-between bg-surface-container/30">
                         <div class="flex items-center gap-4">
@@ -167,7 +167,7 @@
                         <!-- Tab: Generales -->
                         <div id="tabContentGeneral" class="p-8 space-y-6">
                             <!-- Notification Toggle (Desktop) -->
-                            <div class="flex items-center justify-between p-4 bg-surface-container/20 rounded-2xl border border-panel-border/40">
+                            <div class="flex items-center justify-between p-4 bg-surface-container/20 rounded-xl border border-panel-border/40">
                                 <div>
                                     <h4 class="text-sm font-black text-label uppercase tracking-tight">Notificaciones de Escritorio</h4>
                                     <p class="text-[12px] text-label/60 font-medium leading-none mt-1">Recibir alertas de tareas terminadas</p>
@@ -179,7 +179,7 @@
                             </div>
 
                             <!-- Notification Toggle (Email) -->
-                            <div class="flex items-center justify-between p-4 bg-surface-container/20 rounded-2xl border border-panel-border/40">
+                            <div class="flex items-center justify-between p-4 bg-surface-container/20 rounded-xl border border-panel-border/40">
                                 <div>
                                     <h4 class="text-sm font-black text-label uppercase tracking-tight">Notificaciones por Correo</h4>
                                     <p class="text-[12px] text-label/60 font-medium leading-none mt-1">Avisos de inicio, fin y errores de tareas</p>
@@ -191,7 +191,7 @@
                             </div>
 
                             <!-- Refresh Interval -->
-                            <div class="p-4 bg-surface-container/20 rounded-2xl border border-panel-border/40">
+                            <div class="p-4 bg-surface-container/20 rounded-xl border border-panel-border/40">
                                 <div class="flex justify-between items-center mb-4">
                                     <div>
                                         <h4 class="text-sm font-black text-label uppercase tracking-tight">Frecuencia de Refresco</h4>
@@ -207,7 +207,7 @@
                             </div>
 
                             <!-- Guided Tour Toggle -->
-                            <div class="flex items-center justify-between p-4 bg-surface-container/20 rounded-2xl border border-panel-border/40">
+                            <div class="flex items-center justify-between p-4 bg-surface-container/20 rounded-xl border border-panel-border/40">
                                 <div>
                                     <h4 class="text-sm font-black text-label uppercase tracking-tight">Tour Guiado Automático</h4>
                                     <p class="text-[12px] text-label/60 font-medium leading-none mt-1">Mostrar guía al iniciar sesión</p>
@@ -226,7 +226,7 @@
 
                         <!-- Tab: Colores & Estados -->
                         <div id="tabContentColors" class="hidden p-8 space-y-6">
-                            <div class="border border-panel-border/40 rounded-3xl overflow-hidden bg-surface-container/10">
+                            <div class="border border-panel-border/40 rounded-xl overflow-hidden bg-surface-container/10">
                                 <table class="w-full text-left border-collapse">
                                     <thead>
                                         <tr class="border-b border-panel-border/40 bg-surface-container/20">
@@ -326,11 +326,11 @@
 
                     <!-- Footer Actions -->
                     <div class="p-8 bg-surface-container/30 border-t border-panel-border flex items-center gap-4">
-                        <button onclick="closeModal('settingsModal')" class="h-12 flex-1 rounded-2xl bg-tab-inactive border border-panel-border text-tab-inactive-text font-black text-[12px] uppercase tracking-widest flex items-center justify-center gap-3 hover:border-primary hover:text-primary transition-all active:scale-95 shadow-lg shadow-black/5">
+                        <button onclick="closeModal('settingsModal')" class="h-12 flex-1 rounded-xl bg-tab-inactive border border-panel-border text-tab-inactive-text font-black text-[12px] uppercase tracking-widest flex items-center justify-center gap-3 hover:border-primary hover:text-primary transition-all active:scale-95 shadow-lg shadow-black/5">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                             <span>Cancelar</span>
                         </button>
-                        <button id="saveSettingsBtn" class="h-12 flex-1 bg-primary text-white text-[12px] font-black rounded-2xl uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3">
+                        <button id="saveSettingsBtn" class="h-12 flex-1 bg-primary text-white text-[12px] font-black rounded-xl uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                             <span>Guardar</span>
                         </button>

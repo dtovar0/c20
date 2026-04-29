@@ -14,7 +14,7 @@
 
 <div id="auditWrapper" class="w-full h-full p-6 overflow-hidden flex flex-col">
     <!-- PANEL PRINCIPAL (Directo) -->
-    <div id="tab-panel-audit" class="tab-panel tab-panel-content flex-1 min-h-0 flex flex-col animate-in fade-in slide-in-from-bottom-2 duration-500 rounded-2xl border border-panel-border shadow-2xl shadow-primary/5 overflow-hidden">
+    <div id="tab-panel-audit" class="tab-panel tab-panel-content flex-1 min-h-0 flex flex-col animate-in fade-in slide-in-from-bottom-2 duration-500 rounded-xl border border-panel-border shadow-2xl shadow-primary/5 overflow-hidden">
             <!-- PANEL HEADER -->
             <header class="flex-shrink-0 bg-panel-header border-b border-panel-border px-6 py-6 flex items-center justify-between">
                 <div class="flex items-center gap-4">
@@ -41,16 +41,16 @@
                         <div class="relative group flex-grow">
                             <svg class="w-4 h-4 absolute left-5 top-1/2 -translate-y-1/2 text-label/60 group-focus-within:text-primary transition-colors z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                             <input type="text" id="auditSearch" placeholder="Filtrar eventos PSX5K..." 
-                                   class="w-full bg-input-bg border-2 border-panel-border rounded-2xl pl-12 pr-5 py-3 text-sm font-bold text-input outline-none focus:border-input-focus focus:ring-4 focus:ring-primary/10 transition-all placeholder:text-label/50">
+                                   class="w-full bg-input-bg border-2 border-panel-border rounded-xl pl-12 pr-5 py-3 text-sm font-bold text-input outline-none focus:border-input-focus focus:ring-4 focus:ring-primary/10 transition-all placeholder:text-label/50">
                         </div>
                         
                         <!-- Status Filter Dropdown -->
                         <div class="relative items-center flex shrink-0">
-                            <button id="statusFilterBtn" class="h-12 w-12 flex items-center justify-center rounded-2xl bg-input-bg border-2 border-panel-border text-label/40 hover:text-primary hover:border-primary transition-all group overflow-hidden active:scale-95" data-nx-tooltip="Filtrar por Estado">
+                            <button id="statusFilterBtn" class="h-12 w-12 flex items-center justify-center rounded-xl bg-input-bg border-2 border-panel-border text-label/40 hover:text-primary hover:border-primary transition-all group overflow-hidden active:scale-95" data-nx-tooltip="Filtrar por Estado">
                                 <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
                             </button>
                             
-                            <div id="statusFilterDropdown" class="absolute left-0 sm:right-0 sm:left-auto top-full mt-2 w-56 bg-panel-fill/95 backdrop-blur-xl border border-panel-border rounded-2xl shadow-2xl opacity-0 translate-y-4 pointer-events-none transition-all duration-300 z-50 overflow-hidden">
+                            <div id="statusFilterDropdown" class="absolute left-0 sm:right-0 sm:left-auto top-full mt-2 w-56 bg-panel-fill/95 backdrop-blur-xl border border-panel-border rounded-xl shadow-2xl opacity-0 translate-y-4 pointer-events-none transition-all duration-300 z-50 overflow-hidden">
                                 <div class="p-4 border-b border-panel-border bg-surface-container/30">
                                     <h3 class="text-[10px] font-black text-label/40 uppercase tracking-widest leading-none">Categoría de Estado</h3>
                                 </div>
@@ -96,15 +96,15 @@
                         </div>
                     </div>
                     <div class="flex items-center gap-3">
-                        <button id="modifyTaskBtn" class="h-12 w-[220px] rounded-2xl bg-label/10 text-label/60 border border-panel-border font-black text-[12px] uppercase tracking-widest flex items-center justify-center gap-3 hover:border-primary hover:text-primary transition-all opacity-30 pointer-events-none shadow-lg shadow-black/5">
+                        <button id="modifyTaskBtn" class="h-12 w-[220px] rounded-xl bg-label/10 text-label/60 border border-panel-border font-black text-[12px] uppercase tracking-widest flex items-center justify-center gap-3 hover:border-primary hover:text-primary transition-all opacity-30 pointer-events-none shadow-lg shadow-black/5">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                             <span>Modificar</span>
                         </button>
-                        <button id="scheduleTaskBtn" class="h-12 w-[220px] rounded-2xl bg-tab-inactive border border-panel-border text-tab-inactive-text font-black text-[12px] uppercase tracking-widest flex items-center justify-center gap-3 hover:border-primary hover:text-primary transition-all active:scale-95 shadow-lg shadow-black/5">
+                        <button id="scheduleTaskBtn" class="h-12 w-[220px] rounded-xl bg-tab-inactive border border-panel-border text-tab-inactive-text font-black text-[12px] uppercase tracking-widest flex items-center justify-center gap-3 hover:border-primary hover:text-primary transition-all active:scale-95 shadow-lg shadow-black/5">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             <span>Programar Tarea</span>
                         </button>
-                        <button id="refreshAudit" class="h-12 w-[220px] rounded-2xl bg-primary text-white font-black text-[12px] uppercase tracking-widest flex items-center justify-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/20">
+                        <button id="refreshAudit" class="h-12 w-[220px] rounded-xl bg-primary text-white font-black text-[12px] uppercase tracking-widest flex items-center justify-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/20">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                             <span>Tarea Nueva</span>
                         </button>
@@ -114,7 +114,7 @@
                     <table id="psxDataTable" class="w-full text-left table-fixed dataTable">
                         <thead class="sticky top-0 z-20">
                             <tr class="text-[12px] font-black text-white uppercase tracking-[0.2em]">
-                                <th class="w-[40px] py-4 bg-slate-900/50 border-y border-panel-border" style="border-left:3px solid transparent;padding:0 1.25rem 0 1rem;">
+                                <th class="w-[40px] py-4 bg-slate-900/50 border-y border-panel-border border-l-3 border-l-transparent px-5">
                                     <div class="flex items-center justify-center h-full">
                                         <input type="checkbox" id="selectAllPSX" class="nexus-checkbox">
                                     </div>
@@ -142,7 +142,7 @@
     <!-- MODAL: PSX5K WIZARD -->
 <div id="psxWizardModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
     <div class="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onclick="closeWizard()"></div>
-    <div class="w-full max-w-xl nx-modal-glass rounded-[32px] shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300">
+    <div class="w-full max-w-xl nx-modal-glass rounded-xl shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300">
         <header class="px-8 py-6 border-b border-panel-border flex items-center justify-between bg-header/50">
             <div class="flex items-center gap-4">
                 <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
@@ -165,8 +165,8 @@
                     
                     <div class="space-y-6 w-full">
                         <!-- Botón AGREGAR -->
-                        <button type="button" class="op-select-btn w-full p-10 rounded-[40px] border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-primary hover:bg-primary/5 hover:shadow-[0_0_50px_rgba(rgb(var(--color-primary)),0.2)] transition-all group relative overflow-hidden">
-                            <div class="w-20 h-20 min-w-[80px] rounded-[32px] bg-panel-border/30 group-hover:bg-primary/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
+                        <button type="button" class="op-select-btn w-full p-10 rounded-xl border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-primary hover:bg-primary/5 hover:shadow-[0_0_50px_rgba(rgb(var(--color-primary)),0.2)] transition-all group relative overflow-hidden">
+                            <div class="w-20 h-20 min-w-[80px] rounded-xl bg-panel-border/30 group-hover:bg-primary/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
                                 <svg class="w-10 h-10 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
                             </div>
                             <div class="text-left">
@@ -179,8 +179,8 @@
                         </button>
 
                         <!-- Botón BORRAR -->
-                        <button type="button" class="op-select-btn w-full p-10 rounded-[40px] border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-rose-500 hover:bg-rose-500/5 hover:shadow-[0_0_50px_rgba(244,63,94,0.2)] transition-all group relative overflow-hidden">
-                            <div class="w-20 h-20 min-w-[80px] rounded-[32px] bg-panel-border/30 group-hover:bg-rose-500/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
+                        <button type="button" class="op-select-btn w-full p-10 rounded-xl border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-rose-500 hover:bg-rose-500/5 hover:shadow-[0_0_50px_rgba(244,63,94,0.2)] transition-all group relative overflow-hidden">
+                            <div class="w-20 h-20 min-w-[80px] rounded-xl bg-panel-border/30 group-hover:bg-rose-500/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
                                 <svg class="w-10 h-10 group-hover:text-rose-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                             </div>
                             <div class="text-left">
@@ -201,20 +201,20 @@
                     <div id="opConfigSection" class="space-y-6">
                         <div>
                             <label class="nx-label-strip mb-3 block">Modo de Cliente</label>
-                            <select id="clientModeSelect" onchange="handleRoutingLabelState()" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl px-5 py-4 text-sm font-bold text-input outline-none focus:border-input-focus transition-all">
+                            <select id="clientModeSelect" onchange="handleRoutingLabelState()" class="w-full bg-input-bg border-2 border-panel-border rounded-xl px-5 py-4 text-sm font-bold text-input outline-none focus:border-input-focus transition-all">
                                 <option value="call_in" selected>Cliente solo hace llamadas</option>
                                 <option value="call_inout">Cliente hace y recibe llamadas</option>
                             </select>
                         </div>
                         <div>
                             <label class="nx-label-strip mb-3 block opacity-40" id="routingLabelTag">Etiqueta de Ruta</label>
-                            <input type="text" id="routingLabelInput" placeholder="Bloqueado..." disabled class="w-full bg-input-bg border-2 border-panel-border rounded-2xl px-5 py-4 text-sm font-bold text-input outline-none disabled:opacity-30">
+                            <input type="text" id="routingLabelInput" placeholder="Bloqueado..." disabled class="w-full bg-input-bg border-2 border-panel-border rounded-xl px-5 py-4 text-sm font-bold text-input outline-none disabled:opacity-30">
                         </div>
                     </div>
                     <!-- Data Method Toggle... -->
                     <div class="pt-6 border-t border-panel-border">
                         <label class="nx-label-strip mb-4 block">Fuente de Datos</label>
-                        <div class="flex items-center bg-surface-container/30 p-1 rounded-2xl border border-panel-border mb-6">
+                        <div class="flex items-center bg-surface-container/30 p-1 rounded-xl border border-panel-border mb-6">
                             <span class="text-[12px] font-black flex-1 text-center py-2.5 rounded-xl" id="labelFileMode">Archivo</span>
                             <label class="relative inline-flex items-center cursor-pointer px-2">
                                 <input type="checkbox" id="dataEntryToggle" class="sr-only peer" onchange="toggleDataMethod()">
@@ -223,7 +223,7 @@
                             <span class="text-[12px] font-black flex-1 text-center py-2.5 rounded-xl opacity-40" id="labelManualMode">Manual</span>
                         </div>
                         <div id="methodFileUpload">
-                            <label class="border-2 border-dashed border-panel-border rounded-[24px] h-40 w-full flex flex-col items-center justify-center gap-3 hover:border-primary hover:bg-primary/5 transition-all cursor-pointer group px-6 text-center">
+                            <label class="border-2 border-dashed border-panel-border rounded-xl h-40 w-full flex flex-col items-center justify-center gap-3 hover:border-primary hover:bg-primary/5 transition-all cursor-pointer group px-6 text-center">
                                 <input type="file" id="psxFileInput" accept=".csv,.xls,.xlsx" class="hidden" onchange="validateFile(this)">
                                 <div id="fileIconContainer" class="w-10 h-10 flex items-center justify-center text-primary transition-all">
                                     <svg class="w-8 h-8 opacity-40 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
@@ -249,7 +249,7 @@
                         <h4 class="text-lg font-black text-body-text uppercase italic">Verificación Técnica</h4>
                         <p class="text-[12px] text-label/40 font-bold uppercase tracking-widest mt-1">Confirmación de parámetros</p>
                     </div>
-                    <div class="bg-surface-container/50 border border-panel-border rounded-[24px] p-6 space-y-4">
+                    <div class="bg-surface-container/50 border border-panel-border rounded-xl p-6 space-y-4">
                         <div class="grid grid-cols-[140px_1fr] items-center border-b border-panel-border pb-3"><span class="nx-label-strip opacity-40">Operación:</span><span class="text-xs font-bold text-body-text uppercase pl-4" id="summaryTaskType">-</span></div>
                         <div id="summaryModeRow" class="grid grid-cols-[140px_1fr] items-center border-b border-panel-border pb-3"><span class="nx-label-strip opacity-40">Modo:</span><span class="text-xs font-bold text-body-text uppercase pl-4" id="summaryMode">-</span></div>
                         <div id="summaryRoutingRow" class="grid grid-cols-[140px_1fr] items-center border-b border-panel-border pb-3"><span class="nx-label-strip opacity-40">Routing:</span><span class="text-xs font-bold text-body-text pl-4" id="summaryRouting">-</span></div>
@@ -258,7 +258,7 @@
                     </div>
 
                     <!-- Force Toggle -->
-                    <div id="psxForceContainer" class="flex items-center justify-between p-5 bg-rose-500/5 border border-rose-500/20 rounded-[24px] group hover:bg-rose-500/10 transition-all">
+                    <div id="psxForceContainer" class="flex items-center justify-between p-5 bg-rose-500/5 border border-rose-500/20 rounded-xl group hover:bg-rose-500/10 transition-all">
                         <div class="flex flex-col gap-1">
                             <span class="text-[12px] font-black text-rose-500 uppercase tracking-widest leading-none">Forzar Operación</span>
                             <span class="text-[12px] text-label/40 font-bold uppercase tracking-tight mt-0.5">Sobreescribir registros existentes</span>
@@ -288,7 +288,7 @@
 <!-- MODAL: PROGRAMAR TAREA WIZARD -->
 <div id="scheduleWizardModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
     <div class="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onclick="closeScheduleWizard()"></div>
-    <div class="w-full max-w-xl nx-modal-glass rounded-[32px] shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300">
+    <div class="w-full max-w-xl nx-modal-glass rounded-xl shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300">
         <header class="px-8 py-6 border-b border-panel-border flex items-center justify-between bg-header/50">
             <div class="flex items-center gap-4">
                 <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
@@ -311,8 +311,8 @@
                     
                     <div class="space-y-6 w-full">
                         <!-- Botón AGREGAR -->
-                        <button type="button" class="schedule-op-btn w-full p-10 rounded-[40px] border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-primary hover:bg-primary/5 hover:shadow-[0_0_50px_rgba(var(--color-primary),0.2)] transition-all group relative overflow-hidden">
-                            <div class="w-20 h-20 min-w-[80px] rounded-[32px] bg-panel-border/30 group-hover:bg-primary/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
+                        <button type="button" class="schedule-op-btn w-full p-10 rounded-xl border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-primary hover:bg-primary/5 hover:shadow-[0_0_50px_rgba(var(--color-primary),0.2)] transition-all group relative overflow-hidden">
+                            <div class="w-20 h-20 min-w-[80px] rounded-xl bg-panel-border/30 group-hover:bg-primary/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
                                 <svg class="w-10 h-10 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
                             </div>
                             <div class="text-left">
@@ -325,8 +325,8 @@
                         </button>
 
                         <!-- Botón BORRAR -->
-                        <button type="button" class="schedule-op-btn w-full p-10 rounded-[40px] border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-rose-500 hover:bg-rose-500/5 hover:shadow-[0_0_50px_rgba(244,63,94,0.2)] transition-all group relative overflow-hidden">
-                            <div class="w-20 h-20 min-w-[80px] rounded-[32px] bg-panel-border/30 group-hover:bg-rose-500/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
+                        <button type="button" class="schedule-op-btn w-full p-10 rounded-xl border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-rose-500 hover:bg-rose-500/5 hover:shadow-[0_0_50px_rgba(244,63,94,0.2)] transition-all group relative overflow-hidden">
+                            <div class="w-20 h-20 min-w-[80px] rounded-xl bg-panel-border/30 group-hover:bg-rose-500/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
                                 <svg class="w-10 h-10 group-hover:text-rose-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                             </div>
                             <div class="text-left">
@@ -347,19 +347,19 @@
                     <div id="scheduleOpConfigSection" class="space-y-6">
                         <div>
                             <label class="nx-label-strip mb-3 block">Modo de Cliente</label>
-                            <select id="scheduleClientModeSelect" onchange="handleScheduleRoutingLabelState()" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl px-5 py-4 text-sm font-bold text-input outline-none focus:border-input-focus transition-all">
+                            <select id="scheduleClientModeSelect" onchange="handleScheduleRoutingLabelState()" class="w-full bg-input-bg border-2 border-panel-border rounded-xl px-5 py-4 text-sm font-bold text-input outline-none focus:border-input-focus transition-all">
                                 <option value="call_in">Cliente solo hace llamadas</option>
                                 <option value="call_inout">Cliente hace y recibe llamadas</option>
                             </select>
                         </div>
                         <div>
                             <label class="nx-label-strip mb-3 block opacity-40" id="scheduleRoutingLabelTag">Etiqueta de Ruta</label>
-                            <input type="text" id="scheduleRoutingLabelInput" placeholder="Bloqueado..." disabled class="w-full bg-input-bg border-2 border-panel-border rounded-2xl px-5 py-4 text-sm font-bold text-input outline-none disabled:opacity-30">
+                            <input type="text" id="scheduleRoutingLabelInput" placeholder="Bloqueado..." disabled class="w-full bg-input-bg border-2 border-panel-border rounded-xl px-5 py-4 text-sm font-bold text-input outline-none disabled:opacity-30">
                         </div>
                     </div>
                     <div class="pt-6 border-t border-panel-border">
                         <label class="nx-label-strip mb-4 block">Fuente de Datos</label>
-                        <div class="flex items-center bg-surface-container/30 p-1 rounded-2xl border border-panel-border mb-6">
+                        <div class="flex items-center bg-surface-container/30 p-1 rounded-xl border border-panel-border mb-6">
                             <span class="text-[12px] font-black flex-1 text-center py-2.5 rounded-xl" id="scheduleLabelFileMode">Archivo</span>
                             <label class="relative inline-flex items-center cursor-pointer px-2">
                                 <input type="checkbox" id="scheduleDataEntryToggle" class="sr-only peer" onchange="toggleScheduleDataMethod()">
@@ -368,7 +368,7 @@
                             <span class="text-[12px] font-black flex-1 text-center py-2.5 rounded-xl opacity-40" id="scheduleLabelManualMode">Manual</span>
                         </div>
                         <div id="scheduleMethodFileUpload">
-                            <label class="border-2 border-dashed border-panel-border rounded-[24px] h-40 w-full flex flex-col items-center justify-center gap-3 hover:border-primary hover:bg-primary/5 transition-all cursor-pointer group px-6 text-center">
+                            <label class="border-2 border-dashed border-panel-border rounded-xl h-40 w-full flex flex-col items-center justify-center gap-3 hover:border-primary hover:bg-primary/5 transition-all cursor-pointer group px-6 text-center">
                                 <input type="file" id="scheduleFileInput" accept=".csv,.xls,.xlsx" class="hidden" onchange="validateScheduleFile(this)">
                                 <div id="scheduleFileIconContainer" class="w-10 h-10 flex items-center justify-center text-primary transition-all">
                                     <svg class="w-8 h-8 opacity-40 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
@@ -392,7 +392,7 @@
                     <h4 class="nx-label-strip text-primary/80 text-center">Programación de Fecha</h4>
                     
                     <!-- CUSTOM CALENDAR -->
-                    <div class="bg-surface-container/30 border-2 border-panel-border rounded-[32px] p-5 overflow-hidden">
+                    <div class="bg-surface-container/30 border-2 border-panel-border rounded-xl p-5 overflow-hidden">
                         <div class="flex items-center justify-between mb-4 px-2">
                             <span id="calendarMonthLabel" class="text-xs font-black uppercase tracking-widest text-primary">Abril 2026</span>
                             <div class="flex gap-1">
@@ -418,7 +418,7 @@
 
                     <div class="space-y-3">
                         <label class="nx-label-strip opacity-40 text-center block">Hora de Inicio (24h)</label>
-                        <input type="time" id="scheduleTimeInput" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl px-5 py-4 text-sm font-bold text-input text-center outline-none focus:border-primary transition-all">
+                        <input type="time" id="scheduleTimeInput" class="w-full bg-input-bg border-2 border-panel-border rounded-xl px-5 py-4 text-sm font-bold text-input text-center outline-none focus:border-primary transition-all">
                     </div>
                 </div>
             </div>
@@ -431,7 +431,7 @@
                         <h4 class="text-lg font-black text-body-text uppercase italic">Confirmación Agenda</h4>
                         <p class="text-[12px] text-label/40 font-bold uppercase tracking-widest mt-1">Verificación de parámetros programados</p>
                     </div>
-                    <div class="bg-surface-container/50 border border-panel-border rounded-[24px] p-6 space-y-4">
+                    <div class="bg-surface-container/50 border border-panel-border rounded-xl p-6 space-y-4">
                         <div class="grid grid-cols-[140px_1fr] items-center border-b border-panel-border pb-3"><span class="nx-label-strip opacity-40">Operación:</span><span class="text-xs font-bold text-body-text uppercase pl-4" id="scheduleSummaryTaskType">-</span></div>
                         <div id="scheduleSummaryModeRow" class="grid grid-cols-[140px_1fr] items-center border-b border-panel-border pb-3"><span class="nx-label-strip opacity-40">Modo:</span><span class="text-xs font-bold text-body-text uppercase pl-4" id="scheduleSummaryMode">-</span></div>
                         <div id="scheduleSummaryRoutingRow" class="grid grid-cols-[140px_1fr] items-center border-b border-panel-border pb-3"><span class="nx-label-strip opacity-40">Routing:</span><span class="text-xs font-bold text-body-text pl-4" id="scheduleSummaryRouting">-</span></div>
@@ -442,7 +442,7 @@
                     </div>
 
                     <!-- Force Toggle -->
-                    <div id="scheduleForceContainer" class="flex items-center justify-between p-5 bg-rose-500/5 border border-rose-500/20 rounded-[24px] group hover:bg-rose-500/10 transition-all">
+                    <div id="scheduleForceContainer" class="flex items-center justify-between p-5 bg-rose-500/5 border border-rose-500/20 rounded-xl group hover:bg-rose-500/10 transition-all">
                         <div class="flex flex-col gap-1">
                             <span class="text-[12px] font-black text-rose-500 uppercase tracking-widest leading-none">Forzar Operación</span>
                             <span class="text-[12px] text-label/40 font-bold uppercase tracking-tight mt-0.5">Sobreescribir registros existentes</span>
@@ -475,7 +475,7 @@
 <!-- MODAL: MODIFICAR TAREA (WIZARD DINÁMICO) -->
 <div id="modifyTaskModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
     <div class="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onclick="closeModifyModal()"></div>
-    <div class="w-full max-w-xl nx-modal-glass rounded-[32px] shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300">
+    <div class="w-full max-w-xl nx-modal-glass rounded-xl shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300">
         <header class="px-8 py-6 border-b border-panel-border flex items-center justify-between bg-header/50">
             <div class="flex items-center gap-4">
                 <div class="w-10 h-10 rounded-xl bg-slate-500/20 flex items-center justify-center text-label/60">
@@ -498,8 +498,8 @@
                     <h4 class="nx-label-strip mb-12 text-primary/80 text-center">Selección: Acción Crítica</h4>
                     <div class="space-y-6 w-full" id="modifyDecisionGrid">
                         <!-- CANCELAR -->
-                        <button type="button" id="btnActionCancel" onclick="selectModifyAction('cancel')" class="w-full p-10 rounded-[40px] border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-rose-500 hover:bg-rose-500/5 hover:shadow-[0_0_50px_rgba(244,63,94,0.2)] transition-all group relative overflow-hidden hidden">
-                            <div class="w-20 h-20 min-w-[80px] rounded-[32px] bg-panel-border/30 group-hover:bg-rose-500/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
+                        <button type="button" id="btnActionCancel" onclick="selectModifyAction('cancel')" class="w-full p-10 rounded-xl border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-rose-500 hover:bg-rose-500/5 hover:shadow-[0_0_50px_rgba(244,63,94,0.2)] transition-all group relative overflow-hidden hidden">
+                            <div class="w-20 h-20 min-w-[80px] rounded-xl bg-panel-border/30 group-hover:bg-rose-500/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
                                 <svg class="w-10 h-10 group-hover:text-rose-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </div>
                             <div class="text-left">
@@ -512,8 +512,8 @@
                         </button>
 
                         <!-- ACTIVAR -->
-                        <button type="button" id="btnActionActivate" onclick="selectModifyAction('activate')" class="w-full p-10 rounded-[40px] border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-emerald-500 hover:bg-emerald-500/5 hover:shadow-[0_0_50px_rgba(16,185,129,0.2)] transition-all group relative overflow-hidden hidden">
-                            <div class="w-20 h-20 min-w-[80px] rounded-[32px] bg-panel-border/30 group-hover:bg-emerald-500/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
+                        <button type="button" id="btnActionActivate" onclick="selectModifyAction('activate')" class="w-full p-10 rounded-xl border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-emerald-500 hover:bg-emerald-500/5 hover:shadow-[0_0_50px_rgba(16,185,129,0.2)] transition-all group relative overflow-hidden hidden">
+                            <div class="w-20 h-20 min-w-[80px] rounded-xl bg-panel-border/30 group-hover:bg-emerald-500/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
                                 <svg class="w-10 h-10 group-hover:text-emerald-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             </div>
                             <div class="text-left">
@@ -526,8 +526,8 @@
                         </button>
 
                         <!-- MODIFICAR (DEFAULT) -->
-                        <button type="button" id="btnActionModify" onclick="selectModifyAction('modify')" class="w-full p-10 rounded-[40px] border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-primary hover:bg-primary/5 hover:shadow-[0_0_50px_rgba(rgb(var(--color-primary)),0.2)] transition-all group relative overflow-hidden">
-                            <div class="w-20 h-20 min-w-[80px] rounded-[32px] bg-panel-border/30 group-hover:bg-primary/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
+                        <button type="button" id="btnActionModify" onclick="selectModifyAction('modify')" class="w-full p-10 rounded-xl border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-primary hover:bg-primary/5 hover:shadow-[0_0_50px_rgba(rgb(var(--color-primary)),0.2)] transition-all group relative overflow-hidden">
+                            <div class="w-20 h-20 min-w-[80px] rounded-xl bg-panel-border/30 group-hover:bg-primary/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
                                 <svg class="w-10 h-10 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                             </div>
                             <div class="text-left">
@@ -547,8 +547,8 @@
                 <div class="max-w-md w-full flex flex-col items-center mx-auto">
                     <h4 class="nx-label-strip mb-12 text-primary/80 text-center">Selección: Tipo de Operación</h4>
                     <div class="space-y-6 w-full">
-                        <button type="button" id="modTypeAdd" onclick="setModifyTaskType('add')" class="w-full p-10 rounded-[40px] border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-primary hover:bg-primary/5 hover:shadow-[0_0_50px_rgba(rgb(var(--color-primary)),0.2)] transition-all group relative overflow-hidden">
-                            <div class="w-20 h-20 min-w-[80px] rounded-[32px] bg-panel-border/30 group-hover:bg-primary/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
+                        <button type="button" id="modTypeAdd" onclick="setModifyTaskType('add')" class="w-full p-10 rounded-xl border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-primary hover:bg-primary/5 hover:shadow-[0_0_50px_rgba(rgb(var(--color-primary)),0.2)] transition-all group relative overflow-hidden">
+                            <div class="w-20 h-20 min-w-[80px] rounded-xl bg-panel-border/30 group-hover:bg-primary/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
                                 <svg class="w-10 h-10 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
                             </div>
                             <div class="text-left">
@@ -560,8 +560,8 @@
                             </div>
                         </button>
 
-                        <button type="button" id="modTypeDel" onclick="setModifyTaskType('delete')" class="w-full p-10 rounded-[40px] border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-rose-500 hover:bg-rose-500/5 hover:shadow-[0_0_50px_rgba(244,63,94,0.2)] transition-all group relative overflow-hidden">
-                            <div class="w-20 h-20 min-w-[80px] rounded-[32px] bg-panel-border/30 group-hover:bg-rose-500/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
+                        <button type="button" id="modTypeDel" onclick="setModifyTaskType('delete')" class="w-full p-10 rounded-xl border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-rose-500 hover:bg-rose-500/5 hover:shadow-[0_0_50px_rgba(244,63,94,0.2)] transition-all group relative overflow-hidden">
+                            <div class="w-20 h-20 min-w-[80px] rounded-xl bg-panel-border/30 group-hover:bg-rose-500/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
                                 <svg class="w-10 h-10 group-hover:text-rose-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                             </div>
                             <div class="text-left">
@@ -581,14 +581,14 @@
                 <div class="space-y-4 w-full py-2 max-w-sm mx-auto">
                     <h4 class="nx-label-strip text-primary/80 text-center">Programación de Fecha</h4>
                     
-                    <div class="flex items-center bg-surface-container/30 p-1 rounded-2xl border border-panel-border mb-4">
+                    <div class="flex items-center bg-surface-container/30 p-1 rounded-xl border border-panel-border mb-4">
                         <button onclick="setModifyTiming('now')" id="modTimingNow" class="flex-1 py-3 text-[12px] font-black uppercase rounded-xl transition-all">Ejecutar Ahora</button>
                         <button onclick="setModifyTiming('schedule')" id="modTimingLate" class="flex-1 py-3 text-[12px] font-black uppercase rounded-xl transition-all">Programar</button>
                     </div>
 
                     <!-- CALENDARIO INLINE (Premium) -->
                     <div id="modCalendarContainer" class="hidden space-y-4 animate-in fade-in duration-500">
-                        <div class="bg-surface-container/30 border-2 border-panel-border rounded-[32px] p-5 overflow-hidden">
+                        <div class="bg-surface-container/30 border-2 border-panel-border rounded-xl p-5 overflow-hidden">
                             <div class="flex items-center justify-between mb-4 px-2">
                                 <span id="modCalendarMonthLabel" class="text-xs font-black uppercase tracking-widest text-primary">--</span>
                                 <div class="flex gap-1">
@@ -611,7 +611,7 @@
                         </div>
 
                         <div class="space-y-3">
-                            <input type="time" id="modTimeInput" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl px-5 py-4 text-sm font-bold text-input text-center outline-none focus:border-primary transition-all">
+                            <input type="time" id="modTimeInput" class="w-full bg-input-bg border-2 border-panel-border rounded-xl px-5 py-4 text-sm font-bold text-input text-center outline-none focus:border-primary transition-all">
                         </div>
                     </div>
                 </div>
@@ -623,16 +623,16 @@
                 <div class="space-y-6">
                     <div>
                         <label class="nx-label-strip mb-3 block">Modo de Cliente</label>
-                        <select id="modClientModeSelect" onchange="handleModRoutingLabelState()" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl px-5 py-4 text-sm font-bold text-input outline-none focus:border-input-focus transition-all">
+                        <select id="modClientModeSelect" onchange="handleModRoutingLabelState()" class="w-full bg-input-bg border-2 border-panel-border rounded-xl px-5 py-4 text-sm font-bold text-input outline-none focus:border-input-focus transition-all">
                             <option value="call_in" selected>Cliente solo hace llamadas</option>
                             <option value="call_inout">Cliente hace y recibe llamadas</option>
                         </select>
                     </div>
                     <div>
                         <label class="nx-label-strip mb-2 block opacity-40">Routing Label</label>
-                        <input type="text" id="modRoutingInput" placeholder="N/A" class="w-full bg-input-bg border-2 border-panel-border rounded-2xl px-5 py-4 text-sm font-bold text-input outline-none transition-all">
+                        <input type="text" id="modRoutingInput" placeholder="N/A" class="w-full bg-input-bg border-2 border-panel-border rounded-xl px-5 py-4 text-sm font-bold text-input outline-none transition-all">
                     </div>
-                    <div id="modForceContainer" class="flex items-center justify-between p-4 bg-rose-500/5 border border-rose-500/20 rounded-2xl">
+                    <div id="modForceContainer" class="flex items-center justify-between p-4 bg-rose-500/5 border border-rose-500/20 rounded-xl">
                         <span class="text-[12px] font-black text-rose-500 uppercase">Forzar Operación</span>
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="modForceToggle" class="sr-only peer">
@@ -679,7 +679,7 @@
 
 <!-- PROGRESS MODAL (Telemetría de Carga) -->
 <div id="psxProgressModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
-    <div class="w-full max-w-sm nx-modal-glass rounded-[32px] border border-panel-border p-8 text-center animate-in zoom-in-95 duration-300">
+    <div class="w-full max-w-sm nx-modal-glass rounded-xl border border-panel-border p-8 text-center animate-in zoom-in-95 duration-300">
         <div class="mb-6">
             <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary mx-auto mb-4 relative">
                 <svg class="w-8 h-8 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>

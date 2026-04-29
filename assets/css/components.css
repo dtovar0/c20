@@ -289,7 +289,7 @@ table.dataTable tbody tr:hover td {
 .dataTables_wrapper { padding: 0 !important; }
 .dataTables_scrollBody { border: none !important; }
 
-/* Tactical Grid Architecture Dashboard 2 (80/20) */
+/* Tactical Grid Architecture Dashboard 2 (70/30) */
 .dashboard-grid-locked {
     display: flex;
     flex-direction: column;
@@ -301,7 +301,7 @@ table.dataTable tbody tr:hover td {
 @media (min-width: 1024px) {
     .dashboard-grid-locked {
         display: grid;
-        grid-template-columns: 75.5fr 24.5fr;
+        grid-template-columns: 70fr 30fr;
         gap: 1.5rem;
         height: 100%;
         min-height: 0;
@@ -335,7 +335,7 @@ thead tr {
     position: relative;
     background: rgb(var(--color-panel-fill));
     border: 1px solid rgb(var(--color-panel-border));
-    border-radius: 24px;
+    border-radius: var(--radius-panel);
     padding: 24px;
     padding-top: 28px;
     overflow: hidden;
@@ -382,7 +382,7 @@ thead tr {
 }
 
 .kpi-minimalist-rounded {
-    border-radius: 28px;
+    border-radius: var(--radius-panel);
 }
 
 .kpi-minimalist-squared {
@@ -429,7 +429,7 @@ thead tr {
 }
 
 .kpi-conversion-rounded {
-    border-radius: 24px;
+    border-radius: var(--radius-panel);
 }
 
 .kpi-conversion-squared {
@@ -490,7 +490,7 @@ thead tr {
 }
 
 .kpi-road-rounded {
-    border-radius: 18px;
+    border-radius: var(--radius-panel);
 }
 
 .kpi-road-squared {
@@ -557,7 +557,7 @@ thead tr {
 }
 
 .kpi-gauge-rounded {
-    border-radius: 20px;
+    border-radius: var(--radius-panel);
 }
 
 .kpi-gauge-squared {
@@ -815,7 +815,7 @@ textarea) {
     z-index: 100;
     background-color: rgb(var(--color-panel-fill));
     border: 1px solid rgb(var(--color-panel-border));
-    border-radius: 20px;
+    border-radius: var(--radius-panel);
     box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
     overflow: hidden;
     opacity: 0;
@@ -863,8 +863,8 @@ textarea) {
 
 .nx-select-option.is-selected::after {
     content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white' stroke-width='3'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M4.5 12.75l6 6 9-13.5' /%3E%3C/svg%3E");
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
 }
 
 /* Hide original but keep it for form submission and events */
@@ -1059,7 +1059,7 @@ input[name="db_engine"]:checked + label .w-5.h-5 .bg-primary {
 
 .badge-op-delete::before {
     content: '×';
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 900;
     margin-right: 2px;
 }
@@ -1200,7 +1200,7 @@ input[name="db_engine"]:checked + label .w-5.h-5 .bg-primary {
     display: flex;
     font-family: 'Inter', sans-serif;
     border: 2px solid var(--color-panel-border);
-    border-radius: 20px;
+    border-radius: var(--radius-panel);
     background: var(--color-input-bg);
     overflow: hidden;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1262,7 +1262,7 @@ input[name="db_engine"]:checked + label .w-5.h-5 .bg-primary {
 .nx-tooltip {
     position: fixed;
     z-index: 9999;
-    padding: 8px 14px;
+    padding: 8px 12px;
     background: rgba(15, 23, 42, 0.9);
     backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -1395,7 +1395,7 @@ input[name="db_engine"]:checked + label .w-5.h-5 .bg-primary {
 }
 
 .nx-tour-table th {
-    padding: 10px 14px;
+    padding: 10px 12px;
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 0.15em;
@@ -1406,7 +1406,7 @@ input[name="db_engine"]:checked + label .w-5.h-5 .bg-primary {
 }
 
 .nx-tour-table td {
-    padding: 10px 14px;
+    padding: 10px 12px;
     border-bottom: 1px solid rgb(var(--color-panel-border));
     color: var(--color-body-text);
     font-weight: 700;
@@ -1477,7 +1477,7 @@ input[name="db_engine"]:checked + label .w-5.h-5 .bg-primary {
     background: rgb(var(--color-primary));
     border-color: rgb(var(--color-primary));
     transform: scale(1.15);
-    box-shadow: 0 4px 14px rgb(var(--color-primary) / 0.35);
+    box-shadow: 0 4px 12px rgb(var(--color-primary) / 0.35);
 }
 
 .nx-tour-arrow:active {
@@ -1496,3 +1496,92 @@ input[name="db_engine"]:checked + label .w-5.h-5 .bg-primary {
     letter-spacing: 0.1em;
 }
 
+/* Status Icons System */
+.status-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.5rem;
+    border-width: 1px;
+    border-style: solid;
+    transition: all 0.2s ease;
+}
+
+.status-icon:hover {
+    transform: scale(1.1);
+}
+
+.status-icon-emerald {
+    color: #10b981;
+    background: rgba(16,185,129,0.15);
+    border-color: rgba(16,185,129,0.3);
+}
+
+.status-icon-rose {
+    color: #f43f5e;
+    background: rgba(244,63,94,0.15);
+    border-color: rgba(244,63,94,0.3);
+}
+
+.status-icon-teal {
+    color: #14b8a6;
+    background: rgba(20,184,166,0.15);
+    border-color: rgba(20,184,166,0.3);
+}
+
+.status-icon-indigo {
+    color: #6366f1;
+    background: rgba(99,102,241,0.15);
+    border-color: rgba(99,102,241,0.3);
+}
+
+.status-icon-amber {
+    color: #f59e0b;
+    background: rgba(245,158,11,0.15);
+    border-color: rgba(245,158,11,0.3);
+}
+
+.status-icon-label {
+    color: rgb(var(--color-label-text));
+    background: rgb(var(--color-panel-fill)/0.3);
+    border-color: rgb(var(--color-panel-border)/0.3);
+}
+
+/* --- SECTION HEADERS (Nexus Tactical Design) --- */
+.nx-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+    flex-shrink: 0;
+}
+
+.nx-section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 11px;
+    font-weight: 900;
+    color: var(--color-body-text);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+}
+
+.nx-section-title::before {
+    content: '';
+    width: 16px;
+    height: 3px;
+    background-color: #10b981; /* Emerald / Success */
+    border-radius: 2px;
+}
+
+.nx-section-subtitle {
+    font-size: 10px;
+    font-weight: 800;
+    color: rgb(var(--color-secondary));
+    opacity: 0.6;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}

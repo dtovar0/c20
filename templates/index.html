@@ -7,9 +7,15 @@
 {% endblock %}
 
 {% block content %}
-<div id="dashboardWrapper" class="w-full h-full flex flex-col space-y-8 animate-fade-in p-6 overflow-hidden">
+<div id="dashboardWrapper" class="w-full h-full flex flex-col animate-fade-in p-6 overflow-y-auto lg:overflow-hidden">
+    <!-- SECCIÓN: SÍNTESIS ESTRATÉGICA -->
+    <div class="nx-section-header">
+        <h2 class="nx-section-title">SÍNTESIS ESTRATÉGICA</h2>
+        <span class="nx-section-subtitle">MÉTRICAS CLAVE DEL ECOSISTEMA</span>
+    </div>
+
     <!-- Quick Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <!-- Card 1: Total Tareas (Primary) -->
         <div class="kpi-card-premium">
             <div class="kpi-card-bar bg-primary"></div>
@@ -75,11 +81,17 @@
         </div>
     </div>
 
+    <!-- SECCIÓN: ANÁLISIS OPERATIVO -->
+    <div class="nx-section-header mt-4">
+        <h2 class="nx-section-title">ANÁLISIS OPERATIVO</h2>
+        <span class="nx-section-subtitle">MÉTRICAS DE DEMANDA Y EFICIENCIA</span>
+    </div>
+
     <!-- Main Grid Content -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 flex-grow min-h-0 items-stretch">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 flex-grow min-h-0 items-stretch overflow-hidden">
         <!-- Dashboard Quad-Core (Left Section) -->
-        <div class="lg:col-span-2 grid grid-cols-1 gap-8">
-            <div id="cardVolumen" class="kpi-card-premium group min-h-[220px]">
+        <div class="lg:col-span-2 flex flex-col gap-6 min-h-0">
+            <div id="cardVolumen" class="kpi-card-premium group flex-1 min-h-[180px]">
                 <!-- Operative Content Grid -->
                 <div id="volumeContent" class="grid grid-cols-[1fr_4fr] h-full items-center relative z-10 gap-8 p-4">
                     <div class="grid grid-rows-[auto_1fr] h-full">
@@ -92,7 +104,7 @@
                             <p class="text-[12px] text-label/40 font-bold mt-1">Registros procesados</p>
                         </div>
                     </div>
-                    <div class="relative w-full h-52 flex items-center justify-center">
+                    <div class="relative w-full flex-grow flex items-center justify-center min-h-0">
                         <div id="bookingSparkline" class="w-full h-full"></div>
                     </div>
                 </div>
@@ -100,7 +112,7 @@
                 <!-- Premium No-Data State (Spans Full Width) -->
                 <div id="noDataVolume" class="hidden absolute inset-0 z-20 flex items-center justify-center p-8 animate-in fade-in zoom-in duration-700">
                     <div class="flex items-center gap-10 max-w-xl">
-                        <div class="w-24 h-24 rounded-[40px] bg-sky/5 border-2 border-sky/10 flex items-center justify-center text-sky/20 relative group shrink-0">
+                        <div class="w-24 h-24 rounded-xl bg-sky/5 border-2 border-sky/10 flex items-center justify-center text-sky/20 relative group shrink-0">
                             <div class="absolute inset-0 bg-sky/10 blur-2xl rounded-full opacity-30 group-hover:opacity-60 transition-all"></div>
                             <svg class="w-12 h-12 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                         </div>
@@ -116,7 +128,7 @@
                 </div>
             </div>
 
-            <div id="cardCumplimiento" class="kpi-card-premium group min-h-[220px]">
+            <div id="cardCumplimiento" class="kpi-card-premium group flex-1 min-h-[180px]">
                 <!-- History Content Grid -->
                 <div id="historyContent" class="grid grid-cols-[1fr_4fr] h-full items-center relative z-10 gap-8 p-4">
                     <div class="grid grid-rows-[auto_1fr] h-full">
@@ -129,7 +141,7 @@
                             <p class="text-[12px] text-label/40 font-bold mt-1">Desempeño cronológico reciente</p>
                         </div>
                     </div>
-                    <div class="relative w-full h-52 flex items-center justify-center">
+                    <div class="relative w-full flex-grow flex items-center justify-center min-h-0">
                         <div id="onTimeRadial" class="w-full h-full"></div>
                     </div>
                 </div>
@@ -137,7 +149,7 @@
                 <!-- Premium No-Data State (Spans Full Width) -->
                 <div id="noDataHistory" class="hidden absolute inset-0 z-20 flex items-center justify-center p-8 animate-in fade-in zoom-in duration-700">
                     <div class="flex items-center gap-10 max-w-xl">
-                        <div class="w-24 h-24 rounded-[40px] bg-primary/5 border-2 border-primary/10 flex items-center justify-center text-primary/20 relative group shrink-0">
+                        <div class="w-24 h-24 rounded-xl bg-primary/5 border-2 border-primary/10 flex items-center justify-center text-primary/20 relative group shrink-0">
                             <div class="absolute inset-0 bg-primary/10 blur-2xl rounded-full opacity-30 group-hover:opacity-60 transition-all"></div>
                             <svg class="w-12 h-12 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                         </div>
@@ -154,7 +166,7 @@
             </div>
         </div>
         <!-- Activity Monitor (Right Column) -->
-        <div class="lg:col-span-1 flex flex-col bg-panel-fill border border-panel-border shadow-2xl shadow-primary/5 rounded-2xl pt-6 px-0 pb-0 relative overflow-hidden group h-full">
+        <div class="lg:col-span-1 flex flex-col bg-panel-fill border border-panel-border shadow-2xl shadow-primary/5 rounded-xl pt-6 px-0 pb-0 relative overflow-hidden group h-full">
             <div class="absolute -right-12 -top-12 w-48 h-48 bg-primary/5 blur-3xl rounded-full group-hover:bg-primary/10 transition-all"></div>
             
             <!-- Header -->
@@ -251,7 +263,8 @@
                 </div>
             </div>
         </div>
-  </div>
+    </div>
+</div>
 
 <!-- Dashboard Logic Assets -->
 <script src="{{ url_for('core.serve_assets', filename='js/dashboard.js') }}"></script>
