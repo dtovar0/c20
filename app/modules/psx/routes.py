@@ -361,7 +361,8 @@ def create_task():
     data = request.json
     try:
         if not data:
-            current_app.logger.error("PSX_CREATE: No JSON data received")
+            try: current_app.logger.error("PSX_CREATE: No JSON data received")
+            except: pass
             return jsonify({"status": "error", "message": "No se recibieron datos (JSON vacío)"}), 400
 
         raw_tarea = data.get('tarea') # add / delete
@@ -369,11 +370,14 @@ def create_task():
         raw_origen = data.get('datos_tipo', 'Manual') # Procedencia: Manual / Archivo
         
         if not raw_tarea:
-            current_app.logger.error("PSX_CREATE: Missing 'tarea' field")
+            try: current_app.logger.error("PSX_CREATE: Missing 'tarea' field")
+            except: pass
             return jsonify({"status": "error", "message": "El campo 'tarea' es obligatorio"}), 400
 
         # 1. Extraer registros
-        current_app.logger.info(f"PSX_CREATE: Extracting records from {raw_origen}")
+        try: current_app.logger.info(f"PSX_CREATE: Extracting records from {raw_origen}")
+        except: pass
+        
         all_records = extract_records(
             raw_origen, 
             data.get('datos'), 
@@ -381,23 +385,28 @@ def create_task():
         )
         
         if not all_records:
-            current_app.logger.error("PSX_CREATE: No valid records found")
+            try: current_app.logger.error("PSX_CREATE: No valid records found")
+            except: pass
             return jsonify({"status": "error", "message": "No se encontraron registros válidos para procesar"}), 400
             
         # 2. Chunking
         chunk_size = current_app.config.get('PSX_CHUNK_SIZE', 200)
         chunks = list(chunk_list(all_records, chunk_size))
         total_chunks = len(chunks)
-        current_app.logger.info(f"PSX_CREATE: {len(all_records)} records split into {total_chunks} chunks")
+        try: current_app.logger.info(f"PSX_CREATE: {len(all_records)} records split into {total_chunks} chunks")
+        except: pass
         
         # --- IDENTIDAD DEL USUARIO ---
         user_email = getattr(current_user, 'email', None) or "usuario_desconocido"
-        current_app.logger.info(f"PSX_CREATE: Iniciando petición para el usuario: {user_email}")
+        try: current_app.logger.info(f"PSX_CREATE: Iniciando petición para el usuario: {user_email}")
+        except: pass
 
         # --- CREAR JOB MAESTRO ---
         from .models import PSX5KJob
         try:
-            current_app.logger.info(f"PSX_CREATE: Creating PSX5KJob for user {user_email}")
+            try: current_app.logger.info(f"PSX_CREATE: Creating PSX5KJob for user {user_email}")
+            except: pass
+
             new_job = PSX5KJob(
                 usuario=user_email,
                 tarea=raw_tarea,
@@ -409,10 +418,12 @@ def create_task():
             )
             db.session.add(new_job)
             db.session.flush() # Para obtener el new_job.id
-            current_app.logger.info(f"PSX_CREATE: PSX5KJob created with ID {new_job.id}")
+            try: current_app.logger.info(f"PSX_CREATE: PSX5KJob created with ID {new_job.id}")
+            except: pass
         except Exception as job_err:
             db.session.rollback()
-            current_app.logger.error(f"PSX_CREATE: Failed to create PSX5KJob: {job_err}")
+            try: current_app.logger.error(f"PSX_CREATE: Failed to create PSX5KJob: {job_err}")
+            except: pass
             return jsonify({"status": "error", "message": f"Error al crear el trabajo maestro: {str(job_err)}"}), 500
 
         created_ids = []
@@ -449,10 +460,12 @@ def create_task():
                 created_ids.append(new_task.id)
             
             db.session.commit()
-            current_app.logger.info(f"PSX_CREATE: {len(created_ids)} tasks committed successfully")
+            try: current_app.logger.info(f"PSX_CREATE: {len(created_ids)} tasks committed successfully")
+            except: pass
         except Exception as task_err:
             db.session.rollback()
-            current_app.logger.error(f"PSX_CREATE: Task creation loop failed: {task_err}")
+            try: current_app.logger.error(f"PSX_CREATE: Task creation loop failed: {task_err}")
+            except: pass
             return jsonify({"status": "error", "message": f"Error al generar fragmentos: {str(task_err)}"}), 500
         
         # 4. Auditoría (Final)
@@ -464,7 +477,8 @@ def create_task():
                 user_override=user_email
             )
         except Exception as audit_err:
-            current_app.logger.warning(f"PSX_CREATE: Audit log failed (non-critical): {audit_err}")
+            try: current_app.logger.warning(f"PSX_CREATE: Audit log failed (non-critical): {audit_err}")
+            except: pass
         
         return jsonify({
             "status": "success",
@@ -477,7 +491,8 @@ def create_task():
         import traceback
         db.session.rollback()
         error_details = traceback.format_exc()
-        current_app.logger.error(f"Error fatal en create_task PSX: {e}\n{error_details}")
+        try: current_app.logger.error(f"Error fatal en create_task PSX: {e}\n{error_details}")
+        except: pass
         return jsonify({
             "status": "error", 
             "message": f"Error interno: {str(e)}",
