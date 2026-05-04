@@ -9,8 +9,9 @@ import datetime
 
 psx_bp = Blueprint('psx', __name__, url_prefix='/api/psx')
 
-# Configuración de carga
-UPLOAD_FOLDER = '/home/dtovar/bayblade/c20/uploads/psx5k'
+# Configuración de rutas dinámica
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
+UPLOAD_FOLDER = os.path.join(PROJECT_ROOT, 'uploads', 'psx5k')
 ALLOWED_EXTENSIONS = {'xml', 'csv', 'xls', 'xlsx'}
 
 @psx_bp.route('/list')
