@@ -166,10 +166,22 @@ def create_app():
     @app.errorhandler(Exception)
     def handle_exception(e):
         import traceback
+        import sys
         from flask import jsonify
         error_msg = str(e)
         error_trace = traceback.format_exc()
-        app.logger.error(f"FATAL ERROR: {error_msg}\n{error_trace}")
+        
+        # FORZAR SALIDA A CONSOLA (Para journalctl -u nexus-web -f)
+        print("\n" + "!"*60, file=sys.stderr)
+        print(f"FATAL EXCEPTION: {error_msg}", file=sys.stderr)
+        print(error_trace, file=sys.stderr)
+        print("!"*60 + "\n", file=sys.stderr)
+
+        try:
+            app.logger.error(f"FATAL ERROR: {error_msg}\n{error_trace}")
+        except:
+            pass
+
         return jsonify({
             "status": "error",
             "message": f"Error Interno: {error_msg}",
