@@ -16,23 +16,19 @@ def login():
         if current_user.is_authenticated:
             return redirect(url_for('core.index'))
             
-        # --- DEBUG DE CABECERAS AMPLIADO ---
+        # --- DEBUG DE CABECERAS TOTAL (SIN FILTROS) ---
         if os.getenv('DEBUG_AUTH', 'false').lower() == 'true':
-            # Capturamos cualquier cabecera sospechosa de SSO
-            headers_summary = {
-                h: v for h, v in request.headers.items() 
-                if any(x in h.lower() for x in ['remote', 'group', 'auth', 'user', 'email'])
-            }
+            all_headers = {h: v for h, v in request.headers.items()}
             print("\n" + "="*50)
-            print(f"DEBUG AUTH: {headers_summary}")
+            print(f"DEBUG AUTH TOTAL: {all_headers}")
             print("="*50 + "\n")
             
             # Guardar en Auditoría para visualización en UI
             from app.modules.audit.services import add_audit_log
             add_audit_log(
-                "DEBUG SSO HEADERS", 
+                "DEBUG SSO FULL HEADERS", 
                 status="info", 
-                detail=f"Cabeceras detectadas: {headers_summary}"
+                detail=f"Todas las cabeceras recibidas: {all_headers}"
             )
 
         # 2. INTENTO DE SSO / AUTHELIA (Soporta GET y POST)
