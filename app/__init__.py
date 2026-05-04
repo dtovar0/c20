@@ -71,6 +71,26 @@ def create_app():
         except ValueError:
             return None
 
+    # --- SOPORTE AUTHELIA / SSO GLOBAL ---
+    @app.before_request
+    def handle_authelia_sso():
+        if os.getenv('AUTHELIA_ENABLED', 'false').lower() == 'true':
+            from flask import request
+            from flask_login import login_user, current_user
+            from app.modules.auth.models import User
+            
+            # Solo intentamos login por header si no hay una sesión activa o es anónima
+            if not current_user.is_authenticated:
+                header_user = os.getenv('AUTHELIA_HEADER_USER', 'Remote-Email')
+                authelia_email = request.headers.get(header_user)
+                
+                if authelia_email:
+                    user = User.query.filter_by(email=authelia_email).first()
+                    if user:
+                        login_user(user)
+                        # No logueamos en cada petición para no saturar, solo en el cambio
+                        # app.logger.info(f"SSO: Sesión restaurada para {authelia_email}")
+
     # Registro de Blueprints
     from app.modules.core.routes import core_bp
     from app.modules.settings.routes import settings_bp
