@@ -75,21 +75,38 @@ def create_app():
     @app.before_request
     def handle_authelia_sso():
         if os.getenv('AUTHELIA_ENABLED', 'false').lower() == 'true':
-            from flask import request
-            from flask_login import login_user, current_user
-            from app.modules.auth.models import User
-            
-            # Solo intentamos login por header si no hay una sesión activa o es anónima
-            if not current_user.is_authenticated:
-                header_user = os.getenv('AUTHELIA_HEADER_USER', 'Remote-Email')
-                authelia_email = request.headers.get(header_user)
+            try:
+                from flask import request
+                from flask_login import login_user, current_user
+                from app.modules.auth.models import User
+                
+                # Si ya está autenticado, no hacemos nada
+                if current_user.is_authenticated:
+                    return
+
+                # Lista de cabeceras comunes de Authelia/Proxies
+                header_options = [
+                    os.getenv('AUTHELIA_HEADER_USER', 'Remote-Email'),
+                    'X-Forwarded-Email',
+                    'Remote-User',
+                    'X-Forwarded-User'
+                ]
+                
+                authelia_email = None
+                for h in header_options:
+                    val = request.headers.get(h)
+                    if val:
+                        authelia_email = val
+                        break
                 
                 if authelia_email:
                     user = User.query.filter_by(email=authelia_email).first()
                     if user:
                         login_user(user)
-                        # No logueamos en cada petición para no saturar, solo en el cambio
-                        # app.logger.info(f"SSO: Sesión restaurada para {authelia_email}")
+                        # No logueamos para no saturar, pero el usuario ya es válido
+            except Exception as e:
+                # Si el puente falla, que la app siga (fallará el @login_required si es necesario)
+                pass
 
     # Registro de Blueprints
     from app.modules.core.routes import core_bp

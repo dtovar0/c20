@@ -9,9 +9,9 @@ from app.modules.audit.models import AuditLog
 
 app = create_app()
 with app.app_context():
-    print("--- ÚLTIMOS ERRORES REGISTRADOS EN AUDITORÍA ---")
-    logs = AuditLog.query.filter(AuditLog.status=='error').order_by(AuditLog.id.desc()).limit(10).all()
+    print("--- ÚLTIMOS 10 EVENTOS DE AUDITORÍA ---")
+    logs = AuditLog.query.order_by(AuditLog.id.desc()).limit(10).all()
     if not logs:
-        print("No se encontraron errores en la tabla audit_logs.")
+        print("No se encontraron registros en la tabla audit_logs.")
     for l in logs:
-        print(f"[{l.timestamp}] {l.action}: {l.detail}")
+        print(f"[{l.timestamp}] {l.status.upper()} | {l.action}: {l.detail}")
