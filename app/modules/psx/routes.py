@@ -359,18 +359,16 @@ def create_task():
     
     data = request.json
     try:
-        # --- AUTO-MIGRACIÓN RÁPIDA (Para asegurar job_id en servidores remotos) ---
-        from sqlalchemy import text
+        # --- AUTO-MIGRACIÓN ROBUSTA ---
+        from sqlalchemy import text, inspect
         try:
-            # Intentar ver si la columna existe (MySQL style)
-            db.session.execute(text("SELECT job_id FROM psx5k_tasks LIMIT 1"))
-        except Exception:
-            db.session.rollback()
-            current_app.logger.warning("Auto-Migración: La columna job_id no existe. Intentando crearla...")
-            try:
-                # 1. Asegurar que existe psx5k_jobs
+            inspector = inspect(db.engine)
+            tasks_columns = [c['name'] for c in inspector.get_columns('psx5k_tasks')]
+            
+            # 1. Asegurar tabla psx5k_jobs
+            if 'psx5k_jobs' not in inspector.get_table_names():
                 db.session.execute(text("""
-                    CREATE TABLE IF NOT EXISTS psx5k_jobs (
+                    CREATE TABLE psx5k_jobs (
                         id INT AUTO_INCREMENT PRIMARY KEY,
                         usuario VARCHAR(100) NOT NULL,
                         tarea VARCHAR(50),
@@ -380,31 +378,58 @@ def create_task():
                         archivo_origen VARCHAR(255),
                         run_force BOOLEAN DEFAULT FALSE,
                         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-                    )
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
                 """))
-                # 2. Añadir job_id a psx5k_tasks
-                db.session.execute(text("ALTER TABLE psx5k_tasks ADD COLUMN job_id INT"))
-                # 3. Añadir fecha_inicio a psx5k_tasks
-                db.session.execute(text("ALTER TABLE psx5k_tasks ADD COLUMN fecha_inicio DATETIME"))
-                # 4. Aumentar tamaño de columna estado
-                db.session.execute(text("ALTER TABLE psx5k_tasks MODIFY COLUMN estado VARCHAR(50)"))
                 db.session.commit()
-                current_app.logger.info("Auto-Migración: Columna job_id y tabla psx5k_jobs creadas con éxito.")
-            except Exception as migrate_err:
-                db.session.rollback()
-                current_app.logger.error(f"Fallo en Auto-Migración: {migrate_err}")
-                # No detenemos el flujo, si falla aquí probablemente falle la inserción después con el error real
+            
+            # 2. Asegurar columnas en psx5k_tasks
+            missing_tasks_cols = {
+                'job_id': "INT",
+                'fecha_inicio': "DATETIME",
+                'parent_id': "INT",
+                'tipo': "VARCHAR(20) DEFAULT 'normal'",
+                'chunk_index': "INT DEFAULT 1",
+                'chunk_total': "INT DEFAULT 1"
+            }
+            for col, col_type in missing_tasks_cols.items():
+                if col not in tasks_columns:
+                    db.session.execute(text(f"ALTER TABLE psx5k_tasks ADD COLUMN {col} {col_type}"))
+            
+            # 3. Asegurar columnas en psx5k_details
+            details_columns = [c['name'] for c in inspector.get_columns('psx5k_details')]
+            missing_details_cols = {
+                'force_ok': "INT DEFAULT 0",
+                'dup': "INT DEFAULT 0",
+                'del': "INT DEFAULT 0",
+                'delcheck': "INT DEFAULT 0"
+            }
+            for col, col_type in missing_details_cols.items():
+                if col not in details_columns:
+                    db.session.execute(text(f"ALTER TABLE psx5k_details ADD COLUMN {col} {col_type}"))
+            
+            # Asegurar tamaño de estado
+            db.session.execute(text("ALTER TABLE psx5k_tasks MODIFY COLUMN estado VARCHAR(50)"))
+            db.session.commit()
+        except Exception as migrate_err:
+            db.session.rollback()
+            current_app.logger.warning(f"Aviso en Auto-Migración: {migrate_err}")
         # -------------------------------------------------------------------------
+
+        if not data:
+            return jsonify({"status": "error", "message": "No se recibieron datos (JSON vacío)"}), 400
 
         raw_tarea = data.get('tarea') # add / delete
         raw_accion = data.get('accion_tipo', 'N/A') # Modo: call_in / call_inout
         raw_origen = data.get('datos_tipo', 'Manual') # Procedencia: Manual / Archivo
         
-        # 1. Extraer TODOS los registros del origen (sea archivo o manual)
+        if not raw_tarea:
+            return jsonify({"status": "error", "message": "El campo 'tarea' es obligatorio"}), 400
+
+        # 1. Extraer TODOS los registros del origen
         all_records = extract_records(
             raw_origen, 
             data.get('datos'), 
-            '/home/dtovar/bayblade/c20/uploads/psx5k'
+            UPLOAD_FOLDER
         )
         
         if not all_records:
@@ -415,7 +440,7 @@ def create_task():
         chunks = list(chunk_list(all_records, chunk_size))
         total_chunks = len(chunks)
         
-        # --- NUEVA LÓGICA: CREAR JOB MAESTRO ---
+        # --- CREAR JOB MAESTRO ---
         from .models import PSX5KJob
         new_job = PSX5KJob(
             usuario=current_user.email,
@@ -435,63 +460,59 @@ def create_task():
         raw_fecha_inicio = None
         if data.get('fecha_inicio'):
             try:
-                # 1. Parse UTC ISO string from JS
-                utc_dt = datetime.fromisoformat(data['fecha_inicio'].replace('Z', '+00:00'))
-                
-                # 2. Convert to Local System TZ (Set in app/__init__.py)
-                # and make it naive local for DB comparison consistency
+                # Parse date accurately
+                f_str = data['fecha_inicio'].replace('Z', '+00:00')
+                utc_dt = datetime.fromisoformat(f_str)
                 raw_fecha_inicio = utc_dt.astimezone().replace(tzinfo=None)
             except Exception as e:
-                current_app.logger.error(f"Error parsing/converting date {data['fecha_inicio']}: {e}")
+                current_app.logger.error(f"Error parsing date {data['fecha_inicio']}: {e}")
 
         for i, chunk in enumerate(chunks):
             task_data_value = ",".join(chunk)
             
             new_task = PSX5KTask(
-                job_id=new_job.id, # Vínculo al maestro
+                job_id=new_job.id,
                 chunk_index=i + 1,
                 chunk_total=total_chunks,
                 datos=task_data_value,
                 estado=raw_estado,
-                fecha_inicio=raw_fecha_inicio
+                fecha_inicio=raw_fecha_inicio,
+                tipo='normal'
             )
             db.session.add(new_task)
             db.session.flush()
-            
-            # Registro individual en auditoría con más detalle
-            add_audit_log(
-                f"Creación Tarea #{new_task.id}", 
-                status="info", 
-                detail=f"Job: {new_job.id} | Proceso: {raw_tarea} | Parte {i+1}/{total_chunks} | Registros: {len(chunk)}"
-            )
             
             new_detail = PSX5KDetail(id=new_task.id, total=len(chunk), ok=0, fail=0)
             db.session.add(new_detail)
             created_ids.append(new_task.id)
             
         db.session.commit()
+        
+        # Registro ÚNICO en auditoría para el lote completo (Evita múltiples commits lentos)
         add_audit_log(
             f"Lote PSX-{new_job.id} Creado", 
             status="info", 
-            detail=f"Tarea: {raw_tarea} | Origen: {raw_origen} | {total_chunks} fragmentos generados"
+            detail=f"Tarea: {raw_tarea} | Origen: {raw_origen} | {total_chunks} fragmentos | {len(all_records)} registros"
         )
         
         return jsonify({
             "status": "success",
             "message": f"Se han generado {total_chunks} mini-tareas correctamente",
-            "task_ids": created_ids
+            "task_ids": created_ids,
+            "job_id": new_job.id
         }), 201
         
     except Exception as e:
         import traceback
         db.session.rollback()
         error_details = traceback.format_exc()
-        current_app.logger.error(f"Error form tarea PSX: {e}\n{error_details}")
+        current_app.logger.error(f"Error fatal en create_task PSX: {e}\n{error_details}")
         return jsonify({
             "status": "error", 
             "message": f"Error interno: {str(e)}",
-            "debug": error_details if current_app.debug or True else None
+            "debug": error_details
         }), 500
+
 
 def allowed_file(filename):
     return '.' in filename and \

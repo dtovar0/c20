@@ -33,6 +33,9 @@ def extract_records(accion_tipo, datos, upload_folder):
     Soporta formato rango: 1147777000-1147777005
     """
     records = []
+    if not datos:
+        return []
+        
     if accion_tipo == 'Manual':
         raw_data = datos or ""
         # Separadores comunes: coma, punto y coma, espacio, nueva línea
