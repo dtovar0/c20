@@ -16,9 +16,13 @@ def login():
         if current_user.is_authenticated:
             return redirect(url_for('core.index'))
             
-        # --- DEBUG DE CABECERAS (SI ESTÁ HABILITADO) ---
+        # --- DEBUG DE CABECERAS AMPLIADO ---
         if os.getenv('DEBUG_AUTH', 'false').lower() == 'true':
-            headers_summary = {h: v for h, v in request.headers.items() if h.startswith('Remote-')}
+            # Capturamos cualquier cabecera sospechosa de SSO
+            headers_summary = {
+                h: v for h, v in request.headers.items() 
+                if any(x in h.lower() for x in ['remote', 'group', 'auth', 'user', 'email'])
+            }
             print("\n" + "="*50)
             print(f"DEBUG AUTH: {headers_summary}")
             print("="*50 + "\n")
