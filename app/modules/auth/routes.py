@@ -18,11 +18,18 @@ def login():
             
         # --- DEBUG DE CABECERAS (SI ESTÁ HABILITADO) ---
         if os.getenv('DEBUG_AUTH', 'false').lower() == 'true':
+            headers_summary = {h: v for h, v in request.headers.items() if h.startswith('Remote-')}
             print("\n" + "="*50)
-            print("DEBUG AUTH: REVISANDO CABECERAS ENTRANTES")
-            for header, value in request.headers.items():
-                print(f"  {header}: {value}")
+            print(f"DEBUG AUTH: {headers_summary}")
             print("="*50 + "\n")
+            
+            # Guardar en Auditoría para visualización en UI
+            from app.modules.audit.services import add_audit_log
+            add_audit_log(
+                "DEBUG SSO HEADERS", 
+                status="info", 
+                detail=f"Cabeceras detectadas: {headers_summary}"
+            )
 
         # 2. INTENTO DE SSO / AUTHELIA (Soporta GET y POST)
         if os.getenv('AUTHELIA_ENABLED', 'false').lower() == 'true':
