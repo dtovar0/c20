@@ -162,4 +162,18 @@ def create_app():
             print(f"DEBUG CONTEXT_PROCESSOR ERROR: {e}")
             return dict(sys_config=None)
 
+    # --- MANEJADOR GLOBAL DE ERRORES (DEBUG 500) ---
+    @app.errorhandler(Exception)
+    def handle_exception(e):
+        import traceback
+        from flask import jsonify
+        error_msg = str(e)
+        error_trace = traceback.format_exc()
+        app.logger.error(f"FATAL ERROR: {error_msg}\n{error_trace}")
+        return jsonify({
+            "status": "error",
+            "message": f"Error Interno: {error_msg}",
+            "debug": error_trace
+        }), 500
+
     return app
