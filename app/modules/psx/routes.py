@@ -359,63 +359,8 @@ def create_task():
     
     data = request.json
     try:
-        # --- AUTO-MIGRACIÓN ROBUSTA ---
-        from sqlalchemy import text, inspect
-        try:
-            inspector = inspect(db.engine)
-            tasks_columns = [c['name'] for c in inspector.get_columns('psx5k_tasks')]
-            
-            # 1. Asegurar tabla psx5k_jobs
-            if 'psx5k_jobs' not in inspector.get_table_names():
-                db.session.execute(text("""
-                    CREATE TABLE psx5k_jobs (
-                        id INT AUTO_INCREMENT PRIMARY KEY,
-                        usuario VARCHAR(100) NOT NULL,
-                        tarea VARCHAR(50),
-                        accion_tipo VARCHAR(50),
-                        datos_tipo VARCHAR(50),
-                        routing_label VARCHAR(100),
-                        archivo_origen VARCHAR(255),
-                        run_force BOOLEAN DEFAULT FALSE,
-                        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-                """))
-                db.session.commit()
-            
-            # 2. Asegurar columnas en psx5k_tasks
-            missing_tasks_cols = {
-                'job_id': "INT",
-                'fecha_inicio': "DATETIME",
-                'parent_id': "INT",
-                'tipo': "VARCHAR(20) DEFAULT 'normal'",
-                'chunk_index': "INT DEFAULT 1",
-                'chunk_total': "INT DEFAULT 1"
-            }
-            for col, col_type in missing_tasks_cols.items():
-                if col not in tasks_columns:
-                    db.session.execute(text(f"ALTER TABLE psx5k_tasks ADD COLUMN {col} {col_type}"))
-            
-            # 3. Asegurar columnas en psx5k_details
-            details_columns = [c['name'] for c in inspector.get_columns('psx5k_details')]
-            missing_details_cols = {
-                'force_ok': "INT DEFAULT 0",
-                'dup': "INT DEFAULT 0",
-                'del': "INT DEFAULT 0",
-                'delcheck': "INT DEFAULT 0"
-            }
-            for col, col_type in missing_details_cols.items():
-                if col not in details_columns:
-                    db.session.execute(text(f"ALTER TABLE psx5k_details ADD COLUMN {col} {col_type}"))
-            
-            # Asegurar tamaño de estado
-            db.session.execute(text("ALTER TABLE psx5k_tasks MODIFY COLUMN estado VARCHAR(50)"))
-            db.session.commit()
-        except Exception as migrate_err:
-            db.session.rollback()
-            current_app.logger.warning(f"Aviso en Auto-Migración: {migrate_err}")
-        # -------------------------------------------------------------------------
-
         if not data:
+            current_app.logger.error("PSX_CREATE: No JSON data received")
             return jsonify({"status": "error", "message": "No se recibieron datos (JSON vacío)"}), 400
 
         raw_tarea = data.get('tarea') # add / delete
@@ -423,9 +368,11 @@ def create_task():
         raw_origen = data.get('datos_tipo', 'Manual') # Procedencia: Manual / Archivo
         
         if not raw_tarea:
+            current_app.logger.error("PSX_CREATE: Missing 'tarea' field")
             return jsonify({"status": "error", "message": "El campo 'tarea' es obligatorio"}), 400
 
-        # 1. Extraer TODOS los registros del origen
+        # 1. Extraer registros
+        current_app.logger.info(f"PSX_CREATE: Extracting records from {raw_origen}")
         all_records = extract_records(
             raw_origen, 
             data.get('datos'), 
@@ -433,67 +380,90 @@ def create_task():
         )
         
         if not all_records:
+            current_app.logger.error("PSX_CREATE: No valid records found")
             return jsonify({"status": "error", "message": "No se encontraron registros válidos para procesar"}), 400
             
-        # 2. Aplicar DIVISION (Auto-Chunking) cada 200 registros
+        # 2. Chunking
         chunk_size = current_app.config.get('PSX_CHUNK_SIZE', 200)
         chunks = list(chunk_list(all_records, chunk_size))
         total_chunks = len(chunks)
+        current_app.logger.info(f"PSX_CREATE: {len(all_records)} records split into {total_chunks} chunks")
         
+        # --- IDENTIDAD DEL USUARIO ---
+        user_email = getattr(current_user, 'email', None) or "usuario_desconocido"
+        current_app.logger.info(f"PSX_CREATE: Iniciando petición para el usuario: {user_email}")
+
         # --- CREAR JOB MAESTRO ---
         from .models import PSX5KJob
-        new_job = PSX5KJob(
-            usuario=current_user.email,
-            tarea=raw_tarea,
-            accion_tipo=raw_accion,
-            datos_tipo=raw_origen,
-            routing_label=data.get('routing_label'),
-            archivo_origen=data.get('datos') if raw_origen == 'Archivo' else 'Ingreso Manual',
-            run_force=data.get('force', False)
-        )
-        db.session.add(new_job)
-        db.session.flush() # Para obtener el new_job.id
+        try:
+            current_app.logger.info(f"PSX_CREATE: Creating PSX5KJob for user {user_email}")
+            new_job = PSX5KJob(
+                usuario=user_email,
+                tarea=raw_tarea,
+                accion_tipo=raw_accion,
+                datos_tipo=raw_origen,
+                routing_label=data.get('routing_label'),
+                archivo_origen=data.get('datos') if raw_origen == 'Archivo' else 'Ingreso Manual',
+                run_force=data.get('force', False)
+            )
+            db.session.add(new_job)
+            db.session.flush() # Para obtener el new_job.id
+            current_app.logger.info(f"PSX_CREATE: PSX5KJob created with ID {new_job.id}")
+        except Exception as job_err:
+            db.session.rollback()
+            current_app.logger.error(f"PSX_CREATE: Failed to create PSX5KJob: {job_err}")
+            return jsonify({"status": "error", "message": f"Error al crear el trabajo maestro: {str(job_err)}"}), 500
 
         created_ids = []
         raw_estado = data.get('estado', 'Pendiente')
         from datetime import datetime
         raw_fecha_inicio = None
+        
         if data.get('fecha_inicio'):
             try:
-                # Parse date accurately
                 f_str = data['fecha_inicio'].replace('Z', '+00:00')
                 utc_dt = datetime.fromisoformat(f_str)
                 raw_fecha_inicio = utc_dt.astimezone().replace(tzinfo=None)
             except Exception as e:
-                current_app.logger.error(f"Error parsing date {data['fecha_inicio']}: {e}")
+                current_app.logger.error(f"PSX_CREATE: Date parsing error {data['fecha_inicio']}: {e}")
 
-        for i, chunk in enumerate(chunks):
-            task_data_value = ",".join(chunk)
+        # 3. Crear Tareas y Detalles
+        try:
+            for i, chunk in enumerate(chunks):
+                task_data_value = ",".join(chunk)
+                new_task = PSX5KTask(
+                    job_id=new_job.id,
+                    chunk_index=i + 1,
+                    chunk_total=total_chunks,
+                    datos=task_data_value,
+                    estado=raw_estado,
+                    fecha_inicio=raw_fecha_inicio,
+                    tipo='normal'
+                )
+                db.session.add(new_task)
+                db.session.flush()
+                
+                new_detail = PSX5KDetail(id=new_task.id, total=len(chunk), ok=0, fail=0)
+                db.session.add(new_detail)
+                created_ids.append(new_task.id)
             
-            new_task = PSX5KTask(
-                job_id=new_job.id,
-                chunk_index=i + 1,
-                chunk_total=total_chunks,
-                datos=task_data_value,
-                estado=raw_estado,
-                fecha_inicio=raw_fecha_inicio,
-                tipo='normal'
-            )
-            db.session.add(new_task)
-            db.session.flush()
-            
-            new_detail = PSX5KDetail(id=new_task.id, total=len(chunk), ok=0, fail=0)
-            db.session.add(new_detail)
-            created_ids.append(new_task.id)
-            
-        db.session.commit()
+            db.session.commit()
+            current_app.logger.info(f"PSX_CREATE: {len(created_ids)} tasks committed successfully")
+        except Exception as task_err:
+            db.session.rollback()
+            current_app.logger.error(f"PSX_CREATE: Task creation loop failed: {task_err}")
+            return jsonify({"status": "error", "message": f"Error al generar fragmentos: {str(task_err)}"}), 500
         
-        # Registro ÚNICO en auditoría para el lote completo (Evita múltiples commits lentos)
-        add_audit_log(
-            f"Lote PSX-{new_job.id} Creado", 
-            status="info", 
-            detail=f"Tarea: {raw_tarea} | Origen: {raw_origen} | {total_chunks} fragmentos | {len(all_records)} registros"
-        )
+        # 4. Auditoría (Final)
+        try:
+            add_audit_log(
+                f"Lote PSX-{new_job.id} Creado", 
+                status="info", 
+                detail=f"Tarea: {raw_tarea} | Origen: {raw_origen} | {total_chunks} fragmentos | {len(all_records)} registros",
+                user_override=user_email
+            )
+        except Exception as audit_err:
+            current_app.logger.warning(f"PSX_CREATE: Audit log failed (non-critical): {audit_err}")
         
         return jsonify({
             "status": "success",
