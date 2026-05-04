@@ -1,7 +1,9 @@
 import os
 import sys
-# Add app to path
-sys.path.append('/home/dtovar/bayblade/c20')
+
+# Detectar la raíz del proyecto dinámicamente
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, PROJECT_ROOT)
 
 from app import create_app, db
 from app.modules.psx.models import PSX5KJob, PSX5KTask, PSX5KDetail
@@ -15,7 +17,7 @@ with app.app_context():
         # Simulate current_user
         user = User.query.filter_by(role='administrador').first()
         if not user:
-            user = User(email='test@vivaro.com', nombre='Test', role='administrador')
+            user = User(email='admin@vivaro.com', nombre='Admin', role='administrador')
             db.session.add(user)
             db.session.commit()
         
@@ -25,7 +27,6 @@ with app.app_context():
         raw_tarea = 'add'
         raw_accion = 'call_in'
         raw_origen = 'Manual'
-        all_records = ['1234567890', '0987654321']
         
         # 1. Crear Job Maestro
         new_job = PSX5KJob(
@@ -33,7 +34,7 @@ with app.app_context():
             tarea=raw_tarea,
             accion_tipo=raw_accion,
             datos_tipo=raw_origen,
-            routing_label='TEST_LABEL',
+            routing_label='TEST_REPRO',
             archivo_origen='Ingreso Manual',
             run_force=False
         )
@@ -46,24 +47,25 @@ with app.app_context():
             job_id=new_job.id,
             chunk_index=1,
             chunk_total=1,
-            datos="1234567890,0987654321",
-            estado='Pendiente'
+            datos="1147777002",
+            estado='Pendiente',
+            tipo='normal'
         )
         db.session.add(new_task)
         db.session.flush()
         print(f"Task created with ID: {new_task.id}")
         
         # 3. Crear Detail
-        new_detail = PSX5KDetail(id=new_task.id, total=2, ok=0, fail=0)
+        new_detail = PSX5KDetail(id=new_task.id, total=1, ok=0, fail=0)
         db.session.add(new_detail)
         db.session.flush()
         print(f"Detail created with ID: {new_detail.id}")
         
         db.session.commit()
-        print("Test successful!")
+        print("✅ Reproducción exitosa en este entorno.")
         
     except Exception as e:
         import traceback
-        print(f"Test failed: {e}")
+        print(f"❌ Error detectado: {e}")
         print(traceback.format_exc())
         db.session.rollback()
