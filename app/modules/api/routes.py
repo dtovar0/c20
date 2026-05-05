@@ -154,7 +154,7 @@ def cancel_api_task(task_id):
     Cancela una tarea específica si no ha terminado.
     """
     task = PSX5KTask.query.get_or_404(task_id)
-    if task.estado in ['Completado', 'Terminado con Errores', 'Cancelado']:
+    if task.estado in ['Completado', 'Completada', 'Terminado con Errores', 'Cancelada', 'Cancelado', 'Abortada']:
         return jsonify({"status": "error", "message": "Task already finished"}), 400
         
     task.estado = 'Cancelada'

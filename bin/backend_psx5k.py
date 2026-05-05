@@ -442,7 +442,7 @@ def main():
                     ))
 
                 # Finalizar
-                task.estado = 'Completada'
+                task.estado = 'Completado'
                 task.fecha_fin = datetime.datetime.now()
                 # task.datos = None  # Se deshabilita la purga por solicitud del usuario
                 db.session.commit()

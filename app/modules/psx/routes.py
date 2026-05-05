@@ -704,7 +704,7 @@ def update_or_reprocess_job(job_id):
         return jsonify({"status": "error", "message": "No se puede modificar un Job con fragmentos en ejecución."}), 400
 
     # Estado global del job (basado en sus tareas)
-    finished = all(t.estado in ['Terminada', 'Cancelada', 'Error'] for t in job.tasks)
+    finished = all(t.estado in ['Completado', 'Completada', 'Terminado con Errores', 'Error', 'Cancelada', 'Cancelado', 'Abortada'] for t in job.tasks)
     
     try:
         if action == 'cancel':
@@ -728,7 +728,7 @@ def update_or_reprocess_job(job_id):
                     if recovery:
                         t.datos = ",".join([r.numero for r in recovery])
                 
-                if t.estado in ['Cancelada', 'Error', 'Terminada']:
+                if t.estado in ['Cancelada', 'Cancelado', 'Error', 'Completado', 'Completada', 'Terminado con Errores', 'Abortada']:
                     t.estado = 'Pendiente' if not data.get('is_scheduled') else 'Programada'
                     t.fecha_inicio = parsed_scheduled_time if data.get('is_scheduled') else None
                     updated_count += 1
@@ -787,7 +787,7 @@ def update_or_reprocess_job(job_id):
             
             # Actualizar estado y tiempos de las tareas asociadas
             for t in job.tasks:
-                if t.estado in ['Pendiente', 'Programada', 'Cancelada', 'Error']:
+                if t.estado in ['Pendiente', 'Programada', 'Cancelada', 'Cancelado', 'Error', 'Completado', 'Completada', 'Terminado con Errores']:
                     if not t.datos:
                         recovery = PSX5KHistory.query.filter_by(task_id=t.id).all()
                         if recovery:
