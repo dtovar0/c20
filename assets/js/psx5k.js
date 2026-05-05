@@ -257,47 +257,27 @@ function initPSXDataTable() {
                 visible: true,
                 render: (data, type, row) => {
                     const state = (row.estado || '').toLowerCase();
-                    const isProgramada = state === 'programada' || state === 'pendiente';
-                    const isEjecutando = state === 'ejecutando';
-                    const isCancelada = state === 'cancelada' || state === 'abortada';
-
-                    // Si está cancelada, mantenemos el estilo de "Descartada"
-                    if (isCancelada) {
+                    
+                    if (state === 'programada' || state === 'pendiente') {
+                        return `<div class="flex items-center justify-center gap-1.5 opacity-40 italic py-2">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <span class="text-[11px] font-black uppercase tracking-[0.15em]">En Cola</span>
+                                </div>`;
+                    }
+                    if (state === 'ejecutando') {
+                        return `<div class="flex items-center justify-center gap-1.5 text-primary animate-pulse py-2">
+                                    <svg class="w-3.5 h-3.5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                    <span class="text-[11px] font-black uppercase tracking-[0.15em]">Ejecutando</span>
+                                </div>`;
+                    }
+                    if (state === 'cancelada' || state === 'abortada') {
                         return `<div class="flex items-center justify-center gap-1.5 opacity-40 text-rose-500/60 py-2">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                                     <span class="text-[11px] font-black uppercase tracking-[0.15em]">Descartada</span>
                                 </div>`;
                     }
 
-                    // Generamos la gráfica base
-                    let graphicHtml = generateTaskGraphic(data, row.tarea, row.run_force);
-
-                    // Si está programada o ejecutando, añadimos un overlay informativo
-                    if (isProgramada) {
-                        return `
-                            <div class="relative group">
-                                <div class="opacity-20 grayscale transition-all group-hover:opacity-40 group-hover:grayscale-0">${graphicHtml}</div>
-                                <div class="absolute inset-0 flex items-center justify-center gap-1.5 text-indigo-400">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                    <span class="text-[10px] font-black uppercase tracking-widest">En Cola</span>
-                                </div>
-                            </div>`;
-                    }
-
-                    if (isEjecutando) {
-                        return `
-                            <div class="relative group">
-                                <div class="animate-pulse">${graphicHtml}</div>
-                                <div class="absolute -top-1 -right-1">
-                                    <span class="relative flex h-3 w-3">
-                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                                        <span class="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
-                                    </span>
-                                </div>
-                            </div>`;
-                    }
-
-                    return `<div class="flex items-center justify-center h-full min-w-0 overflow-hidden">${graphicHtml}</div>`;
+                    return `<div class="flex items-center justify-center h-full min-w-0 overflow-hidden">${generateTaskGraphic(data, row.tarea, row.run_force)}</div>`;
                 }
             },
             { 
@@ -331,7 +311,7 @@ function initPSXDataTable() {
                     } else {
                         modeIcon = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4"></path></svg>`;
                     }
-
+ 
                     let statusIcon = '';
                     let statusStyle = '';
                     const stateLower = row.estado.toLowerCase();
@@ -348,7 +328,7 @@ function initPSXDataTable() {
                         statusIcon = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
                         statusStyle = 'color:#f59e0b;background:rgba(245,158,11,0.15);border-color:rgba(245,158,11,0.3)';
                     }
-
+ 
                     return `
                         <div class="flex items-center justify-center gap-2 h-full">
                             <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="${actionStyle}" data-nx-tooltip="${row.tarea.toUpperCase()}">
@@ -367,12 +347,26 @@ function initPSXDataTable() {
                 data: 'id', 
                 width: '50px',
                 orderable: false,
-                render: (data) => `
-                    <div class="flex items-center justify-center h-full">
-                        <a href="/api/psx/detail/${data}" target="_blank" class="p-2 hover:bg-primary/10 text-primary/40 hover:text-primary rounded-xl transition-all" data-nx-tooltip="Ver Detalles">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        </a>
-                    </div>`
+                render: (data, type, row) => {
+                    const state = (row.estado || '').toLowerCase();
+                    const isFinished = (state === 'completada' || state === 'error');
+                    
+                    if (!isFinished) {
+                        return `
+                        <div class="flex items-center justify-center h-full">
+                            <div class="p-2 opacity-10 text-label/20 cursor-not-allowed" data-nx-tooltip="Detalle no disponible">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            </div>
+                        </div>`;
+                    }
+
+                    return `
+                        <div class="flex items-center justify-center h-full">
+                            <a href="/api/psx/detail/${data}" target="_blank" class="p-2 hover:bg-primary/10 text-primary/40 hover:text-primary rounded-xl transition-all" data-nx-tooltip="Ver Detalles">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            </a>
+                        </div>`;
+                }
             }
         ],
         autoWidth: false,
