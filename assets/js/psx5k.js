@@ -257,25 +257,47 @@ function initPSXDataTable() {
                 visible: true,
                 render: (data, type, row) => {
                     const state = (row.estado || '').toLowerCase();
-                    if (state === 'programada') {
-                        return `<div class="flex items-center justify-center gap-1.5 opacity-30 italic py-2">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                    <span class="text-[11px] font-black uppercase tracking-[0.15em]">En Cola</span>
-                                </div>`;
-                    }
-                    if (state === 'ejecutando') {
-                        return `<div class="flex items-center justify-center gap-1.5 text-primary/70 animate-pulse py-2">
-                                    <svg class="w-3.5 h-3.5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                                    <span class="text-[11px] font-black uppercase tracking-[0.15em]">Ejecutando</span>
-                                </div>`;
-                    }
-                    if (state === 'cancelada' || state === 'abortada') {
+                    const isProgramada = state === 'programada' || state === 'pendiente';
+                    const isEjecutando = state === 'ejecutando';
+                    const isCancelada = state === 'cancelada' || state === 'abortada';
+
+                    // Si está cancelada, mantenemos el estilo de "Descartada"
+                    if (isCancelada) {
                         return `<div class="flex items-center justify-center gap-1.5 opacity-40 text-rose-500/60 py-2">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                                     <span class="text-[11px] font-black uppercase tracking-[0.15em]">Descartada</span>
                                 </div>`;
                     }
-                    return `<div class="flex items-center justify-center h-full min-w-0 overflow-hidden">${generateTaskGraphic(data, row.tarea, row.run_force)}</div>`;
+
+                    // Generamos la gráfica base
+                    let graphicHtml = generateTaskGraphic(data, row.tarea, row.run_force);
+
+                    // Si está programada o ejecutando, añadimos un overlay informativo
+                    if (isProgramada) {
+                        return `
+                            <div class="relative group">
+                                <div class="opacity-20 grayscale transition-all group-hover:opacity-40 group-hover:grayscale-0">${graphicHtml}</div>
+                                <div class="absolute inset-0 flex items-center justify-center gap-1.5 text-indigo-400">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <span class="text-[10px] font-black uppercase tracking-widest">En Cola</span>
+                                </div>
+                            </div>`;
+                    }
+
+                    if (isEjecutando) {
+                        return `
+                            <div class="relative group">
+                                <div class="animate-pulse">${graphicHtml}</div>
+                                <div class="absolute -top-1 -right-1">
+                                    <span class="relative flex h-3 w-3">
+                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                                        <span class="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+                                    </span>
+                                </div>
+                            </div>`;
+                    }
+
+                    return `<div class="flex items-center justify-center h-full min-w-0 overflow-hidden">${graphicHtml}</div>`;
                 }
             },
             { 
