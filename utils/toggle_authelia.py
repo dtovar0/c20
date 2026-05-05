@@ -28,7 +28,15 @@ def toggle_nginx(enable=True):
         new_lines = []
         for line in lines:
             # Líneas que controlamos en la sección de Authelia
-            keywords = ["auth_request", "auth_request_set", "proxy_set_header Remote-", "error_page 401"]
+            keywords = [
+                "auth_request", 
+                "auth_request_set", 
+                "proxy_set_header Remote-", 
+                "error_page 401",
+                "proxy_pass_request_body", 
+                "proxy_set_header Content-Length",
+                "X-Original-URI"
+            ]
             if any(key in line for key in keywords):
                 clean_line = line.lstrip().lstrip('#').strip()
                 if enable:
