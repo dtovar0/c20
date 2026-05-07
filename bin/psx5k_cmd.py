@@ -9,6 +9,7 @@ load_dotenv()
 
 # Configuraciones globales desde ENV
 DEBUG_PSX_ENABLED = os.getenv('DEBUG_PSX', 'false').lower() == 'true'
+PSX_FORCE_MODE = os.getenv('PSX_FORCE_MODE', 'delete').lower()
 EXPECT_PROMPTS = ['Password:', '\r\n>', 'PSXMASTER>', 'PSX>', pexpect.TIMEOUT, pexpect.EOF]
 
 class StreamLog:
@@ -156,6 +157,12 @@ def psx5k_cmd(line_task, line_number, line_type=None, routing_label=None, force=
                         is_force = found and force
                         msg_prefix = "[OK]" if not found else "[FORCE-OK]"
                         
+                        if is_force and PSX_FORCE_MODE == 'delete':
+                            cmd.sendline(f'delete subscriber Subscriber_Id {number} Country_Id 52')
+                            cmd.expect(EXPECT_PROMPTS)
+                            cmd.sendline(f'delete destination National_Id {number} Country_Id 52')
+                            cmd.expect(EXPECT_PROMPTS)
+                        
                         if line_type == 'call_in':
                             # Registro de Subscriber
                             cmd.sendline(f"put subscriber Subscriber_Id {number} Country_Id 52 Orig_Entity_Routing_Profile_Id 911 Is_Destination 1")
@@ -164,7 +171,10 @@ def psx5k_cmd(line_task, line_number, line_type=None, routing_label=None, force=
                             if err: raise Exception(f"Error Subscriber: {err_msg}")
                             
                             # Registro de Destination
-                            cmd.sendline(f"put destination National_Id {number} Country_Id 52 Custom_Script_Id BLOCKING Is_Subscriber 1")
+                            if is_force and PSX_FORCE_MODE == 'update':
+                                cmd.sendline(f"put destination National_Id {number} Country_Id 52 Custom_Script_Id BLOCKING Element_Attributes 0x0 Routing_Label_Id \"\" Is_Subscriber 1")
+                            else:
+                                cmd.sendline(f"put destination National_Id {number} Country_Id 52 Custom_Script_Id BLOCKING Is_Subscriber 1")
                             cmd.expect(EXPECT_PROMPTS)
                             err, err_msg = _check_psx_error(cmd.before)
                             if err: raise Exception(f"Error Destination: {err_msg}")
