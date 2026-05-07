@@ -37,22 +37,8 @@ function generateTaskGraphic(resumen, taskType, runForce) {
         totalPct = Math.min(rawPct, 100);
         const scale = processed > 0 ? totalPct / rawPct : 0;
 
-        const okPct = ((resumen.ok / resumen.total) * 100) * scale;
-        const failPct = ((resumen.fail / resumen.total) * 100) * scale;
-        const secondPct = runForce 
-            ? ((resumen.force_ok / resumen.total) * 100) * scale
-            : ((resumen.dup / resumen.total) * 100) * scale;
-        
-        segmentsHtml = `
-            <div class="h-full transition-all duration-700 ease-out" style="width:${okPct}%;background:${c.ok}" title="OK: ${resumen.ok}"></div>
-            <div class="h-full transition-all duration-700 ease-out" style="width:${failPct}%;background:${c.fail}" title="FAIL: ${resumen.fail}"></div>
-            <div class="h-full transition-all duration-700 ease-out" style="width:${secondPct}%;background:${runForce ? (c.force || '#8b5cf6') : (c.dup || '#f59e0b')}" title="${runForce ? 'FORCED' : 'DUP'}: ${runForce ? resumen.force_ok : resumen.dup}"></div>
-        `;
-    } else if (taskType === 'delete') {
+    } else {
         processed = (resumen.del || 0) + (resumen.delcheck || 0) + resumen.fail;
-        const rawPct = (processed / resumen.total) * 100;
-        totalPct = Math.min(rawPct, 100);
-        const scale = processed > 0 ? totalPct / rawPct : 0;
 
         const delPct = (((resumen.del || 0) / resumen.total) * 100) * scale;
         const delCheckPct = (((resumen.delcheck || 0) / resumen.total) * 100) * scale;
@@ -286,17 +272,27 @@ function initPSXDataTable() {
                 orderable: false,
                 render: (data, type, row) => {
                     if (type === 'filter' || type === 'sort') return data; // Returns 'estado' text
-                    
+                                 const c = window.nexusSettings.statusColors;
                     const isAdd = row.tarea === 'add';
-                    const actionStyle = isAdd 
-                        ? 'color:#2563eb;background:rgba(37,99,235,0.1);border-color:rgba(37,99,235,0.2)' 
-                        : 'color:#f43f5e;background:rgba(244,63,94,0.1);border-color:rgba(244,63,94,0.2)';
+                    
+                    // Colores base según acción y force
+                    let actionHex = isAdd ? c.ok : c.del;
+                    if (row.run_force && isAdd) actionHex = c.force;
+
+                    const actionStyle = getNexusBadgeStyle(actionHex);
+                    
+                    // Iconos Premium
+                    const iconPlus = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>`;
+                    const iconTrash = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>`;
+                    const iconBolt = `<svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>`;
+
                     const actionIcon = isAdd 
-                        ? `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>`
-                        : `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>`;
+                        ? (row.run_force ? iconBolt : iconPlus)
+                        : iconTrash;
                     
                     let modeIcon = '';
-                    let modeStyle = 'color:rgba(148,163,184,0.5);background:rgba(148,163,184,0.05);border-color:rgba(148,163,184,0.15)';
+                    let modeStyle = getNexusBadgeStyle('#94a3b8', 0.05, 0.15); // Default muted
+ult muted
                     
                     // Normalización de Título de Modo
                     let modeTitle = row.accion_tipo || 'N/A';
@@ -304,10 +300,10 @@ function initPSXDataTable() {
                     
                     if (row.accion_tipo === 'call_in') {
                         modeIcon = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>`;
-                        modeStyle = 'color:#0ea5e9;background:rgba(14,165,233,0.1);border-color:rgba(14,165,233,0.2)';
+                        modeStyle = getNexusBadgeStyle('#0ea5e9'); // Sky-500
                     } else if (row.accion_tipo === 'call_inout') {
                         modeIcon = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>`;
-                        modeStyle = 'color:#6366f1;background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.2)';
+                        modeStyle = getNexusBadgeStyle('#6366f1'); // Indigo-500
                     } else {
                         modeIcon = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4"></path></svg>`;
                     }
@@ -317,21 +313,21 @@ function initPSXDataTable() {
                     const stateLower = row.estado.toLowerCase();
                     if (stateLower === 'ejecutando') {
                         statusIcon = `<svg class="w-3.5 h-3.5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>`;
-                        statusStyle = 'color:#2563eb;background:rgba(37,99,235,0.15);border-color:rgba(37,99,235,0.3)';
+                        statusStyle = getNexusBadgeStyle(c.ok, 0.15, 0.3);
                     } else if (stateLower.startsWith('completad')) {
                         statusIcon = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
-                        statusStyle = 'color:#10b981;background:rgba(16,185,129,0.15);border-color:rgba(16,185,129,0.3)';
+                        statusStyle = getNexusBadgeStyle('#10b981', 0.15, 0.3); // Emerald-500
                     } else if (stateLower === 'error') {
                         statusIcon = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>`;
-                        statusStyle = 'color:#f43f5e;background:rgba(244,63,94,0.15);border-color:rgba(244,63,94,0.3)';
+                        statusStyle = getNexusBadgeStyle(c.fail, 0.15, 0.3);
                     } else {
                         statusIcon = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
-                        statusStyle = 'color:#f59e0b;background:rgba(245,158,11,0.15);border-color:rgba(245,158,11,0.3)';
+                        statusStyle = getNexusBadgeStyle('#f59e0b', 0.15, 0.3); // Amber-500
                     }
  
                     return `
                         <div class="flex items-center justify-center gap-2 h-full">
-                            <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="${actionStyle}" data-nx-tooltip="${row.tarea.toUpperCase()}">
+                            <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="${actionStyle}" data-nx-tooltip="${row.tarea.toUpperCase()}${row.run_force ? ' (FORCE MODE)' : ''}">
                                 ${actionIcon}
                             </div>
                             <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="${modeStyle}" data-nx-tooltip="MODO: ${modeTitle.toUpperCase()}">
