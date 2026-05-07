@@ -72,3 +72,13 @@ El portal de Authelia debe reflejar la identidad visual de Nexus (Modo Premium) 
 
 ### Impacto
 Portal de Login y flujo de autenticación SSO.
+## Módulo: PSX5K / Estados Operativos
+
+### Regla: Consistencia de Nomenclatura (Género y Número)
+Todos los estados operativos almacenados en la base de datos deben seguir la nomenclatura masculina (e.g., "Completado", "Cancelado"). El frontend debe estar preparado para realizar búsquedas y validaciones basadas en prefijos (startsWith) para manejar variaciones de género en la visualización o filtros sin romper la lógica de negocio.
+
+### Ejemplo
+Si el worker marca una tarea como "Completado", el frontend debe reconocerla como finalizada y habilitar el icono de detalle (lupa) buscando "Completad".
+
+### Impacto
+Trazabilidad de tareas y consistencia UI/UX.
