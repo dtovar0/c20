@@ -702,7 +702,7 @@
     </div>
 </div>
 
-<script src="{{ url_for('core.serve_assets', filename='js/psx5k.js') }}"></script>
+<script src="{{ url_for('core.serve_assets', filename='js/psx5k.js') }}?v={{ range(10000, 99999) | random }}"></script>
 <script src="/assets/js/psx-wizard.js"></script>
 <script src="/assets/js/psx-tour.js?v={{ range(1000, 9999) | random }}"></script>
 {% endblock %}
