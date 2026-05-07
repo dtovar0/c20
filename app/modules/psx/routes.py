@@ -23,20 +23,29 @@ def list_tasks():
     """
     try:
         from .models import PSX5KJob
-        query = PSX5KTask.query.join(PSX5KJob)
+        from sqlalchemy.orm import joinedload
+        
+        query = PSX5KTask.query.options(joinedload(PSX5KTask.job)).join(PSX5KJob)
         
         # 1. Filtro de Seguridad: No-admins solo ven sus propias tareas
-        is_admin = current_user.role == 'administrador'
+        is_admin = getattr(current_user, 'role', 'usuario') == 'administrador'
         if not is_admin:
             query = query.filter(PSX5KJob.usuario == current_user.email)
             
         tasks = query.order_by(PSX5KJob.created_at.desc(), PSX5KTask.id.desc()).all()
         
-        return jsonify({
+        response = jsonify({
             "status": "success",
             "tasks": [t.to_dict() for t in tasks],
             "is_admin": is_admin
         })
+        
+        # Evitar caché en el navegador para asegurar datos frescos (especialmente run_force)
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+        
+        return response
     except Exception as e:
         current_app.logger.error(f"Error en list_tasks: {e}")
         return jsonify({"status": "error", "message": "No se pudo obtener la lista de tareas"}), 500
