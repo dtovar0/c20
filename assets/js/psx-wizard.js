@@ -1088,14 +1088,17 @@ async function openModifyModal(taskId) {
             btnCancel.classList.add('col-span-2');
             btnModify.classList.add('hidden');
             grid.classList.replace('grid-cols-2', 'grid-cols-1');
-        } else if (['activa', 'programada', 'pendiente'].includes(stateLower)) {
+        } else if (['programada', 'pendiente'].includes(stateLower)) {
+            // Tareas en espera: se pueden cancelar o modificar
             btnCancel.classList.remove('hidden');
             btnModify.classList.remove('hidden');
-        } else if (['terminada', 'completada', 'error', 'cancelada'].includes(stateLower)) {
+        } else if (stateLower.startsWith('completad') || stateLower.startsWith('terminad') || stateLower === 'error' || stateLower === 'cancelada' || stateLower === 'abortada') {
+            // Tareas finalizadas: solo se pueden activar (clonar) o modificar metadatos
             btnActivate.classList.remove('hidden');
             btnModify.classList.remove('hidden');
+            btnCancel.classList.add('hidden');
         } else {
-            // Unificamos el resto de estados para que al menos se pueda cancelar si no es un estado terminal
+            // Estado desconocido: precaución (mostrar modificar y cancelar)
             btnCancel.classList.remove('hidden');
             btnModify.classList.remove('hidden');
         }
