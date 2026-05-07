@@ -68,7 +68,7 @@ class PSX5KTask(db.Model):
 
 class PSX5KDetail(db.Model):
     __tablename__ = 'psx5k_details'
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, db.ForeignKey('psx5k_tasks.id'), primary_key=True)
     total = db.Column(db.Integer, default=0)
     ok = db.Column(db.Integer, default=0)
     fail = db.Column(db.Integer, default=0)
