@@ -22,10 +22,14 @@ def list_tasks():
     Filtrado por usuario si no es administrador.
     """
     try:
-        from .models import PSX5KJob
+        from .models import PSX5KJob, PSX5KDetail
         from sqlalchemy.orm import joinedload
         
-        query = PSX5KTask.query.options(joinedload(PSX5KTask.job)).join(PSX5KJob)
+        # Carga proactiva de Job y Resumen (Detail) para evitar fallos de sesión/cache
+        query = PSX5KTask.query.options(
+            joinedload(PSX5KTask.job),
+            joinedload(PSX5KTask.resumen)
+        ).join(PSX5KJob)
         
         # 1. Filtro de Seguridad: No-admins solo ven sus propias tareas
         is_admin = getattr(current_user, 'role', 'usuario') == 'administrador'

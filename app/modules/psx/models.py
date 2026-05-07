@@ -42,13 +42,11 @@ class PSX5KTask(db.Model):
     parent_id = db.Column(db.Integer, db.ForeignKey('psx5k_tasks.id'), nullable=True)
     tipo = db.Column(db.String(20), default='normal') 
 
-    @property
-    def resumen(self):
-        return PSX5KDetail.query.get(self.id)
+    # Relación con el detalle (1 a 1)
+    resumen = db.relationship('PSX5KDetail', backref='task', uselist=False, lazy=True)
 
     def to_dict(self):
         job = self.job
-        res = self.resumen
         return {
             "id": self.id,
             "job_id": self.job_id,
@@ -64,8 +62,8 @@ class PSX5KTask(db.Model):
             "archivo_origen": job.archivo_origen,
             "chunk_index": self.chunk_index,
             "chunk_total": self.chunk_total,
-            "run_force": job.run_force,
-            "resumen": res.to_dict() if res else {"total": 0, "ok": 0, "fail": 0}
+            "run_force": bool(job.run_force),
+            "resumen": self.resumen.to_dict() if self.resumen else {"total": 0, "ok": 0, "fail": 0, "force_ok": 0, "dup": 0, "del": 0, "delcheck": 0}
         }
 
 class PSX5KDetail(db.Model):
