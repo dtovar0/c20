@@ -190,6 +190,7 @@ function initPSXDataTable() {
         ajax: {
             url: '/api/psx/list',
             dataSrc: (json) => {
+                console.log("[NEXUS DEBUG] PSX Data Received:", json);
                 const isAdmin = json.is_admin || false;
                 const api = tableEl.DataTable();
                 if (api) { 
@@ -257,6 +258,9 @@ function initPSXDataTable() {
                 visible: true,
                 render: (data, type, row) => {
                     const state = (row.estado || '').toLowerCase();
+                    if (row.id === 72 || row.id === 71) {
+                        console.log(`[NEXUS DEBUG] Row #${row.id} Render:`, {run_force: row.run_force, resumen: data});
+                    }
                     
                     if (state === 'programada' || state === 'pendiente') {
                         return `<div class="flex items-center justify-center gap-1.5 opacity-40 italic py-2">
