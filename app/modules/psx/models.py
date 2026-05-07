@@ -64,6 +64,7 @@ class PSX5KTask(db.Model):
             "archivo_origen": job.archivo_origen,
             "chunk_index": self.chunk_index,
             "chunk_total": self.chunk_total,
+            "run_force": job.run_force,
             "resumen": res.to_dict() if res else {"total": 0, "ok": 0, "fail": 0}
         }
 
