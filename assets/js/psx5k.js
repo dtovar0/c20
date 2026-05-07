@@ -306,7 +306,6 @@ function initPSXDataTable() {
                     
                     let modeIcon = '';
                     let modeStyle = getNexusBadgeStyle('#94a3b8', 0.05, 0.15); // Default muted
-ult muted
                     
                     // Normalización de Título de Modo
                     let modeTitle = row.accion_tipo || 'N/A';
