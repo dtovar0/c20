@@ -458,7 +458,7 @@
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                                     </div>
                                 {% else %}
-                                    <button onclick="reprocessDuplicates({{ task.id }})" id="reprocessBtn" {% if stats.dup == 0 %}disabled{% endif %} aria-label="Reprocesar registros duplicados" class="p-3 bg-primary/10 hover:bg-primary/20 border border-primary/30 rounded-xl text-primary transition-all active:scale-95 group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 {% if stats.dup == 0 %}opacity-20 pointer-events-none grayscale{% endif %}" title="Procesar Duplicados ({{ stats.dup }})">
+                                    <button onclick="reprocessDuplicates({{ task.id }}, {{ 'true' if has_retry else 'false' }}, '{{ has_retry.id if has_retry else '' }}')" id="reprocessBtn" {% if stats.dup == 0 %}disabled{% endif %} aria-label="Reprocesar registros duplicados" class="p-3 bg-primary/10 hover:bg-primary/20 border border-primary/30 rounded-xl text-primary transition-all active:scale-95 group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 {% if stats.dup == 0 %}opacity-20 pointer-events-none grayscale{% endif %}" title="Procesar Duplicados ({{ stats.dup }})">
                                         <svg class="w-5 h-5 group-hover:rotate-90 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                                     </button>
                                 {% endif %}
@@ -703,5 +703,31 @@
     <script src="{{ url_for('core.serve_assets', filename='js/global.js') }}"></script>
     <script src="{{ url_for('core.serve_assets', filename='js/psx-tour.js') }}"></script>
     <script src="{{ url_for('core.serve_assets', filename='js/psx-detail.js') }}"></script>
+    <!-- MODAL: YA EXISTE COMPLEMENTARIA (NUEVO) -->
+    <div id="alreadyHasRetryModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
+        <div class="bg-surface-container border border-amber-500/30 rounded-3xl p-8 max-w-md w-full shadow-2xl shadow-amber-500/10 transform transition-all duration-300 scale-95">
+            <div class="flex items-center gap-4 mb-6">
+                <div class="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 border border-amber-500/20">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                </div>
+                <h3 class="text-xl font-black text-body-text uppercase tracking-widest">Acción Bloqueada</h3>
+            </div>
+            
+            <p class="text-label/70 text-sm leading-relaxed mb-8">
+                Esta tarea ya cuenta con una **tarea complementaria** asociada. El sistema bloquea múltiples reprocesos para evitar la saturación del nodo PSX.
+                <br><br>
+                <span class="text-amber-500 font-bold">ID Complementaria:</span> <span id="retryIdLabel" class="text-body-text font-black">#---</span>
+            </p>
+
+            <div class="flex gap-3">
+                <button onclick="closeAlreadyHasRetryModal()" class="flex-1 p-4 bg-surface-container border border-panel-border rounded-2xl text-label font-black text-[11px] uppercase tracking-widest hover:bg-panel-fill/20 transition-all active:scale-95">
+                    Entendido
+                </button>
+                <a id="goToRetryBtn" href="#" class="flex-1 p-4 bg-amber-500 text-white rounded-2xl font-black text-[11px] uppercase tracking-widest text-center shadow-lg shadow-amber-500/20 hover:bg-amber-600 transition-all active:scale-95">
+                    Ir a Tarea
+                </a>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

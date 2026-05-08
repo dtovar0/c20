@@ -208,11 +208,38 @@ function renderGhostRows(settings, columns) {
     tbody.append(ghostHtml);
 }
 
-function reprocessDuplicates(taskId) {
+function reprocessDuplicates(taskId, alreadyHasRetry = false, retryId = '') {
+    if (alreadyHasRetry) {
+        const modal = document.getElementById('alreadyHasRetryModal');
+        const label = document.getElementById('retryIdLabel');
+        const btn = document.getElementById('goToRetryBtn');
+        
+        if (modal && label && btn) {
+            label.innerText = `#${retryId}`;
+            btn.href = `/api/psx/detail/${retryId}`;
+            
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.classList.add('opacity-100');
+            modal.querySelector('div').classList.remove('scale-95');
+            modal.querySelector('div').classList.add('scale-100');
+        }
+        return;
+    }
+
     const modal = document.getElementById('reprocessModal');
     if (modal) {
         modal.classList.remove('opacity-0', 'pointer-events-none');
         modal.classList.add('opacity-100');
+    }
+}
+
+function closeAlreadyHasRetryModal() {
+    const modal = document.getElementById('alreadyHasRetryModal');
+    if (modal) {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        modal.classList.remove('opacity-100');
+        modal.querySelector('div').classList.add('scale-95');
+        modal.querySelector('div').classList.remove('scale-100');
     }
 }
 
@@ -226,7 +253,10 @@ function closeReprocessModal() {
 
 // Cerrar modal con tecla ESC
 window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeReprocessModal();
+    if (e.key === 'Escape') {
+        closeReprocessModal();
+        closeAlreadyHasRetryModal();
+    }
 });
 
 async function executeReprocess(taskId) {

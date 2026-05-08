@@ -65,10 +65,14 @@ def task_detail(task_id):
         history = PSX5KHistory.query.filter_by(task_id=task_id).order_by(PSX5KHistory.fecha.desc()).all()
         command_log = PSX5KCommandLog.query.filter_by(task_id=task_id).first()
         
+        # Verificar si ya existe un reintento
+        has_retry = PSX5KTask.query.filter_by(parent_id=task_id).first()
+        
         return render_template('psx_detail.html', 
                                task=task, 
                                history=history, 
-                               command_log=command_log)
+                               command_log=command_log,
+                               has_retry=has_retry)
     except Exception as e:
         current_app.logger.error(f"Error en task_detail #{task_id}: {e}")
         return render_template('errors/500.html'), 500
