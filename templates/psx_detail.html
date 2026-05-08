@@ -227,7 +227,7 @@
                                             <div class="flex justify-between items-center group/meta">
                                                 <span class="text-[11px] font-black text-label/40 uppercase tracking-[0.2em]">Modo Force</span>
                                                 <span class="text-[11px] font-black {% if task.job.run_force %}text-violet-500 italic{% else %}text-label/20{% endif %} uppercase tracking-widest">
-                                                    {{ 'ON ⚡' if task.job.run_force else 'OFF' }}
+                                                    {{ 'ON' if task.job.run_force else 'OFF' }}
                                                 </span>
                                             </div>
 
