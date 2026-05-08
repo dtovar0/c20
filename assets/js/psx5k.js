@@ -347,9 +347,6 @@ function initPSXDataTable() {
 
                     return `
                         <div class="flex items-center justify-center gap-2 h-full">
-                            <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="${forceStyle}" data-nx-tooltip="FORCE MODE: ${isForce ? 'ACTIVO' : 'INACTIVO'}">
-                                ${forceIcon}
-                            </div>
                             <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="${actionStyle}" data-nx-tooltip="${row.tarea.toUpperCase()}">
                                 ${actionIcon}
                             </div>
@@ -358,6 +355,9 @@ function initPSXDataTable() {
                             </div>
                             <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="${statusStyle}" data-nx-tooltip="${row.estado.toUpperCase()}">
                                 ${statusIcon}
+                            </div>
+                            <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="${forceStyle}" data-nx-tooltip="FORCE MODE: ${isForce ? 'ACTIVO' : 'INACTIVO'}">
+                                ${forceIcon}
                             </div>
                         </div>`;
                 }
