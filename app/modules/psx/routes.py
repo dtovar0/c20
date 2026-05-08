@@ -603,7 +603,7 @@ def download_duplicates(task_id):
         current_app.logger.error(f"Error en download_duplicates #{task_id}: {e}")
         return jsonify({"status": "error", "message": "Error al generar archivo de duplicados"}), 500
 
-@psx_bp.route('/reprocess_duplicates/<int:task_id>', methods=['POST'])
+@psx_bp.route('/reprocess_duplicates/<int:task_id>/', methods=['POST'])
 @login_required
 def reprocess_duplicates(task_id):
     """

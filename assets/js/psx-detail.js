@@ -244,7 +244,7 @@ async function executeReprocess(taskId) {
     btn.disabled = true;
 
     try {
-        const res = await fetch(`/api/psx/reprocess_duplicates/${taskId}`, { method: 'POST' });
+        const res = await fetch(`/api/psx/reprocess_duplicates/${taskId}/`, { method: 'POST' });
         const data = await res.json();
         
         if (data.status === 'success') {
