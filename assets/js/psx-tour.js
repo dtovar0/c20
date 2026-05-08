@@ -20,6 +20,7 @@ const svgCheck = '<path stroke-linecap="round" stroke-linejoin="round" stroke-wi
 const svgWarn = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>';
 const svgClock = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>';
 const svgDelCheck = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>';
+const svgBolt = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>';
 
 class PSXNexusTour {
     constructor(steps) {
@@ -334,8 +335,9 @@ window.startLogTour = function() {
             target: '#colStatusHeader',
             title: 'Estatus Operativo',
             table_headers: ['Tipo', 'Descripción'],
-            content: 'Tríada de indicadores que resume el ciclo de vida del proceso.',
+            content: 'Conjunto de indicadores que resume el ciclo de vida del proceso.',
             table: [
+                ['<b>Force</b>', { text: `${ico(svgBolt, '#8b5cf6')} Indica si la validación forzada está activa o inactiva.`, colspan: 2 }],
                 ['<b>Operación</b>', `${ico(svgPlus, '#2563eb')} Alta`, `${ico(svgTrash, '#f43f5e')} Baja`],
                 ['<b>Modo</b>', { text: `${ico(svgIn, '#0ea5e9')} Solo Llamadas`, colspan: 2 }],
                 ['', { text: `${ico(svgInOut, '#6366f1')} Llamadas y Recibe`, colspan: 2 }],

@@ -629,12 +629,28 @@ def reprocess_duplicates(task_id):
         if not duplicates:
             return jsonify({"status": "error", "message": "No se encontraron registros duplicados para procesar."}), 400
 
-        # 3. Crear la nueva tarea clónica
+        # 3. Crear el nuevo Job y Tarea clónica (FORZANDO EL PROCESO)
+        from .models import PSX5KJob
+        
+        # Creamos un Job independiente para poder activar el FORCE 
+        # sin alterar la configuración del Job original
+        new_job = PSX5KJob(
+            usuario=parent_task.job.usuario,
+            tarea=parent_task.job.tarea,
+            accion_tipo=parent_task.job.accion_tipo,
+            datos_tipo=parent_task.job.datos_tipo,
+            routing_label=parent_task.job.routing_label,
+            archivo_origen=f"RETRY_DUP_TASK_{task_id}",
+            run_force=True # <--- ACTIVAMOS EL FORCE POR DEFECTO PARA EL REPROCESO
+        )
+        db.session.add(new_job)
+        db.session.flush()
+
         ani_list = [d.numero for d in duplicates]
         task_data_value = ",".join(ani_list)
         
         new_task = PSX5KTask(
-            job_id=parent_task.job_id,  # Vinculamos al mismo job maestro
+            job_id=new_job.id, # Vinculado al nuevo Job con Force
             chunk_index=1,
             chunk_total=1,
             datos=task_data_value,
@@ -647,7 +663,7 @@ def reprocess_duplicates(task_id):
         new_detail = PSX5KDetail(id=new_task.id, total=len(ani_list), ok=0, fail=0)
         db.session.add(new_detail)
         
-        add_audit_log("tarea duplicados - reintento", status="info", detail=f"Target: #{new_task.id} | Parent: #{task_id} | Registros: {len(ani_list)}")
+        add_audit_log("reproceso duplicados (force)", status="info", detail=f"Target: #{new_task.id} | Parent: #{task_id} | Registros: {len(ani_list)} | Force: ON")
         
         db.session.commit()
         

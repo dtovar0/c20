@@ -338,9 +338,19 @@ function initPSXDataTable() {
                         statusStyle = getNexusBadgeStyle('#f59e0b', 0.15, 0.3); // Amber-500
                     }
  
+                    // 4. Force Mode Indicator (NUEVO)
+                    const isForce = row.run_force === true || String(row.run_force) === 'true';
+                    const forceIcon = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>';
+                    const forceStyle = isForce 
+                        ? 'border-violet-500/30 bg-violet-500/10 text-violet-500 shadow-[0_0_15px_rgba(139,92,246,0.2)]' 
+                        : 'border-panel-border/20 bg-surface-container/20 text-label/20 opacity-40';
+
                     return `
                         <div class="flex items-center justify-center gap-2 h-full">
-                            <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="${actionStyle}" data-nx-tooltip="${row.tarea.toUpperCase()}${row.run_force ? ' (FORCE MODE)' : ''}">
+                            <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="${forceStyle}" data-nx-tooltip="FORCE MODE: ${isForce ? 'ACTIVO' : 'INACTIVO'}">
+                                ${forceIcon}
+                            </div>
+                            <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="${actionStyle}" data-nx-tooltip="${row.tarea.toUpperCase()}">
                                 ${actionIcon}
                             </div>
                             <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="${modeStyle}" data-nx-tooltip="MODO: ${modeTitle.toUpperCase()}">
