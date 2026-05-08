@@ -337,12 +337,12 @@ window.startLogTour = function() {
             table_headers: ['Tipo', 'Descripción'],
             content: 'Conjunto de indicadores que resume el ciclo de vida del proceso.',
             table: [
-                ['<b>Force</b>', { text: `${ico(svgBolt, '#8b5cf6')} Indica si la validación forzada está activa o inactiva.`, colspan: 2 }],
                 ['<b>Operación</b>', `${ico(svgPlus, '#2563eb')} Alta`, `${ico(svgTrash, '#f43f5e')} Baja`],
                 ['<b>Modo</b>', { text: `${ico(svgIn, '#0ea5e9')} Solo Llamadas`, colspan: 2 }],
                 ['', { text: `${ico(svgInOut, '#6366f1')} Llamadas y Recibe`, colspan: 2 }],
                 ['<b>Estado</b>', `${ico(svgSpin, '#2563eb')} En Ejecución`, `${ico(svgCheck, '#10b981')} Completada`],
-                ['', `${ico(svgWarn, '#f43f5e')} Error`, `${ico(svgClock, '#f59e0b')} Programada`]
+                ['', `${ico(svgWarn, '#f43f5e')} Error`, `${ico(svgClock, '#f59e0b')} Programada`],
+                ['<b>Force</b>', { text: `${ico(svgBolt, '#8b5cf6')} Indica si la validación forzada está activa o inactiva.`, colspan: 2 }]
             ]
         },
         {
