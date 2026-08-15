@@ -101,6 +101,19 @@ def send_notification_by_slug(slug, target_email, context=None):
                 body = body.replace(f"{{{key}}}", str(val))
                 subject = subject.replace(f"{{{key}}}", str(val))
 
+        # Los placeholders que el emisor no rellenó se sustituyen por '-' en vez
+        # de quedar literales en el correo: una misma plantilla la usan varios
+        # emisores (PSX5K, C20, Teams) y no todos aportan los mismos campos.
+        import re as _re
+        _hueco = _re.compile(r'\{[a-zA-Z_][a-zA-Z0-9_]*\}')
+        body = _hueco.sub('-', body)
+        # En el asunto se elimina además el fragmento que rodeaba al hueco, para
+        # no dejar restos como "Tarea #" sin número. Los fragmentos se delimitan
+        # por '·', así que un asunto sin ningún dato conserva solo su cabecera.
+        partes = [p.strip() for p in subject.split('·')]
+        partes = [p for p in partes if p and not _hueco.search(p)]
+        subject = ' · '.join(partes) if partes else _hueco.sub('', template.subject).strip(' ·')
+
         msg = MIMEMultipart()
         msg['From'] = f"{config.sender_name} <{config.username}>"
         msg['To'] = target_email

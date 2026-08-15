@@ -355,7 +355,12 @@ def main():
                 target = get_notification_target(task.job.usuario)
                 if target:
                     send_notification_by_slug(slug='inicio', target_email=target, 
-                                            context={'usuario': task.job.usuario, 'hora': task.fecha_inicio.strftime('%H:%M:%S')})
+                                            context={'usuario': task.job.usuario,
+                                                     'hora': task.fecha_inicio.strftime('%H:%M:%S'),
+                                                     'seccion': 'PSX5K', 'tarea': task.id,
+                                                     'operacion': (task.job.tarea or '').upper(),
+                                                     'parametro': task.job.routing_label or '-',
+                                                     'registros': len(ani_list)})
                     print(f"📧 Correo de inicio enviado satisfactoriamente a: {target}")
                 
                 # Procesar datos
@@ -403,7 +408,11 @@ def main():
                     target = get_notification_target(task.job.usuario)
                     if target:
                         send_notification_by_slug(slug='error', target_email=target,
-                                                context={'usuario': task.job.usuario, 'ip': 'PSX_NODE', 'error': str(task_err)[:100]})
+                                                context={'usuario': task.job.usuario, 'ip': 'PSX_NODE',
+                                                         'seccion': 'PSX5K', 'tarea': task.id,
+                                                         'operacion': (task.job.tarea or '').upper(),
+                                                         'resultado': 'ERROR',
+                                                         'error': str(task_err)[:150]})
                         print(f"📧 Correo de error enviado satisfactoriamente a: {target}")
 
                     # Limpiar de la lista de notificados si existía
@@ -463,7 +472,16 @@ def main():
                                             context={
                                                 'usuario': task.job.usuario, 
                                                 'hora': task.fecha_fin.strftime('%H:%M:%S'),
-                                                'url': task_url
+                                                'url': task_url,
+                                                'seccion': 'PSX5K', 'tarea': task.id,
+                                                'operacion': (task.job.tarea or '').upper(),
+                                                'parametro': task.job.routing_label or '-',
+                                                'resultado': 'COMPLETADO',
+                                                'total': detail.total,
+                                                'aplicados': detail.ok + detail.force_ok + detail.del_ + detail.delcheck,
+                                                'sin_aplicar': detail.dup,
+                                                'desglose': f"OK: {detail.ok} | FAIL: {detail.fail} | DUP: {detail.dup} | FORCE: {detail.force_ok}",
+                                                'incidencias': 'Ninguna' if detail.fail == 0 else f"{detail.fail} registro(s) con error"
                                             })
                     print(f"📧 Correo de término enviado satisfactoriamente a: {target} | URL: {task_url}")
 

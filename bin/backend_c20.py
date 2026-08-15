@@ -206,7 +206,10 @@ def handle_stale_tasks(app):
                             slug='error', target_email=admin.email,
                             context={
                                 'usuario': 'SYSTEM_WATCHDOG', 'ip': 'LOCAL_WORKER',
-                                'error': f'TAREA_{label.upper()}_ABORTADA_TIMEOUT_ID_{task.id} (>{kill_timeout}min)'
+                                'seccion': label, 'tarea': task.id,
+                                'operacion': (task.job.tarea or '').upper(),
+                                'resultado': 'ABORTADA POR TIMEOUT',
+                                'error': f'Tarea abortada tras exceder {kill_timeout} min sin terminar'
                             }
                         )
 
@@ -235,7 +238,10 @@ def handle_stale_tasks(app):
                                 slug='error', target_email=admin.email,
                                 context={
                                     'usuario': 'SYSTEM_WATCHDOG', 'ip': 'LOCAL_WORKER',
-                                    'error': f'DEMORA_DETECTADA_{label.upper()}_ID_{task.id} (>{notify_timeout}min)'
+                                    'seccion': label, 'tarea': task.id,
+                                    'operacion': (task.job.tarea or '').upper(),
+                                    'resultado': 'EN CURSO CON DEMORA',
+                                    'error': f'La tarea lleva más de {notify_timeout} min en ejecución'
                                 }
                             )
                         except Exception as e:
@@ -316,15 +322,20 @@ def ejecutar_tarea(seccion, cfg, task):
     task.fecha_inicio = datetime.datetime.now()
     db.session.commit()
 
+    numeros = process_task_data(task, cfg['upload_dir'])
+
     target = get_notification_target(task.job.usuario)
     if target:
         send_notification_by_slug(
             slug='inicio', target_email=target,
             context={'usuario': task.job.usuario,
-                     'hora': task.fecha_inicio.strftime('%H:%M:%S')}
+                     'hora': task.fecha_inicio.strftime('%H:%M:%S'),
+                     'seccion': label,
+                     'tarea': task.id,
+                     'operacion': (task.job.tarea or '').upper(),
+                     'registros': len(numeros),
+                     'parametro': parametro or '-'}
         )
-
-    numeros = process_task_data(task, cfg['upload_dir'])
 
     add_audit_log(
         f"EJECUCIÓN INICIADA ({label.upper()}-{task.id})", status="info",
@@ -370,7 +381,10 @@ def ejecutar_tarea(seccion, cfg, task):
             send_notification_by_slug(
                 slug='error', target_email=target,
                 context={'usuario': task.job.usuario, 'ip': 'C20_NODE',
-                         'error': str(task_err)[:100]}
+                         'seccion': label, 'tarea': task.id,
+                         'operacion': (task.job.tarea or '').upper(),
+                         'resultado': 'ERROR',
+                         'error': str(task_err)[:150]}
             )
         notified_stale_tasks.pop((seccion, task.id), None)
         return
@@ -436,11 +450,28 @@ def ejecutar_tarea(seccion, cfg, task):
     target = get_notification_target(task.job.usuario)
     if target:
         base_url = os.getenv('BASE_URL', 'http://10.224.2.146')
+        # OFC2CODE como referencia del lote: es la única tabla por la que pasa
+        # cada número una sola vez, así que sus cifras sí son el tamaño real.
+        ref = results.get('ofc2code', {})
+        aplicados = ref.get('ok', 0)
+        sin_aplicar = ref.get('fail', 0)
+        total_ref = ref.get('total', 0)
         send_notification_by_slug(
             slug='terminado', target_email=target,
             context={'usuario': task.job.usuario,
                      'hora': task.fecha_fin.strftime('%H:%M:%S'),
-                     'url': f"{base_url}{cfg['detail_url']}/{task.id}"}
+                     'url': f"{base_url}{cfg['detail_url']}/{task.id}",
+                     'seccion': label,
+                     'tarea': task.id,
+                     'operacion': (task.job.tarea or '').upper(),
+                     'parametro': parametro or '-',
+                     'resultado': 'TERMINADO CON ERRORES' if errores else 'COMPLETADO',
+                     'total': total_ref,
+                     'aplicados': aplicados,
+                     'sin_aplicar': sin_aplicar,
+                     'duracion': detail.duracion,
+                     'desglose': resumen or '-',
+                     'incidencias': '; '.join(errores) if errores else 'Ninguna'}
         )
 
 
@@ -505,7 +536,10 @@ def main():
                             slug='error', target_email=admin.email,
                             context={'usuario': 'SYSTEM_WORKER',
                                      'ip': os.getenv('C20_HOST', 'C20_NODE'),
-                                     'error': f'CONECTIVIDAD FALLIDA: {msg}'}
+                                     'seccion': cfg['label'], 'tarea': task.id,
+                                     'operacion': 'CONEXIÓN',
+                                     'resultado': 'SIN CONECTIVIDAD',
+                                     'error': f'No se pudo conectar con el nodo: {msg}'}
                         )
 
                     print("⏳ Pospone tarea por falta de conectividad.")
