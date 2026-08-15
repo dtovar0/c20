@@ -364,7 +364,7 @@ def check_teams_connectivity():
         if bin_path not in sys.path:
             sys.path.insert(0, bin_path)
 
-        from switch_cmd import test_connectivity
+        from c20_cmd import test_connectivity
         ok, message = test_connectivity()
 
         if ok:

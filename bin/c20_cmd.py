@@ -1,5 +1,5 @@
 """
-Motor de ejecución del switch, compartido por las secciones C20 y Teams.
+Motor de ejecución del C20, compartido por sus secciones (C20 y Teams).
 
 Sustituye a los scripts expect del sistema legado (add/del_SNPANAME, TOFCNAME,
 OFC2CODE, DNSCRN, por sección) por una única sesión telnet que recorre las
@@ -33,17 +33,17 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DEBUG_ENABLED = os.getenv('DEBUG_SWITCH', os.getenv('DEBUG_C20', 'false')).lower() == 'true'
+DEBUG_ENABLED = os.getenv('DEBUG_C20', 'false').lower() == 'true'
 
 # Ladas de 2 dígitos (Monterrey, Guadalajara, CDMX). El resto usa 3.
 # En ambos casos lada + serie suman 6 dígitos.
 LADAS_CORTAS = {'81', '33', '55'}
 
 # Segundos de espera entre tablas, como el flujo original entre scripts.
-SLEEP_BETWEEN_TABLES = int(os.getenv('SWITCH_SLEEP_BETWEEN_TABLES', os.getenv('C20_SLEEP_BETWEEN_TABLES', 5)))
+SLEEP_BETWEEN_TABLES = int(os.getenv('C20_SLEEP_BETWEEN_TABLES', 5))
 # Espera tras cada 'pos', que el nodo necesita para responder.
-CMD_DELAY = float(os.getenv('SWITCH_CMD_DELAY', os.getenv('C20_CMD_DELAY', 1)))
-EXPECT_TIMEOUT = int(os.getenv('SWITCH_EXPECT_TIMEOUT', os.getenv('C20_EXPECT_TIMEOUT', 15)))
+CMD_DELAY = float(os.getenv('C20_CMD_DELAY', 1))
+EXPECT_TIMEOUT = int(os.getenv('C20_EXPECT_TIMEOUT', 15))
 
 
 # --- PERFILES POR SECCIÓN ---
@@ -394,9 +394,9 @@ def _tally(entries):
     }
 
 
-def switch_cmd(line_task, line_number, parametro=None, seccion='c20'):
+def c20_cmd(line_task, line_number, parametro=None, seccion='c20'):
     """
-    Ejecuta una tarea completa contra el switch en una sola sesión.
+    Ejecuta una tarea completa contra el C20 en una sola sesión.
 
     line_task: 'add' o 'del' ('delete' también se acepta: es la etiqueta de la UI)
     line_number: lista de números

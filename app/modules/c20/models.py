@@ -85,10 +85,8 @@ class C20Task(db.Model):
             "resumen": self.resumen.to_dict() if self.resumen else C20Detail.empty_dict()
         }
 
-# Tablas del C20 que produce cada ejecución, en orden jerárquico (lada -> serie -> número).
-# Las dos primeras solo intervienen en 'add': un 'del' no da de baja ladas ni series.
-C20_TABLES = ('snpaname', 'tofcname', 'ofc2code', 'dnscrn')
-C20_DEL_TABLES = ('ofc2code', 'dnscrn')
+# Definidas en shared_models: son comunes a todas las secciones de la plataforma
+from app.modules.c20.shared_models import C20_TABLES, C20_DEL_TABLES  # noqa: F401
 
 class C20Detail(db.Model):
     """
@@ -180,13 +178,9 @@ class C20CommandLog(db.Model):
         }
 
 
-# El historial y el espejo del switch viven en app.modules.switch.models: son
-# compartidos con Teams porque ambas secciones operan sobre el mismo nodo.
-# Se reexportan aquí para no romper los imports existentes del módulo.
-from app.modules.switch.models import (  # noqa: E402
-    SwitchHistory as C20History,
-    SwitchSnpaname as C20Snpaname,
-    SwitchTofcname as C20Tofcname,
-    SwitchOfc2code as C20Ofc2code,
-    SwitchDnscrn as C20Dnscrn,
+# El historial y el espejo viven en shared_models: son compartidos con Teams
+# porque ambas secciones operan sobre el mismo nodo. Se reexportan aquí para no
+# romper los imports existentes del módulo.
+from app.modules.c20.shared_models import (  # noqa: E402,F401
+    C20History, C20Snpaname, C20Tofcname, C20Ofc2code, C20Dnscrn,
 )

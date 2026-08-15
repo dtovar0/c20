@@ -141,8 +141,8 @@ def create_app():
     from app.modules.notifications.models import SMTPConfig, NotificationTemplate
     from app.modules.auth.models import AuthConfig, User
     from app.modules.psx.models import PSX5KTask, PSX5KDetail, PSX5KHistory
-    from app.modules.switch.models import (
-        SwitchHistory, SwitchSnpaname, SwitchTofcname, SwitchOfc2code, SwitchDnscrn)
+    from app.modules.c20.shared_models import (
+        C20History, C20Snpaname, C20Tofcname, C20Ofc2code, C20Dnscrn)
     from app.modules.c20.models import C20Job, C20Task, C20Detail, C20CommandLog
     from app.modules.teams.models import TeamsJob, TeamsTask, TeamsDetail, TeamsCommandLog
 

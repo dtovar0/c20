@@ -1,13 +1,13 @@
 from app import db
-from app.modules.switch.models import SWITCH_TABLES as TEAMS_TABLES
+from app.modules.c20.shared_models import C20_TABLES as TEAMS_TABLES
 import datetime
 
-# El historial y el espejo del switch son compartidos con C20: ambas secciones
-# operan sobre el mismo nodo, así que el estado del switch y el rastro de cada
+# El historial y el espejo son compartidos con C20: ambas secciones
+# operan sobre el mismo nodo, así que su estado y el rastro de cada
 # número son únicos. Lo propio de Teams son la cola, las tareas y los contadores.
-from app.modules.switch.models import (
-    SwitchHistory as TeamsHistory,
-    SwitchSnpaname, SwitchTofcname, SwitchOfc2code, SwitchDnscrn,
+from app.modules.c20.shared_models import (  # noqa: F401
+    C20History as TeamsHistory,
+    C20Snpaname, C20Tofcname, C20Ofc2code, C20Dnscrn,
 )
 
 
@@ -101,7 +101,7 @@ class TeamsTask(db.Model):
 
 class TeamsDetail(db.Model):
     """
-    RESUMEN POR TAREA: un juego de contadores por cada tabla del switch.
+    RESUMEN POR TAREA: un juego de contadores por cada tabla del C20.
 
     Cada tabla se recorre en una pasada independiente y produce su propio
     total/ok/fail, igual que la tabla `daemon_teams` del sistema legado.
