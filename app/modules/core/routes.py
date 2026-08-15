@@ -46,6 +46,15 @@ def dashboard_2():
         current_app.logger.error(f"Error en dashboard_2: {e}")
         return "Internal Error", 500
 
+@core_bp.route("/c20")
+@login_required
+def c20():
+    try:
+        return render_template("c20.html")
+    except Exception as e:
+        current_app.logger.error(f"Error en c20: {e}")
+        return "Internal Error", 500
+
 @core_bp.route("/psx5k")
 @login_required
 def psx5k():

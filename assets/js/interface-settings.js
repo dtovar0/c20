@@ -247,16 +247,21 @@ function startGlobalPolling() {
 
     const intervalMs = window.nexusSettings.refreshInterval * 1000;
 
-    // 2. Register Poller: PSX Task Table (if present)
-    const tableTarget = $('#psxDataTable'); // Usar ID directo del elemento
-    if (tableTarget.length && $.fn.dataTable.isDataTable('#psxDataTable')) {
-        const psxTable = tableTarget.DataTable();
-        const id = setInterval(() => {
-            console.log('🔄 Polling: DataTables Reload');
-            psxTable.ajax.reload(null, false); // Reload without resetting pagination
-        }, intervalMs);
-        window.nexusPollers.push({ name: 'psx_table', id });
-    }
+    // 2. Register Poller: Operational Task Tables (PSX5K / C20, si están presentes)
+    [
+        { selector: '#psxDataTable', name: 'psx_table' },
+        { selector: '#c20DataTable', name: 'c20_table' }
+    ].forEach(({ selector, name }) => {
+        const tableTarget = $(selector); // Usar ID directo del elemento
+        if (tableTarget.length && $.fn.dataTable.isDataTable(selector)) {
+            const opTable = tableTarget.DataTable();
+            const id = setInterval(() => {
+                console.log('🔄 Polling: DataTables Reload');
+                opTable.ajax.reload(null, false); // Reload without resetting pagination
+            }, intervalMs);
+            window.nexusPollers.push({ name, id });
+        }
+    });
 
     // 3. Register Poller: Dashboard Charts (if present)
     // Add logic here if dashboard charts need refresh

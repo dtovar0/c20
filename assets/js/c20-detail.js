@@ -1,0 +1,294 @@
+/* C20 DETAIL MODULE - LOGIC DECOUPLING */
+
+let historyDataTable;
+
+$(document).ready(function() {
+    initHistoryDataTable();
+
+    // Custom tab switching logic
+    // We don't use ready for switchTab as it is called from onclick
+});
+
+/**
+ * Tab switching logic for Dashboard, Technical History, and CMD History.
+ */
+function switchTab(tabId) {
+    // 1. Reset all panels
+    const panes = document.querySelectorAll('.tab-panel');
+    panes.forEach(p => {
+        p.classList.add('hidden');
+        p.classList.remove('active');
+        p.style.opacity = '0';
+        p.style.transform = 'translateY(10px)';
+    });
+
+    // 2. Reset all triggers
+    document.querySelectorAll('.tab-trigger').forEach(b => {
+        b.classList.remove('nav-item-active');
+        b.classList.remove('active');
+    });
+
+    // 3. Activate target panel
+    const activePane = document.getElementById('tab-panel-' + tabId);
+    if (activePane) {
+        activePane.classList.remove('hidden');
+        activePane.classList.add('active');
+        
+        // Trigger animation
+        setTimeout(() => {
+            activePane.style.opacity = '1';
+            activePane.style.transform = 'translateY(0)';
+            activePane.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+        }, 50);
+
+        // Specific fix for DataTables
+        if (tabId === 'logs' && historyDataTable) {
+            setTimeout(() => {
+                historyDataTable.columns.adjust().draw(false);
+            }, 100);
+        }
+    }
+
+    // 4. Activate target trigger
+    const btn = document.getElementById('tab-trigger-' + tabId);
+    if (btn) {
+        btn.classList.add('nav-item-active');
+        btn.classList.add('active');
+    }
+}
+
+/**
+ * Returns optimal pageLength based on viewport height for detail view.
+ */
+function getPageLength() {
+    const h = window.innerHeight;
+    if (h < 900) return 9;
+    return 10;
+}
+
+/**
+ * DATATABLES INTEGRATION
+ */
+function initHistoryDataTable() {
+    const tableEl = $('#historyTable');
+    if (!tableEl.length) return;
+
+    historyDataTable = tableEl.DataTable({
+        autoWidth: false,
+        pageLength: getPageLength(),
+        pagingType: 'simple',
+        order: [[3, 'desc']], // Order by time by default
+        layout: {
+            topStart: null,
+            topEnd: null,
+            bottomStart: 'info',
+            bottomEnd: 'paging'
+        },
+        language: {
+            zeroRecords: "No se encontraron registros",
+            info: "Mostrando _START_-_END_ de _TOTAL_ registros",
+            infoEmpty: "Mostrando 0-0 de 0 registros",
+            infoFiltered: "(filtrado de _MAX_ registros totales)",
+            paginate: {
+                previous: '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>',
+                next: '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>'
+            }
+        },
+        drawCallback: function(settings) {
+            renderGhostRows(settings, 4);
+        },
+        initComplete: function() {
+            // Wrap table in .nx-table-scroll
+            const cell = $(this.api().table().container()).find('.dt-layout-row.dt-layout-table .dt-layout-cell');
+            const tbl  = cell.children('table');
+            if (tbl.length && !cell.children('.nx-table-scroll').length) {
+                tbl.wrap('<div class="nx-table-scroll"></div>');
+            }
+            
+            const api = this.api();
+            let resizeTimer;
+            $(window).on('resize.dtDetail', function() {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function() {
+                    const newLen = getPageLength();
+                    if (api.page.len() !== newLen) api.page.len(newLen).draw();
+                    else api.draw(false);
+                }, 200);
+            });
+        }
+    });
+
+    // Sync custom search input
+    $('#logSearch').on('input', function() {
+        historyDataTable.search(this.value).draw();
+    });
+
+    // Custom quick filters
+    window.quickFilter = function(type) {
+        if (type === 'all') {
+            historyDataTable.search('').column(2).search('').draw();
+        } else {
+            // Search in column 2 (Event) using regex
+            historyDataTable.column(2).search(type).draw();
+        }
+
+        // Update UI of buttons
+        updateFilterUI(type);
+    };
+
+    // Register for global search
+    window.activeNexusTable = historyDataTable;
+}
+
+function updateFilterUI(type) {
+    const container = document.getElementById('logFiltersContainer');
+    if (!container) return;
+    
+    const buttons = container.querySelectorAll('button');
+    buttons.forEach(btn => {
+        const btnOnclick = btn.getAttribute('onclick') || '';
+        const isTarget = btnOnclick.includes(`'${type}'`);
+        const isAll = btnOnclick.includes("'all'");
+        const base = "p-3 rounded-2xl transition-all active:scale-95 border ";
+        
+        if (isAll) {
+            btn.className = base + "bg-panel-fill/20 hover:bg-panel-fill/40 border-panel-border/30 text-label";
+            return;
+        }
+
+        if (btnOnclick.toLowerCase().includes("'ok'")) {
+            btn.className = base + (isTarget ? "bg-emerald-500 text-white border-emerald-500 shadow-lg shadow-emerald-500/20" : "bg-emerald-500/10 hover:bg-emerald-500/20 border-emerald-500/30 text-emerald-500");
+        } else if (btnOnclick.toLowerCase().includes("'force_ok'")) {
+            btn.className = base + (isTarget ? "bg-sky-500 text-white border-sky-500 shadow-lg shadow-sky-500/20" : "bg-sky-500/10 hover:bg-sky-500/20 border-sky-500/30 text-sky-400");
+        } else if (btnOnclick.toLowerCase().includes("'fail'")) {
+            btn.className = base + (isTarget ? "bg-rose-500 text-white border-rose-500 shadow-lg shadow-rose-500/20" : "bg-rose-500/10 hover:bg-rose-500/20 border-rose-500/30 text-rose-500");
+        } else if (btnOnclick.toLowerCase().includes("'dup'")) {
+            btn.className = base + (isTarget ? "bg-amber-500 text-white border-amber-500 shadow-lg shadow-amber-500/20" : "bg-amber-500/10 hover:bg-amber-500/20 border-amber-500/30 text-amber-500");
+        }
+    });
+}
+
+function renderGhostRows(settings, columns) {
+    const api = new $.fn.dataTable.Api(settings);
+    const info = api.page.info();
+    const tbody = $(settings.nTBody);
+    const pageLen = api.page.len();
+    
+    // 1. Cleanup
+    tbody.find('.ghost-row').remove();
+    tbody.find('.dataTables_empty').closest('tr').remove();
+
+    // 2. Calculate row height based on the GRID SCOPE
+    const container = api.table().container();
+    const gridH = $(container).height();
+    let rowH = 50;
+    
+    if (gridH > 0) {
+        const totalRows  = pageLen;
+        rowH = Math.max(40, Math.floor((gridH - 52) / (totalRows + 1)) - 1);
+    }
+    
+    $(container).css('--row-h', rowH + 'px');
+
+    // 3. Ghost Row injection
+    const realRows   = info.end - info.start;
+    const ghostCount = pageLen - realRows;
+    if (ghostCount <= 0) return;
+
+    let ghostHtml = '';
+    for (let i = 0; i < ghostCount; i++) {
+        ghostHtml += `
+            <tr class="history-row ghost-row pointer-events-none select-none">
+                <td><div></div></td>
+                ${Array(columns - 1).fill(0).map(() => `
+                    <td><div></div></td>
+                `).join('')}
+            </tr>`;
+    }
+    tbody.append(ghostHtml);
+}
+
+function reprocessDuplicates(taskId, alreadyHasRetry = false, retryId = '') {
+    if (alreadyHasRetry) {
+        const modal = document.getElementById('alreadyHasRetryModal');
+        const label = document.getElementById('retryIdLabel');
+        const btn = document.getElementById('goToRetryBtn');
+        
+        if (modal && label && btn) {
+            label.innerText = `#${retryId}`;
+            btn.href = `/api/c20/detail/${retryId}`;
+            
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.classList.add('opacity-100');
+            modal.querySelector('div').classList.remove('scale-95');
+            modal.querySelector('div').classList.add('scale-100');
+        }
+        return;
+    }
+
+    const modal = document.getElementById('reprocessModal');
+    if (modal) {
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        modal.classList.add('opacity-100');
+    }
+}
+
+function closeAlreadyHasRetryModal() {
+    const modal = document.getElementById('alreadyHasRetryModal');
+    if (modal) {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        modal.classList.remove('opacity-100');
+        modal.querySelector('div').classList.add('scale-95');
+        modal.querySelector('div').classList.remove('scale-100');
+    }
+}
+
+function closeReprocessModal() {
+    const modal = document.getElementById('reprocessModal');
+    if (modal) {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        modal.classList.remove('opacity-100');
+    }
+}
+
+// Cerrar modal con tecla ESC
+window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        closeReprocessModal();
+        closeAlreadyHasRetryModal();
+    }
+});
+
+async function executeReprocess(taskId) {
+    const btn = document.getElementById('confirmReprocessBtn');
+    if (!btn) return;
+    
+    const originalContent = btn.innerHTML;
+    btn.innerHTML = `
+        <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <span>Procesando...</span>
+    `;
+    btn.disabled = true;
+
+    try {
+        const res = await fetch(`/api/c20/reprocess_duplicates/${taskId}/`, { method: 'POST' });
+        const data = await res.json();
+        
+        if (data.status === 'success') {
+            closeReprocessModal();
+            // Notificamos éxito con el estilo de la plataforma (puedes usar un toast si tienes, si no alert por ahora)
+            location.href = `/api/c20/detail/${data.task_id}?tour=true`;
+        } else {
+            alert(`Error: ${data.message}`);
+            btn.innerHTML = originalContent;
+            btn.disabled = false;
+        }
+    } catch (err) {
+        alert('Fallo de conexión con el servidor.');
+        btn.innerHTML = originalContent;
+        btn.disabled = false;
+    }
+}

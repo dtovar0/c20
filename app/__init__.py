@@ -46,6 +46,9 @@ def create_app():
     # Custom PSX Settings
     app.config['PSX_CHUNK_SIZE'] = int(os.getenv('PSX_CHUNK_SIZE', 200))
 
+    # Custom C20 Settings
+    app.config['C20_CHUNK_SIZE'] = int(os.getenv('C20_CHUNK_SIZE', 200))
+
     # Inicializar Extensiones
     Compress(app)
     db.init_app(app)
@@ -115,14 +118,16 @@ def create_app():
     from app.modules.notifications.routes import notifications_bp
     from app.modules.auth.routes import auth_bp
     from app.modules.psx.routes import psx_bp
+    from app.modules.c20.routes import c20_bp
     from app.modules.api import api_bp
-    
+
     app.register_blueprint(core_bp)
     app.register_blueprint(settings_bp)
     app.register_blueprint(audit_bp)
     app.register_blueprint(notifications_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(psx_bp)
+    app.register_blueprint(c20_bp)
     app.register_blueprint(api_bp)
 
     # Sincronizar Modelos (Importar antes de crear tablas)
@@ -131,6 +136,7 @@ def create_app():
     from app.modules.notifications.models import SMTPConfig, NotificationTemplate
     from app.modules.auth.models import AuthConfig, User
     from app.modules.psx.models import PSX5KTask, PSX5KDetail, PSX5KHistory
+    from app.modules.c20.models import C20Job, C20Task, C20Detail, C20History, C20CommandLog
 
     # Crear tablas automáticamente dentro del contexto de la app
     with app.app_context():
