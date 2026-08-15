@@ -164,10 +164,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const historyChart = new ApexCharts(document.querySelector("#onTimeRadial"), optionsHistory);
     if (document.querySelector("#onTimeRadial")) historyChart.render();
 
-    // 3. PSX5K Stats Integration
+    // 3. Stats Integration (agrega PSX5K, C20 y Teams)
+    // Cada cifra llega como {total, por_seccion:{...}} para poder mostrar el
+    // total y su reparto sin sumar en cliente.
+    const SECCION_LABEL = { psx5k: 'PSX5K', c20: 'C20', teams: 'Teams' };
+
+    function pintarDesglose(elId, metrica) {
+        const el = document.getElementById(elId);
+        if (!el) return;
+        const reparto = (metrica && metrica.por_seccion) || {};
+        const partes = Object.entries(reparto)
+            .filter(([, v]) => v > 0)
+            .map(([k, v]) => `${SECCION_LABEL[k] || k} ${v.toLocaleString()}`);
+        el.textContent = partes.length ? partes.join(' · ') : '';
+    }
+
+    // Acepta tanto el formato con desglose como una cifra suelta
+    const valorDe = (m) => (m && typeof m === 'object' ? (m.total || 0) : (m || 0));
+
     async function loadPSXStats() {
         try {
-            const response = await fetch('/api/psx/stats');
+            const response = await fetch('/api/stats');
             const data = await response.json();
             
             if (data.status === 'success') {
@@ -179,15 +196,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 const volumeEl = document.getElementById('kpiOperationalVolume');
                 const efficiencyEl = document.getElementById('kpiEfficiency');
 
-                if (totalEl) totalEl.textContent = s.total.toLocaleString();
-                if (pendingEl) pendingEl.textContent = s.pending.toLocaleString();
-                if (scheduledEl) scheduledEl.textContent = s.scheduled.toLocaleString();
-                if (volumeEl) volumeEl.textContent = s.volume_today.toLocaleString();
-                if (efficiencyEl) efficiencyEl.textContent = s.processed_total.toLocaleString();
+                if (totalEl) totalEl.textContent = valorDe(s.total).toLocaleString();
+                if (pendingEl) pendingEl.textContent = valorDe(s.pending).toLocaleString();
+                if (scheduledEl) scheduledEl.textContent = valorDe(s.scheduled).toLocaleString();
+                if (volumeEl) volumeEl.textContent = valorDe(s.volume_today).toLocaleString();
+                if (efficiencyEl) efficiencyEl.textContent = valorDe(s.processed_total).toLocaleString();
+
+                // Reparto por sección bajo cada KPI
+                pintarDesglose('bdTotalTasks', s.total);
+                pintarDesglose('bdPendingTasks', s.pending);
+                pintarDesglose('bdScheduledTasks', s.scheduled);
+                pintarDesglose('bdOperationalVolume', s.volume_today);
+                pintarDesglose('bdEfficiency', s.processed_total);
 
                 // Update Volume Chart Breakdown
                 if (volumeChart) {
-                    const hasData = s.volume_today > 0;
+                    const hasData = valorDe(s.volume_today) > 0;
                     const volumeContent = document.getElementById('volumeContent');
                     const emptyMessage = document.getElementById('noDataVolume');
 
@@ -214,11 +238,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (historyContent) historyContent.classList.remove('opacity-0', 'pointer-events-none');
                         if (emptyHistory) emptyHistory.classList.add('hidden');
 
-                        const okData = s.last_7_tasks.map(t => t.ok);
-                        const failData = s.last_7_tasks.map(t => t.fail);
-                        const forceData = s.last_7_tasks.map(t => t.force);
-                        const dupData = s.last_7_tasks.map(t => t.dup);
-                        const categories = s.last_7_tasks.map(t => `#${t.id.toString().padStart(4, '0')}`);
+                        const okData = s.last_7_tasks.map(t => t.ok || 0);
+                        const failData = s.last_7_tasks.map(t => t.fail || 0);
+                        const forceData = s.last_7_tasks.map(t => t.force || 0);
+                        const dupData = s.last_7_tasks.map(t => t.dup || 0);
+                        // Las tareas vienen de las tres secciones: se prefija la
+                        // sección para que dos ids iguales no se confundan.
+                        const categories = s.last_7_tasks.map(t =>
+                            `${t.seccion ? t.seccion + '-' : ''}${t.id.toString().padStart(4, '0')}`);
 
                         historyChart.updateOptions({
                             xaxis: { categories: categories }
@@ -236,7 +263,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 if (activeEl) {
-                    activeEl.textContent = s.active_task !== "NINGUNA" ? `PSX-${s.active_task}` : "NINGUNA";
+                    const activa = s.active_task !== "NINGUNA";
+                    activeEl.textContent = activa
+                        ? `${s.active_section || 'TAREA'}-${s.active_task}`
+                        : "NINGUNA";
+                    const bdActive = document.getElementById('bdActiveTask');
+                    // Solo puede haber una tarea activa: el nodo admite una conexión
+                    if (bdActive) bdActive.textContent = activa && s.active_section
+                        ? `Sección: ${s.active_section}` : '';
                     if (s.active_task !== "NINGUNA") {
                         activeEl.classList.add('text-emerald-500');
                     } else {
@@ -245,7 +279,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         } catch (error) {
-            console.error('Error loading PSX stats:', error);
+            console.error('Error loading stats:', error);
         }
     }
 

@@ -125,8 +125,19 @@ document.addEventListener('DOMContentLoaded', () => {
             if (searchTitle) searchTitle.textContent = `Resultados para: "${query}"`;
                 
             try {
-                const response = await fetch(`/api/psx/history/search?q=${encodeURIComponent(query)}`);
-                const data = await response.json();
+                // Historial combinado: PSX5K más las secciones de la plataforma C20
+                const respuestas = await Promise.all([
+                    fetch(`/api/psx/history/search?q=${encodeURIComponent(query)}`)
+                        .then(r => r.json()).catch(() => null),
+                    fetch(`/api/c20/history/search?q=${encodeURIComponent(query)}&seccion=all`)
+                        .then(r => r.json()).catch(() => null)
+                ]);
+                const [dPsx, dC20] = respuestas;
+                const resultados = [
+                    ...((dPsx && dPsx.results) || []).map(r => ({ ...r, seccion: r.seccion || 'PSX5K' })),
+                    ...((dC20 && dC20.results) || [])
+                ].sort((a, b) => String(b.fecha || '').localeCompare(String(a.fecha || '')));
+                const data = { status: 'success', results: resultados };
                 
                 const tbody = document.getElementById('globalSearchResultsBody');
                 const noResults = document.getElementById('noHistoryResults');
@@ -136,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     tbody.innerHTML = data.results.map(r => `
                         <tr class="hover:bg-primary/5 transition-colors group">
                             <td class="px-6 py-4 text-[12px] font-bold text-label uppercase tracking-tighter">#${r.task_id}</td>
-                            <td class="px-6 py-4 text-[12px] font-bold text-label/80">${r.routing_label || '-'}</td>
+                            <td class="px-6 py-4 text-[12px] font-bold text-label/80">${r.parametro || r.routing_label || '-'}</td>
                             <td class="px-6 py-4 text-center">
                                 <span class="px-2 py-0.5 rounded-md text-[12px] font-black uppercase
                                     ${r.estado === 'OK' ? 'bg-emerald-500/10 text-emerald-500' : 

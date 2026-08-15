@@ -336,10 +336,33 @@ document.addEventListener('DOMContentLoaded', () => {
     cpuEngineChartApex = new ApexCharts(document.querySelector("#cpuEngineChartApex"), optionsCpu);
     cpuEngineChartApex.render();
 
-    // 7. Global Admin Stats Integration
+    // 7. Global Admin Stats Integration (agrega PSX5K, C20 y Teams)
+    // Las cifras llegan como {total, por_seccion:{...}} y las series de las
+    // gráficas vienen ya separadas por sección.
+    const SECCION_LABEL = { psx5k: 'PSX5K', c20: 'C20', teams: 'Teams' };
+    const valorDe = (m) => (m && typeof m === 'object' ? (m.total || 0) : (m || 0));
+
+    function pintarDesglose(elId, metrica) {
+        const el = document.getElementById(elId);
+        if (!el) return;
+        const reparto = (metrica && metrica.por_seccion) || {};
+        const partes = Object.entries(reparto)
+            .filter(([, v]) => v > 0)
+            .map(([k, v]) => `${SECCION_LABEL[k] || k} ${v.toLocaleString()}`);
+        el.textContent = partes.length ? partes.join(' · ') : '';
+    }
+
+    // Convierte {psx5k:[...], c20:[...], teams:[...]} en series de ApexCharts,
+    // omitiendo las secciones que no aportan datos.
+    function seriesPorSeccion(series) {
+        return Object.entries(series || {})
+            .filter(([, datos]) => (datos || []).some(v => v > 0))
+            .map(([k, datos]) => ({ name: SECCION_LABEL[k] || k, data: datos }));
+    }
+
     async function loadGlobalStats() {
         try {
-            const response = await fetch('/api/psx/stats/global');
+            const response = await fetch('/api/stats/global');
             const data = await response.json();
             
             if (data.status === 'success') {
@@ -351,43 +374,43 @@ document.addEventListener('DOMContentLoaded', () => {
                 const queueEl = document.getElementById('globalKpiQueue');
                 const activeEl = document.getElementById('globalKpiActive');
                 
-                if (usersEl) usersEl.textContent = s.users.toLocaleString();
-                if (tasksEl) tasksEl.textContent = s.tasks.toLocaleString();
-                if (pendingEl) pendingEl.textContent = s.pending.toLocaleString();
-                if (scheduledEl) scheduledEl.textContent = s.scheduled.toLocaleString();
-                if (queueEl) queueEl.textContent = s.queue.toLocaleString();
+                if (usersEl) usersEl.textContent = valorDe(s.users).toLocaleString();
+                if (tasksEl) tasksEl.textContent = valorDe(s.tasks).toLocaleString();
+                if (pendingEl) pendingEl.textContent = valorDe(s.pending).toLocaleString();
+                if (scheduledEl) scheduledEl.textContent = valorDe(s.scheduled).toLocaleString();
+                if (queueEl) queueEl.textContent = valorDe(s.queue).toLocaleString();
+
+                // Reparto por sección bajo cada KPI
+                pintarDesglose('globalBdTasks', s.tasks);
+                pintarDesglose('globalBdPending', s.pending);
+                pintarDesglose('globalBdScheduled', s.scheduled);
+                pintarDesglose('globalBdQueue', s.queue);
                 
                 // Sync Top Users Chart (Stacked Breakdown)
                 if (data.stats.top_users && mirrorChartApex) {
                     const u = data.stats.top_users;
-                    mirrorChartApex.updateSeries([
-                        { name: 'Completadas', data: u.ok },
-                        { name: 'Con Errores', data: u.fail },
-                        { name: 'Pendiente', data: u.pending },
-                        { name: 'Programada', data: u.scheduled },
-                        { name: 'Activa', data: u.active }
-                    ], true);
+                    const series = seriesPorSeccion(u.series);
+                    mirrorChartApex.updateSeries(series.length ? series : [{ name: 'Sin datos', data: [] }], true);
                     mirrorChartApex.updateOptions({
-                        xaxis: { categories: u.users },
+                        xaxis: { categories: u.users || [] },
                         yaxis: { show: true, forceNiceScale: true }
                     });
                 }
 
                 // Sync Daily Operations Trend
                 if (data.stats.daily_tasks && demandChartApex) {
-                    const days = data.stats.daily_tasks.map(d => d.day);
-                    const counts = data.stats.daily_tasks.map(d => d.count);
+                    const dt = data.stats.daily_tasks;
+                    const series = seriesPorSeccion(dt.series);
                     demandChartApex.updateOptions({
-                        series: [{
-                            name: 'Operaciones',
-                            data: counts
-                        }],
-                        xaxis: { categories: days },
+                        series: series.length ? series : [{ name: 'Operaciones', data: dt.total || [] }],
+                        xaxis: { categories: dt.days || [] },
                         yaxis: { show: true, forceNiceScale: true }
                     }, false, true); // true to redraw
                 }
 
                 // Sync Daily Analysis (Stacked Status)
+                // analysis_daily no aplica al agregado: cada sección cuenta con
+                // categorías propias (PSX5K tiene force/dup; C20 y Teams no).
                 if (data.stats.analysis_daily && aiPulseChartApex) {
                     const an = data.stats.analysis_daily;
                     aiPulseChartApex.updateOptions({
@@ -404,7 +427,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Sync Today Status Distribution (Donut)
                 if (data.stats.today_stats && cpuEngineChartApex) {
-                    const totalToday = data.stats.today_stats.reduce((a, b) => a + b, 0);
+                    const ts = data.stats.today_stats;
+                    const serieHoy = Array.isArray(ts) ? ts : (ts.total || []);
+                    const totalToday = serieHoy.reduce((a, b) => a + b, 0);
                     const emptyEl = document.getElementById('cpuEmptyState');
                     const chartEl = document.getElementById('cpuEngineChartApex');
                     
@@ -414,13 +439,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     } else {
                         if (emptyEl) emptyEl.classList.add('hidden');
                         if (chartEl) chartEl.style.opacity = '1';
-                        cpuEngineChartApex.updateSeries(data.stats.today_stats, true);
+                        cpuEngineChartApex.updateSeries(serieHoy, true);
                     }
                 }
 
                 if (activeEl) {
                     if (s.active_id) {
-                        activeEl.textContent = `${s.active_name}: PSX-${s.active_id}`;
+                        activeEl.textContent = `${s.active_name}: ${s.active_section || ''}-${s.active_id}`;
                         activeEl.classList.add('text-emerald-500');
                     } else {
                         activeEl.textContent = "NINGUNA";

@@ -73,6 +73,40 @@ def psx5k():
         current_app.logger.error(f"Error en psx5k: {e}")
         return "Internal Error", 500
 
+@core_bp.route("/api/stats")
+@login_required
+def api_stats():
+    """
+    Métricas del usuario actual, agregando PSX5K, C20 y Teams.
+
+    Cada cifra viene con su desglose: {'total': N, 'por_seccion': {...}}, para
+    que el dashboard pueda mostrar el total y el reparto sin sumar en cliente.
+    """
+    try:
+        from flask import jsonify
+        from app.modules.core.stats import stats_usuario
+        return jsonify({"status": "success", "stats": stats_usuario(current_user.email)})
+    except Exception as e:
+        current_app.logger.error(f"Error en api_stats: {e}")
+        from flask import jsonify
+        return jsonify({"status": "error", "message": "Error al calcular estadísticas"}), 500
+
+
+@core_bp.route("/api/stats/global")
+@login_required
+@admin_required
+def api_stats_global():
+    """Métricas de todo el sistema, agregando las tres secciones."""
+    try:
+        from flask import jsonify
+        from app.modules.core.stats import stats_globales
+        return jsonify({"status": "success", "stats": stats_globales()})
+    except Exception as e:
+        current_app.logger.error(f"Error en api_stats_global: {e}")
+        from flask import jsonify
+        return jsonify({"status": "error", "message": "Error al calcular estadísticas globales"}), 500
+
+
 @core_bp.route('/assets/<path:filename>')
 def serve_assets(filename):
     """Handler oficial de assets migrado al Core Blueprint"""
