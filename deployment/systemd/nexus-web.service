@@ -1,0 +1,50 @@
+[Unit]
+Description=Nexus C20 - Interfaz web
+Documentation=https://github.com/dtovar0/c20
+After=network-online.target mysql.service mariadb.service
+Wants=network-online.target
+
+[Service]
+Type=notify
+User=dtovar
+Group=dtovar
+WorkingDirectory=/home/dtovar/bayblade/c20
+
+# La app lee su configuración de .env al arrancar (load_dotenv), así que no se
+# duplica aquí. EnvironmentFile permite sobreescribir puntualmente sin tocarlo.
+EnvironmentFile=-/home/dtovar/bayblade/c20/.env
+
+# Type=notify requiere el plugin de systemd de gunicorn: informa cuando los
+# workers están listos, de modo que systemd no dé el arranque por bueno antes
+# de tiempo.
+ExecStart=/home/dtovar/bayblade/c20/venv/bin/gunicorn \
+    --workers 3 \
+    --bind 0.0.0.0:5000 \
+    --timeout 120 \
+    --graceful-timeout 30 \
+    --access-logfile - \
+    --error-logfile - \
+    --capture-output \
+    "run:app"
+
+ExecReload=/bin/kill -s HUP $MAINPID
+KillMode=mixed
+TimeoutStopSec=30
+
+Restart=always
+RestartSec=5
+
+# Salida a journalctl -u nexus-web -f
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=nexus-web
+
+# Endurecimiento básico: el servicio solo necesita escribir en uploads y logs
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=read-only
+ReadWritePaths=/home/dtovar/bayblade/c20/uploads /home/dtovar/bayblade/c20/logs
+
+[Install]
+WantedBy=multi-user.target

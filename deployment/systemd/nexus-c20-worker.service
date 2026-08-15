@@ -1,0 +1,44 @@
+[Unit]
+Description=Nexus C20 - Worker de tareas (C20 y Teams)
+Documentation=https://github.com/dtovar0/c20
+After=network-online.target mysql.service mariadb.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=dtovar
+Group=dtovar
+WorkingDirectory=/home/dtovar/bayblade/c20
+
+EnvironmentFile=-/home/dtovar/bayblade/c20/.env
+
+# Un solo proceso atiende las colas de C20 y Teams: el nodo admite una única
+# conexión activa. No subir --workers ni lanzar una segunda instancia.
+ExecStart=/home/dtovar/bayblade/c20/venv/bin/python -u /home/dtovar/bayblade/c20/bin/backend_c20.py
+
+# El worker escribe c20_worker.pid al arrancar y lo borra al recibir SIGTERM.
+# Si el proceso muere de golpe, el lock queda huérfano; el propio worker lo
+# detecta al arrancar (comprueba si el PID sigue vivo) y lo limpia. Esta línea
+# cubre el caso de que systemd lo mate sin darle tiempo a hacerlo.
+ExecStopPost=-/bin/rm -f /home/dtovar/bayblade/c20/c20_worker.pid
+
+# Margen para que una tarea en curso termine su sesión con el nodo antes de
+# que systemd fuerce el cierre.
+KillSignal=SIGTERM
+TimeoutStopSec=60
+
+Restart=always
+RestartSec=10
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=nexus-c20-worker
+
+NoNewPrivileges=true
+PrivateTmp=false
+ProtectSystem=full
+ProtectHome=read-only
+ReadWritePaths=/home/dtovar/bayblade/c20/uploads /home/dtovar/bayblade/c20/logs /home/dtovar/bayblade/c20
+
+[Install]
+WantedBy=multi-user.target

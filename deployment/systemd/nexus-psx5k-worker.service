@@ -1,0 +1,38 @@
+[Unit]
+Description=Nexus C20 - Worker de tareas PSX5K
+Documentation=https://github.com/dtovar0/c20
+After=network-online.target mysql.service mariadb.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=dtovar
+Group=dtovar
+WorkingDirectory=/home/dtovar/bayblade/c20
+
+EnvironmentFile=-/home/dtovar/bayblade/c20/.env
+
+# PSX5K ataca un nodo distinto al de C20/Teams, así que ambos workers pueden
+# correr a la vez sin estorbarse: cada uno tiene su propio lock.
+ExecStart=/home/dtovar/bayblade/c20/venv/bin/python -u /home/dtovar/bayblade/c20/bin/backend_psx5k.py
+
+ExecStopPost=-/bin/rm -f /home/dtovar/bayblade/c20/psx5k_worker.pid
+
+KillSignal=SIGTERM
+TimeoutStopSec=60
+
+Restart=always
+RestartSec=10
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=nexus-psx5k-worker
+
+NoNewPrivileges=true
+PrivateTmp=false
+ProtectSystem=full
+ProtectHome=read-only
+ReadWritePaths=/home/dtovar/bayblade/c20/uploads /home/dtovar/bayblade/c20/logs /home/dtovar/bayblade/c20
+
+[Install]
+WantedBy=multi-user.target

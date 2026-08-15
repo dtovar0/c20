@@ -12,6 +12,9 @@ instance/
 secret.key
 *.zip
 *.sql
-deployment/
+deployment/*
+# Las unidades systemd sí se versionan; lo excluido son los certificados y
+# la configuración de Authelia que vive junto a ellas.
+!deployment/systemd/
 C20_old/
 # === FIN GITIGNORE ===
