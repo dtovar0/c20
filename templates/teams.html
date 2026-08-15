@@ -1,0 +1,708 @@
+{% extends 'base.html' %}
+
+{% block title %}Teams | Nexus Operational Terminal{% endblock %}
+
+{% block breadcrumbs %}
+<span class="text-secondary">Nexus</span>
+<svg class="w-4 h-4 text-label/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+<span class="text-primary">Teams Terminal</span>
+{% endblock %}
+
+{% block content %}
+<div id="teams-view-marker" class="hidden"></div>
+
+
+<div id="auditWrapper" class="w-full h-full p-6 overflow-hidden flex flex-col">
+    <!-- PANEL PRINCIPAL (Directo) -->
+    <div id="tab-panel-audit" class="tab-panel tab-panel-content flex-1 min-h-0 flex flex-col animate-in fade-in slide-in-from-bottom-2 duration-500 rounded-xl border border-panel-border shadow-2xl shadow-primary/5 overflow-hidden">
+            <!-- PANEL HEADER -->
+            <header class="flex-shrink-0 bg-panel-header border-b border-panel-border px-6 py-6 flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-black tracking-tighter text-primary uppercase italic leading-none">Teams Terminal</h2>
+                        <p class="text-[12px] text-primary/60 font-bold tracking-widest uppercase mt-0.5">Gestión Operativa / Trazabilidad</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button id="helpTourBtn" class="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary/70 hover:text-primary hover:border-primary/40 hover:bg-primary/20 transition-all hover:scale-110 active:scale-95 group" data-nx-tooltip="Guía del Sistema Teams">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </button>
+                </div>
+            </header>
+
+            <!-- PANEL BODY -->
+            <main class="flex-1 min-h-0 flex flex-col overflow-hidden px-4 pt-3 pb-1">
+                <!-- Search and Table logic... (Standard Audit Clone) -->
+                <div class="flex-shrink-0 mb-3 mt-2 flex justify-between items-center gap-2">
+                    <div class="flex items-center gap-2 flex-grow max-w-lg">
+                        <div class="relative group flex-grow">
+                            <svg class="w-4 h-4 absolute left-5 top-1/2 -translate-y-1/2 text-label/60 group-focus-within:text-primary transition-colors z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            <input type="text" id="auditSearch" placeholder="Filtrar eventos Teams..." 
+                                   class="w-full bg-input-bg border-2 border-panel-border rounded-xl pl-12 pr-5 py-3 text-sm font-bold text-input outline-none focus:border-input-focus focus:ring-4 focus:ring-primary/10 transition-all placeholder:text-label/50">
+                        </div>
+                        
+                        <!-- Status Filter Dropdown -->
+                        <div class="relative items-center flex shrink-0">
+                            <button id="statusFilterBtn" class="h-12 w-12 flex items-center justify-center rounded-xl bg-input-bg border-2 border-panel-border text-label/40 hover:text-primary hover:border-primary transition-all group overflow-hidden active:scale-95" data-nx-tooltip="Filtrar por Estado">
+                                <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+                            </button>
+                            
+                            <div id="statusFilterDropdown" class="absolute left-0 sm:right-0 sm:left-auto top-full mt-2 w-56 bg-panel-fill/95 backdrop-blur-xl border border-panel-border rounded-xl shadow-2xl opacity-0 translate-y-4 pointer-events-none transition-all duration-300 z-50 overflow-hidden">
+                                <div class="p-4 border-b border-panel-border bg-surface-container/30">
+                                    <h3 class="text-[10px] font-black text-label/40 uppercase tracking-widest leading-none">Categoría de Estado</h3>
+                                </div>
+                                <div class="py-2" id="statusFilterOptions">
+                                    <button data-status="" class="filter-opt active w-full px-5 py-2.5 text-left text-[11px] font-black uppercase text-primary hover:bg-primary/10 transition-all flex items-center justify-between group/opt">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></div>
+                                            <span>Todos los registros</span>
+                                        </div>
+                                        <i class="fas fa-check text-[10px]"></i>
+                                    </button>
+                                    <div class="h-px bg-panel-border/20 mx-4 my-1"></div>
+                                    <button data-status="programad" class="filter-opt w-full px-5 py-2.5 text-left text-[11px] font-black uppercase text-label/60 hover:bg-surface-container hover:text-label transition-all flex items-center justify-between group/opt">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-1.5 h-1.5 rounded-full bg-indigo-500"></div>
+                                            <span>Tareas Programadas</span>
+                                        </div>
+                                        <i class="fas fa-check text-[10px] opacity-0"></i>
+                                    </button>
+                                    <button data-status="ejecutando" class="filter-opt w-full px-5 py-2.5 text-left text-[11px] font-black uppercase text-label/60 hover:bg-surface-container hover:text-label transition-all flex items-center justify-between group/opt">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-spin-slow"></div>
+                                            <span>Tareas en Ejecución</span>
+                                        </div>
+                                        <i class="fas fa-check text-[10px] opacity-0"></i>
+                                    </button>
+                                    <button data-status="completad" class="filter-opt w-full px-5 py-2.5 text-left text-[11px] font-black uppercase text-label/60 hover:bg-surface-container hover:text-label transition-all flex items-center justify-between group/opt">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+                                            <span>Tareas Completadas</span>
+                                        </div>
+                                        <i class="fas fa-check text-[10px] opacity-0"></i>
+                                    </button>
+                                    <button data-status="error" class="filter-opt w-full px-5 py-2.5 text-left text-[11px] font-black uppercase text-label/60 hover:bg-surface-container hover:text-label transition-all flex items-center justify-between group/opt">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-1.5 h-1.5 rounded-full bg-rose-500"></div>
+                                            <span>Tareas con Errores</span>
+                                        </div>
+                                        <i class="fas fa-check text-[10px] opacity-0"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button id="modifyTaskBtn" class="h-12 w-[220px] rounded-xl bg-label/10 text-label/60 border border-panel-border font-black text-[12px] uppercase tracking-widest flex items-center justify-center gap-3 hover:border-primary hover:text-primary transition-all opacity-30 pointer-events-none shadow-lg shadow-black/5">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                            <span>Modificar</span>
+                        </button>
+                        <button id="scheduleTaskBtn" class="h-12 w-[220px] rounded-xl bg-tab-inactive border border-panel-border text-tab-inactive-text font-black text-[12px] uppercase tracking-widest flex items-center justify-center gap-3 hover:border-primary hover:text-primary transition-all active:scale-95 shadow-lg shadow-black/5">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span>Programar Tarea</span>
+                        </button>
+                        <button id="refreshAudit" class="h-12 w-[220px] rounded-xl bg-primary text-white font-black text-[12px] uppercase tracking-widest flex items-center justify-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/20">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            <span>Tarea Nueva</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="flex-1 min-h-0 flex flex-col">
+                    <table id="teamsDataTable" class="w-full text-left table-fixed dataTable">
+                        <thead class="sticky top-0 z-20">
+                            <tr class="text-[12px] font-black text-white uppercase tracking-[0.2em]">
+                                <th class="w-[40px] py-4 bg-slate-900/50 border-y border-panel-border border-l-3 border-l-transparent px-5">
+                                    <div class="flex items-center justify-center h-full">
+                                        <input type="checkbox" id="selectAllTeams" class="nexus-checkbox">
+                                    </div>
+                                </th>
+                                <th id="colTicketHeader" class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Ticket #</th>
+                                <th id="colUserHeader" class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Usuario</th>
+                                <th id="colOrigenHeader" class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Origen / Segmento</th>
+                                <th id="colLabelHeader" class="px-5 py-4 bg-slate-900/50 border-y border-panel-border">Prefijo</th>
+                                <th id="colGraphHeader" class="px-5 py-4 bg-slate-900/50 border-y border-panel-border text-center">Gráfica</th>
+                                <th id="colStatusHeader" class="px-5 py-4 bg-slate-900/50 border-y border-panel-border text-center">Estatus</th>
+                                <th id="colSearchHeader" class="px-5 py-4 bg-slate-900/50 border-y border-panel-border text-center">
+                                    <svg class="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="auditTableBody"></tbody>
+                    </table>
+                </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- MODAL: TEAMS WIZARD -->
+<div id="teamsWizardModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+    <div class="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onclick="closeWizard()"></div>
+    <div class="w-full max-w-xl nx-modal-glass rounded-xl shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300">
+        <header class="px-8 py-6 border-b border-panel-border flex items-center justify-between bg-header/50">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-black tracking-tighter text-body-text uppercase italic leading-none">Configurador Teams</h3>
+                    <p class="text-[12px] text-primary/60 font-bold tracking-widest uppercase mt-1">Paso <span id="currentStepNum">1</span> de 3</p>
+                </div>
+            </div>
+            <button onclick="closeWizard()" class="p-2 text-label/40 hover:text-label transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+        </header>
+
+        <div class="h-1 w-full bg-panel-border relative"><div id="stepProgress" class="absolute inset-y-0 left-0 bg-primary transition-all duration-500" style="width: 33.33%;"></div></div>
+        <div class="p-8 h-[560px] flex flex-col relative overflow-hidden">
+            <!-- STEP 1: SELECTION -->
+            <div id="wizardStep1" class="step-content w-full flex-1 flex flex-col items-center justify-center animate-in fade-in zoom-in-95 duration-300">
+                <div class="max-w-md w-full flex flex-col items-center my-auto">
+                    <h4 class="nx-label-strip mb-12 text-primary/80 text-center">Selección: Tipo de Operación</h4>
+                    
+                    <div class="space-y-6 w-full">
+                        <!-- Botón AGREGAR -->
+                        <button type="button" class="op-select-btn w-full p-10 rounded-xl border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-primary hover:bg-primary/5 hover:shadow-[0_0_50px_rgba(rgb(var(--color-primary)),0.2)] transition-all group relative overflow-hidden">
+                            <div class="w-20 h-20 min-w-[80px] rounded-xl bg-panel-border/30 group-hover:bg-primary/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
+                                <svg class="w-10 h-10 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                            </div>
+                            <div class="text-left">
+                                <span class="block text-base font-black uppercase tracking-widest group-hover:text-primary transition-colors">Añadir registros</span>
+                                <span class="block text-xs opacity-40 font-bold mt-1.5">Integrar nuevos registros al nodo Teams</span>
+                            </div>
+                            <div class="absolute right-10 opacity-0 group-hover:opacity-100 transition-all -translate-x-3 group-hover:translate-x-0">
+                                <svg class="w-7 h-7 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                            </div>
+                        </button>
+
+                        <!-- Botón BORRAR -->
+                        <button type="button" class="op-select-btn w-full p-10 rounded-xl border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-rose-500 hover:bg-rose-500/5 hover:shadow-[0_0_50px_rgba(244,63,94,0.2)] transition-all group relative overflow-hidden">
+                            <div class="w-20 h-20 min-w-[80px] rounded-xl bg-panel-border/30 group-hover:bg-rose-500/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
+                                <svg class="w-10 h-10 group-hover:text-rose-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </div>
+                            <div class="text-left">
+                                <span class="block text-base font-black uppercase tracking-widest group-hover:text-rose-500 transition-colors">Eliminar registros</span>
+                                <span class="block text-xs opacity-40 font-bold mt-1.5">Remover registros de la base operativa</span>
+                            </div>
+                            <div class="absolute right-10 opacity-0 group-hover:opacity-100 transition-all -translate-x-3 group-hover:translate-x-0">
+                                <svg class="w-7 h-7 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: CONFIGURATION -->
+            <div id="wizardStep2" class="step-content w-full flex-col hidden animate-in fade-in slide-in-from-right-4 duration-300">
+                <div class="space-y-6 w-full">
+                    <div id="opConfigSection" class="hidden space-y-6">
+                        <div>
+                            <label class="nx-label-strip mb-3 block">Modo de Cliente</label>
+                            <select id="clientModeSelect" onchange="handleRoutingLabelState()" class="w-full bg-input-bg border-2 border-panel-border rounded-xl px-5 py-4 text-sm font-bold text-input outline-none focus:border-input-focus transition-all">
+                                <option value="call_in" selected>Cliente solo hace llamadas</option>
+                                <option value="call_inout">Cliente hace y recibe llamadas</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="nx-label-strip mb-3 block opacity-40" id="routingLabelTag">Etiqueta de Ruta</label>
+                            <input type="text" id="routingLabelInput" placeholder="Bloqueado..." disabled class="w-full bg-input-bg border-2 border-panel-border rounded-xl px-5 py-4 text-sm font-bold text-input outline-none disabled:opacity-30">
+                        </div>
+                    </div>
+                    <!-- Data Method Toggle... -->
+                    <div class="pt-6 border-t border-panel-border">
+                        <label class="nx-label-strip mb-4 block">Fuente de Datos</label>
+                        <div class="flex items-center bg-surface-container/30 p-1 rounded-xl border border-panel-border mb-6">
+                            <span class="text-[12px] font-black flex-1 text-center py-2.5 rounded-xl" id="labelFileMode">Archivo</span>
+                            <label class="relative inline-flex items-center cursor-pointer px-2">
+                                <input type="checkbox" id="dataEntryToggle" class="sr-only peer" onchange="toggleDataMethod()">
+                                <div class="w-12 h-6 bg-panel-border rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[10px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                            </label>
+                            <span class="text-[12px] font-black flex-1 text-center py-2.5 rounded-xl opacity-40" id="labelManualMode">Manual</span>
+                        </div>
+                        <div id="methodFileUpload">
+                            <label class="border-2 border-dashed border-panel-border rounded-xl h-40 w-full flex flex-col items-center justify-center gap-3 hover:border-primary hover:bg-primary/5 transition-all cursor-pointer group px-6 text-center">
+                                <input type="file" id="teamsFileInput" accept=".csv,.xls,.xlsx" class="hidden" onchange="validateFile(this)">
+                                <div id="fileIconContainer" class="w-10 h-10 flex items-center justify-center text-primary transition-all">
+                                    <svg class="w-8 h-8 opacity-40 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                                </div>
+                                <p class="nx-label-strip" id="fileNameDisplay">Cargar Archivo Operativo</p>
+                            </label>
+                        </div>
+                        <div id="methodManualEntry" class="hidden">
+                            <div class="nx-textarea-container h-48">
+                                <div class="nx-line-numbers" id="wizardLineNums"><span>1</span></div>
+                                <textarea id="wizardManualTextarea" oninput="syncLineNumbers('wizardManualTextarea', 'wizardLineNums')" onscroll="syncScroll('wizardManualTextarea', 'wizardLineNums')" placeholder="individual: 8147777000 &#10;rangos:      8147777000-8147777100" class="nx-numbered-textarea"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="wizardStep3" class="step-content h-full flex flex-col justify-center items-center hidden animate-in fade-in">
+                <!-- Verification logic... -->
+                <div class="space-y-6 w-full max-w-md">
+                    <div class="text-center mb-6">
+                        <div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-primary mx-auto mb-4"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg></div>
+                        <h4 class="text-lg font-black text-body-text uppercase italic">Verificación Técnica</h4>
+                        <p class="text-[12px] text-label/40 font-bold uppercase tracking-widest mt-1">Confirmación de parámetros</p>
+                    </div>
+                    <div class="bg-surface-container/50 border border-panel-border rounded-xl p-6 space-y-4">
+                        <div class="grid grid-cols-[140px_1fr] items-center border-b border-panel-border pb-3"><span class="nx-label-strip opacity-40">Operación:</span><span class="text-xs font-bold text-body-text uppercase pl-4" id="summaryTaskType">-</span></div>
+                        <div id="summaryModeRow" class="hidden grid grid-cols-[140px_1fr] items-center border-b border-panel-border pb-3"><span class="nx-label-strip opacity-40">Modo:</span><span class="text-xs font-bold text-body-text uppercase pl-4" id="summaryMode">-</span></div>
+                        <div id="summaryRoutingRow" class="hidden grid grid-cols-[140px_1fr] items-center border-b border-panel-border pb-3"><span class="nx-label-strip opacity-40">Routing:</span><span class="text-xs font-bold text-body-text pl-4" id="summaryRouting">-</span></div>
+                        <div class="grid grid-cols-[140px_1fr] items-center border-b border-panel-border pb-3"><span class="nx-label-strip opacity-40" id="summaryDataLabel">Fuente:</span><span class="text-xs font-bold text-body-text pl-4" id="summaryData">-</span></div>
+                        <div class="grid grid-cols-[140px_1fr] items-center"><span class="nx-label-strip opacity-40" id="summaryFileLabel">Registros:</span><span class="text-xs font-bold text-body-text pl-4 truncate" id="summaryFileName">-</span></div>
+                    </div>
+
+                    <!-- Force Toggle -->
+                    <div id="teamsForceContainer" class="hidden flex items-center justify-between p-5 bg-rose-500/5 border border-rose-500/20 rounded-xl group hover:bg-rose-500/10 transition-all">
+                        <div class="flex flex-col gap-1">
+                            <span class="text-[12px] font-black text-rose-500 uppercase tracking-widest leading-none">Forzar Operación</span>
+                            <span class="text-[12px] text-label/40 font-bold uppercase tracking-tight mt-0.5">Sobreescribir registros existentes</span>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="teamsForceToggle" class="sr-only peer">
+                            <div class="w-11 h-6 bg-panel-border rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-rose-500"></div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="px-8 py-6 border-t border-panel-border bg-header/50 flex items-center">
+            <div class="flex-1 flex justify-start"><button id="prevStepBtn" onclick="changeStep(-1)" class="nx-btn-base nx-btn-back">Atrás</button></div>
+            <div class="flex-1 flex justify-end">
+                <button id="nextStepBtn" onclick="changeStep(1)" class="nx-btn-base nx-btn-primary">Siguiente Paso</button>
+                <button id="launchBtn" onclick="finalizeWizard()" class="nx-btn-base nx-btn-primary">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                    <span>Guardar</span>
+                </button>
+            </div>
+        </footer>
+    </div>
+</div>
+
+<!-- MODAL: PROGRAMAR TAREA WIZARD -->
+<div id="scheduleWizardModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+    <div class="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onclick="closeScheduleWizard()"></div>
+    <div class="w-full max-w-xl nx-modal-glass rounded-xl shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300">
+        <header class="px-8 py-6 border-b border-panel-border flex items-center justify-between bg-header/50">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-black tracking-tighter text-body-text uppercase italic leading-none">Programar Tarea Teams</h3>
+                    <p class="text-[12px] text-primary/60 font-bold tracking-widest uppercase mt-1">Paso <span id="scheduleStepNum">1</span> de 4</p>
+                </div>
+            </div>
+            <button onclick="closeScheduleWizard()" class="p-2 text-label/40 hover:text-label transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+        </header>
+
+        <div class="h-1 w-full bg-panel-border relative"><div id="scheduleStepProgress" class="absolute inset-y-0 left-0 bg-primary transition-all duration-500" style="width: 25%;"></div></div>
+        <div class="p-8 h-[560px] flex flex-col relative overflow-hidden">
+            <!-- STEP 1: SELECTION -->
+            <div id="scheduleStep1" class="step-content w-full flex-1 flex flex-col items-center justify-center hidden animate-in fade-in zoom-in-95 duration-500">
+                <div class="max-w-md w-full flex flex-col items-center my-auto">
+                    <h4 class="nx-label-strip mb-12 text-primary/80 text-center">Selección: Tipo de Operación</h4>
+                    
+                    <div class="space-y-6 w-full">
+                        <!-- Botón AGREGAR -->
+                        <button type="button" class="schedule-op-btn w-full p-10 rounded-xl border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-primary hover:bg-primary/5 hover:shadow-[0_0_50px_rgba(var(--color-primary),0.2)] transition-all group relative overflow-hidden">
+                            <div class="w-20 h-20 min-w-[80px] rounded-xl bg-panel-border/30 group-hover:bg-primary/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
+                                <svg class="w-10 h-10 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                            </div>
+                            <div class="text-left">
+                                <span class="block text-base font-black uppercase tracking-widest group-hover:text-primary transition-colors">Añadir registros</span>
+                                <span class="block text-xs opacity-40 font-bold mt-1.5">Integrar nuevos registros programados</span>
+                            </div>
+                            <div class="absolute right-10 opacity-0 group-hover:opacity-100 transition-all -translate-x-3 group-hover:translate-x-0">
+                                <svg class="w-7 h-7 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                            </div>
+                        </button>
+
+                        <!-- Botón BORRAR -->
+                        <button type="button" class="schedule-op-btn w-full p-10 rounded-xl border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-rose-500 hover:bg-rose-500/5 hover:shadow-[0_0_50px_rgba(244,63,94,0.2)] transition-all group relative overflow-hidden">
+                            <div class="w-20 h-20 min-w-[80px] rounded-xl bg-panel-border/30 group-hover:bg-rose-500/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
+                                <svg class="w-10 h-10 group-hover:text-rose-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </div>
+                            <div class="text-left">
+                                <span class="block text-base font-black uppercase tracking-widest group-hover:text-rose-500 transition-colors">Eliminar registros</span>
+                                <span class="block text-xs opacity-40 font-bold mt-1.5">Remover registros programados</span>
+                            </div>
+                            <div class="absolute right-10 opacity-0 group-hover:opacity-100 transition-all -translate-x-3 group-hover:translate-x-0">
+                                <svg class="w-7 h-7 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: CONFIGURATION -->
+            <div id="scheduleStep2" class="step-content w-full flex-col hidden animate-in fade-in slide-in-from-right-4 duration-500">
+                <div class="space-y-6 w-full">
+                    <div id="scheduleOpConfigSection" class="hidden space-y-6">
+                        <div>
+                            <label class="nx-label-strip mb-3 block">Modo de Cliente</label>
+                            <select id="scheduleClientModeSelect" onchange="handleScheduleRoutingLabelState()" class="w-full bg-input-bg border-2 border-panel-border rounded-xl px-5 py-4 text-sm font-bold text-input outline-none focus:border-input-focus transition-all">
+                                <option value="call_in">Cliente solo hace llamadas</option>
+                                <option value="call_inout">Cliente hace y recibe llamadas</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="nx-label-strip mb-3 block opacity-40" id="scheduleRoutingLabelTag">Etiqueta de Ruta</label>
+                            <input type="text" id="scheduleRoutingLabelInput" placeholder="Bloqueado..." disabled class="w-full bg-input-bg border-2 border-panel-border rounded-xl px-5 py-4 text-sm font-bold text-input outline-none disabled:opacity-30">
+                        </div>
+                    </div>
+                    <div class="pt-6 border-t border-panel-border">
+                        <label class="nx-label-strip mb-4 block">Fuente de Datos</label>
+                        <div class="flex items-center bg-surface-container/30 p-1 rounded-xl border border-panel-border mb-6">
+                            <span class="text-[12px] font-black flex-1 text-center py-2.5 rounded-xl" id="scheduleLabelFileMode">Archivo</span>
+                            <label class="relative inline-flex items-center cursor-pointer px-2">
+                                <input type="checkbox" id="scheduleDataEntryToggle" class="sr-only peer" onchange="toggleScheduleDataMethod()">
+                                <div class="w-12 h-6 bg-panel-border rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[10px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                            </label>
+                            <span class="text-[12px] font-black flex-1 text-center py-2.5 rounded-xl opacity-40" id="scheduleLabelManualMode">Manual</span>
+                        </div>
+                        <div id="scheduleMethodFileUpload">
+                            <label class="border-2 border-dashed border-panel-border rounded-xl h-40 w-full flex flex-col items-center justify-center gap-3 hover:border-primary hover:bg-primary/5 transition-all cursor-pointer group px-6 text-center">
+                                <input type="file" id="scheduleFileInput" accept=".csv,.xls,.xlsx" class="hidden" onchange="validateScheduleFile(this)">
+                                <div id="scheduleFileIconContainer" class="w-10 h-10 flex items-center justify-center text-primary transition-all">
+                                    <svg class="w-8 h-8 opacity-40 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                                </div>
+                                <p class="nx-label-strip" id="scheduleFileNameDisplay">Cargar Archivo Operativo</p>
+                            </label>
+                        </div>
+                        <div id="scheduleMethodManualEntry" class="hidden">
+                            <div class="nx-textarea-container h-48">
+                                <div class="nx-line-numbers" id="scheduleLineNums"><span>1</span></div>
+                                <textarea id="scheduleManualTextarea" oninput="syncLineNumbers('scheduleManualTextarea', 'scheduleLineNums')" onscroll="syncScroll('scheduleManualTextarea', 'scheduleLineNums')" placeholder="individual: 8147777000 &#10;rangos:      8147777000-8147777100" class="nx-numbered-textarea"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3: SCHEDULING CONFIG -->
+            <div id="scheduleStep3" class="step-content w-full flex-col hidden animate-in fade-in slide-in-from-right-4 duration-500">
+                <div class="space-y-6 w-full py-2 max-w-sm mx-auto">
+                    <h4 class="nx-label-strip text-primary/80 text-center">Programación de Fecha</h4>
+                    
+                    <!-- CUSTOM CALENDAR -->
+                    <div class="bg-surface-container/30 border-2 border-panel-border rounded-xl p-5 overflow-hidden">
+                        <div class="flex items-center justify-between mb-4 px-2">
+                            <span id="calendarMonthLabel" class="text-xs font-black uppercase tracking-widest text-primary">Abril 2026</span>
+                            <div class="flex gap-1">
+                                <button type="button" onclick="changeCalendarMonth(-1)" class="p-1.5 hover:bg-primary/10 rounded-lg text-label/40 hover:text-primary transition-all"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path></svg></button>
+                                <button type="button" onclick="changeCalendarMonth(1)" class="p-1.5 hover:bg-primary/10 rounded-lg text-label/40 hover:text-primary transition-all"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg></button>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-7 gap-1 text-center mb-2">
+                            <span class="text-[12px] font-black text-label/20 uppercase">Do</span>
+                            <span class="text-[12px] font-black text-label/20 uppercase">Lu</span>
+                            <span class="text-[12px] font-black text-label/20 uppercase">Ma</span>
+                            <span class="text-[12px] font-black text-label/20 uppercase">Mi</span>
+                            <span class="text-[12px] font-black text-label/20 uppercase">Ju</span>
+                            <span class="text-[12px] font-black text-label/20 uppercase">Vi</span>
+                            <span class="text-[12px] font-black text-label/20 uppercase">Sa</span>
+                        </div>
+                        
+                        <div id="calendarGrid" class="grid grid-cols-7 gap-1">
+                            <!-- JS will populate days here -->
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <label class="nx-label-strip opacity-40 text-center block">Hora de Inicio (24h)</label>
+                        <input type="time" id="scheduleTimeInput" class="w-full bg-input-bg border-2 border-panel-border rounded-xl px-5 py-4 text-sm font-bold text-input text-center outline-none focus:border-primary transition-all">
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 4: VERIFICATION -->
+            <div id="scheduleStep4" class="step-content h-full flex flex-col justify-center items-center hidden animate-in fade-in zoom-in-95 duration-500">
+                <div class="space-y-6 w-full max-w-md">
+                    <div class="text-center mb-6">
+                        <div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-primary mx-auto mb-4"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg></div>
+                        <h4 class="text-lg font-black text-body-text uppercase italic">Confirmación Agenda</h4>
+                        <p class="text-[12px] text-label/40 font-bold uppercase tracking-widest mt-1">Verificación de parámetros programados</p>
+                    </div>
+                    <div class="bg-surface-container/50 border border-panel-border rounded-xl p-6 space-y-4">
+                        <div class="grid grid-cols-[140px_1fr] items-center border-b border-panel-border pb-3"><span class="nx-label-strip opacity-40">Operación:</span><span class="text-xs font-bold text-body-text uppercase pl-4" id="scheduleSummaryTaskType">-</span></div>
+                        <div id="scheduleSummaryModeRow" class="hidden grid grid-cols-[140px_1fr] items-center border-b border-panel-border pb-3"><span class="nx-label-strip opacity-40">Modo:</span><span class="text-xs font-bold text-body-text uppercase pl-4" id="scheduleSummaryMode">-</span></div>
+                        <div id="scheduleSummaryRoutingRow" class="hidden grid grid-cols-[140px_1fr] items-center border-b border-panel-border pb-3"><span class="nx-label-strip opacity-40">Routing:</span><span class="text-xs font-bold text-body-text pl-4" id="scheduleSummaryRouting">-</span></div>
+                        <div class="grid grid-cols-[140px_1fr] items-center border-b border-panel-border pb-3"><span class="nx-label-strip opacity-40">Fecha:</span><span class="text-xs font-bold text-primary pl-4" id="scheduleSummaryDate">-</span></div>
+                        <div class="grid grid-cols-[140px_1fr] items-center border-b border-panel-border pb-3"><span class="nx-label-strip opacity-40">Hora:</span><span class="text-xs font-bold text-primary pl-4" id="scheduleSummaryTime">-</span></div>
+                        <div class="grid grid-cols-[140px_1fr] items-center border-b border-panel-border pb-3"><span class="nx-label-strip opacity-40">Fuente:</span><span class="text-xs font-bold text-body-text pl-4" id="scheduleSummaryData">-</span></div>
+                        <div class="grid grid-cols-[140px_1fr] items-center"><span class="nx-label-strip opacity-40">Registros:</span><span class="text-xs font-bold text-body-text pl-4 truncate" id="scheduleSummaryFileName">-</span></div>
+                    </div>
+
+                    <!-- Force Toggle -->
+                    <div id="scheduleForceContainer" class="hidden flex items-center justify-between p-5 bg-rose-500/5 border border-rose-500/20 rounded-xl group hover:bg-rose-500/10 transition-all">
+                        <div class="flex flex-col gap-1">
+                            <span class="text-[12px] font-black text-rose-500 uppercase tracking-widest leading-none">Forzar Operación</span>
+                            <span class="text-[12px] text-label/40 font-bold uppercase tracking-tight mt-0.5">Sobreescribir registros existentes</span>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="scheduleTeamsForceToggle" class="sr-only peer">
+                            <div class="w-11 h-6 bg-panel-border rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-rose-500"></div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <footer class="px-8 py-6 border-t border-panel-border bg-header/50 flex items-center">
+            <div class="flex-1 flex justify-start"><button id="schedulePrevStepBtn" onclick="changeScheduleStep(-1)" class="nx-btn-base nx-btn-back">Atrás</button></div>
+            <div class="flex-1 flex justify-end">
+                <button id="scheduleNextStepBtn" onclick="if (currentScheduleStep === 4) collectScheduleData(); changeScheduleStep(1)" class="nx-btn-base nx-btn-primary">Siguiente Paso</button>
+                <button id="scheduleLaunchBtn" onclick="finalizeScheduleWizard()" class="nx-btn-base nx-btn-primary hidden">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                    <span>Guardar</span>
+                </button>
+            </div>
+        </footer>
+    </div>
+</div>
+    </div>
+</div>
+
+<!-- MODAL: MODIFICAR TAREA (WIZARD DINÁMICO) -->
+<div id="modifyTaskModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+    <div class="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onclick="closeModifyModal()"></div>
+    <div class="w-full max-w-xl nx-modal-glass rounded-xl shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300">
+        <header class="px-8 py-6 border-b border-panel-border flex items-center justify-between bg-header/50">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-xl bg-slate-500/20 flex items-center justify-center text-label/60">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-black tracking-tighter text-body-text uppercase italic leading-none">Modificar tarea Teams</h3>
+                    <p class="text-[12px] text-label/60 font-bold tracking-widest uppercase mt-1">Ticket #<span id="modifyTicketNum">---</span> / Paso <span id="modifyStepNum">1</span> de <span id="modifyTotalSteps">5</span></p>
+                </div>
+            </div>
+            <button onclick="closeModifyModal()" class="p-2 text-label/40 hover:text-label transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+        </header>
+
+        <div class="h-1 w-full bg-panel-border relative"><div id="modifyStepProgress" class="absolute inset-y-0 left-0 bg-slate-400 transition-all duration-500" style="width: 20%;"></div></div>
+        
+        <div class="p-8 h-[500px] flex flex-col relative overflow-hidden">
+            <!-- STEP 1: DECISION -->
+            <div id="modifyStep1" class="modify-step-content w-full flex-1 flex flex-col items-center justify-center animate-in fade-in zoom-in-95 duration-300">
+                <div class="max-w-md w-full flex flex-col items-center my-auto">
+                    <h4 class="nx-label-strip mb-12 text-primary/80 text-center">Selección: Acción Crítica</h4>
+                    <div class="space-y-6 w-full" id="modifyDecisionGrid">
+                        <!-- CANCELAR -->
+                        <button type="button" id="btnActionCancel" onclick="selectModifyAction('cancel')" class="w-full p-10 rounded-xl border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-rose-500 hover:bg-rose-500/5 hover:shadow-[0_0_50px_rgba(244,63,94,0.2)] transition-all group relative overflow-hidden hidden">
+                            <div class="w-20 h-20 min-w-[80px] rounded-xl bg-panel-border/30 group-hover:bg-rose-500/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
+                                <svg class="w-10 h-10 group-hover:text-rose-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </div>
+                            <div class="text-left">
+                                <span class="block text-base font-black uppercase tracking-widest group-hover:text-rose-500 transition-colors">Cancelar Tarea</span>
+                                <span class="block text-xs opacity-40 font-bold mt-1.5">Detener fragmentos del proceso</span>
+                            </div>
+                            <div class="absolute right-10 opacity-0 group-hover:opacity-100 transition-all -translate-x-3 group-hover:translate-x-0">
+                                <svg class="w-7 h-7 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                            </div>
+                        </button>
+
+                        <!-- ACTIVAR -->
+                        <button type="button" id="btnActionActivate" onclick="selectModifyAction('activate')" class="w-full p-10 rounded-xl border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-emerald-500 hover:bg-emerald-500/5 hover:shadow-[0_0_50px_rgba(16,185,129,0.2)] transition-all group relative overflow-hidden hidden">
+                            <div class="w-20 h-20 min-w-[80px] rounded-xl bg-panel-border/30 group-hover:bg-emerald-500/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
+                                <svg class="w-10 h-10 group-hover:text-emerald-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </div>
+                            <div class="text-left">
+                                <span class="block text-base font-black uppercase tracking-widest group-hover:text-emerald-500 transition-colors">Activar Tarea</span>
+                                <span class="block text-xs opacity-40 font-bold mt-1.5">Re-procesar fragmentos pendientes</span>
+                            </div>
+                            <div class="absolute right-10 opacity-0 group-hover:opacity-100 transition-all -translate-x-3 group-hover:translate-x-0">
+                                <svg class="w-7 h-7 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                            </div>
+                        </button>
+
+                        <!-- MODIFICAR (DEFAULT) -->
+                        <button type="button" id="btnActionModify" onclick="selectModifyAction('modify')" class="w-full p-10 rounded-xl border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-primary hover:bg-primary/5 hover:shadow-[0_0_50px_rgba(rgb(var(--color-primary)),0.2)] transition-all group relative overflow-hidden">
+                            <div class="w-20 h-20 min-w-[80px] rounded-xl bg-panel-border/30 group-hover:bg-primary/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
+                                <svg class="w-10 h-10 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                            </div>
+                            <div class="text-left">
+                                <span class="block text-base font-black uppercase tracking-widest group-hover:text-primary transition-colors">Modificar Tarea</span>
+                                <span class="block text-xs opacity-40 font-bold mt-1.5">Renombrar o reconfigurar job</span>
+                            </div>
+                            <div class="absolute right-10 opacity-0 group-hover:opacity-100 transition-all -translate-x-3 group-hover:translate-x-0">
+                                <svg class="w-7 h-7 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: TASK TYPE -->
+            <div id="modifyStep2" class="modify-step-content w-full hidden animate-in slide-in-from-right-4 duration-300">
+                <div class="max-w-md w-full flex flex-col items-center mx-auto">
+                    <h4 class="nx-label-strip mb-12 text-primary/80 text-center">Selección: Tipo de Operación</h4>
+                    <div class="space-y-6 w-full">
+                        <button type="button" id="modTypeAdd" onclick="setModifyTaskType('add')" class="w-full p-10 rounded-xl border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-primary hover:bg-primary/5 hover:shadow-[0_0_50px_rgba(rgb(var(--color-primary)),0.2)] transition-all group relative overflow-hidden">
+                            <div class="w-20 h-20 min-w-[80px] rounded-xl bg-panel-border/30 group-hover:bg-primary/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
+                                <svg class="w-10 h-10 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                            </div>
+                            <div class="text-left">
+                                <span class="block text-base font-black uppercase tracking-widest group-hover:text-primary transition-colors">Añadir registros</span>
+                                <span class="block text-xs opacity-40 font-bold mt-1.5">Integrar nuevos registros al nodo</span>
+                            </div>
+                            <div class="absolute right-10 opacity-0 group-hover:opacity-100 transition-all -translate-x-3 group-hover:translate-x-0">
+                                <svg class="w-7 h-7 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                            </div>
+                        </button>
+
+                        <button type="button" id="modTypeDel" onclick="setModifyTaskType('delete')" class="w-full p-10 rounded-xl border-2 border-panel-border bg-surface-container/40 text-label/60 flex items-center gap-8 hover:border-rose-500 hover:bg-rose-500/5 hover:shadow-[0_0_50px_rgba(244,63,94,0.2)] transition-all group relative overflow-hidden">
+                            <div class="w-20 h-20 min-w-[80px] rounded-xl bg-panel-border/30 group-hover:bg-rose-500/20 flex items-center justify-center transition-all group-hover:scale-110 shadow-inner">
+                                <svg class="w-10 h-10 group-hover:text-rose-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </div>
+                            <div class="text-left">
+                                <span class="block text-base font-black uppercase tracking-widest group-hover:text-rose-500 transition-colors">Eliminar registros</span>
+                                <span class="block text-xs opacity-40 font-bold mt-1.5">Remover registros de la base</span>
+                            </div>
+                            <div class="absolute right-10 opacity-0 group-hover:opacity-100 transition-all -translate-x-3 group-hover:translate-x-0">
+                                <svg class="w-7 h-7 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3: TIMING & CALENDAR -->
+            <div id="modifyStep3" class="modify-step-content w-full hidden animate-in slide-in-from-right-4">
+                <div class="space-y-4 w-full py-2 max-w-sm mx-auto">
+                    <h4 class="nx-label-strip text-primary/80 text-center">Programación de Fecha</h4>
+                    
+                    <div class="flex items-center bg-surface-container/30 p-1 rounded-xl border border-panel-border mb-4">
+                        <button onclick="setModifyTiming('now')" id="modTimingNow" class="flex-1 py-3 text-[12px] font-black uppercase rounded-xl transition-all">Ejecutar Ahora</button>
+                        <button onclick="setModifyTiming('schedule')" id="modTimingLate" class="flex-1 py-3 text-[12px] font-black uppercase rounded-xl transition-all">Programar</button>
+                    </div>
+
+                    <!-- CALENDARIO INLINE (Premium) -->
+                    <div id="modCalendarContainer" class="hidden space-y-4 animate-in fade-in duration-500">
+                        <div class="bg-surface-container/30 border-2 border-panel-border rounded-xl p-5 overflow-hidden">
+                            <div class="flex items-center justify-between mb-4 px-2">
+                                <span id="modCalendarMonthLabel" class="text-xs font-black uppercase tracking-widest text-primary">--</span>
+                                <div class="flex gap-1">
+                                    <button type="button" onclick="changeModCalendarMonth(-1)" class="p-1.5 hover:bg-primary/10 rounded-lg text-label/40 hover:text-primary transition-all"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path></svg></button>
+                                    <button type="button" onclick="changeModCalendarMonth(1)" class="p-1.5 hover:bg-primary/10 rounded-lg text-label/40 hover:text-primary transition-all"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg></button>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-7 gap-1 text-center mb-2">
+                                <span class="text-[12px] font-black text-label/20 uppercase">Do</span>
+                                <span class="text-[12px] font-black text-label/20 uppercase">Lu</span>
+                                <span class="text-[12px] font-black text-label/20 uppercase">Ma</span>
+                                <span class="text-[12px] font-black text-label/20 uppercase">Mi</span>
+                                <span class="text-[12px] font-black text-label/20 uppercase">Ju</span>
+                                <span class="text-[12px] font-black text-label/20 uppercase">Vi</span>
+                                <span class="text-[12px] font-black text-label/20 uppercase">Sa</span>
+                            </div>
+                            
+                            <div id="modCalendarGrid" class="grid grid-cols-7 gap-1"></div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <input type="time" id="modTimeInput" class="w-full bg-input-bg border-2 border-panel-border rounded-xl px-5 py-4 text-sm font-bold text-input text-center outline-none focus:border-primary transition-all">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 4: PARAMS -->
+            <div id="modifyStep4" class="modify-step-content w-full hidden animate-in slide-in-from-right-4">
+                <h4 class="nx-label-strip mb-6 text-primary/80">Paso 4: Parámetros del Job</h4>
+                <div class="space-y-6">
+                    <div>
+                        <label class="nx-label-strip mb-3 block">Modo de Cliente</label>
+                        <select id="modClientModeSelect" onchange="handleModRoutingLabelState()" class="w-full bg-input-bg border-2 border-panel-border rounded-xl px-5 py-4 text-sm font-bold text-input outline-none focus:border-input-focus transition-all">
+                            <option value="call_in" selected>Cliente solo hace llamadas</option>
+                            <option value="call_inout">Cliente hace y recibe llamadas</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="nx-label-strip mb-2 block opacity-40">Routing Label</label>
+                        <input type="text" id="modRoutingInput" placeholder="N/A" class="w-full bg-input-bg border-2 border-panel-border rounded-xl px-5 py-4 text-sm font-bold text-input outline-none transition-all">
+                    </div>
+                    <div id="modForceContainer" class="hidden flex items-center justify-between p-4 bg-rose-500/5 border border-rose-500/20 rounded-xl">
+                        <span class="text-[12px] font-black text-rose-500 uppercase">Forzar Operación</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="modForceToggle" class="sr-only peer">
+                            <div class="w-11 h-6 bg-panel-border rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-rose-500"></div>
+                        </label>
+                    </div>
+                    <div class="p-4 bg-slate-900/40 border border-panel-border rounded-2xl opacity-40">
+                         <span class="text-[12px] font-black uppercase block mb-1">Fuente de datos (Protegida)</span>
+                         <span id="modSourceDisplay" class="text-xs font-bold truncate block">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 5: FINAL CONFIRMATION -->
+            <div id="modifyStep5" class="modify-step-content w-full hidden animate-in slide-in-from-right-4 text-center">
+                 <div class="w-16 h-16 rounded-full bg-slate-500/10 flex items-center justify-center text-label/60 mx-auto mb-4">
+                     <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                 </div>
+                 <h4 id="modFinalTitle" class="text-lg font-black text-body-text uppercase italic px-10">Confirmar Cambios</h4>
+                 <p id="modFinalDesc" class="text-xs font-bold text-label/40 mt-2 px-12">Se aplicarán los nuevos parámetros a todos los fragmentos pendientes del Job.</p>
+                 
+                 <div class="mt-8 bg-surface-container/40 p-6 rounded-3xl border border-panel-border text-left space-y-3">
+                     <div class="flex justify-between text-[12px] font-black uppercase"><span class="opacity-40">Acción:</span> <span id="summaryModAction" class="text-primary">--</span></div>
+                     <div class="flex justify-between text-[12px] font-black uppercase"><span class="opacity-40">Programación:</span> <span id="summaryModTime">--</span></div>
+                     <div class="flex justify-between text-[12px] font-black uppercase"><span class="opacity-40">Label:</span> <span id="summaryModLabel">--</span></div>
+                 </div>
+            </div>
+        </div>
+
+        <footer class="px-8 py-6 border-t border-panel-border bg-header/50 flex items-center">
+            <div class="flex-1 flex justify-start">
+                <button onclick="changeModifyStep(-1)" id="modPrevBtn" class="nx-btn-base nx-btn-back">Atrás</button>
+            </div>
+            <div class="flex-1 flex justify-end">
+                <button onclick="changeModifyStep(1)" id="modNextBtn" class="nx-btn-base nx-btn-primary">Siguiente Paso</button>
+                <button onclick="confirmModifyAction()" id="modSubmitBtn" class="nx-btn-base nx-btn-primary hidden">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                    <span>Confirmar</span>
+                </button>
+            </div>
+        </footer>
+    </div>
+</div>
+
+<!-- PROGRESS MODAL (Telemetría de Carga) -->
+<div id="teamsProgressModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
+    <div class="w-full max-w-sm nx-modal-glass rounded-xl border border-panel-border p-8 text-center animate-in zoom-in-95 duration-300">
+        <div class="mb-6">
+            <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary mx-auto mb-4 relative">
+                <svg class="w-8 h-8 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                <div class="absolute inset-0 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+            </div>
+            <h4 class="text-base font-black text-body-text uppercase italic">Procesando Tarea</h4>
+            <p id="progressStatusText" class="text-[12px] text-label/40 font-bold uppercase tracking-widest mt-1">Iniciando transferencia...</p>
+        </div>
+
+        <!-- Barra de Progreso Nexus -->
+        <div class="h-2 w-full bg-panel-border rounded-full overflow-hidden mb-4 shadow-inner">
+            <div id="uploadProgressBar" class="h-full bg-primary transition-all duration-300 shadow-[0_0_15px_rgba(rgb(var(--color-primary)),0.5)]" style="width: 0%;"></div>
+        </div>
+
+        <div class="space-y-1.5 text-left bg-black/40 rounded-xl p-4 font-mono text-[12px] text-primary/60 border border-panel-border/30">
+            <div class="flex gap-2"><span>[OK]</span><span class="text-label/60">Conexión con Nodo establecida</span></div>
+            <div id="logValidation" class="flex gap-2 opacity-0"><span>[OK]</span><span class="text-label/60">Integridad de datos validada</span></div>
+            <div id="logIndexing" class="flex gap-2 opacity-0"><span>[OK]</span><span class="text-label/60">Registros indexados en DB</span></div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('core.serve_assets', filename='js/teams.js') }}?v={{ range(10000, 99999) | random }}"></script>
+<script src="/assets/js/teams-wizard.js"></script>
+<script src="/assets/js/teams-tour.js?v={{ range(1000, 9999) | random }}"></script>
+{% endblock %}

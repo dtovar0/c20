@@ -49,6 +49,9 @@ def create_app():
     # Custom C20 Settings
     app.config['C20_CHUNK_SIZE'] = int(os.getenv('C20_CHUNK_SIZE', 200))
 
+    # Custom Teams Settings
+    app.config['TEAMS_CHUNK_SIZE'] = int(os.getenv('TEAMS_CHUNK_SIZE', 200))
+
     # Inicializar Extensiones
     Compress(app)
     db.init_app(app)
@@ -119,6 +122,7 @@ def create_app():
     from app.modules.auth.routes import auth_bp
     from app.modules.psx.routes import psx_bp
     from app.modules.c20.routes import c20_bp
+    from app.modules.teams.routes import teams_bp
     from app.modules.api import api_bp
 
     app.register_blueprint(core_bp)
@@ -128,6 +132,7 @@ def create_app():
     app.register_blueprint(auth_bp)
     app.register_blueprint(psx_bp)
     app.register_blueprint(c20_bp)
+    app.register_blueprint(teams_bp)
     app.register_blueprint(api_bp)
 
     # Sincronizar Modelos (Importar antes de crear tablas)
@@ -136,7 +141,10 @@ def create_app():
     from app.modules.notifications.models import SMTPConfig, NotificationTemplate
     from app.modules.auth.models import AuthConfig, User
     from app.modules.psx.models import PSX5KTask, PSX5KDetail, PSX5KHistory
-    from app.modules.c20.models import C20Job, C20Task, C20Detail, C20History, C20CommandLog
+    from app.modules.switch.models import (
+        SwitchHistory, SwitchSnpaname, SwitchTofcname, SwitchOfc2code, SwitchDnscrn)
+    from app.modules.c20.models import C20Job, C20Task, C20Detail, C20CommandLog
+    from app.modules.teams.models import TeamsJob, TeamsTask, TeamsDetail, TeamsCommandLog
 
     # Crear tablas automáticamente dentro del contexto de la app
     with app.app_context():

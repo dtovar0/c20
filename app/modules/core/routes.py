@@ -46,6 +46,15 @@ def dashboard_2():
         current_app.logger.error(f"Error en dashboard_2: {e}")
         return "Internal Error", 500
 
+@core_bp.route("/teams")
+@login_required
+def teams():
+    try:
+        return render_template("teams.html")
+    except Exception as e:
+        current_app.logger.error(f"Error en teams: {e}")
+        return "Internal Error", 500
+
 @core_bp.route("/c20")
 @login_required
 def c20():

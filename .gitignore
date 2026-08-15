@@ -13,4 +13,5 @@ secret.key
 *.zip
 *.sql
 deployment/
+C20_old/
 # === FIN GITIGNORE ===

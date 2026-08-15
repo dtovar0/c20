@@ -250,7 +250,8 @@ function startGlobalPolling() {
     // 2. Register Poller: Operational Task Tables (PSX5K / C20, si están presentes)
     [
         { selector: '#psxDataTable', name: 'psx_table' },
-        { selector: '#c20DataTable', name: 'c20_table' }
+        { selector: '#c20DataTable', name: 'c20_table' },
+        { selector: '#teamsDataTable', name: 'teams_table' }
     ].forEach(({ selector, name }) => {
         const tableTarget = $(selector); // Usar ID directo del elemento
         if (tableTarget.length && $.fn.dataTable.isDataTable(selector)) {

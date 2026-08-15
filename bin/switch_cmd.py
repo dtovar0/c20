@@ -1,11 +1,16 @@
 """
-Motor de ejecución C20.
+Motor de ejecución del switch, compartido por las secciones C20 y Teams.
 
-Sustituye a los seis scripts expect del sistema legado (add/del_SNPANAME,
-TOFCNAME, OFC2CODE, DNSCRN) por una única sesión telnet que recorre las tablas
-en orden. El comportamiento frente al nodo es el mismo; lo que cambia es que
-antes se abrían cuatro sesiones —una por script, con las credenciales escritas
-en cada archivo— y ahora se abre una sola, con las credenciales en el .env.
+Sustituye a los scripts expect del sistema legado (add/del_SNPANAME, TOFCNAME,
+OFC2CODE, DNSCRN, por sección) por una única sesión telnet que recorre las
+tablas en orden. El comportamiento frente al nodo es el mismo; lo que cambia es
+que antes se abrían cuatro sesiones por tarea —una por script, con las
+credenciales escritas en cada archivo— y ahora se abre una sola, con las
+credenciales en el .env.
+
+Las secciones comparten nodo, tablas, jerarquía y confirmaciones; lo único que
+difiere es cómo se construye el alta en OFC2CODE, que cada una define en
+SECTION_PROFILES.
 
 Jerarquía del C20: lada -> serie -> número. El contenedor debe existir antes que
 lo contenido, de ahí el orden en las altas. Una baja no retira ladas ni series:
@@ -28,24 +33,63 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DEBUG_C20_ENABLED = os.getenv('DEBUG_C20', 'false').lower() == 'true'
+DEBUG_ENABLED = os.getenv('DEBUG_SWITCH', os.getenv('DEBUG_C20', 'false')).lower() == 'true'
 
 # Ladas de 2 dígitos (Monterrey, Guadalajara, CDMX). El resto usa 3.
 # En ambos casos lada + serie suman 6 dígitos.
 LADAS_CORTAS = {'81', '33', '55'}
 
-# Zona operativa por defecto. OJO: el valor 900 no es un parámetro más — conmuta
-# el alta en OFC2CODE a la rama 'TRMT OFC UNDN' (terminación) en vez de 'RTE DEST'.
-ZONA_DEFAULT = os.getenv('C20_ZONA_DEFAULT', '504')
-# Destino de ruteo para zonas distintas de 900. El sistema legado lo tenía fijo
-# en 504 (la línea que usaba la zona real estaba comentada).
-DEST_DEFAULT = os.getenv('C20_DEST_DEFAULT', '504')
-
 # Segundos de espera entre tablas, como el flujo original entre scripts.
-SLEEP_BETWEEN_TABLES = int(os.getenv('C20_SLEEP_BETWEEN_TABLES', 5))
+SLEEP_BETWEEN_TABLES = int(os.getenv('SWITCH_SLEEP_BETWEEN_TABLES', os.getenv('C20_SLEEP_BETWEEN_TABLES', 5)))
 # Espera tras cada 'pos', que el nodo necesita para responder.
-CMD_DELAY = float(os.getenv('C20_CMD_DELAY', 1))
-EXPECT_TIMEOUT = int(os.getenv('C20_EXPECT_TIMEOUT', 15))
+CMD_DELAY = float(os.getenv('SWITCH_CMD_DELAY', os.getenv('C20_CMD_DELAY', 1)))
+EXPECT_TIMEOUT = int(os.getenv('SWITCH_EXPECT_TIMEOUT', os.getenv('C20_EXPECT_TIMEOUT', 15)))
+
+
+# --- PERFILES POR SECCIÓN ---
+# Lo único que distingue a una sección de otra es cómo construye el alta en
+# OFC2CODE. Todo lo demás (SNPANAME, TOFCNAME, DNSCRN, bajas, confirmaciones)
+# es idéntico.
+#
+#   C20   -> zona 900 da terminación; el resto rutea a un destino fijo. En el
+#            sistema legado la línea que usaba la zona real estaba comentada y
+#            el destino quedó fijo en 504.
+#   Teams -> prefijo 100 rutea a DEST 16; el resto inserta el prefijo con
+#            traducción a la troncal de Teams.
+
+C20_ZONA_TERMINACION = os.getenv('C20_ZONA_TERMINACION', '900')
+C20_DEST = os.getenv('C20_DEST_DEFAULT', '504')
+C20_ZONA_DEFAULT = os.getenv('C20_ZONA_DEFAULT', '504')
+
+TEAMS_PREFIJO_DIRECTO = os.getenv('TEAMS_PREFIJO_DIRECTO', '100')
+TEAMS_DEST_DIRECTO = os.getenv('TEAMS_DEST_DIRECTO', '16')
+TEAMS_XLT = os.getenv('TEAMS_XLT', 'PX2')
+TEAMS_TRONCAL = os.getenv('TEAMS_TRONCAL', 'MSTEAMS2')
+TEAMS_PREFIJO_DEFAULT = os.getenv('TEAMS_PREFIJO_DEFAULT', '')
+
+def _ofc2code_add_c20(numero, parametro):
+    if str(parametro) == C20_ZONA_TERMINACION:
+        return f'add LCL_SUB {numero} {numero} TRMT OFC UNDN $'
+    return f'add LCL_SUB {numero} {numero} RTE DEST {C20_DEST} $'
+
+
+def _ofc2code_add_teams(numero, parametro):
+    if str(parametro) == TEAMS_PREFIJO_DIRECTO:
+        return f'add LCL_SUB {numero} {numero} RTE DEST {TEAMS_DEST_DIRECTO} $'
+    return (f'add LCL_SUB {numero} {numero} DMOD INSRT {parametro} '
+            f'XLT {TEAMS_XLT} {TEAMS_TRONCAL} $')
+
+
+SECTION_PROFILES = {
+    'c20': {
+        'ofc2code_add': _ofc2code_add_c20,
+        'parametro_default': C20_ZONA_DEFAULT,
+    },
+    'teams': {
+        'ofc2code_add': _ofc2code_add_teams,
+        'parametro_default': TEAMS_PREFIJO_DEFAULT,
+    },
+}
 
 TABLES = ('snpaname', 'tofcname', 'ofc2code', 'dnscrn')
 
@@ -67,11 +111,11 @@ class StreamLog:
 
     def write(self, s):
         self.content += s
-        if DEBUG_C20_ENABLED:
+        if DEBUG_ENABLED:
             sys.stdout.write(s)
 
     def flush(self):
-        if DEBUG_C20_ENABLED:
+        if DEBUG_ENABLED:
             sys.stdout.flush()
 
 
@@ -285,12 +329,13 @@ def _process_tofcname(session, series, accion):
     return entries
 
 
-def _process_ofc2code(session, numeros, accion, zona):
+def _process_ofc2code(session, numeros, accion, parametro, build_add):
     """
     Altas y bajas de número en OFC2CODE.
 
-    La zona 900 marca terminación (TRMT OFC UNDN); cualquier otra rutea a
-    DEST_DEFAULT, replicando el comportamiento del sistema legado.
+    Es la única tabla cuyo comando de alta depende de la sección: `build_add`
+    lo construye según el perfil (ver SECTION_PROFILES). La baja es idéntica
+    en todas.
     """
     entries = []
     for numero in numeros:
@@ -303,10 +348,7 @@ def _process_ofc2code(session, numeros, accion, zona):
             if existe:
                 entries.append((numero, 'fail'))
                 continue
-            if str(zona) == '900':
-                session.sendline(f'add LCL_SUB {numero} {numero} TRMT OFC UNDN $')
-            else:
-                session.sendline(f'add LCL_SUB {numero} {numero} RTE DEST {DEST_DEFAULT} $')
+            session.sendline(build_add(numero, parametro))
             entries.append((numero, 'ok' if _confirm(session) else 'error'))
         else:
             if not existe:
@@ -317,7 +359,7 @@ def _process_ofc2code(session, numeros, accion, zona):
     return entries
 
 
-def _process_dnscrn(session, numeros, accion, zona):
+def _process_dnscrn(session, numeros, accion):
     """Altas y bajas de número en DNSCRN."""
     entries = []
     for numero in numeros:
@@ -352,23 +394,30 @@ def _tally(entries):
     }
 
 
-def c20_cmd(line_task, line_number, zona=None):
+def switch_cmd(line_task, line_number, parametro=None, seccion='c20'):
     """
-    Ejecuta una tarea C20 completa en una sola sesión.
+    Ejecuta una tarea completa contra el switch en una sola sesión.
 
     line_task: 'add' o 'del' ('delete' también se acepta: es la etiqueta de la UI)
     line_number: lista de números
-    zona: zona operativa del lote (por defecto C20_ZONA_DEFAULT)
+    parametro: zona (C20) o prefijo (Teams); por defecto el del perfil
+    seccion: 'c20' o 'teams' — determina cómo se construye el alta en OFC2CODE
 
     Devuelve un dict con los contadores por tabla, más 'ladas'/'series' para
-    sincronizar el espejo local, 'errors' y 'full_flow' con la sesión cruda.
+    sincronizar el espejo, 'errors' y 'full_flow' con la sesión cruda.
     """
+    perfil = SECTION_PROFILES.get(seccion)
+    if not perfil:
+        raise ValueError(f"Sección desconocida: {seccion}")
+
     accion = 'del' if line_task in ('del', 'delete') else 'add'
-    zona = zona or ZONA_DEFAULT
+    if parametro in (None, ''):
+        parametro = perfil['parametro_default']
     tablas = TABLES_ADD if accion == 'add' else TABLES_DEL
 
     results = {t: _tally([]) for t in TABLES}
-    results.update({"accion": accion, "errors": [], "full_flow": "", "ladas": [], "series": []})
+    results.update({"accion": accion, "seccion": seccion, "errors": [],
+                    "full_flow": "", "ladas": [], "series": []})
 
     if not line_number:
         results["errors"].append("Lote vacío: no hay números que procesar")
@@ -378,9 +427,9 @@ def c20_cmd(line_task, line_number, zona=None):
     results["ladas"] = ladas
     results["series"] = [f"{l} {s}" for l, s in series]
 
-    if DEBUG_C20_ENABLED:
-        print(f"🔍 C20 [{accion}] números={len(line_number)} ladas={len(ladas)} "
-              f"series={len(series)} zona={zona}")
+    if DEBUG_ENABLED:
+        print(f"🔍 {seccion.upper()} [{accion}] números={len(line_number)} "
+              f"ladas={len(ladas)} series={len(series)} parametro={parametro}")
 
     session, msg = _connect()
     if not session:
@@ -390,11 +439,12 @@ def c20_cmd(line_task, line_number, zona=None):
     stream = StreamLog()
     session.logfile = stream
 
+    build_add = perfil['ofc2code_add']
     handlers = {
         'snpaname': lambda: _process_snpaname(session, ladas, accion),
         'tofcname': lambda: _process_tofcname(session, series, accion),
-        'ofc2code': lambda: _process_ofc2code(session, line_number, accion, zona),
-        'dnscrn':   lambda: _process_dnscrn(session, line_number, accion, zona),
+        'ofc2code': lambda: _process_ofc2code(session, line_number, accion, parametro, build_add),
+        'dnscrn':   lambda: _process_dnscrn(session, line_number, accion),
     }
 
     try:

@@ -1,0 +1,366 @@
+/**
+ * NEXUS PREMIUM GUIDED TOUR - Teams TERMINAL (V8)
+ */
+
+// === GLOBAL HELPERS & ASSETS ===
+const ico = (svg, color) => `
+    <div class="legend-ico-box" style="display:inline-flex; align-items:center; justify-center; padding: 2px 6px; border-radius: 6px; border: 1px solid ${color}33; background: ${color}11; color: ${color}; margin-right: 8px; vertical-align: middle;">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:14px; height:14px;">${svg}</svg>
+    </div>`;
+
+const dot = (color) => `<div style="width:10px;height:10px;border-radius:50%;background:${color};box-shadow:0 0 6px ${color}40;display:inline-block;vertical-align:middle;margin-right:12px;"></div>`;
+
+// SVGs for tables
+const svgPlus = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>';
+const svgTrash = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>';
+const svgIn = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>';
+const svgInOut = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>';
+const svgSpin = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>';
+const svgCheck = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>';
+const svgWarn = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>';
+const svgClock = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>';
+const svgDelCheck = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>';
+const svgBolt = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>';
+
+class TeamsNexusTour {
+    constructor(steps) {
+        this.steps = steps;
+        this.currentStep = -1;
+        this.overlay = null;
+        this.stepEl = null;
+        this.spotlight = null;
+        this._keyHandler = null;
+    }
+
+    init() {
+        console.log('🏁 Initializing Teams Tour Elements...');
+        // Cleanup existing tour elements to prevent duplication
+        document.querySelectorAll('.nx-tour-overlay, .nx-tour-step, .nx-tour-spotlight').forEach(el => el.remove());
+
+        this.overlay = document.createElement('div');
+        this.overlay.className = 'nx-tour-overlay';
+        this.overlay.onclick = () => this.end();
+        document.body.appendChild(this.overlay);
+
+        this.spotlight = document.createElement('div');
+        this.spotlight.className = 'nx-tour-spotlight';
+        document.body.appendChild(this.spotlight);
+
+        this.stepEl = document.createElement('div');
+        this.stepEl.className = 'nx-tour-step';
+        document.body.appendChild(this.stepEl);
+    }
+
+    start() {
+        console.log('🚀 Starting Teams Guided Tour');
+        
+        // Ensure UI elements are initialized before starting
+        this.init();
+
+        const modBtn = document.getElementById('modifyTaskBtn');
+        if (modBtn) modBtn.classList.remove('opacity-30', 'pointer-events-none');
+
+        this.currentStep = 0;
+        this.overlay.classList.add('active');
+        this.spotlight.classList.add('active');
+        this.showStep();
+
+        // Keyboard navigation
+        this._keyHandler = (e) => {
+            if (this.currentStep < 0) return;
+            if (e.key === 'Enter' || e.key === 'ArrowRight') { e.preventDefault(); this.next(); }
+            else if (e.key === 'Backspace' || e.key === 'ArrowLeft') { e.preventDefault(); this.prev(); }
+            else if (e.key === 'Escape') { e.preventDefault(); this.end(); }
+        };
+        document.addEventListener('keydown', this._keyHandler);
+    }
+
+    next() {
+        if (this.currentStep < this.steps.length - 1) {
+            this.currentStep++;
+            this.showStep();
+        } else {
+            this.end();
+        }
+    }
+
+    prev() {
+        if (this.currentStep > 0) {
+            this.currentStep--;
+            this.showStep();
+        }
+    }
+
+    end() {
+        const modBtn = document.getElementById('modifyTaskBtn');
+        if (modBtn) modBtn.classList.add('opacity-30', 'pointer-events-none');
+
+        if (this.overlay) this.overlay.classList.remove('active');
+        if (this.stepEl) this.stepEl.classList.remove('active');
+        if (this.spotlight) this.spotlight.classList.remove('active');
+        this.currentStep = -1;
+
+        if (this._keyHandler) {
+            document.removeEventListener('keydown', this._keyHandler);
+            this._keyHandler = null;
+        }
+    }
+
+    showStep() {
+        const step = this.steps[this.currentStep];
+        console.log(`[TEAMS-TOUR] Showing step ${this.currentStep + 1}/${this.steps.length}: ${step.title}`);
+        const target = document.querySelector(step.target);
+        console.log(`[TEAMS-TOUR] Target element for '${step.target}':`, target);
+        
+        if (target) {
+            const rect = target.getBoundingClientRect();
+            console.log(`[TEAMS-TOUR] Target rect:`, rect);
+            const padding = 10;
+            
+            this.spotlight.style.top = `${rect.top - padding}px`;
+            this.spotlight.style.left = `${rect.left - padding}px`;
+            this.spotlight.style.width = `${rect.width + (padding * 2)}px`;
+            this.spotlight.style.height = `${rect.height + (padding * 2)}px`;
+
+            // Build pagination dots
+            const dots = this.steps.map((_, i) => 
+                `<div class="nx-tour-dot ${i === this.currentStep ? 'active' : ''}"></div>`
+            ).join('');
+
+            const arrowLeft = `<svg class="nx-tour-arrow ${this.currentStep === 0 ? 'disabled' : ''}" onclick="window.teamsTour.prev()" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 19l-7-7 7-7"></path></svg>`;
+            const arrowRight = `<svg class="nx-tour-arrow" onclick="window.teamsTour.next()" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>`;
+
+            // Build table if present in step
+            let tableHTML = '';
+            if (step.table) {
+                const headerRow = step.table_headers 
+                    ? `<tr>${step.table_headers.map(h => {
+                        const isDesc = h.toLowerCase() === 'descripción' || h.toLowerCase() === 'significado';
+                        return `<th ${isDesc ? 'colspan="2"' : ''}>${h}</th>`;
+                    }).join('')}</tr>` 
+                    : '';
+                
+                const rows = step.table.map(row => {
+                    return `<tr>${row.map(cell => {
+                        const content = typeof cell === 'object' ? cell.text : cell;
+                        const colSpan = typeof cell === 'object' ? cell.colspan : 1;
+                        return `<td ${colSpan > 1 ? `colspan="${colSpan}"` : ''}>${content}</td>`;
+                    }).join('')}</tr>`;
+                }).join('');
+                
+                tableHTML = `
+                    <table class="nx-tour-table">
+                        ${headerRow ? `<thead>${headerRow}</thead>` : ''}
+                        <tbody>${rows}</tbody>
+                    </table>`;
+            }
+
+            this.stepEl.innerHTML = `
+                <div class="nx-tour-step-header">
+                    <span class="nx-tour-type">${step.type}</span>
+                    <h3>${step.title}</h3>
+                </div>
+                <div class="nx-tour-content">
+                    <p>${step.content}</p>
+                    ${tableHTML}
+                </div>
+                <div class="nx-tour-footer">
+                    <div class="nx-tour-pagination">
+                        ${arrowLeft}
+                        <div class="nx-tour-dots">${dots}</div>
+                        ${arrowRight}
+                    </div>
+                    <div class="nx-tour-counter">${this.currentStep + 1} / ${this.steps.length}</div>
+                </div>
+            `;
+
+            const stepWidth = 550;
+            // POSICIÓN POR DEFECTO (LATERAL IZQUIERDA)
+            let stepLeft = (rect.left + window.scrollX) - stepWidth - 40;
+            let stepTop = (rect.top + window.scrollY) + (rect.height / 2) - 150;
+
+            // MANEJO DE POSICIONAMIENTO PERSONALIZADO
+            if (step.placement === 'bottom') {
+                stepLeft = (rect.left + window.scrollX) + (rect.width / 2) - (stepWidth / 2);
+                stepTop = (rect.bottom + window.scrollY) + 20;
+            } else {
+                // Lógica de volteo lateral (fallback si no cabe a la izquierda)
+                if (stepLeft < 20) {
+                    stepLeft = (rect.right + window.scrollX) + 40;
+                }
+            }
+
+            // Screen bounds protection vertical
+            if (stepTop < window.scrollY + 20) stepTop = window.scrollY + 20;
+            if (stepTop + 400 > document.documentElement.scrollHeight) {
+                stepTop = document.documentElement.scrollHeight - 420;
+            }
+
+            this.stepEl.style.width = `${stepWidth}px`;
+            this.stepEl.style.top = `${stepTop}px`;
+            this.stepEl.style.left = `${stepLeft}px`;
+            this.stepEl.classList.add('active');
+            
+            target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+            console.warn(`[TEAMS-TOUR] Target not found: ${step.target}. Moving to next step.`);
+            this.next();
+        }
+    }
+}
+
+// === LOG AUDIT TOUR (DETAIL VIEW) ===
+window.logAuditTour = new TeamsNexusTour([
+    {
+        type: 'Buscador',
+        target: '#logSearch',
+        title: 'Filtro Transaccional',
+        content: 'Escribe cualquier número (ANI) para filtrar instantáneamente el historial. La búsqueda es <b>reactiva</b> y se actualiza en tiempo real.'
+    },
+    {
+        type: 'Filtros Rápidos',
+        target: '#logFiltersContainer',
+        title: 'Estado de Evento',
+        table_headers: ['Icono', 'Descripción'],
+        content: 'Filtra rápidamente por la respuesta del nodo. Usa los iconos para aislar estados específicos:',
+        table: [
+            [ico('<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>', '#64748b'), '<b>Limpiar (Reset)</b> — Elimina los filtros activos.'],
+            [ico(svgCheck, '#10b981'), '<b>Éxito (OK)</b> — Registro procesado correctamente.'],
+            [ico(svgDelCheck, '#14b8a6'), '<b>DelCheck</b> — Eliminado con validación exitosa.'],
+            [ico(svgTrash, '#6366f1'), '<b>Del</b> — Eliminado o no encontrado.'],
+            [ico(svgWarn, '#f43f5e'), '<b>Error (FAIL)</b> — El nodo rechazó la transacción.'],
+            [ico('<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path>', '#f59e0b'), '<b>Duplicado (DUP)</b> — Registro ignorado por repetición.']
+        ]
+    },
+    {
+        type: 'Herramientas de Acción',
+        target: '#logActionsContainer',
+        title: 'Gestión de Datos',
+        table_headers: ['Icono', 'Descripción'],
+        content: 'Acciones operativas disponibles para el manejo de resultados:',
+        table: [
+            [ico('<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>', '#64748b'), '<b>Ayuda</b> — Inicia este tour guiado.'],
+            [ico('<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>', '#64748b'), '<b>Descargar</b> — Exporta CSV de registros.'],
+            [ico('<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>', '#0ea5e9'), '<b>Procesar</b> — Reintenta el lote.']
+        ]
+    },
+    {
+        type: 'Rejilla Técnica',
+        target: '#historyTable thead',
+        placement: 'bottom',
+        title: 'Encabezados de Auditoría',
+        content: 'Haz clic en cualquier encabezado para **ordenar** la tabla. Cada columna ofrece datos específicos sobre la ruta y el tiempo de respuesta del nodo.'
+    }
+]);
+
+window.startLogTour = function() {
+    console.log('🔍 Starting Log Audit Tour...');
+    window.logAuditTour.start();
+};
+
+// === INSTANCE & FLOW TRIGGER ===
+(function() {
+    window.teamsTour = new TeamsNexusTour([
+        {
+            type: 'Buscador',
+            target: '#auditSearch',
+            title: 'Buscador Inteligente',
+            content: 'Filtra instantáneamente cualquier registro de la tabla por su ID, usuario o etiqueta. La búsqueda es <b>progresiva</b> y se procesa en tiempo real.'
+        },
+        {
+            type: 'Filtro Especializado',
+            target: '#statusFilterBtn',
+            title: 'Filtro por Categoría',
+            content: 'Segmenta la vista operativa según el estado actual de las tareas: <b>Programadas, En Ejecución, Completadas o Tareas con Errores</b>.'
+        },
+        {
+            type: 'Botón',
+            target: '#refreshAudit',
+            title: 'Tarea Nueva',
+            content: 'Inicia el proceso de creación de tareas. Permite cargar registros masivos de forma <b>manual</b> o mediante archivos <b>CSV / TXT</b>.'
+        },
+        {
+            type: 'Botón',
+            target: '#scheduleTaskBtn',
+            title: 'Programar Tarea',
+            content: 'Difiere la ejecución de la tarea para una ventana de tiempo específica. Útil para optimización de recursos en el nodo.'
+        },
+        {
+            type: 'Botón',
+            target: '#modifyTaskBtn',
+            title: 'Modificar Tarea',
+            content: 'Edita el <b>Routing Label</b> o el temporizador mientras la tarea aún no ha iniciado su ejecución.'
+        },
+        {
+            type: 'Columna',
+            target: '#colTicketHeader',
+            title: 'ID de Ticket Principal',
+            content: 'Identificador único global del lote de datos. Se usa para auditorías y seguimiento transaccional.'
+        },
+        {
+            type: 'Columna',
+            target: '#colUserHeader',
+            title: 'Propietario',
+            content: 'Muestra el usuario que generó la tarea. (Personalizado según tu rol administrativo o de usuario).'
+        },
+        {
+            type: 'Columna',
+            target: '#colOrigenHeader',
+            title: 'Origen / Segmento',
+            content: 'Nombre del archivo fuente o indicador manual, acompañado del índice del fragmento procesado.'
+        },
+        {
+            type: 'Columna',
+            target: '#colLabelHeader',
+            title: 'Etiqueta de Enrutamiento',
+            content: 'Etiqueta lógica de destino enviada al Teams. Define el canal de salida de los datos procesados.'
+        },
+        {
+            type: 'Columna + Iconos',
+            target: '#colGraphHeader',
+            title: 'Métricas de Avance',
+            table_headers: ['Indicador', 'Estado', 'Significado'],
+            content: 'Barras de progreso proporcionales según el tipo de tarea (Alta vs Baja).<br><br><b style="color:#2563eb">Porcentaje</b> = % de registros procesados exitosamente.',
+            table: [
+                [`${dot('#2563eb')} Azul`, '<b>OK</b>', 'Procesamiento exitoso (Alta)'],
+                [`${dot('#6366f1')} Índigo`, '<b>DEL</b>', 'Eliminación sencilla (Baja)'],
+                [`${dot('#14b8a6')} Teal`, '<b>DELCHECK</b>', 'Eliminación con confirmación (Baja)'],
+                [`${dot('#f43f5e')} Rojo`, '<b>FAIL</b>', 'Error reportado por el nodo'],
+                [`${dot('#8b5cf6')} Púrpura`, '<b>FORCE</b>', 'Validación forzada (Alta)'],
+                [`${dot('#f59e0b')} Ámbar`, '<b>DUP</b>', 'Registro duplicado ignorado (Alta)']
+            ]
+        },
+        {
+            type: 'Columna + Iconos',
+            target: '#colStatusHeader',
+            title: 'Estatus Operativo',
+            table_headers: ['Tipo', 'Descripción'],
+            content: 'Conjunto de indicadores que resume el ciclo de vida del proceso.',
+            table: [
+                ['<b>Operación</b>', `${ico(svgPlus, '#2563eb')} Alta`, `${ico(svgTrash, '#f43f5e')} Baja`],
+                ['<b>Modo</b>', { text: `${ico(svgIn, '#0ea5e9')} Solo Llamadas`, colspan: 2 }],
+                ['', { text: `${ico(svgInOut, '#6366f1')} Llamadas y Recibe`, colspan: 2 }],
+                ['<b>Estado</b>', `${ico(svgSpin, '#2563eb')} En Ejecución`, `${ico(svgCheck, '#10b981')} Completada`],
+                ['', `${ico(svgWarn, '#f43f5e')} Error`, `${ico(svgClock, '#f59e0b')} Programada`],
+                ['<b>Force</b>', { text: `${ico(svgBolt, '#8b5cf6')} Indica si la validación forzada está activa o inactiva.`, colspan: 2 }]
+            ]
+        },
+        {
+            type: 'Columna + Botón',
+            target: '#colSearchHeader',
+            title: 'Auditoría Profunda',
+            content: 'Abre el log detallado de la tarea. Permite auditar la respuesta <b>(Éxito / Rechazo)</b> individual de cada registro enviado al nodo.'
+        }
+    ]);
+
+    // Attachment Logic
+    const helpBtn = document.getElementById('helpTourBtn');
+    if (helpBtn) {
+        console.log('✅ Teams Help Button Found. Attaching Listener.');
+        helpBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            window.teamsTour.start();
+        });
+    }
+})();
