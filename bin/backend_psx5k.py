@@ -357,6 +357,9 @@ def main():
                 task.fecha_inicio = datetime.datetime.now()
                 db.session.commit()
 
+                # Procesar datos
+                ani_list = process_task_data(task)
+
                 # Notificación de inicio al propietario
                 target = get_notification_target(task.job.usuario)
                 if target:
@@ -368,10 +371,7 @@ def main():
                                                      'parametro': task.job.routing_label or '-',
                                                      'registros': len(ani_list)})
                     print(f"📧 Correo de inicio enviado satisfactoriamente a: {target}")
-                
-                # Procesar datos
-                ani_list = process_task_data(task)
-                
+
                 add_audit_log(f"EJECUCIÓN INICIADA (PSX-{task.id})", status="info", detail=f"Proceso: {task.job.tarea} | Usuario: {task.job.usuario} | Registros: {len(ani_list)}", user_override=task.job.usuario)
                 
                 if os.getenv('DEBUG_PSX', 'false').lower() == 'true':
