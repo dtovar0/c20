@@ -292,14 +292,21 @@ function initC20DataTable() {
 
                     // Zona operativa: 900 marca terminación (TRMT OFC UNDN) en OFC2CODE.
                     // Solo interviene en el alta; una baja sale por TABLES_DEL, que
-                    // no la consulta. Los jobs de baja anteriores a este cambio
-                    // tienen un 504 heredado del entorno que nunca viajó al nodo,
-                    // así que el badge se omite por tipo de tarea, no por si hay dato.
-                    const zona = row.zona || '-';
-                    const isTerminacion = String(zona) === '900';
-                    const zonaStyle = getNexusBadgeStyle(isTerminacion ? '#f43f5e' : '#0ea5e9', 0.1, 0.25);
-                    const zonaBadge = !isAdd ? '' : `
-                            <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110 text-[10px] font-black" style="${zonaStyle}" data-nx-tooltip="ZONA: ${zona}${isTerminacion ? ' (TERMINACIÓN)' : ''}">
+                    // no la consulta, así que ahí se rotula N/A en vez del valor.
+                    // Se decide por tipo de tarea y no por si hay dato, porque los
+                    // jobs de baja anteriores a este cambio conservan en BD un 504
+                    // heredado del entorno que nunca viajó al nodo.
+                    // El badge se mantiene siempre para no descuadrar la fila.
+                    const zona = isAdd ? (row.zona || '-') : 'N/A';
+                    const isTerminacion = isAdd && String(zona) === '900';
+                    const zonaStyle = isAdd
+                        ? getNexusBadgeStyle(isTerminacion ? '#f43f5e' : '#0ea5e9', 0.1, 0.25)
+                        : getNexusBadgeStyle('#8a8f98', 0.06, 0.15);
+                    const zonaTooltip = isAdd
+                        ? `ZONA: ${zona}${isTerminacion ? ' (TERMINACIÓN)' : ''}`
+                        : 'ZONA: NO APLICA EN BAJAS';
+                    const zonaBadge = `
+                            <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110 text-[9px] font-black" style="${zonaStyle}" data-nx-tooltip="${zonaTooltip}">
                                 ${zona}
                             </div>`;
 
