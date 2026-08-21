@@ -216,6 +216,10 @@ def create_task():
         user_email = getattr(current_user, 'email', None) or "usuario_desconocido"
 
         # --- CREAR JOB MAESTRO ---
+        # Mismo criterio que el motor, que acepta 'del' y 'delete' (la UI manda
+        # la segunda forma).
+        es_baja = str(raw_tarea).strip().lower() in ('del', 'delete')
+
         from .models import TeamsJob
         try:
             new_job = TeamsJob(
@@ -225,7 +229,12 @@ def create_task():
                 datos_tipo=raw_origen,
                 archivo_origen=data.get('datos') if raw_origen == 'Archivo' else 'Ingreso Manual',
                 # Prefijo del lote: entra literalmente en el comando del nodo
-                prefijo=data.get('prefijo') or os.getenv('TEAMS_PREFIJO_DEFAULT', ''),
+                # El prefijo solo interviene en el alta: entra literalmente en el
+                # comando de OFC2CODE (DMOD INSRT <prefijo> ..., o RTE DEST 16 si
+                # es 100). Una baja sale por TABLES_DEL y no lo consulta, así que
+                # se guarda NULL en vez del default del entorno.
+                prefijo=(None if es_baja
+                         else (data.get('prefijo') or os.getenv('TEAMS_PREFIJO_DEFAULT', ''))),
                 cliente=data.get('cliente')
             )
             db.session.add(new_job)
@@ -632,7 +641,9 @@ def update_or_reprocess_job(job_id):
                 tarea=data.get('tarea', job.tarea),
                 accion_tipo=data.get('accion_tipo', job.accion_tipo),
                 datos_tipo=job.datos_tipo,
-                prefijo=data.get('prefijo', job.prefijo),
+                # Una baja no usa prefijo, tampoco si el reproceso cambia el tipo.
+                prefijo=(None if str(data.get('tarea', job.tarea)).strip().lower() in ('del', 'delete')
+                         else data.get('prefijo', job.prefijo)),
                 cliente=data.get('cliente', job.cliente),
                 archivo_origen=f"REPROCESO_TASK_{origin_task_id}" if origin_task_id else f"REPROCESO_FROM_{job_id}"
             )
@@ -669,7 +680,12 @@ def update_or_reprocess_job(job_id):
             old_prefijo = job.prefijo
             job.tarea = data.get('tarea', job.tarea)
             job.accion_tipo = data.get('accion_tipo', job.accion_tipo)
-            job.prefijo = data.get('prefijo', job.prefijo)
+            # Editar una tarea a baja limpia el prefijo: dejarlo puesto haría
+            # creer que interviene en la operación.
+            if str(job.tarea).strip().lower() in ('del', 'delete'):
+                job.prefijo = None
+            else:
+                job.prefijo = data.get('prefijo', job.prefijo)
             job.cliente = data.get('cliente', job.cliente)
 
             # Actualizar estado y tiempos de las tareas asociadas

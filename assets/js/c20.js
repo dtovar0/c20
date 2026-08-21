@@ -236,7 +236,12 @@ function initC20DataTable() {
             { 
                 data: 'zona',
                 width: '150px',
-                render: (data) => `<div class="flex items-center h-full px-2 text-[12px] font-bold text-label/60 font-mono tracking-tighter truncate">${data || '-'}</div>`
+                // Solo el alta usa zona; en una baja se muestra '-' aunque el job
+                // traiga un valor heredado del entorno (ver el badge más abajo).
+                render: (data, type, row) => {
+                    const valor = row.tarea === 'add' ? (data || '-') : '-';
+                    return `<div class="flex items-center h-full px-2 text-[12px] font-bold text-label/60 font-mono tracking-tighter truncate">${valor}</div>`;
+                }
             },
             { 
                 data: 'resumen', 
@@ -285,10 +290,18 @@ function initC20DataTable() {
 
                     const actionIcon = isAdd ? iconPlus : iconTrash;
 
-                    // Zona operativa: 900 marca terminación (TRMT OFC UNDN) en OFC2CODE
+                    // Zona operativa: 900 marca terminación (TRMT OFC UNDN) en OFC2CODE.
+                    // Solo interviene en el alta; una baja sale por TABLES_DEL, que
+                    // no la consulta. Los jobs de baja anteriores a este cambio
+                    // tienen un 504 heredado del entorno que nunca viajó al nodo,
+                    // así que el badge se omite por tipo de tarea, no por si hay dato.
                     const zona = row.zona || '-';
                     const isTerminacion = String(zona) === '900';
                     const zonaStyle = getNexusBadgeStyle(isTerminacion ? '#f43f5e' : '#0ea5e9', 0.1, 0.25);
+                    const zonaBadge = !isAdd ? '' : `
+                            <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110 text-[10px] font-black" style="${zonaStyle}" data-nx-tooltip="ZONA: ${zona}${isTerminacion ? ' (TERMINACIÓN)' : ''}">
+                                ${zona}
+                            </div>`;
 
                     let statusIcon = '';
                     let statusStyle = '';
@@ -312,9 +325,7 @@ function initC20DataTable() {
                             <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="${actionStyle}" data-nx-tooltip="${row.tarea.toUpperCase()}">
                                 ${actionIcon}
                             </div>
-                            <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110 text-[10px] font-black" style="${zonaStyle}" data-nx-tooltip="ZONA: ${zona}${isTerminacion ? ' (TERMINACIÓN)' : ''}">
-                                ${zona}
-                            </div>
+                            ${zonaBadge}
                             <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="${statusStyle}" data-nx-tooltip="${row.estado.toUpperCase()}">
                                 ${statusIcon}
                             </div>

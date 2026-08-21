@@ -216,6 +216,10 @@ def create_task():
         user_email = getattr(current_user, 'email', None) or "usuario_desconocido"
 
         # --- CREAR JOB MAESTRO ---
+        # Mismo criterio que el motor, que acepta 'del' y 'delete' (la UI manda
+        # la segunda forma).
+        es_baja = str(raw_tarea).strip().lower() in ('del', 'delete')
+
         from .models import C20Job
         try:
             new_job = C20Job(
@@ -224,8 +228,13 @@ def create_task():
                 accion_tipo=raw_accion,
                 datos_tipo=raw_origen,
                 archivo_origen=data.get('datos') if raw_origen == 'Archivo' else 'Ingreso Manual',
-                # Sin zona explícita se aplica la del entorno (C20_ZONA_DEFAULT)
-                zona=data.get('zona') or os.getenv('C20_ZONA_DEFAULT', '504')
+                # La zona solo interviene en el alta: es el 2º campo del comando
+                # de OFC2CODE (y el valor 900 lo conmuta a TRMT OFC UNDN). Una
+                # baja no la usa —sale por TABLES_DEL, que ni la consulta—, así
+                # que se guarda NULL en vez del default del entorno: registrar un
+                # 504 que nunca viajó al nodo haría creer que influyó en la baja.
+                zona=(None if es_baja
+                      else (data.get('zona') or os.getenv('C20_ZONA_DEFAULT', '504')))
             )
             db.session.add(new_job)
             db.session.flush() # Para obtener el new_job.id
@@ -625,12 +634,16 @@ def update_or_reprocess_job(job_id):
         # Si el job ya terminó/canceló y se pide modificar -> CLONAMOS (REPROCESO)
         if finished and action == 'modify':
             origin_task_id = data.get('origin_task_id')
+            nueva_tarea = data.get('tarea', job.tarea)
+            nueva_es_baja = str(nueva_tarea).strip().lower() in ('del', 'delete')
             new_job = C20Job(
                 usuario=current_user.email,
-                tarea=data.get('tarea', job.tarea),
+                tarea=nueva_tarea,
                 accion_tipo=data.get('accion_tipo', job.accion_tipo),
                 datos_tipo=job.datos_tipo,
-                zona=data.get('zona', job.zona),
+                # Una baja no usa zona; si el reproceso cambia el tipo de add a
+                # delete, tampoco se arrastra la del original.
+                zona=None if nueva_es_baja else data.get('zona', job.zona),
                 archivo_origen=f"REPROCESO_TASK_{origin_task_id}" if origin_task_id else f"REPROCESO_FROM_{job_id}"
             )
             db.session.add(new_job)
@@ -666,7 +679,12 @@ def update_or_reprocess_job(job_id):
             old_zona = job.zona
             job.tarea = data.get('tarea', job.tarea)
             job.accion_tipo = data.get('accion_tipo', job.accion_tipo)
-            job.zona = data.get('zona', job.zona)
+            # Editar una tarea a baja limpia la zona: dejarla puesta haría creer
+            # que interviene en la operación.
+            if str(job.tarea).strip().lower() in ('del', 'delete'):
+                job.zona = None
+            else:
+                job.zona = data.get('zona', job.zona)
 
             # Actualizar estado y tiempos de las tareas asociadas
             for t in job.tasks:

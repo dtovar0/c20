@@ -236,7 +236,12 @@ function initTeamsDataTable() {
             { 
                 data: 'prefijo',
                 width: '150px',
-                render: (data) => `<div class="flex items-center h-full px-2 text-[12px] font-bold text-label/60 font-mono tracking-tighter truncate">${data || '-'}</div>`
+                // Solo el alta usa prefijo; en una baja se muestra '-' aunque el
+                // job traiga un valor heredado del entorno (ver el badge abajo).
+                render: (data, type, row) => {
+                    const valor = row.tarea === 'add' ? (data || '-') : '-';
+                    return `<div class="flex items-center h-full px-2 text-[12px] font-bold text-label/60 font-mono tracking-tighter truncate">${valor}</div>`;
+                }
             },
             { 
                 data: 'resumen', 
@@ -286,10 +291,18 @@ function initTeamsDataTable() {
                     const actionIcon = isAdd ? iconPlus : iconTrash;
 
                     // Prefijo: 100 rutea directo (RTE DEST 16); el resto se
-                    // inserta en el comando (DMOD INSRT <prefijo> XLT PX2 MSTEAMS2)
+                    // inserta en el comando (DMOD INSRT <prefijo> XLT PX2 MSTEAMS2).
+                    // Solo interviene en el alta; una baja sale por TABLES_DEL, que
+                    // no lo consulta. Los jobs de baja anteriores a este cambio
+                    // traen el valor heredado del entorno, así que el badge se
+                    // omite por tipo de tarea, no por si hay dato.
                     const prefijo = row.prefijo || '-';
                     const isDirecto = String(prefijo) === '100';
                     const prefijoStyle = getNexusBadgeStyle(isDirecto ? '#f43f5e' : '#0ea5e9', 0.1, 0.25);
+                    const prefijoBadge = !isAdd ? '' : `
+                            <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110 text-[10px] font-black" style="${prefijoStyle}" data-nx-tooltip="PREFIJO: ${prefijo}${isDirecto ? ' (RUTEO DIRECTO)' : ''}">
+                                ${prefijo}
+                            </div>`;
 
                     let statusIcon = '';
                     let statusStyle = '';
@@ -313,9 +326,7 @@ function initTeamsDataTable() {
                             <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="${actionStyle}" data-nx-tooltip="${row.tarea.toUpperCase()}">
                                 ${actionIcon}
                             </div>
-                            <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110 text-[10px] font-black" style="${prefijoStyle}" data-nx-tooltip="PREFIJO: ${prefijo}${isDirecto ? ' (RUTEO DIRECTO)' : ''}">
-                                ${prefijo}
-                            </div>
+                            ${prefijoBadge}
                             <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110" style="${statusStyle}" data-nx-tooltip="${row.estado.toUpperCase()}">
                                 ${statusIcon}
                             </div>
