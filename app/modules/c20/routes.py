@@ -592,15 +592,23 @@ def update_or_reprocess_job(job_id):
         except Exception as e:
             current_app.logger.error(f"Error parsing date in update C20: {e}")
 
-    # Si alguna tarea está en 'Ejecutando', bloqueamos
-    active_tasks = C20Task.query.filter(C20Task.job_id == job_id, C20Task.estado == 'Ejecutando').count()
-    if active_tasks > 0:
-        return jsonify({"status": "error", "message": "No se puede modificar un Job con fragmentos en ejecución."}), 400
-
     # Estado global del job (basado en sus tareas)
     finished = all(t.estado in ['Completado', 'Completada', 'Terminado con Errores', 'Error', 'Cancelada', 'Cancelado', 'Abortada'] for t in job.tasks)
 
     try:
+        # El bloqueo por fragmentos en ejecución protege la MODIFICACIÓN, no la
+        # cancelación: parar una tarea en curso es justamente lo que el usuario
+        # necesita poder hacer, y la rama 'cancel' de abajo ya contempla el
+        # estado 'Ejecutando'. Cuando el guardia vivía al principio de la vista
+        # cortaba también el cancel, dejando las tareas colgadas sin más salida
+        # que un UPDATE a mano en la base.
+        if action != 'cancel':
+            active_tasks = C20Task.query.filter(
+                C20Task.job_id == job_id, C20Task.estado == 'Ejecutando'
+            ).count()
+            if active_tasks > 0:
+                return jsonify({"status": "error", "message": "No se puede modificar un Job con fragmentos en ejecución."}), 400
+
         if action == 'cancel':
             # Acción de Cancelación (Solo para tareas no terminadas)
             updated_count = 0
