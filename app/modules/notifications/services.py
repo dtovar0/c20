@@ -1,7 +1,112 @@
+import os
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from app.modules.notifications.models import SMTPConfig, NotificationTemplate, InAppNotification
+
+
+class _SMTPSettings:
+    """Configuración SMTP efectiva, venga del .env o de la base de datos.
+
+    Expone los mismos atributos que el modelo SMTPConfig para que los
+    consumidores no distingan el origen.
+    """
+
+    __slots__ = ('server', 'port', 'encryption', 'auth_enabled',
+                 'username', 'password', 'sender_name', 'origen')
+
+    def __init__(self, server, port, encryption, auth_enabled,
+                 username, password, sender_name, origen):
+        self.server = server
+        self.port = port
+        self.encryption = encryption
+        self.auth_enabled = auth_enabled
+        self.username = username
+        self.password = password
+        self.sender_name = sender_name
+        self.origen = origen
+
+
+def env_bool(name, default):
+    """Lee un booleano del entorno aceptando true/1/yes/on."""
+    raw = os.getenv(name)
+    if raw is None or raw.strip() == '':
+        return default
+    return raw.strip().lower() in ('true', '1', 'yes', 'on')
+
+
+def get_smtp_settings():
+    """Devuelve la configuración SMTP a usar, o None si no hay ninguna.
+
+    Orden de precedencia:
+
+    1. Si SMTP_FORCE_ENV=true, manda el .env y la base de datos se ignora por
+       completo. Es la vía para entornos donde la configuración debe viajar con
+       el despliegue y no depender de lo que alguien haya dejado en la BD.
+    2. Si no, manda la fila de smtp_config (editable desde la UI) y el .env solo
+       cubre los campos que la BD no tenga definidos.
+    3. Sin fila en BD, se usa el .env siempre que aporte al menos SMTP_SERVER.
+
+    SMTP_FORCE_ENV exige SMTP_SERVER: forzar el entorno sin decir a qué
+    servidor conectarse dejaría el sistema sin correo de forma silenciosa, así
+    que en ese caso se avisa y se cae a la BD.
+    """
+    env_server = (os.getenv('SMTP_SERVER') or '').strip()
+    force_env = env_bool('SMTP_FORCE_ENV', False)
+
+    if force_env and not env_server:
+        print("⚠️  SMTP_FORCE_ENV=true pero falta SMTP_SERVER; se usa la configuración de la base de datos.")
+        force_env = False
+
+    def _env_port(default):
+        raw = (os.getenv('SMTP_PORT') or '').strip()
+        if not raw:
+            return default
+        try:
+            return int(raw)
+        except ValueError:
+            print(f"⚠️  SMTP_PORT no es un número válido ('{raw}'); se usa {default}.")
+            return default
+
+    if force_env:
+        return _SMTPSettings(
+            server=env_server,
+            port=_env_port(587),
+            encryption=(os.getenv('SMTP_ENCRYPTION') or 'starttls').strip().lower(),
+            auth_enabled=env_bool('SMTP_AUTH_ENABLED', True),
+            username=os.getenv('SMTP_USER') or None,
+            password=os.getenv('SMTP_PASS') or None,
+            sender_name=(os.getenv('SMTP_SENDER_NAME') or 'Nexus System').strip(),
+            origen='env (forzado)',
+        )
+
+    config = SMTPConfig.query.first()
+    if config:
+        # La BD manda; el entorno solo rellena huecos.
+        return _SMTPSettings(
+            server=config.server or env_server or None,
+            port=config.port or _env_port(587),
+            encryption=config.encryption or (os.getenv('SMTP_ENCRYPTION') or 'starttls').strip().lower(),
+            auth_enabled=config.auth_enabled if config.auth_enabled is not None else env_bool('SMTP_AUTH_ENABLED', True),
+            username=config.username or os.getenv('SMTP_USER') or None,
+            password=config.password or os.getenv('SMTP_PASS') or None,
+            sender_name=config.sender_name or (os.getenv('SMTP_SENDER_NAME') or 'Nexus System').strip(),
+            origen='base de datos',
+        )
+
+    if env_server:
+        return _SMTPSettings(
+            server=env_server,
+            port=_env_port(587),
+            encryption=(os.getenv('SMTP_ENCRYPTION') or 'starttls').strip().lower(),
+            auth_enabled=env_bool('SMTP_AUTH_ENABLED', True),
+            username=os.getenv('SMTP_USER') or None,
+            password=os.getenv('SMTP_PASS') or None,
+            sender_name=(os.getenv('SMTP_SENDER_NAME') or 'Nexus System').strip(),
+            origen='env',
+        )
+
+    return None
 
 def add_in_app_notification(type, title, message, user_id=None, solo_admins=False):
     """
@@ -76,7 +181,6 @@ def send_test_email(server, port, encryption, username, password, sender_name, t
             if encryption == 'starttls':
                 smtp.starttls()
                 
-        import os
         if os.getenv('DEBUG_SMTP') == 'true':
             smtp.set_debuglevel(1)
 
@@ -104,7 +208,6 @@ def send_notification_by_slug(slug, target_email, context=None, html_body=None,
     que quien no pase html_body conserva exactamente el comportamiento anterior.
     """
     from app import db
-    import os
     from dotenv import load_dotenv
     
     # Reload env to catch changes without restart
@@ -116,7 +219,7 @@ def send_notification_by_slug(slug, target_email, context=None, html_body=None,
         return {"status": "success", "message": "Notifications disabled globally"}
 
     try:
-        config = SMTPConfig.query.first()
+        config = get_smtp_settings()
         template = NotificationTemplate.query.filter_by(slug=slug).first()
         if not config or not template:
             return {"status": "error", "message": "Missing SMTP config or Template"}
@@ -162,7 +265,6 @@ def send_notification_by_slug(slug, target_email, context=None, html_body=None,
             if config.encryption == 'starttls':
                 smtp.starttls()
 
-        import os
         if os.getenv('DEBUG_SMTP') == 'true':
             smtp.set_debuglevel(1)
 

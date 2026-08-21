@@ -16,12 +16,14 @@ def test_smtp():
         print("📧 PRUEBA DE ENVÍO SMTP")
         print("="*60)
 
-        config = SMTPConfig.query.first()
+        from app.modules.notifications.services import get_smtp_settings
+        config = get_smtp_settings()
         if not config:
-            print("❌ Error: No hay configuración SMTP en la base de datos.")
+            print("❌ Error: No hay configuración SMTP (ni en la base de datos ni en el .env).")
             return
 
         print(f"📡 Servidor: {config.server}:{config.port}")
+        print(f"🗂  Origen: {config.origen}")
         print(f"🔐 Cifrado: {config.encryption}")
         print(f"👤 Remitente: {config.sender_name} <{config.username}>")
         

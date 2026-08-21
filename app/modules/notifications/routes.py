@@ -4,7 +4,7 @@ from datetime import datetime
 from app.decorators import admin_required
 from app import db
 from app.modules.notifications.models import SMTPConfig, NotificationTemplate, InAppNotification
-from app.modules.notifications.services import send_test_email
+from app.modules.notifications.services import send_test_email, get_smtp_settings
 
 notifications_bp = Blueprint("notifications", __name__, url_prefix="/notifications")
 
@@ -12,7 +12,11 @@ notifications_bp = Blueprint("notifications", __name__, url_prefix="/notificatio
 @login_required
 @admin_required
 def index():
-    config = SMTPConfig.query.first()
+    # La vista muestra la configuración efectiva: si SMTP_FORCE_ENV está activo,
+    # lo que se pinta es el .env y no la fila de la BD, para que el formulario no
+    # contradiga lo que el sistema usa realmente al enviar.
+    config = get_smtp_settings()
+    smtp_forzado_env = bool(config and config.origen == 'env (forzado)')
     
     # Ensuring default templates exist
     default_slugs = ['test', 'inicio', 'error', 'guardado', 'terminado']
@@ -35,7 +39,8 @@ def index():
     if any(slug not in existing_slugs for slug in default_slugs):
         db.session.commit()
 
-    return render_template("notifications.html", config=config)
+    return render_template("notifications.html", config=config,
+                           smtp_forzado_env=smtp_forzado_env)
 
 @notifications_bp.route("/save", methods=["POST"])
 @login_required
@@ -46,6 +51,15 @@ def save():
         if not data:
             return jsonify({"status": "error", "message": "No data provided"}), 400
             
+        # Guardar en la BD mientras SMTP_FORCE_ENV manda daría un falso
+        # positivo: la fila se escribiría pero el envío seguiría usando el .env.
+        from app.modules.notifications.services import env_bool
+        if env_bool('SMTP_FORCE_ENV', False):
+            return jsonify({
+                "status": "error",
+                "message": "SMTP_FORCE_ENV está activo: la configuración se toma del .env. Desactiva esa variable para editar desde aquí."
+            }), 409
+
         config = SMTPConfig.query.first()
         if not config:
             config = SMTPConfig()
@@ -78,7 +92,7 @@ def test_connection():
         if not target_email:
             return jsonify({"status": "error", "message": "Falta el correo destinatario"}), 400
             
-        config = SMTPConfig.query.first()
+        config = get_smtp_settings()
         if not config:
             return jsonify({"status": "error", "message": "Configura y guarda el servidor primero"}), 400
             

@@ -46,10 +46,12 @@ def run_health_check():
 
         # 3. SMTP
         print("\n📧 3. NOTIFICACIONES (SMTP)")
-        smtp_cfg = SMTPConfig.query.first()
+        from app.modules.notifications.services import get_smtp_settings
+        smtp_cfg = get_smtp_settings()
         if smtp_cfg:
             # No enviamos mail real para no saturar, solo test de conectividad si existiera service
             print(f"   ℹ️  Configurado: {smtp_cfg.server}:{smtp_cfg.port} (Técnico: OK)")
+            print(f"      Origen de la configuración: {smtp_cfg.origen}")
             print("      (Usa 'utils/test_smtp.py' para una prueba de envío real)")
         else:
             print("   ⚠️  No hay configuración SMTP definida.")

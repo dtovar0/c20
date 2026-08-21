@@ -60,7 +60,18 @@
                     <!-- Vertical Panel A (SMTP Configuration) -->
                     <div class="tab-panel-inner flex flex-col h-full overflow-y-auto custom-scrollbar">
                         <label class="block text-[12px] font-black text-label uppercase tracking-[0.2em] mb-6 px-1 text-center">Configuración SMTP</label>
-                        
+
+                        {% if smtp_forzado_env %}
+                        <div class="mb-6 rounded-2xl border-2 border-amber-500/40 bg-amber-500/10 px-5 py-4">
+                            <p class="text-[12px] font-black text-amber-500 uppercase tracking-[0.2em] mb-1">Configuración fijada por entorno</p>
+                            <p class="text-[12px] font-bold text-label/70 leading-tight">
+                                SMTP_FORCE_ENV está activo: el sistema usa los valores del archivo .env
+                                y estos campos son solo informativos. Los cambios que guardes aquí no
+                                surtirán efecto hasta desactivar esa variable.
+                            </p>
+                        </div>
+                        {% endif %}
+
                         <div class="space-y-6">
                             <!-- Host Group -->
                             <div class="group">
