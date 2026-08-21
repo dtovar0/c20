@@ -82,34 +82,40 @@ def create_app():
     def handle_authelia_sso():
         if os.getenv('AUTHELIA_ENABLED', 'false').lower() == 'true':
             try:
-                from flask import request
                 from flask_login import login_user, current_user
                 from app.modules.auth.models import User
-                
+                from app.trusted_proxy import (is_trusted_proxy,
+                                               sso_identity_headers)
+
                 # Si ya está autenticado, no hacemos nada
                 if current_user.is_authenticated:
                     return
 
-                # Lista de cabeceras comunes de Authelia/Proxies
-                header_options = [
-                    os.getenv('AUTHELIA_HEADER_USER', 'Remote-Email'),
-                    'X-Forwarded-Email',
-                    'Remote-User',
-                    'X-Forwarded-User'
-                ]
-                
-                authelia_email = None
-                for h in header_options:
-                    val = request.headers.get(h)
-                    if val:
-                        authelia_email = val
-                        break
-                
-                if authelia_email:
-                    user = User.query.filter_by(email=authelia_email).first()
-                    if user:
-                        login_user(user)
-                        # No logueamos para no saturar, pero el usuario ya es válido
+                # Las cabeceras de identidad solo valen si las puso el proxy.
+                # Sin esta comprobación, cualquiera que alcance el puerto podría
+                # enviar Remote-Email y entrar como el usuario que quisiera.
+                identity = sso_identity_headers()
+                if identity is None:
+                    if not is_trusted_proxy():
+                        from flask import request
+                        from app.trusted_proxy import describe
+                        # Solo se registra si de verdad venían cabeceras: así el
+                        # intento queda visible sin llenar el log de ruido.
+                        headers = [os.getenv('AUTHELIA_HEADER_USER', 'Remote-Email'),
+                                   'X-Forwarded-Email', 'Remote-User',
+                                   'X-Forwarded-User']
+                        if any(request.headers.get(h) for h in headers):
+                            app.logger.warning(
+                                "SSO rechazado: cabeceras de identidad desde "
+                                f"{request.remote_addr}, que no es un proxy de "
+                                f"confianza ({describe()})")
+                    return
+
+                authelia_email, _name, _groups = identity
+                user = User.query.filter_by(email=authelia_email).first()
+                if user:
+                    login_user(user)
+                    # No logueamos para no saturar, pero el usuario ya es válido
             except Exception as e:
                 # Si el puente falla, que la app siga (fallará el @login_required si es necesario)
                 pass

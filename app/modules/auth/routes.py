@@ -33,9 +33,22 @@ def login():
 
         # 2. INTENTO DE SSO / AUTHELIA (Soporta GET y POST)
         if os.getenv('AUTHELIA_ENABLED', 'false').lower() == 'true':
+            from app.trusted_proxy import describe, is_trusted_proxy
+
             header_user = os.getenv('AUTHELIA_HEADER_USER', 'Remote-Email')
             authelia_user = request.headers.get(header_user)
-            
+
+            # La cabecera solo es fiable si la puso el reverse proxy: de otro
+            # modo bastaría enviarla a mano para suplantar a cualquiera.
+            if authelia_user and not is_trusted_proxy():
+                add_audit_log(
+                    f"SSO RECHAZADO: {authelia_user}",
+                    status="warning",
+                    detail=(f"Cabecera de identidad recibida desde "
+                            f"{request.remote_addr}, que no es un proxy de "
+                            f"confianza ({describe()})"))
+                authelia_user = None
+
             if authelia_user:
                 print(f"DEBUG: Usuario detectado -> {authelia_user}")
                 header_name = os.getenv('AUTHELIA_HEADER_NAME', 'Remote-Name')
