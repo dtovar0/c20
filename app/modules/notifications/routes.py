@@ -157,14 +157,23 @@ def get_active_notifications():
         db.session.commit()
 
         # Hybrid fetch: Global (null) OR specific to user
-        notifications = InAppNotification.query.filter(
-            (InAppNotification.user_id == None) | (InAppNotification.user_id == current_user.id)
-        ).order_by(InAppNotification.created_at.desc()).limit(15).all()
-        
+        visibles = (InAppNotification.user_id == None) | \
+                   (InAppNotification.user_id == current_user.id)
+
+        notifications = InAppNotification.query.filter(visibles) \
+            .order_by(InAppNotification.created_at.desc()).limit(15).all()
+
+        # El contador se cuenta contra la tabla, no contra las 15 traídas: con
+        # más no leídas, contar sobre la página las tapaba y el badge se quedaba
+        # clavado en 15.
+        unread_count = InAppNotification.query.filter(
+            visibles, InAppNotification.is_read == False
+        ).count()
+
         return jsonify({
             "status": "success", 
             "notifications": [n.to_dict() for n in notifications],
-            "unread_count": sum(1 for n in notifications if not n.is_read)
+            "unread_count": unread_count
         })
     except Exception as e:
         return jsonify({"status": "error", "message": "Falló la lectura del estado de las notificaciones."}), 500
