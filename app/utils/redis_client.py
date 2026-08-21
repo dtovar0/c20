@@ -23,7 +23,11 @@ class RedisClient:
                 port=self.port,
                 db=self.db,
                 password=self.password,
-                decode_responses=True # Para obtener strings en lugar de bytes
+                decode_responses=True, # Para obtener strings en lugar de bytes
+                # redis-py >= 8 deja protocol=None por defecto, lo que resuelve a
+                # RESP3 y negocia con el comando HELLO, inexistente en Redis < 6.0.
+                # Fijamos RESP2 por compatibilidad; no usamos features de RESP3.
+                protocol=int(os.getenv('REDIS_PROTOCOL', 2))
             )
             # Test connection
             self._client.ping()
