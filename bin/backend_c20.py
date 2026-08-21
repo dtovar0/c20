@@ -39,6 +39,7 @@ from app.modules.c20.shared_models import (
     C20_TABLES,
 )
 from app.modules.notifications.services import send_notification_by_slug
+from app.modules.notifications.resumen import build_resumen_html
 from app.modules.auth.models import User
 from app.modules.audit.services import add_audit_log
 from c20_log import log_line, LOG_ENABLED, LOG_FILE  # bin/ ya está en sys.path (arriba)
@@ -469,22 +470,51 @@ def ejecutar_tarea(seccion, cfg, task):
         aplicados = ref.get('ok', 0)
         sin_aplicar = ref.get('fail', 0)
         total_ref = ref.get('total', 0)
+        detail_url = f"{base_url}{cfg['detail_url']}/{task.id}"
+        incidencias = '; '.join(errores) if errores else 'Ninguna'
+        estado_final = 'TERMINADO CON ERRORES' if errores else 'COMPLETADO'
+
+        # El cuerpo se arma aquí en vez de con placeholders: es la misma tabla de
+        # cifras que muestra la vista de detalle, y su tamaño varía según la
+        # operación (un alta toca cuatro tablas, una baja dos). La plantilla
+        # 'terminado' sigue aportando el asunto, y PSX5K —que comparte el slug—
+        # no se ve afectado porque no pasa html_body.
+        cuerpo = build_resumen_html(
+            seccion=label,
+            task_id=task.id,
+            usuario=task.job.usuario,
+            operacion=task.job.tarea or '',
+            estado=estado_final,
+            origen=task.job.archivo_origen,
+            secuencia=f"Parte {task.chunk_index} de {task.chunk_total}",
+            hora_inicio=(task.fecha_inicio.strftime('%H:%M:%S')
+                         if task.fecha_inicio else None),
+            hora_fin=task.fecha_fin.strftime('%H:%M:%S'),
+            duracion=detail.duracion,
+            parametro=parametro,
+            parametro_label='Zona' if cfg['param_attr'] == 'zona' else 'Prefijo',
+            contadores={t: results.get(t, {}) for t in C20_TABLES},
+            incidencias=incidencias,
+            url=detail_url,
+        )
+
         send_notification_by_slug(
             slug='terminado', target_email=target,
+            html_body=cuerpo,
             context={'usuario': task.job.usuario,
                      'hora': task.fecha_fin.strftime('%H:%M:%S'),
-                     'url': f"{base_url}{cfg['detail_url']}/{task.id}",
+                     'url': detail_url,
                      'seccion': label,
                      'tarea': task.id,
                      'operacion': (task.job.tarea or '').upper(),
                      'parametro': parametro or '-',
-                     'resultado': 'TERMINADO CON ERRORES' if errores else 'COMPLETADO',
+                     'resultado': estado_final,
                      'total': total_ref,
                      'aplicados': aplicados,
                      'sin_aplicar': sin_aplicar,
                      'duracion': detail.duracion,
                      'desglose': resumen or '-',
-                     'incidencias': '; '.join(errores) if errores else 'Ninguna'}
+                     'incidencias': incidencias}
         )
 
 

@@ -71,9 +71,19 @@ def send_test_email(server, port, encryption, username, password, sender_name, t
     except Exception as e:
         return {"status": "error", "message": "Error al enviar correo de prueba."}
 
-def send_notification_by_slug(slug, target_email, context=None):
+def send_notification_by_slug(slug, target_email, context=None, html_body=None,
+                              subject_override=None):
     """
     Sends a pre-defined notification template using the global SMTP configuration.
+
+    html_body sustituye el cuerpo de la plantilla por HTML ya armado, para los
+    avisos cuyo contenido es una tabla de cifras que no se puede expresar con
+    placeholders (el resumen operativo de una tarea). La plantilla sigue
+    haciendo falta: de ella salen el asunto y el registro editable en la UI.
+    subject_override hace lo propio con el asunto.
+
+    Un slug puede tener varios emisores (PSX5K y C20 comparten 'terminado'), así
+    que quien no pase html_body conserva exactamente el comportamiento anterior.
     """
     from app import db
     import os
@@ -94,19 +104,24 @@ def send_notification_by_slug(slug, target_email, context=None):
             return {"status": "error", "message": "Missing SMTP config or Template"}
 
         # Prepare content
-        body = template.body
-        subject = template.subject
+        body = html_body if html_body is not None else template.body
+        subject = subject_override or template.subject
         if context:
             for key, val in context.items():
-                body = body.replace(f"{{{key}}}", str(val))
+                # Un cuerpo inyectado ya viene completo; sustituir dentro de él
+                # solo podría estropear su marcado.
+                if html_body is None:
+                    body = body.replace(f"{{{key}}}", str(val))
                 subject = subject.replace(f"{{{key}}}", str(val))
 
         # Los placeholders que el emisor no rellenó se sustituyen por '-' en vez
         # de quedar literales en el correo: una misma plantilla la usan varios
         # emisores (PSX5K, C20, Teams) y no todos aportan los mismos campos.
+        # No se aplica al cuerpo inyectado: sus llaves son CSS, no huecos.
         import re as _re
         _hueco = _re.compile(r'\{[a-zA-Z_][a-zA-Z0-9_]*\}')
-        body = _hueco.sub('-', body)
+        if html_body is None:
+            body = _hueco.sub('-', body)
         # En el asunto se elimina además el fragmento que rodeaba al hueco, para
         # no dejar restos como "Tarea #" sin número. Los fragmentos se delimitan
         # por '·', así que un asunto sin ningún dato conserva solo su cabecera.
@@ -118,7 +133,8 @@ def send_notification_by_slug(slug, target_email, context=None):
         msg['From'] = f"{config.sender_name} <{config.username}>"
         msg['To'] = target_email
         msg['Subject'] = subject
-        msg.attach(MIMEText(body, 'html' if template.is_html else 'plain'))
+        es_html = True if html_body is not None else template.is_html
+        msg.attach(MIMEText(body, 'html' if es_html else 'plain'))
 
         # Connection
         if config.encryption == 'ssl':
