@@ -571,9 +571,12 @@ def main():
                                   detail=f"C20: {msg}", user_override="SYSTEM_WORKER")
 
                     from app.modules.notifications.services import add_in_app_notification
+                    # Aviso de infraestructura: va a los administradores, no a
+                    # toda la plantilla (el correo de abajo ya se limita a ellos).
                     add_in_app_notification(
                         type='error', title='Fallo de Conexión con el C20',
-                        message=f'No se pudo establecer conexión con el nodo: {msg}'
+                        message=f'No se pudo establecer conexión con el nodo: {msg}',
+                        solo_admins=True
                     )
 
                     admin = User.query.filter_by(role='administrador').first()

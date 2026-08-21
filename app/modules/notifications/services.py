@@ -3,21 +3,39 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from app.modules.notifications.models import SMTPConfig, NotificationTemplate, InAppNotification
 
-def add_in_app_notification(type, title, message, user_id=None):
+def add_in_app_notification(type, title, message, user_id=None, solo_admins=False):
     """
     Creates a persistent in-app notification.
     type: success, error, warning, info
     user_id: ID of the user (NULL for global)
+    solo_admins: dirige el aviso a cada administrador en vez de dejarlo global.
+
+    Un aviso sin user_id es global, y la campana los muestra a cualquiera que
+    inicie sesión (filtra por 'user_id IS NULL OR user_id = <yo>'). Los avisos
+    de infraestructura —fallos del nodo, purga de cuentas— no son para toda la
+    plantilla: su correo equivalente ya se limita al administrador, y la campana
+    debe hacer lo mismo. De ahí solo_admins, que inserta una fila por cada
+    administrador para que todos se enteren, no solo el primero.
     """
     from app import db
+    from app.modules.auth.models import User
     try:
-        notif = InAppNotification(
-            type=type,
-            title=title,
-            message=message,
-            user_id=user_id
-        )
-        db.session.add(notif)
+        if solo_admins:
+            admins = User.query.filter_by(role='administrador').all()
+            if not admins:
+                # Sin administradores no hay a quién avisar. Se deja constancia
+                # en consola en vez de caer en un aviso global, que es
+                # justamente lo que se quiere evitar.
+                print(f"⚠️  Aviso de sistema sin destinatario (no hay administradores): {title}")
+                return False
+            for admin in admins:
+                db.session.add(InAppNotification(
+                    type=type, title=title, message=message, user_id=admin.id
+                ))
+        else:
+            db.session.add(InAppNotification(
+                type=type, title=title, message=message, user_id=user_id
+            ))
         db.session.commit()
         return True
     except Exception as e:

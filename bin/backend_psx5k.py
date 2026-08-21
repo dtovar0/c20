@@ -170,10 +170,13 @@ def handle_user_hygiene(app):
                 print(f"✨ [HYGIENE] Limpieza completada: {count} usuarios eliminados ({names})")
                 
                 # 1. Notificación Campana
+                # Solo administradores: el mensaje incluye los nombres de las
+                # cuentas eliminadas, que no son para el resto de la plantilla.
                 add_in_app_notification(
                     type='warning',
                     title='Limpieza de Usuarios Inactivos',
-                    message=f'Se han eliminado automáticamente {count} cuentas tras 30 días de inactividad: {names}'
+                    message=f'Se han eliminado automáticamente {count} cuentas tras 30 días de inactividad: {names}',
+                    solo_admins=True
                 )
                 
                 # 2. Notificación Email
@@ -318,10 +321,13 @@ def main():
                         
                         # 2. Notificación In-App (Campana)
                         from app.modules.notifications.services import add_in_app_notification
+                        # Aviso de infraestructura: solo administradores, igual
+                        # que el correo que se envía justo debajo.
                         add_in_app_notification(
                             type='error',
                             title='Fallo de Conexión PSX',
-                            message=f'No se pudo establecer conexión con el nodo PSX: {msg}'
+                            message=f'No se pudo establecer conexión con el nodo PSX: {msg}',
+                            solo_admins=True
                         )
 
                         # 3. Notificación por Correo
