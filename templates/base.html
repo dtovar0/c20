@@ -233,7 +233,10 @@
                         <!-- Tab: Colores & Estados -->
                         <div id="tabContentColors" class="hidden p-8 space-y-6">
                             <div class="border border-panel-border/40 rounded-xl overflow-hidden bg-surface-container/10">
-                                <table class="w-full text-left border-collapse">
+                                {# id propio: esta tabla vive en base.html, así que aparece en
+                                   todas las vistas. Sin identificar, cualquier inicialización
+                                   que busque 'table' a secas puede engancharla por error. #}
+                                <table id="statusColorsTable" class="w-full text-left border-collapse">
                                     <thead>
                                         <tr class="border-b border-panel-border/40 bg-surface-container/20">
                                             <th class="px-6 py-4 text-[10px] font-black text-label/40 uppercase tracking-[0.2em]">Estado</th>

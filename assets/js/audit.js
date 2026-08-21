@@ -40,7 +40,11 @@ $(document).ready(function() {
  * Initializes DataTables for Audit
  */
 function initAuditDataTable() {
-    const tableEl = $('table');
+    // Por id, no por $('table'): el selector global agarraba la primera <table>
+    // del documento, y base.html trae la del configurador de colores en el modal
+    // de ajustes. En esta vista esa tabla iba antes en el DOM, así que DataTables
+    // la enganchaba y la rellenaba con los registros de auditoría.
+    const tableEl = $('#auditTable');
     if (!tableEl.length) return;
 
     auditDataTable = tableEl.DataTable({
