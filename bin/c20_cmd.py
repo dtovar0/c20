@@ -24,12 +24,22 @@ Semántica de los veredictos, uniforme en las cuatro tablas:
           (El sistema legado no distinguía este caso: los .exp no tenían rama
           por defecto, así que esos números desaparecían del log en silencio.)
 """
+import logging
 import os
 import sys
 import time
 
 import pexpect
 from dotenv import load_dotenv
+
+# El log vive junto a este módulo. Sus dos consumidores (el worker y la web)
+# insertan bin/ en sys.path antes de importar, pero el fallback cubre que a
+# alguien se le importe como bin.c20_cmd desde la raíz.
+try:
+    from c20_log import log_line, log_stream
+except ImportError:  # pragma: no cover
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from c20_log import log_line, log_stream
 
 load_dotenv()
 
@@ -105,12 +115,23 @@ PROMPT = r'\r\n>'
 
 
 class StreamLog:
-    """Captura el flujo de la sesión sin saturar consola (salvo con DEBUG_C20)."""
+    """
+    Captura el flujo de la sesión con el nodo.
+
+    Tres destinos, independientes entre sí:
+      - self.content, que la tarea persiste en BD al cerrarse
+      - logs/c20_worker.log, en vivo (C20_LOG_ENABLED)
+      - stdout, en vivo (DEBUG_C20)
+
+    El archivo se escribe conforme llega el flujo, no al final: si la sesión se
+    interrumpe, self.content se pierde pero el archivo conserva lo ocurrido.
+    """
     def __init__(self):
         self.content = ""
 
     def write(self, s):
         self.content += s
+        log_stream(s)
         if DEBUG_ENABLED:
             sys.stdout.write(s)
 
@@ -427,12 +448,15 @@ def c20_cmd(line_task, line_number, parametro=None, seccion='c20'):
     results["ladas"] = ladas
     results["series"] = [f"{l} {s}" for l, s in series]
 
+    resumen_lote = (f"{seccion.upper()} [{accion}] números={len(line_number)} "
+                    f"ladas={len(ladas)} series={len(series)} parametro={parametro}")
+    log_line(f"INICIO {resumen_lote}")
     if DEBUG_ENABLED:
-        print(f"🔍 {seccion.upper()} [{accion}] números={len(line_number)} "
-              f"ladas={len(ladas)} series={len(series)} parametro={parametro}")
+        print(f"🔍 {resumen_lote}")
 
     session, msg = _connect()
     if not session:
+        log_line(f"CONEXIÓN FALLIDA: {msg}", level=logging.ERROR)
         results["errors"].append(f"Conexión: {msg}")
         return results
 
@@ -450,11 +474,17 @@ def c20_cmd(line_task, line_number, parametro=None, seccion='c20'):
     try:
         for idx, tabla in enumerate(tablas):
             print(f"▶️  Corriendo {tabla.upper()}")
+            log_line(f"TABLA {tabla.upper()} inicio")
             try:
                 _select_table(session, tabla)
                 results[tabla] = _tally(handlers[tabla]())
+                t = results[tabla]
+                log_line(f"TABLA {tabla.upper()} fin "
+                         f"ok={t.get('ok', 0)} fail={t.get('fail', 0)} "
+                         f"error={t.get('error', 0)} total={t.get('total', 0)}")
             except Exception as e:
                 print(f"❌ {tabla.upper()}: {e}")
+                log_line(f"TABLA {tabla.upper()} abortada: {e}", level=logging.ERROR)
                 results["errors"].append(f"{tabla}: {e}")
 
             # El nodo necesita margen entre tablas; se omite tras la última.
@@ -467,6 +497,7 @@ def c20_cmd(line_task, line_number, parametro=None, seccion='c20'):
         except Exception:
             pass
     except Exception as e:
+        log_line(f"SESIÓN INTERRUMPIDA: {e}", level=logging.ERROR)
         results["errors"].append(f"Sesión interrumpida: {e}")
     finally:
         try:
@@ -474,5 +505,8 @@ def c20_cmd(line_task, line_number, parametro=None, seccion='c20'):
         except Exception:
             pass
         results["full_flow"] = stream.content
+        log_line(f"FIN {seccion.upper()} [{accion}] "
+                 f"errores={len(results['errors'])} "
+                 f"flujo={len(stream.content)} bytes")
 
     return results

@@ -13,6 +13,7 @@ ejecuta contra el C20 y consolida sus resultados en las tablas de esa sección.
 El historial y el espejo son compartidos: reflejan el estado del nodo, que es uno
 solo.
 """
+import logging
 import os
 import sys
 import time
@@ -40,6 +41,7 @@ from app.modules.c20.shared_models import (
 from app.modules.notifications.services import send_notification_by_slug
 from app.modules.auth.models import User
 from app.modules.audit.services import add_audit_log
+from c20_log import log_line, LOG_ENABLED, LOG_FILE  # bin/ ya está en sys.path (arriba)
 
 # Lock COMPARTIDO por todas las secciones: el C20 admite una sola conexión activa.
 LOCK_FILE = os.path.join(PROJECT_ROOT, "c20_worker.pid")
@@ -317,6 +319,8 @@ def ejecutar_tarea(seccion, cfg, task):
     parametro = getattr(task.job, cfg['param_attr'], None)
 
     print(f"🎯 Procesando Tarea {label} ID {task.id}: {task.job.tarea}")
+    log_line(f"TAREA {label.upper()}-{task.id} tomada: {task.job.tarea} "
+             f"usuario={task.job.usuario} parametro={parametro}")
 
     task.estado = 'Ejecutando'
     task.fecha_inicio = datetime.datetime.now()
@@ -348,6 +352,8 @@ def ejecutar_tarea(seccion, cfg, task):
 
     if not numeros:
         print(f"⚠️ Tarea {label} {task.id} abortada: sin registros válidos.")
+        log_line(f"TAREA {label.upper()}-{task.id} abortada: sin registros válidos",
+                 level=logging.ERROR)
         task.estado = 'Error'
         db.session.commit()
         add_audit_log(
@@ -368,6 +374,8 @@ def ejecutar_tarea(seccion, cfg, task):
         )
     except Exception as task_err:
         print(f"❌ Error ejecutando Tarea {label} {task.id}: {task_err}")
+        log_line(f"TAREA {label.upper()}-{task.id} excepción: {task_err}",
+                 level=logging.ERROR)
         task.estado = 'Error'
         task.fecha_fin = datetime.datetime.now()
         db.session.commit()
@@ -434,6 +442,11 @@ def ejecutar_tarea(seccion, cfg, task):
     task.estado = 'Terminado con Errores' if errores else 'Completado'
     db.session.commit()
 
+    log_line(f"TAREA {label.upper()}-{task.id} {task.estado.upper()} "
+             f"duración={detail.duracion}s"
+             + (f" | fallos: {'; '.join(errores)}" if errores else ""),
+             level=logging.ERROR if errores else logging.INFO)
+
     notified_stale_tasks.pop((seccion, task.id), None)
 
     resumen = " | ".join(
@@ -482,8 +495,11 @@ def main():
     with open(LOCK_FILE, "w") as f:
         f.write(str(os.getpid()))
 
-    print(f"🚀 Nexus Worker C20 iniciado (PID: {os.getpid()}) "
-          f"| Secciones: {', '.join(c['label'] for c in SECCIONES.values())}")
+    arranque = (f"Nexus Worker C20 iniciado (PID: {os.getpid()}) "
+                f"| Secciones: {', '.join(c['label'] for c in SECCIONES.values())}")
+    print(f"🚀 {arranque}")
+    log_line(arranque)
+    print(f"📝 Log a archivo: {LOG_FILE if LOG_ENABLED else 'desactivado (C20_LOG_ENABLED=false)'}")
 
     app = create_app()
 
