@@ -100,7 +100,13 @@
                             <!-- Filter Pills -->
                             <div class="px-4 py-2 bg-surface-container/10 border-b border-panel-border flex gap-2 overflow-x-auto custom-scrollbar no-scrollbar">
                                 <button data-filter="all" class="notif-filter active px-3 py-1 rounded-full text-[12px] font-black uppercase tracking-tighter transition-all">Todos</button>
+                                {# 'Seguridad' filtra type='warning', que solo emiten los avisos de
+                                   infraestructura dirigidos a administradores (purga de cuentas). Para
+                                   un usuario normal la pestaña nunca tendría contenido, así que se
+                                   oculta en vez de ofrecer una categoría vacía. #}
+                                {% if current_user.is_authenticated and current_user.role == 'administrador' %}
                                 <button data-filter="warning" class="notif-filter px-3 py-1 rounded-full text-[12px] font-black uppercase tracking-tighter transition-all opacity-40 hover:opacity-100">Seguridad</button>
+                                {% endif %}
                                 <button data-filter="info" class="notif-filter px-3 py-1 rounded-full text-[12px] font-black uppercase tracking-tighter transition-all opacity-40 hover:opacity-100">Sistema</button>
                                 <button data-filter="success" class="notif-filter px-3 py-1 rounded-full text-[12px] font-black uppercase tracking-tighter transition-all opacity-40 hover:opacity-100">Éxito</button>
                             </div>
