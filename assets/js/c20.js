@@ -236,10 +236,10 @@ function initC20DataTable() {
             { 
                 data: 'zona',
                 width: '150px',
-                // Solo el alta usa zona; en una baja se muestra '-' aunque el job
+                // Solo el alta usa zona; en una baja se rotula N/A aunque el job
                 // traiga un valor heredado del entorno (ver el badge más abajo).
                 render: (data, type, row) => {
-                    const valor = row.tarea === 'add' ? (data || '-') : '-';
+                    const valor = row.tarea === 'add' ? (data || '-') : 'N/A';
                     return `<div class="flex items-center h-full px-2 text-[12px] font-bold text-label/60 font-mono tracking-tighter truncate">${valor}</div>`;
                 }
             },

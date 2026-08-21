@@ -236,10 +236,10 @@ function initTeamsDataTable() {
             { 
                 data: 'prefijo',
                 width: '150px',
-                // Solo el alta usa prefijo; en una baja se muestra '-' aunque el
+                // Solo el alta usa prefijo; en una baja se rotula N/A aunque el
                 // job traiga un valor heredado del entorno (ver el badge abajo).
                 render: (data, type, row) => {
-                    const valor = row.tarea === 'add' ? (data || '-') : '-';
+                    const valor = row.tarea === 'add' ? (data || '-') : 'N/A';
                     return `<div class="flex items-center h-full px-2 text-[12px] font-bold text-label/60 font-mono tracking-tighter truncate">${valor}</div>`;
                 }
             },
@@ -293,14 +293,21 @@ function initTeamsDataTable() {
                     // Prefijo: 100 rutea directo (RTE DEST 16); el resto se
                     // inserta en el comando (DMOD INSRT <prefijo> XLT PX2 MSTEAMS2).
                     // Solo interviene en el alta; una baja sale por TABLES_DEL, que
-                    // no lo consulta. Los jobs de baja anteriores a este cambio
-                    // traen el valor heredado del entorno, así que el badge se
-                    // omite por tipo de tarea, no por si hay dato.
-                    const prefijo = row.prefijo || '-';
-                    const isDirecto = String(prefijo) === '100';
-                    const prefijoStyle = getNexusBadgeStyle(isDirecto ? '#f43f5e' : '#0ea5e9', 0.1, 0.25);
-                    const prefijoBadge = !isAdd ? '' : `
-                            <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110 text-[10px] font-black" style="${prefijoStyle}" data-nx-tooltip="PREFIJO: ${prefijo}${isDirecto ? ' (RUTEO DIRECTO)' : ''}">
+                    // no lo consulta, así que ahí se rotula N/A en vez del valor.
+                    // Se decide por tipo de tarea y no por si hay dato, porque los
+                    // jobs de baja anteriores a este cambio conservan en BD el
+                    // valor heredado del entorno, que nunca viajó al nodo.
+                    // El badge se mantiene siempre para no descuadrar la fila.
+                    const prefijo = isAdd ? (row.prefijo || '-') : 'N/A';
+                    const isDirecto = isAdd && String(prefijo) === '100';
+                    const prefijoStyle = isAdd
+                        ? getNexusBadgeStyle(isDirecto ? '#f43f5e' : '#0ea5e9', 0.1, 0.25)
+                        : getNexusBadgeStyle('#8a8f98', 0.06, 0.15);
+                    const prefijoTooltip = isAdd
+                        ? `PREFIJO: ${prefijo}${isDirecto ? ' (RUTEO DIRECTO)' : ''}`
+                        : 'PREFIJO: NO APLICA EN BAJAS';
+                    const prefijoBadge = `
+                            <div class="flex items-center justify-center w-8 h-8 rounded-lg border transition-all hover:scale-110 text-[9px] font-black" style="${prefijoStyle}" data-nx-tooltip="${prefijoTooltip}">
                                 ${prefijo}
                             </div>`;
 

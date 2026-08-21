@@ -132,8 +132,11 @@ def build_resumen_html(*, seccion, task_id, usuario, operacion, estado,
         _fila_meta('Origen de datos', origen or 'Ingreso Manual'),
         _fila_meta('Secuencia de carga', secuencia),
     ]
-    # La zona/prefijo solo interviene en el alta.
-    if not es_baja and parametro not in (None, '', '-'):
+    # La zona/prefijo solo interviene en el alta; en una baja se rotula N/A en
+    # vez de omitir la fila, para que el correo diga lo mismo que el listado.
+    if es_baja:
+        filas_meta.append(_fila_meta(parametro_label, 'N/A'))
+    elif parametro not in (None, '', '-'):
         filas_meta.append(_fila_meta(parametro_label, parametro))
     filas_meta += [
         _fila_meta('Inicio de ejecución', hora_inicio or '--:--:--'),
