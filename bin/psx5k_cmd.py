@@ -97,7 +97,19 @@ def test_connectivity():
 def psx5k_cmd(line_task, line_number, line_type=None, routing_label=None, force=False):
     """
     Motor de ejecución PSX5K optimizado.
+
+    `force` llega por tarea desde el toggle de la UI (`run_force` del job). La
+    variable de entorno PSX_FORCE_ALWAYS lo eleva a global: con ella en `true`
+    toda alta sobrescribe el registro existente aunque el toggle esté apagado.
     """
+    # Se lee en cada llamada, no al importar, para poder cambiarla sin reiniciar
+    # el worker.
+    force_always = os.getenv('PSX_FORCE_ALWAYS', 'false').lower() == 'true'
+    if force_always and not force:
+        # Que quede rastro: el operador no pidió forzar y aun así se sobrescribe.
+        print("⚠️ PSX_FORCE_ALWAYS=true: se fuerza la sobrescritura pese al toggle apagado.")
+    force = force or force_always
+
     stats = {
         "total": 0, "ok": 0, "dup": 0, "force_ok": 0, "fail": 0,
         "del": 0, "delcheck": 0,
