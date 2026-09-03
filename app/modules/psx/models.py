@@ -1,4 +1,5 @@
 from app import db
+from app.utils.db_types import LongText
 import datetime
 
 class PSX5KJob(db.Model):
@@ -117,7 +118,7 @@ class PSX5KCommandLog(db.Model):
     __tablename__ = 'psx5k_command_logs'
     id = db.Column(db.Integer, primary_key=True)
     task_id = db.Column(db.Integer, db.ForeignKey('psx5k_tasks.id'), nullable=False)
-    raw_log = db.Column(db.Text)
+    raw_log = db.Column(LongText)
     fecha = db.Column(db.DateTime, default=datetime.datetime.now)
 
     def to_dict(self):

@@ -449,12 +449,18 @@ def main():
                         ))
                     except: pass
                 
-                # Guardar el flujo completo de comandos
+                # Guardar el flujo completo de comandos. Es material de
+                # diagnóstico: si la BD lo rechaza no debe arrastrar consigo el
+                # cierre de una tarea que sí se aplicó en el nodo.
                 if results.get("full_flow"):
-                    db.session.add(PSX5KCommandLog(
-                        task_id=task.id,
-                        raw_log=results["full_flow"]
-                    ))
+                    try:
+                        with db.session.begin_nested():
+                            db.session.add(PSX5KCommandLog(
+                                task_id=task.id,
+                                raw_log=results["full_flow"]
+                            ))
+                    except Exception as log_err:
+                        print(f"⚠️ No se pudo guardar el log crudo de PSX-{task.id}: {log_err}")
 
                 # Finalizar
                 task.estado = 'Completado'

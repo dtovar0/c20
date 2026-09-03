@@ -1,4 +1,5 @@
 from app import db
+from app.utils.db_types import LongText
 from app.modules.c20.shared_models import C20_TABLES as TEAMS_TABLES
 import datetime
 
@@ -177,7 +178,7 @@ class TeamsCommandLog(db.Model):
     __tablename__ = 'teams_command_logs'
     id = db.Column(db.Integer, primary_key=True)
     task_id = db.Column(db.Integer, db.ForeignKey('teams_tasks.id'), nullable=False)
-    raw_log = db.Column(db.Text)
+    raw_log = db.Column(LongText)
     fecha = db.Column(db.DateTime, default=datetime.datetime.now)
 
     def to_dict(self):

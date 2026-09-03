@@ -1,4 +1,5 @@
 from app import db
+from app.utils.db_types import LongText
 import datetime
 
 class C20Job(db.Model):
@@ -166,7 +167,7 @@ class C20CommandLog(db.Model):
     __tablename__ = 'c20_command_logs'
     id = db.Column(db.Integer, primary_key=True)
     task_id = db.Column(db.Integer, db.ForeignKey('c20_tasks.id'), nullable=False)
-    raw_log = db.Column(db.Text)
+    raw_log = db.Column(LongText)
     fecha = db.Column(db.DateTime, default=datetime.datetime.now)
 
     def to_dict(self):

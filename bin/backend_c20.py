@@ -427,9 +427,16 @@ def ejecutar_tarea(seccion, cfg, task):
         sync_mirror(accion, aplicados, results.get('ladas', []),
                     results.get('series', []), task.job.usuario, seccion)
 
-    # Guardar el flujo crudo de la sesión (una sola, para todas las tablas)
+    # Guardar el flujo crudo de la sesión (una sola, para todas las tablas).
+    # Es material de diagnóstico: si la BD lo rechaza no debe arrastrar consigo
+    # el cierre de una tarea que sí se aplicó en el nodo.
     if results.get("full_flow"):
-        db.session.add(cfg['command_log'](task_id=task.id, raw_log=results["full_flow"]))
+        try:
+            with db.session.begin_nested():
+                db.session.add(cfg['command_log'](task_id=task.id,
+                                                  raw_log=results["full_flow"]))
+        except Exception as log_err:
+            print(f"⚠️ No se pudo guardar el log crudo de la tarea {task.id}: {log_err}")
 
     # Cerrar la tarea. Un fallo de sesión o un número sin respuesta la marcan con
     # errores: los contadores por sí solos no lo revelarían.
