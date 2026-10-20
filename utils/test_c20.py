@@ -1,9 +1,9 @@
 """
 Valida la cuenta del C20 (C20_USER / C20_PASS) contra el nodo.
 
-A diferencia de test_connectivity() de bin/c20_cmd.py, que solo espera el prompt
-y ante un rechazo termina por timeout, aquí se reconocen los mensajes con los
-que el nodo niega el acceso y se informa el motivo.
+Usa el mismo inicio de sesión que el worker (_login de bin/c20_cmd.py), que
+reconoce los mensajes con los que el nodo niega el acceso, y muestra el motivo
+y lo que respondió el nodo.
 
 Códigos de salida: 0 cuenta válida, 1 acceso rechazado, 2 sin respuesta o sin
 configuración.
@@ -19,31 +19,14 @@ import sys
 import pexpect
 from dotenv import load_dotenv
 
-# Agrega bin/ para reutilizar las constantes del motor del C20
+# Agrega bin/ para reutilizar el inicio de sesión del motor del C20
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(BASE_DIR, 'bin'))
 
-from c20_cmd import EXPECT_TIMEOUT, PROMPT
-
-PIDE_USUARIO = 'Enter User Name'
-PIDE_PASSWORD = 'Enter Password'
-
-# Mensajes del nodo al negar el acceso, del más específico al más general.
-# El nodo no distingue contraseña vencida de usuario nuevo: imprime ambos
-# casos en el mismo aviso.
-RECHAZOS = (
-    ('NOT PERMITTED TO LOGON',
-     'Cuenta no permitida: la contraseña tiene más de 180 días, o es un usuario '
-     'nuevo que no la cambió en el primer acceso. Hay que cambiarla en el nodo.'),
-    ('Invalid user name or password', 'Usuario o contraseña incorrectos.'),
-)
+from c20_cmd import EXPECT_TIMEOUT, LOGIN_OK, LOGIN_RECHAZADO, _login
 
 OK, RECHAZADO, SIN_RESPUESTA = 0, 1, 2
-
-# Segundos que se sigue escuchando después de ver el prompt tras la contraseña.
-# El nodo real puede dejar un '>' antes de imprimir el rechazo; sin esta espera
-# ese '>' se tomaba como sesión iniciada.
-GRACIA_RECHAZO = 5
+CODIGOS = {LOGIN_OK: OK, LOGIN_RECHAZADO: RECHAZADO}
 
 
 class _Captura:
@@ -83,58 +66,25 @@ def validar_cuenta(captura=None):
     try:
         session = pexpect.spawn(f'telnet {host} {port}', timeout=EXPECT_TIMEOUT,
                                 encoding='utf-8', codec_errors='replace')
+        # Mismo ritmo de envío que el worker, para que la prueba lo refleje
+        session.delaybeforesend = 0.5
     except Exception as e:
         return SIN_RESPUESTA, f"No se pudo abrir telnet: {e}", []
     if captura is not None:
         session.logfile_read = captura
 
     try:
-        if session.expect([PIDE_USUARIO, pexpect.TIMEOUT, pexpect.EOF]) != 0:
-            return SIN_RESPUESTA, "El nodo no pidió el usuario", []
-        # Tras pedir el usuario el nodo imprime avisos de terminal y luego su
-        # prompt; se espera ese prompt para no responder antes de tiempo.
-        session.expect([PROMPT, pexpect.TIMEOUT, pexpect.EOF])
-        session.sendline(user)
-
-        if session.expect([PIDE_PASSWORD, pexpect.TIMEOUT, pexpect.EOF]) != 0:
-            return SIN_RESPUESTA, "El nodo no pidió la contraseña", []
-        session.expect([PROMPT, pexpect.TIMEOUT, pexpect.EOF])
-        session.sendline(password)
-
-        # Con rechazo el nodo imprime el motivo y vuelve a pedir el usuario;
-        # con éxito deja el prompt.
-        idx = session.expect([PIDE_USUARIO, PROMPT, pexpect.TIMEOUT, pexpect.EOF])
-        texto = session.before or ''
-
-        # Un prompt no basta: se sigue escuchando por si el rechazo llega
-        # detrás. Solo un silencio sin rechazo cuenta como sesión iniciada.
-        if idx == 1:
-            idx_gracia = session.expect([PIDE_USUARIO, pexpect.TIMEOUT, pexpect.EOF],
-                                        timeout=GRACIA_RECHAZO)
-            texto += session.before or ''
-            if idx_gracia == 0:
-                idx = 0
-            elif idx_gracia == 2:
-                lineas = _mensajes_del_nodo(texto, password)
-                for patron, motivo in RECHAZOS:
-                    if patron in texto:
-                        return RECHAZADO, motivo, lineas
-                return RECHAZADO, "El nodo cerró la sesión tras enviar la contraseña", lineas
-
-        lineas = _mensajes_del_nodo(texto, password)
-
-        for patron, motivo in RECHAZOS:
-            if patron in texto:
-                return RECHAZADO, motivo, lineas
-        if idx == 0:
-            return RECHAZADO, "El nodo rechazó el acceso y volvió a pedir el usuario", lineas
-        if idx == 1:
+        resultado, motivo, texto = _login(session, user, password)
+        codigo = CODIGOS.get(resultado, SIN_RESPUESTA)
+        if codigo == OK:
+            motivo = "Cuenta válida: el nodo aceptó el usuario y la contraseña"
             try:
                 session.sendline('exit')
             except Exception:
                 pass
-            return OK, "Cuenta válida: el nodo aceptó el usuario y la contraseña", lineas
-        return SIN_RESPUESTA, "El nodo no respondió tras enviar la contraseña", lineas
+        return codigo, motivo, _mensajes_del_nodo(texto, password)
+    except Exception as e:
+        return SIN_RESPUESTA, str(e), []
     finally:
         session.close()
 
