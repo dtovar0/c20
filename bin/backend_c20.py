@@ -77,6 +77,23 @@ SECCIONES = {
 }
 
 
+def get_admin_target():
+    """
+    Destinatario de los avisos de infraestructura (nodo, watchdog).
+
+    Manda NOTIFICATION_ADMIN_EMAIL; solo si está vacía se recurre al primer
+    administrador de la BD.
+    """
+    if ADMIN_EMAIL:
+        return ADMIN_EMAIL
+    admin = User.query.filter_by(role='administrador').first()
+    if admin and admin.email:
+        return admin.email
+    print("⚠️  Aviso al administrador sin destinatario "
+          "(NOTIFICATION_ADMIN_EMAIL vacía y sin administrador con correo)")
+    return None
+
+
 def get_notification_target(email):
     """Resuelve el destinatario de la notificación consultando preferencias en DB."""
     if not email:
@@ -203,10 +220,10 @@ def handle_stale_tasks(app):
                     task.estado = 'Error'
                     task.fecha_fin = now
 
-                    admin = User.query.filter_by(role='administrador').first()
-                    if admin and admin.email:
+                    admin_email = get_admin_target()
+                    if admin_email:
                         send_notification_by_slug(
-                            slug='error', target_email=admin.email,
+                            slug='error', target_email=admin_email,
                             context={
                                 'usuario': 'SYSTEM_WATCHDOG', 'ip': 'LOCAL_WORKER',
                                 'seccion': label, 'tarea': task.id,
@@ -234,11 +251,11 @@ def handle_stale_tasks(app):
                         continue
 
                     print(f"🕒 ALERTA DE TIEMPO: Tarea {label} {task.id} superó {notify_timeout} min.")
-                    admin = User.query.filter_by(role='administrador').first()
-                    if admin and admin.email:
+                    admin_email = get_admin_target()
+                    if admin_email:
                         try:
                             send_notification_by_slug(
-                                slug='error', target_email=admin.email,
+                                slug='error', target_email=admin_email,
                                 context={
                                     'usuario': 'SYSTEM_WATCHDOG', 'ip': 'LOCAL_WORKER',
                                     'seccion': label, 'tarea': task.id,
@@ -586,10 +603,10 @@ def main():
                         solo_admins=True
                     )
 
-                    admin = User.query.filter_by(role='administrador').first()
-                    if admin and admin.email:
+                    admin_email = get_admin_target()
+                    if admin_email:
                         send_notification_by_slug(
-                            slug='error', target_email=admin.email,
+                            slug='error', target_email=admin_email,
                             context={'usuario': 'SYSTEM_WORKER',
                                      'ip': os.getenv('C20_HOST', 'C20_NODE'),
                                      'seccion': cfg['label'], 'tarea': task.id,
