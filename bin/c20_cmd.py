@@ -185,6 +185,79 @@ def build_hierarchy(numeros):
     return ladas, series
 
 
+# --- INICIO DE SESIÓN ---
+PIDE_USUARIO = 'Enter User Name'
+PIDE_PASSWORD = 'Enter Password'
+
+# Mensajes con los que el nodo niega el acceso, del más específico al más
+# general. No distingue contraseña vencida de usuario nuevo: imprime ambos
+# casos en el mismo aviso.
+LOGIN_RECHAZOS = (
+    ('NOT PERMITTED TO LOGON',
+     'Cuenta no permitida: la contraseña tiene más de 180 días, o es un usuario '
+     'nuevo que no la cambió en el primer acceso. Hay que cambiarla en el nodo.'),
+    ('Invalid user name or password', 'Usuario o contraseña incorrectos.'),
+)
+
+# Segundos que se sigue escuchando después de ver el prompt tras la contraseña.
+# El nodo deja un '>' antes de imprimir el rechazo: tomarlo como sesión
+# iniciada hacía que el lote se enviara al login, y cada comando contaba como
+# un intento fallido de usuario o contraseña.
+LOGIN_GRACE = float(os.getenv('C20_LOGIN_GRACE', 5))
+
+LOGIN_OK, LOGIN_RECHAZADO, LOGIN_SIN_RESPUESTA = 'ok', 'rechazado', 'sin_respuesta'
+
+
+def _login(session, user, password):
+    """
+    Autentica una sesión telnet ya abierta.
+
+    Devuelve (resultado, motivo, texto): resultado es LOGIN_OK, LOGIN_RECHAZADO
+    o LOGIN_SIN_RESPUESTA, y texto lo que respondió el nodo a la contraseña.
+    Un prompt no basta para dar la sesión por iniciada: solo cuenta si en
+    LOGIN_GRACE segundos no llega un rechazo ni una nueva petición de usuario.
+    """
+    # El nodo pide usuario y contraseña con etiqueta; algunos scripts del
+    # sistema legado esperaban solo el prompt, así que se aceptan ambos.
+    idx = session.expect([PIDE_USUARIO, PROMPT, pexpect.TIMEOUT, pexpect.EOF])
+    if idx in (2, 3):
+        return LOGIN_SIN_RESPUESTA, "El nodo no pidió el usuario", ''
+    # Tras la etiqueta el nodo imprime avisos de terminal y luego su prompt; se
+    # espera ese prompt para no responder antes de tiempo.
+    if idx == 0:
+        session.expect([PROMPT, pexpect.TIMEOUT, pexpect.EOF])
+    session.sendline(user)
+
+    idx = session.expect([PIDE_PASSWORD, PROMPT, pexpect.TIMEOUT, pexpect.EOF])
+    if idx in (2, 3):
+        return LOGIN_SIN_RESPUESTA, "El nodo no pidió la contraseña", ''
+    if idx == 0:
+        session.expect([PROMPT, pexpect.TIMEOUT, pexpect.EOF])
+    session.sendline(password)
+
+    idx = session.expect([PIDE_USUARIO, PROMPT, pexpect.TIMEOUT, pexpect.EOF])
+    texto = session.before or ''
+    if idx == 1:
+        idx_gracia = session.expect([PIDE_USUARIO, pexpect.TIMEOUT, pexpect.EOF],
+                                    timeout=LOGIN_GRACE)
+        texto += session.before or ''
+        if idx_gracia == 0:
+            idx = 0
+        elif idx_gracia == 2:
+            idx = 3
+
+    for patron, motivo in LOGIN_RECHAZOS:
+        if patron in texto:
+            return LOGIN_RECHAZADO, motivo, texto
+    if idx == 0:
+        return LOGIN_RECHAZADO, "El nodo rechazó el acceso y volvió a pedir el usuario", texto
+    if idx == 1:
+        return LOGIN_OK, "OK", texto
+    if idx == 3:
+        return LOGIN_RECHAZADO, "El nodo cerró la sesión tras enviar la contraseña", texto
+    return LOGIN_SIN_RESPUESTA, "El nodo no respondió tras enviar la contraseña", texto
+
+
 def _connect(timeout=EXPECT_TIMEOUT):
     """
     Abre la sesión telnet y autentica contra el nodo C20.
@@ -204,21 +277,10 @@ def _connect(timeout=EXPECT_TIMEOUT):
                                 encoding='utf-8', codec_errors='replace')
         session.delaybeforesend = 0.5
 
-        # El nodo pide usuario y contraseña con etiqueta; algunos scripts del
-        # sistema legado esperaban solo el prompt, así que se aceptan ambos.
-        idx = session.expect(['Enter User Name', PROMPT, pexpect.TIMEOUT, pexpect.EOF])
-        if idx in (2, 3):
+        resultado, motivo, _ = _login(session, user, password)
+        if resultado != LOGIN_OK:
             session.close()
-            return None, "El nodo no respondió al inicio de sesión"
-
-        session.sendline(user)
-        session.expect(['Enter Password', PROMPT, pexpect.TIMEOUT, pexpect.EOF])
-        session.sendline(password)
-
-        idx = session.expect([PROMPT, pexpect.TIMEOUT, pexpect.EOF])
-        if idx != 0:
-            session.close()
-            return None, "Fallo de autenticación o prompt no reconocido"
+            return None, motivo
 
         return session, "OK"
     except Exception as e:
@@ -235,6 +297,8 @@ def test_connectivity():
         except Exception:
             pass
         return True, "Conexión exitosa"
+    # Queda en el log del C20: hasta ahora solo salía por consola (journalctl).
+    log_line(f"VALIDACIÓN DE CUENTA FALLIDA: {msg}", level=logging.ERROR)
     return False, msg
 
 
