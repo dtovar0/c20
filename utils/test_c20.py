@@ -7,7 +7,12 @@ que el nodo niega el acceso y se informa el motivo.
 
 Códigos de salida: 0 cuenta válida, 1 acceso rechazado, 2 sin respuesta o sin
 configuración.
+
+Uso:
+    python utils/test_c20.py           # resultado
+    python utils/test_c20.py --debug   # además, el diálogo crudo con el nodo
 """
+import argparse
 import os
 import sys
 
@@ -35,6 +40,24 @@ RECHAZOS = (
 
 OK, RECHAZADO, SIN_RESPUESTA = 0, 1, 2
 
+# Segundos que se sigue escuchando después de ver el prompt tras la contraseña.
+# El nodo real puede dejar un '>' antes de imprimir el rechazo; sin esta espera
+# ese '>' se tomaba como sesión iniciada.
+GRACIA_RECHAZO = 5
+
+
+class _Captura:
+    """Acumula lo que llega del nodo para mostrarlo con --debug."""
+
+    def __init__(self):
+        self.texto = ''
+
+    def write(self, s):
+        self.texto += s
+
+    def flush(self):
+        pass
+
 
 def _mensajes_del_nodo(texto, password):
     """Líneas no vacías de la respuesta, sin la contraseña por si hubo eco."""
@@ -43,8 +66,12 @@ def _mensajes_del_nodo(texto, password):
     return [linea.strip() for linea in texto.splitlines() if linea.strip()]
 
 
-def validar_cuenta():
-    """Devuelve (código, mensaje, líneas del nodo)."""
+def validar_cuenta(captura=None):
+    """
+    Devuelve (código, mensaje, líneas del nodo).
+
+    captura: objeto con write() que recibe todo lo leído del nodo (--debug).
+    """
     host = os.getenv('C20_HOST')
     user = os.getenv('C20_USER')
     password = os.getenv('C20_PASS')
@@ -58,6 +85,8 @@ def validar_cuenta():
                                 encoding='utf-8', codec_errors='replace')
     except Exception as e:
         return SIN_RESPUESTA, f"No se pudo abrir telnet: {e}", []
+    if captura is not None:
+        session.logfile_read = captura
 
     try:
         if session.expect([PIDE_USUARIO, pexpect.TIMEOUT, pexpect.EOF]) != 0:
@@ -76,6 +105,22 @@ def validar_cuenta():
         # con éxito deja el prompt.
         idx = session.expect([PIDE_USUARIO, PROMPT, pexpect.TIMEOUT, pexpect.EOF])
         texto = session.before or ''
+
+        # Un prompt no basta: se sigue escuchando por si el rechazo llega
+        # detrás. Solo un silencio sin rechazo cuenta como sesión iniciada.
+        if idx == 1:
+            idx_gracia = session.expect([PIDE_USUARIO, pexpect.TIMEOUT, pexpect.EOF],
+                                        timeout=GRACIA_RECHAZO)
+            texto += session.before or ''
+            if idx_gracia == 0:
+                idx = 0
+            elif idx_gracia == 2:
+                lineas = _mensajes_del_nodo(texto, password)
+                for patron, motivo in RECHAZOS:
+                    if patron in texto:
+                        return RECHAZADO, motivo, lineas
+                return RECHAZADO, "El nodo cerró la sesión tras enviar la contraseña", lineas
+
         lineas = _mensajes_del_nodo(texto, password)
 
         for patron, motivo in RECHAZOS:
@@ -94,7 +139,7 @@ def validar_cuenta():
         session.close()
 
 
-def test_c20():
+def test_c20(debug=False):
     load_dotenv(os.path.join(BASE_DIR, '.env'))
 
     print("\n" + "="*60)
@@ -104,7 +149,8 @@ def test_c20():
     print(f"👤 Usuario: {os.getenv('C20_USER') or '(vacío)'}")
     print(f"⏳ Iniciando sesión ({EXPECT_TIMEOUT}s de espera por paso)...")
 
-    codigo, mensaje, lineas = validar_cuenta()
+    captura = _Captura() if debug else None
+    codigo, mensaje, lineas = validar_cuenta(captura)
 
     if codigo == OK:
         print("\n✅ RESULTADO: CUENTA VÁLIDA")
@@ -119,9 +165,21 @@ def test_c20():
         for linea in lineas:
             print(f"   {linea}")
 
+    if debug:
+        password = os.getenv('C20_PASS')
+        crudo = captura.texto
+        if password:
+            crudo = crudo.replace(password, '*' * len(password))
+        print("\n🔍 Diálogo crudo con el nodo (\\r y \\n visibles):")
+        for linea in crudo.split('\n'):
+            print(f"   {linea!r}")
+
     print("="*60 + "\n")
     return codigo
 
 
 if __name__ == '__main__':
-    sys.exit(test_c20())
+    parser = argparse.ArgumentParser(description="Valida la cuenta del C20 contra el nodo.")
+    parser.add_argument('--debug', action='store_true',
+                        help="Muestra el diálogo crudo con el nodo (contraseña enmascarada)")
+    sys.exit(test_c20(debug=parser.parse_args().debug))
