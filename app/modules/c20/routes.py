@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify, render_template, current_app
 from sqlalchemy import func
 from flask_login import current_user, login_required
+from app.decorators import admin_required
 from werkzeug.utils import secure_filename
 from app import db
 from .models import C20Task, C20Detail, C20History, C20CommandLog
@@ -362,6 +363,7 @@ def upload_file():
 
 @c20_bp.route('/check-connectivity')
 @login_required
+@admin_required
 def check_c20_connectivity():
     """
     Verifica la conectividad con el nodo C20

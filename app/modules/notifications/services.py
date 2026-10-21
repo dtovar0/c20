@@ -27,6 +27,35 @@ class _SMTPSettings:
         self.origen = origen
 
 
+# Plantillas que el sistema necesita. Se crean solo si faltan, así que una
+# plantilla ya editada desde la web nunca se sobrescribe.
+DEFAULT_TEMPLATES = {
+    'test': {'name': 'Test', 'subject': '🟢 NEXUS: VERIFICACIÓN_SISTEMA', 'body': '⚡ ALERTA DE PRUEBA\nEstado: SISTEMA_OK\nUsuario: {usuario}\nVerificación: EXITOSA', 'is_html': False},
+    'inicio': {'name': 'Inicio', 'subject': '🚀 NEXUS: ARRANQUE_INICIAL_{usuario}', 'body': '🚀 ARRANQUE NEXUS\nOperación: INICIALIZANDO\nUsuario: {usuario}\nHora: {hora}\nBienvenido de vuelta a la matriz.', 'is_html': False},
+    'error': {'name': 'Error', 'subject': '🛑 NEXUS: ALERTA_SEGURIDAD_CRÍTICA', 'body': '🛑 NEXUS CRÍTICO\nError: ACCESO_DENEGADO\nUsuario: {usuario}\nIP: {ip}\nAcción: BLOQUEO_SEGURIDAD', 'is_html': False},
+    'guardado': {'name': 'Guardado', 'subject': '💾 NEXUS: SINCRONIZACIÓN_DATOS', 'body': '💾 SINCRONIZACIÓN NEXUS\nDestino: BASE_DATOS_CORE\nEstado: DATOS_GUARDADOS\nUsuario: {usuario}', 'is_html': False},
+    'terminado': {'name': 'Terminado', 'subject': '✅ NEXUS: PROCESO_FINALIZADO', 'body': '✅ NEXUS COMPLETADO\nProceso: TAREA_FINALIZADA\nEjecutor: {usuario}\nEstado: ARCHIVOS_SINCRONIZADOS', 'is_html': False},
+    # Aviso al administrador cuando el worker C20 no puede iniciar sesión en el
+    # nodo. {error} lleva el motivo y, al detenerse la cola, qué archivo borrar.
+    'conexion_c20': {'name': 'Conexión C20', 'subject': '🛑 NEXUS: FALLO DE CONEXIÓN C20 · {resultado}', 'body': '🛑 NEXUS · FALLO DE CONEXIÓN CON EL C20\nEstado: {resultado}\nNodo: {ip}\nSección: {seccion}\nTarea: #{tarea}\n\nDetalle:\n{error}\n\nLas tareas siguen en Pendiente y no se pierden. Si el estado es COLA DETENIDA, el worker ya no volverá a iniciar sesión en el nodo: corrige la cuenta del C20 y borra el archivo de bloqueo indicado en el detalle para reanudar.', 'is_html': False},
+}
+
+
+def ensure_default_templates():
+    """Crea las plantillas de DEFAULT_TEMPLATES que falten en la base."""
+    from app import db
+    existentes = {t.slug for t in NotificationTemplate.query.filter(
+        NotificationTemplate.slug.in_(DEFAULT_TEMPLATES)).all()}
+    faltantes = [slug for slug in DEFAULT_TEMPLATES if slug not in existentes]
+    for slug in faltantes:
+        d = DEFAULT_TEMPLATES[slug]
+        db.session.add(NotificationTemplate(slug=slug, name=d['name'], subject=d['subject'],
+                                            body=d['body'], is_html=d['is_html']))
+    if faltantes:
+        db.session.commit()
+    return faltantes
+
+
 def env_bool(name, default):
     """Lee un booleano del entorno aceptando true/1/yes/on."""
     raw = os.getenv(name)
