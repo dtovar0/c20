@@ -46,7 +46,7 @@ class C20History(db.Model):
     # Parámetro propio de la sección: zona en C20, prefijo en Teams
     parametro = db.Column(db.String(10))
     accion = db.Column(db.String(50))   # add / del
-    estado = db.Column(db.String(50))   # OK (aplicado) / FAIL (sin aplicar) / ERROR
+    estado = db.Column(db.String(50))   # OK (aplicado) / FORCE_OK (sobrescrito) / FAIL (sin aplicar) / ERROR
     fecha = db.Column(db.DateTime, default=datetime.datetime.now, index=True)
 
     __table_args__ = (

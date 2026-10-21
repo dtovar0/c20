@@ -499,7 +499,9 @@ def ejecutar_tarea(seccion, cfg, task):
             line_task=task.job.tarea,
             line_number=numeros,
             parametro=parametro,
-            seccion=seccion
+            seccion=seccion,
+            # Teams no tiene la columna: su job nunca pide Force.
+            force=bool(getattr(task.job, 'run_force', False))
         )
     except Exception as task_err:
         print(f"❌ Error ejecutando Tarea {label} {task.id}: {task_err}")
@@ -556,7 +558,7 @@ def ejecutar_tarea(seccion, cfg, task):
 
     # Historial por número, tomando OFC2CODE como referencia: es la tabla por la
     # que pasa cada número exactamente una vez.
-    estados = {'ok': 'OK', 'fail': 'FAIL', 'error': 'ERROR'}
+    estados = {'ok': 'OK', 'force': 'FORCE_OK', 'fail': 'FAIL', 'error': 'ERROR'}
     for valor, verdict in results.get('ofc2code', {}).get('entries', []):
         db.session.add(C20History(
             seccion=seccion, task_id=task.id, usuario=task.job.usuario,
@@ -568,7 +570,7 @@ def ejecutar_tarea(seccion, cfg, task):
 
     # Sincronizar el espejo con lo que sí se aplicó
     aplicados = [v for v, verdict in results.get('ofc2code', {}).get('entries', [])
-                 if verdict == 'ok']
+                 if verdict in ('ok', 'force')]
     if aplicados:
         sync_mirror(accion, aplicados, results.get('ladas', []),
                     results.get('series', []), task.job.usuario, seccion)

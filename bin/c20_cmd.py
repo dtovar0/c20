@@ -20,6 +20,8 @@ Semántica de los veredictos, uniforme en las cuatro tablas:
   OK   -> se ejecutó la operación
   FAIL -> no se hizo nada porque el registro no estaba en el estado esperado
           (en 'add' ya existía; en 'del' no existía). No es un error.
+  FORCE-> en un 'add' con Force, el número ya existía y se sobrescribió. Solo
+          en OFC2CODE y DNSCRN; cuenta como OK en los totales.
   ERROR-> el nodo respondió algo inesperado o no respondió. Sí es un error.
           (El sistema legado no distinguía este caso: los .exp no tenían rama
           por defecto, así que esos números desaparecían del log en silencio.)
@@ -77,6 +79,18 @@ TEAMS_XLT = os.getenv('TEAMS_XLT', 'PX2')
 TEAMS_TRONCAL = os.getenv('TEAMS_TRONCAL', 'MSTEAMS2')
 TEAMS_PREFIJO_DEFAULT = os.getenv('TEAMS_PREFIJO_DEFAULT', '')
 
+# --- MODO FORCE ---
+# Sobrescribe en un 'add' los números que ya existen en OFC2CODE y DNSCRN. Las
+# ladas y series nunca se fuerzan: borrarlas arrastraría a otros números.
+#   C20_FORCE_ALWAYS -> fuerza todas las altas aunque el toggle de la UI esté
+#                       apagado (equivale a PSX_FORCE_ALWAYS del PSX5K).
+#   C20_FORCE_MODE   -> 'update' reenvía el mismo 'add' con los valores nuevos;
+#                       'delete' da de baja el número y luego lo vuelve a dar
+#                       de alta.
+C20_FORCE_ALWAYS = os.getenv('C20_FORCE_ALWAYS', 'false').lower() == 'true'
+C20_FORCE_MODE = os.getenv('C20_FORCE_MODE', 'update').lower()
+FORCE_MODES = ('update', 'delete')
+
 def _ofc2code_add_c20(numero, parametro):
     if str(parametro) == C20_ZONA_TERMINACION:
         return f'add LCL_SUB {numero} {numero} TRMT OFC UNDN $'
@@ -94,10 +108,13 @@ SECTION_PROFILES = {
     'c20': {
         'ofc2code_add': _ofc2code_add_c20,
         'parametro_default': C20_ZONA_DEFAULT,
+        'permite_force': True,
     },
+    # Teams no tiene modo Force: ni el toggle ni C20_FORCE_ALWAYS lo alcanzan.
     'teams': {
         'ofc2code_add': _ofc2code_add_teams,
         'parametro_default': TEAMS_PREFIJO_DEFAULT,
+        'permite_force': False,
     },
 }
 
@@ -381,6 +398,22 @@ def _confirm(session, doble=True):
     return True
 
 
+def _force_add(session, add_cmd, del_cmd):
+    """
+    Sobrescribe un número que ya existe (alta con Force).
+
+    En modo 'delete' primero lo da de baja; si la baja no se confirma no se
+    intenta el alta, para no dejar el número a medias. Devuelve 'force' o
+    'error'.
+    """
+    if C20_FORCE_MODE == 'delete':
+        session.sendline(del_cmd)
+        if not _confirm(session):
+            return 'error'
+    session.sendline(add_cmd)
+    return 'force' if _confirm(session) else 'error'
+
+
 def _process_snpaname(session, ladas, accion):
     """Altas de lada. Confirmación simple; no interviene en bajas."""
     entries = []
@@ -414,13 +447,13 @@ def _process_tofcname(session, series, accion):
     return entries
 
 
-def _process_ofc2code(session, numeros, accion, parametro, build_add):
+def _process_ofc2code(session, numeros, accion, parametro, build_add, force=False):
     """
     Altas y bajas de número en OFC2CODE.
 
     Es la única tabla cuyo comando de alta depende de la sección: `build_add`
     lo construye según el perfil (ver SECTION_PROFILES). La baja es idéntica
-    en todas.
+    en todas. Con `force`, un alta sobre un número existente lo sobrescribe.
     """
     entries = []
     for numero in numeros:
@@ -430,6 +463,11 @@ def _process_ofc2code(session, numeros, accion, parametro, build_add):
             continue
 
         if accion == 'add':
+            if existe and force:
+                entries.append((numero, _force_add(
+                    session, build_add(numero, parametro),
+                    f'del LCL_SUB {numero} {numero} $')))
+                continue
             if existe:
                 entries.append((numero, 'fail'))
                 continue
@@ -444,8 +482,8 @@ def _process_ofc2code(session, numeros, accion, parametro, build_add):
     return entries
 
 
-def _process_dnscrn(session, numeros, accion):
-    """Altas y bajas de número en DNSCRN."""
+def _process_dnscrn(session, numeros, accion, force=False):
+    """Altas y bajas de número en DNSCRN. Con `force`, igual que OFC2CODE."""
     entries = []
     for numero in numeros:
         existe, ok = _exists(session, f'pos {numero}')
@@ -454,6 +492,10 @@ def _process_dnscrn(session, numeros, accion):
             continue
 
         if accion == 'add':
+            if existe and force:
+                entries.append((numero, _force_add(
+                    session, f'add {numero} CLISERV 1 $', f'del {numero} $')))
+                continue
             if existe:
                 entries.append((numero, 'fail'))
                 continue
@@ -469,17 +511,18 @@ def _process_dnscrn(session, numeros, accion):
 
 
 def _tally(entries):
-    """Convierte una lista de veredictos en contadores."""
+    """Convierte una lista de veredictos en contadores. Un FORCE cuenta como OK."""
     return {
         "total": len(entries),
-        "ok": sum(1 for _, v in entries if v == 'ok'),
+        "ok": sum(1 for _, v in entries if v in ('ok', 'force')),
+        "force": sum(1 for _, v in entries if v == 'force'),
         "fail": sum(1 for _, v in entries if v == 'fail'),
         "error": sum(1 for _, v in entries if v == 'error'),
         "entries": entries,
     }
 
 
-def c20_cmd(line_task, line_number, parametro=None, seccion='c20'):
+def c20_cmd(line_task, line_number, parametro=None, seccion='c20', force=False):
     """
     Ejecuta una tarea completa contra el C20 en una sola sesión.
 
@@ -487,6 +530,8 @@ def c20_cmd(line_task, line_number, parametro=None, seccion='c20'):
     line_number: lista de números
     parametro: zona (C20) o prefijo (Teams); por defecto el del perfil
     seccion: 'c20' o 'teams' — determina cómo se construye el alta en OFC2CODE
+    force: toggle de la UI (`run_force` del job). C20_FORCE_ALWAYS lo eleva a
+           global. Solo aplica a altas y a secciones que lo permiten.
 
     Devuelve un dict con los contadores por tabla, más 'ladas'/'series' para
     sincronizar el espejo, 'errors' y 'full_flow' con la sesión cruda.
@@ -499,6 +544,13 @@ def c20_cmd(line_task, line_number, parametro=None, seccion='c20'):
     if parametro in (None, ''):
         parametro = perfil['parametro_default']
     tablas = TABLES_ADD if accion == 'add' else TABLES_DEL
+
+    if C20_FORCE_MODE not in FORCE_MODES:
+        raise ValueError(f"C20_FORCE_MODE inválido: {C20_FORCE_MODE} "
+                         f"(se espera {' o '.join(FORCE_MODES)})")
+    if C20_FORCE_ALWAYS and not force and perfil['permite_force'] and accion == 'add':
+        log_line("C20_FORCE_ALWAYS=true: se fuerza el alta pese al toggle apagado.")
+    force = (force or C20_FORCE_ALWAYS) and perfil['permite_force'] and accion == 'add'
 
     results = {t: _tally([]) for t in TABLES}
     results.update({"accion": accion, "seccion": seccion, "errors": [],
@@ -513,7 +565,8 @@ def c20_cmd(line_task, line_number, parametro=None, seccion='c20'):
     results["series"] = [f"{l} {s}" for l, s in series]
 
     resumen_lote = (f"{seccion.upper()} [{accion}] números={len(line_number)} "
-                    f"ladas={len(ladas)} series={len(series)} parametro={parametro}")
+                    f"ladas={len(ladas)} series={len(series)} parametro={parametro}"
+                    + (f" force={C20_FORCE_MODE}" if force else ""))
     log_line(f"INICIO {resumen_lote}")
     if DEBUG_ENABLED:
         print(f"🔍 {resumen_lote}")
@@ -534,8 +587,9 @@ def c20_cmd(line_task, line_number, parametro=None, seccion='c20'):
     handlers = {
         'snpaname': lambda: _process_snpaname(session, ladas, accion),
         'tofcname': lambda: _process_tofcname(session, series, accion),
-        'ofc2code': lambda: _process_ofc2code(session, line_number, accion, parametro, build_add),
-        'dnscrn':   lambda: _process_dnscrn(session, line_number, accion),
+        'ofc2code': lambda: _process_ofc2code(session, line_number, accion, parametro,
+                                              build_add, force),
+        'dnscrn':   lambda: _process_dnscrn(session, line_number, accion, force),
     }
 
     try:
@@ -547,7 +601,7 @@ def c20_cmd(line_task, line_number, parametro=None, seccion='c20'):
                 results[tabla] = _tally(handlers[tabla]())
                 t = results[tabla]
                 log_line(f"TABLA {tabla.upper()} fin "
-                         f"ok={t.get('ok', 0)} fail={t.get('fail', 0)} "
+                         f"ok={t.get('ok', 0)} force={t.get('force', 0)} fail={t.get('fail', 0)} "
                          f"error={t.get('error', 0)} total={t.get('total', 0)}")
             except Exception as e:
                 print(f"❌ {tabla.upper()}: {e}")
