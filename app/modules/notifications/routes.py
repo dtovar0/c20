@@ -4,7 +4,7 @@ from datetime import datetime
 from app.decorators import admin_required
 from app import db
 from app.modules.notifications.models import SMTPConfig, NotificationTemplate, InAppNotification
-from app.modules.notifications.services import send_test_email, get_smtp_settings
+from app.modules.notifications.services import send_test_email, get_smtp_settings, ensure_default_templates
 
 notifications_bp = Blueprint("notifications", __name__, url_prefix="/notifications")
 
@@ -18,26 +18,8 @@ def index():
     config = get_smtp_settings()
     smtp_forzado_env = bool(config and config.origen == 'env (forzado)')
     
-    # Ensuring default templates exist
-    default_slugs = ['test', 'inicio', 'error', 'guardado', 'terminado']
-    existing_slugs = [t.slug for t in NotificationTemplate.query.filter(NotificationTemplate.slug.in_(default_slugs)).all()]
-    
-    defaults = {
-        'test': {'name': 'Test', 'subject': '🟢 NEXUS: VERIFICACIÓN_SISTEMA', 'body': '⚡ ALERTA DE PRUEBA\nEstado: SISTEMA_OK\nUsuario: {usuario}\nVerificación: EXITOSA', 'is_html': False},
-        'inicio': {'name': 'Inicio', 'subject': '🚀 NEXUS: ARRANQUE_INICIAL_{usuario}', 'body': '🚀 ARRANQUE NEXUS\nOperación: INICIALIZANDO\nUsuario: {usuario}\nHora: {hora}\nBienvenido de vuelta a la matriz.', 'is_html': False},
-        'error': {'name': 'Error', 'subject': '🛑 NEXUS: ALERTA_SEGURIDAD_CRÍTICA', 'body': '🛑 NEXUS CRÍTICO\nError: ACCESO_DENEGADO\nUsuario: {usuario}\nIP: {ip}\nAcción: BLOQUEO_SEGURIDAD', 'is_html': False},
-        'guardado': {'name': 'Guardado', 'subject': '💾 NEXUS: SINCRONIZACIÓN_DATOS', 'body': '💾 SINCRONIZACIÓN NEXUS\nDestino: BASE_DATOS_CORE\nEstado: DATOS_GUARDADOS\nUsuario: {usuario}', 'is_html': False},
-        'terminado': {'name': 'Terminado', 'subject': '✅ NEXUS: PROCESO_FINALIZADO', 'body': '✅ NEXUS COMPLETADO\nProceso: TAREA_FINALIZADA\nEjecutor: {usuario}\nEstado: ARCHIVOS_SINCRONIZADOS', 'is_html': False}
-    }
-    
-    for slug in default_slugs:
-        if slug not in existing_slugs:
-            d = defaults[slug]
-            tmpl = NotificationTemplate(slug=slug, name=d['name'], subject=d['subject'], body=d['body'], is_html=d['is_html'])
-            db.session.add(tmpl)
-    
-    if any(slug not in existing_slugs for slug in default_slugs):
-        db.session.commit()
+    # Plantillas que el sistema necesita (se crean solo si faltan)
+    ensure_default_templates()
 
     return render_template("notifications.html", config=config,
                            smtp_forzado_env=smtp_forzado_env)

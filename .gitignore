@@ -17,4 +17,6 @@ deployment/*
 # la configuración de Authelia que vive junto a ellas.
 !deployment/systemd/
 C20_old/
+# Bloqueo de la cola del worker C20 tras fallos de conexión (estado local)
+c20_cola_detenida.lock
 # === FIN GITIGNORE ===

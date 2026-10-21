@@ -53,6 +53,15 @@ SLEEP_BETWEEN = 2 # Segundos entre tareas para no saturar DB
 # Estado compartido para el Watchdog (clave (seccion, id) -> última notificación)
 notified_stale_tasks = {}
 
+# Tope de fallos de conexión consecutivos. Cada intento es un inicio de sesión
+# fallido más en el nodo; al llegar al tope se detiene la cola y no se vuelve a
+# intentar hasta que alguien borre BLOQUEO_FILE (sobrevive a reinicios).
+MAX_FALLOS_CONEXION = int(os.getenv('C20_MAX_FALLOS_CONEXION', 5))
+BLOQUEO_FILE = os.path.join(PROJECT_ROOT, os.getenv('C20_BLOQUEO_FILE', 'c20_cola_detenida.lock'))
+# Espera antes de reintentar tras un fallo de conexión que no detuvo la cola.
+ESPERA_REINTENTO_CONEXION = 60
+fallos_conexion = 0
+
 # Registro de secciones: cada una aporta sus propios modelos y el campo cuyo
 # valor viaja al nodo como parámetro del comando (zona en C20, prefijo en Teams).
 SECCIONES = {
@@ -92,6 +101,115 @@ def get_admin_target():
     print("⚠️  Aviso al administrador sin destinatario "
           "(NOTIFICATION_ADMIN_EMAIL vacía y sin administrador con correo)")
     return None
+
+
+def enviar_correo_admin(context, asunto, slug='error'):
+    """
+    Envía un aviso de infraestructura al administrador y deja el resultado en
+    el log del C20.
+
+    send_notification_by_slug no lanza excepciones: devuelve su resultado, y
+    hasta ahora se descartaba, así que un correo que no salía no dejaba rastro.
+    asunto identifica el aviso en el log (p. ej. 'fallo de conexión'); slug es
+    la plantilla a usar.
+    """
+    destino = get_admin_target()
+    if not destino:
+        log_line(f"CORREO ADMIN NO ENVIADO ({asunto}): sin destinatario "
+                 "(NOTIFICATION_ADMIN_EMAIL vacía y sin administrador con correo)",
+                 level=logging.ERROR)
+        return False
+    try:
+        resultado = send_notification_by_slug(slug=slug, target_email=destino,
+                                              context=context) or {}
+    except Exception as e:
+        resultado = {"status": "error", "message": str(e)}
+
+    mensaje = resultado.get('message', 'sin respuesta')
+    # Con ENABLE_NOTIFICATIONS apagado el envío responde 'success' sin mandar nada
+    if 'disabled' in mensaje:
+        log_line(f"CORREO ADMIN NO ENVIADO ({asunto}) -> {destino}: "
+                 "notificaciones desactivadas (ENABLE_NOTIFICATIONS)", level=logging.WARNING)
+        return False
+    if resultado.get('status') == 'success':
+        log_line(f"CORREO ADMIN ({asunto}) -> {destino}: {mensaje}")
+        return True
+    log_line(f"CORREO ADMIN NO ENVIADO ({asunto}) -> {destino}: {mensaje}",
+             level=logging.ERROR)
+    print(f"❌ Correo al administrador no enviado ({asunto}): {mensaje}")
+    return False
+
+
+def cola_detenida():
+    """True si la cola quedó detenida por fallos de conexión (existe BLOQUEO_FILE)."""
+    return os.path.exists(BLOQUEO_FILE)
+
+
+def registrar_fallo_conexion(motivo, label, task_id, origen):
+    """
+    Cuenta un fallo de conexión consecutivo y avisa al administrador.
+
+    Al llegar a MAX_FALLOS_CONEXION crea BLOQUEO_FILE, que detiene la cola, y el
+    aviso indica qué archivo borrar para reanudarla. origen dice dónde falló
+    ('validación' previa o apertura del 'lote'). Devuelve True si la cola quedó
+    detenida.
+    """
+    global fallos_conexion
+    fallos_conexion += 1
+    intento = f"{fallos_conexion} de {MAX_FALLOS_CONEXION}"
+    detener = fallos_conexion >= MAX_FALLOS_CONEXION
+
+    if detener:
+        try:
+            with open(BLOQUEO_FILE, 'w') as f:
+                f.write(f"{datetime.datetime.now():%Y-%m-%d %H:%M:%S} | {fallos_conexion} fallos "
+                        f"de conexión consecutivos | último: {motivo}\n"
+                        "Borra este archivo para que el worker vuelva a tomar tareas.\n")
+        except Exception as e:
+            # Sin archivo no hay bloqueo: se sigue reintentando, y se deja dicho.
+            log_line(f"No se pudo crear {BLOQUEO_FILE}: {e}. La cola NO queda detenida.",
+                     level=logging.ERROR)
+            detener = False
+
+    if detener:
+        texto = (f"{motivo} (intento {intento}). La cola del C20 quedó DETENIDA: no se "
+                 "volverá a iniciar sesión ni a tomar tareas. Para reanudarla, corrige la "
+                 f"cuenta y borra el archivo {BLOQUEO_FILE}")
+        titulo, resultado = 'Cola del C20 detenida', 'COLA DETENIDA'
+    else:
+        texto = f"{motivo} (intento {intento}; se reintentará en {ESPERA_REINTENTO_CONEXION} s)"
+        titulo, resultado = 'Fallo de Conexión con el C20', f'SIN CONECTIVIDAD ({intento})'
+
+    print(f"🚨 Fallo de conexión ({origen}): {texto}")
+    log_line(f"FALLO DE CONEXIÓN {intento} ({origen}): {motivo}"
+             + (f" | COLA DETENIDA: borra {BLOQUEO_FILE} para reanudar" if detener else ""),
+             level=logging.ERROR)
+    add_audit_log("error conectividad", status="error",
+                  detail=f"C20 ({origen}, tarea {label.upper()}-{task_id}): {texto}",
+                  user_override="SYSTEM_WORKER")
+
+    from app.modules.notifications.services import add_in_app_notification
+    # Aviso de infraestructura: solo administradores, igual que el correo.
+    add_in_app_notification(type='error', title=titulo, message=texto, solo_admins=True)
+    enviar_correo_admin(
+        context={'usuario': 'SYSTEM_WORKER',
+                 'ip': os.getenv('C20_HOST', 'C20_NODE'),
+                 'seccion': label, 'tarea': task_id,
+                 'operacion': 'CONEXIÓN',
+                 'resultado': resultado,
+                 'error': texto},
+        asunto=f'fallo de conexión {intento}',
+        slug='conexion_c20'
+    )
+    return detener
+
+
+def registrar_conexion_ok():
+    """Reinicia el contador de fallos tras una conexión exitosa."""
+    global fallos_conexion
+    if fallos_conexion:
+        log_line(f"CONEXIÓN RESTABLECIDA tras {fallos_conexion} fallo(s)")
+        fallos_conexion = 0
 
 
 def get_notification_target(email):
@@ -220,18 +338,16 @@ def handle_stale_tasks(app):
                     task.estado = 'Error'
                     task.fecha_fin = now
 
-                    admin_email = get_admin_target()
-                    if admin_email:
-                        send_notification_by_slug(
-                            slug='error', target_email=admin_email,
-                            context={
-                                'usuario': 'SYSTEM_WATCHDOG', 'ip': 'LOCAL_WORKER',
-                                'seccion': label, 'tarea': task.id,
-                                'operacion': (task.job.tarea or '').upper(),
-                                'resultado': 'ABORTADA POR TIMEOUT',
-                                'error': f'Tarea abortada tras exceder {kill_timeout} min sin terminar'
-                            }
-                        )
+                    enviar_correo_admin(
+                        context={
+                            'usuario': 'SYSTEM_WATCHDOG', 'ip': 'LOCAL_WORKER',
+                            'seccion': label, 'tarea': task.id,
+                            'operacion': (task.job.tarea or '').upper(),
+                            'resultado': 'ABORTADA POR TIMEOUT',
+                            'error': f'Tarea abortada tras exceder {kill_timeout} min sin terminar'
+                        },
+                        asunto=f'tarea abortada {label}-{task.id}'
+                    )
 
                     add_audit_log(
                         f"OPERACIÓN ABORTADA [TIMEOUT] ({label.upper()}-{task.id})", status="error",
@@ -251,21 +367,16 @@ def handle_stale_tasks(app):
                         continue
 
                     print(f"🕒 ALERTA DE TIEMPO: Tarea {label} {task.id} superó {notify_timeout} min.")
-                    admin_email = get_admin_target()
-                    if admin_email:
-                        try:
-                            send_notification_by_slug(
-                                slug='error', target_email=admin_email,
-                                context={
-                                    'usuario': 'SYSTEM_WATCHDOG', 'ip': 'LOCAL_WORKER',
-                                    'seccion': label, 'tarea': task.id,
-                                    'operacion': (task.job.tarea or '').upper(),
-                                    'resultado': 'EN CURSO CON DEMORA',
-                                    'error': f'La tarea lleva más de {notify_timeout} min en ejecución'
-                                }
-                            )
-                        except Exception as e:
-                            print(f"❌ [WATCHDOG] Excepción al enviar correo: {e}")
+                    enviar_correo_admin(
+                        context={
+                            'usuario': 'SYSTEM_WATCHDOG', 'ip': 'LOCAL_WORKER',
+                            'seccion': label, 'tarea': task.id,
+                            'operacion': (task.job.tarea or '').upper(),
+                            'resultado': 'EN CURSO CON DEMORA',
+                            'error': f'La tarea lleva más de {notify_timeout} min en ejecución'
+                        },
+                        asunto=f'demora {label}-{task.id}'
+                    )
 
                     add_audit_log(
                         f"ALERTA DE DEMORA ({label.upper()}-{task.id})", status="warning",
@@ -413,6 +524,24 @@ def ejecutar_tarea(seccion, cfg, task):
                          'error': str(task_err)[:150]}
             )
         notified_stale_tasks.pop((seccion, task.id), None)
+        return
+
+    # No se pudo abrir la sesión del lote (p. ej. la cuenta se bloqueó tras la
+    # validación previa): no se tocó el nodo, así que la tarea vuelve a la cola
+    # en vez de cerrarse con errores. El motivo es de infraestructura y va solo
+    # al administrador; el usuario solo ve su tarea de nuevo en Pendiente.
+    if results.get("conexion_fallida"):
+        motivo = results["conexion_fallida"]
+        print(f"🚨 Tarea {label} {task.id} devuelta a la cola: no se pudo abrir la sesión ({motivo})")
+        log_line(f"TAREA {label.upper()}-{task.id} devuelta a Pendiente: conexión fallida",
+                 level=logging.ERROR)
+        task.estado = 'Pendiente'
+        task.fecha_inicio = None
+        db.session.commit()
+        notified_stale_tasks.pop((seccion, task.id), None)
+        # Cuenta para el tope igual que un fallo de la validación previa: también
+        # es un inicio de sesión fallido en el nodo.
+        registrar_fallo_conexion(motivo, label, task.id, 'lote')
         return
 
     # Consolidar contadores por tabla. Los ERROR (nodo sin respuesta) se suman a
@@ -564,6 +693,14 @@ def main():
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
 
+    # Los avisos de conexión usan su propia plantilla; se crea si nadie ha
+    # abierto aún la sección Notificaciones.
+    with app.app_context():
+        from app.modules.notifications.services import ensure_default_templates
+        creadas = ensure_default_templates()
+        if creadas:
+            log_line(f"Plantillas de notificación creadas: {', '.join(creadas)}")
+
     handle_stale_tasks(app)
 
     if os.getenv('C20_WATCHDOG_ENABLED',
@@ -572,8 +709,27 @@ def main():
     else:
         print("ℹ️  Watchdog paralelo deshabilitado por configuración (ENV)")
 
+    global fallos_conexion
+    aviso_cola_detenida = False
+
     while True:
         try:
+            # 0. Cola detenida por fallos de conexión: no se toca el nodo hasta
+            # que alguien borre el archivo de bloqueo.
+            if cola_detenida():
+                if not aviso_cola_detenida:
+                    print(f"⛔ Cola detenida por fallos de conexión. Borra {BLOQUEO_FILE} para reanudar.")
+                    log_line(f"COLA DETENIDA: existe {BLOQUEO_FILE}; no se toman tareas hasta borrarlo",
+                             level=logging.WARNING)
+                    aviso_cola_detenida = True
+                time.sleep(SLEEP_IDLE)
+                continue
+            if aviso_cola_detenida:
+                print("▶️  Archivo de bloqueo borrado: se reanuda la cola.")
+                log_line(f"COLA REANUDADA: se borró {BLOQUEO_FILE}")
+                aviso_cola_detenida = False
+                fallos_conexion = 0
+
             with app.app_context():
                 # 1. Una sola tarea a la vez en toda la plataforma
                 if hay_tarea_activa():
@@ -590,34 +746,12 @@ def main():
                 from c20_cmd import test_connectivity
                 ok, msg = test_connectivity()
                 if not ok:
-                    print(f"🚨 Fallo de conectividad con el nodo: {msg}")
-                    add_audit_log("error conectividad", status="error",
-                                  detail=f"C20: {msg}", user_override="SYSTEM_WORKER")
-
-                    from app.modules.notifications.services import add_in_app_notification
-                    # Aviso de infraestructura: va a los administradores, no a
-                    # toda la plantilla (el correo de abajo ya se limita a ellos).
-                    add_in_app_notification(
-                        type='error', title='Fallo de Conexión con el C20',
-                        message=f'No se pudo establecer conexión con el nodo: {msg}',
-                        solo_admins=True
-                    )
-
-                    admin_email = get_admin_target()
-                    if admin_email:
-                        send_notification_by_slug(
-                            slug='error', target_email=admin_email,
-                            context={'usuario': 'SYSTEM_WORKER',
-                                     'ip': os.getenv('C20_HOST', 'C20_NODE'),
-                                     'seccion': cfg['label'], 'tarea': task.id,
-                                     'operacion': 'CONEXIÓN',
-                                     'resultado': 'SIN CONECTIVIDAD',
-                                     'error': f'No se pudo conectar con el nodo: {msg}'}
-                        )
-
+                    if registrar_fallo_conexion(msg, cfg['label'], task.id, 'validación'):
+                        continue
                     print("⏳ Pospone tarea por falta de conectividad.")
-                    time.sleep(60)
+                    time.sleep(ESPERA_REINTENTO_CONEXION)
                     continue
+                registrar_conexion_ok()
 
                 # 4. Ejecutar
                 ejecutar_tarea(seccion, cfg, task)

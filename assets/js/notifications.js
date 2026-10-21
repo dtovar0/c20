@@ -288,6 +288,10 @@ function loadTemplate(type) {
                     subject = "✅ NEXUS: PROCESO_FINALIZADO";
                     content = "✅ NEXUS COMPLETADO\nProceso: TAREA_FINALIZADA\nEjecutor: {usuario}\nEstado: ARCHIVOS_SINCRONIZADOS";
                     break;
+                case 'conexion_c20':
+                    subject = "🛑 NEXUS: FALLO DE CONEXIÓN C20 · {resultado}";
+                    content = "🛑 NEXUS · FALLO DE CONEXIÓN CON EL C20\nEstado: {resultado}\nNodo: {ip}\nSección: {seccion}\nTarea: #{tarea}\n\nDetalle:\n{error}\n\nLas tareas siguen en Pendiente y no se pierden. Si el estado es COLA DETENIDA, el worker ya no volverá a iniciar sesión en el nodo: corrige la cuenta del C20 y borra el archivo de bloqueo indicado en el detalle para reanudar.";
+                    break;
                 case 'usuario_creado':
                     subject = "👋 NEXUS: BIENVENIDO AL SISTEMA";
                     content = "👋 ¡Hola {nombre}!\nTu acceso al Nexus ha sido creado exitosamente.\nPortal: {base_url}\nBienvenido a la red.";
@@ -306,7 +310,8 @@ function loadTemplate(type) {
                     'inicio': 'INICIO TAREA',
                     'terminado': 'TAREA TERMINADA',
                     'usuario_creado': 'BIENVENIDA USUARIO',
-                    'error': 'ERROR CRÍTICO'
+                    'error': 'ERROR CRÍTICO',
+                    'conexion_c20': 'CONEXIÓN C20'
                 };
                 
                 showToast(`Cargada plantilla predeterminada: ${friendlyNames[type] || type.toUpperCase()}`, 'info');

@@ -522,6 +522,9 @@ def c20_cmd(line_task, line_number, parametro=None, seccion='c20'):
     if not session:
         log_line(f"CONEXIÓN FALLIDA: {msg}", level=logging.ERROR)
         results["errors"].append(f"Conexión: {msg}")
+        # Marca aparte: el worker devuelve la tarea a la cola en vez de cerrarla,
+        # porque no se llegó a tocar el nodo.
+        results["conexion_fallida"] = msg
         return results
 
     stream = StreamLog()

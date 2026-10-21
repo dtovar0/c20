@@ -259,6 +259,17 @@
                                             <p class="text-[12px] font-bold uppercase tracking-tighter text-label/40 italic">Security_Breach</p>
                                         </div>
                                     </button>
+
+                                    <!-- Conexión C20: aviso al administrador cuando el worker no puede iniciar sesión en el nodo -->
+                                    <button onclick="loadTemplate('conexion_c20')" class="w-full flex items-center gap-4 py-2 px-4 rounded-2xl bg-[rgb(var(--color-ntf-card-bg))] border border-[rgb(var(--color-ntf-card-border))] hover:border-warning/40 hover:shadow-lg hover:shadow-warning/5 transition-all group">
+                                        <div class="w-10 h-10 rounded-xl bg-warning/10 flex items-center justify-center text-warning group-hover:scale-110 transition-transform flex-shrink-0">
+                                            <i class="fas fa-plug text-sm" aria-hidden="true"></i>
+                                        </div>
+                                        <div class="text-left">
+                                            <p class="text-[12px] font-black uppercase tracking-widest text-[rgb(var(--color-input-text))] opacity-90">Conexión C20</p>
+                                            <p class="text-[12px] font-bold uppercase tracking-tighter text-label/40 italic">Node_Link_Down</p>
+                                        </div>
+                                    </button>
                                     
                                     <!-- 6. Bienvenida Usuario -->
                                     <button onclick="loadTemplate('usuario_creado')" class="w-full flex items-center gap-4 py-2 px-4 rounded-2xl bg-[rgb(var(--color-ntf-card-bg))] border border-[rgb(var(--color-ntf-card-border))] hover:border-violet-500/40 hover:shadow-lg hover:shadow-violet-500/5 transition-all group">

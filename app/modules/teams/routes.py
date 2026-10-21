@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify, render_template, current_app
 from sqlalchemy import func
 from flask_login import current_user, login_required
+from app.decorators import admin_required
 from werkzeug.utils import secure_filename
 from app import db
 from .models import TeamsTask, TeamsDetail, TeamsHistory, TeamsCommandLog
@@ -363,6 +364,7 @@ def upload_file():
 
 @teams_bp.route('/check-connectivity')
 @login_required
+@admin_required
 def check_teams_connectivity():
     """
     Verifica la conectividad con el nodo Teams
