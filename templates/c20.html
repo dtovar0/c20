@@ -703,6 +703,6 @@
 </div>
 
 <script src="{{ url_for('core.serve_assets', filename='js/c20.js') }}?v={{ range(10000, 99999) | random }}"></script>
-<script src="/assets/js/c20-wizard.js"></script>
+<script src="{{ url_for('core.serve_assets', filename='js/c20-wizard.js') }}?v={{ range(10000, 99999) | random }}"></script>
 <script src="/assets/js/c20-tour.js?v={{ range(1000, 9999) | random }}"></script>
 {% endblock %}
