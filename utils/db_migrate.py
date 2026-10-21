@@ -69,6 +69,13 @@ def migrate_db():
                 except Exception as e:
                     pass
 
+            # 7. Toggle Force de C20 (c20_jobs.run_force)
+            try:
+                conn.execute(text("ALTER TABLE c20_jobs ADD COLUMN run_force TINYINT(1) DEFAULT 0;"))
+                print("✅ Columna c20_jobs.run_force agregada.")
+            except Exception as e:
+                print("ℹ️ Columna c20_jobs.run_force ya existe.")
+
             conn.commit()
 
 if __name__ == '__main__':

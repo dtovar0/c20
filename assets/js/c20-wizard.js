@@ -299,6 +299,7 @@ async function finalizeWizard() {
         datos_tipo: isManual ? 'Manual' : 'Archivo',
         datos: isManual ? manualData : (fileInput.files[0] ? fileInput.files[0].name : ''),
         total_items: isManual ? countRealRecords(manualData) : 0,
+        force: !isEliminar && forceTask,
     };
 
     closeWizard();
@@ -783,6 +784,7 @@ async function finalizeScheduleWizard() {
         datos: isManual ? manualData : (fileInput.files[0] ? fileInput.files[0].name : ''),
         total_items: isManual ? countRealRecords(manualData) : 0,
         fecha_inicio: scheduledDateTime.toISOString(),
+        force: !isEliminar && forceTask,
     };
 
     closeScheduleWizard();
@@ -1382,7 +1384,8 @@ async function confirmModifyAction() {
         accion_tipo: modifyTaskType === 'delete' ? 'N/A' : (modClientMode ? modClientMode.value : 'call_in'),
         datos_tipo: currentModifyTaskData.datos_tipo, 
         is_scheduled: modifyTiming === 'schedule',
-        scheduled_time: schedTime
+        scheduled_time: schedTime,
+        force: modifyTaskType !== 'delete' && modifyTaskType !== 'del' && !!(modForce && modForce.checked)
     };
 
     try {

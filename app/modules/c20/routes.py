@@ -235,7 +235,9 @@ def create_task():
                 # que se guarda NULL en vez del default del entorno: registrar un
                 # 504 que nunca viajó al nodo haría creer que influyó en la baja.
                 zona=(None if es_baja
-                      else (data.get('zona') or os.getenv('C20_ZONA_DEFAULT', '504')))
+                      else (data.get('zona') or os.getenv('C20_ZONA_DEFAULT', '504'))),
+                # Force solo tiene sentido en un alta: una baja no sobrescribe nada.
+                run_force=(not es_baja) and bool(data.get('force', False))
             )
             db.session.add(new_job)
             db.session.flush() # Para obtener el new_job.id
@@ -438,9 +440,9 @@ def reprocess_duplicates(task_id):
     Crea una nueva tarea con los registros que no se aplicaron (FAIL) en una
     tarea previa. Limitado a un único reintento por tarea origen.
 
-    Nota: en C20 no existe el modo Force del PSX5K —los .exp no sobrescriben—,
-    así que el reintento vuelve a intentar la misma operación tal cual. Solo
-    tiene sentido si el estado del nodo cambió desde la ejecución original.
+    El reintento hereda el Force de la tarea origen y vuelve a intentar la misma
+    operación tal cual. Sin Force solo tiene sentido si el estado del nodo
+    cambió desde la ejecución original.
     """
     try:
         from app.modules.audit.services import add_audit_log
@@ -470,6 +472,7 @@ def reprocess_duplicates(task_id):
             accion_tipo=parent_task.job.accion_tipo,
             datos_tipo=parent_task.job.datos_tipo,
             zona=parent_task.job.zona,
+            run_force=parent_task.job.run_force,
             archivo_origen=f"RETRY_TASK_{task_id}"
         )
         db.session.add(new_job)
@@ -654,6 +657,7 @@ def update_or_reprocess_job(job_id):
                 # Una baja no usa zona; si el reproceso cambia el tipo de add a
                 # delete, tampoco se arrastra la del original.
                 zona=None if nueva_es_baja else data.get('zona', job.zona),
+                run_force=(not nueva_es_baja) and bool(data.get('force', job.run_force)),
                 archivo_origen=f"REPROCESO_TASK_{origin_task_id}" if origin_task_id else f"REPROCESO_FROM_{job_id}"
             )
             db.session.add(new_job)
@@ -693,8 +697,10 @@ def update_or_reprocess_job(job_id):
             # que interviene en la operación.
             if str(job.tarea).strip().lower() in ('del', 'delete'):
                 job.zona = None
+                job.run_force = False
             else:
                 job.zona = data.get('zona', job.zona)
+                job.run_force = bool(data.get('force', job.run_force))
 
             # Actualizar estado y tiempos de las tareas asociadas
             for t in job.tasks:

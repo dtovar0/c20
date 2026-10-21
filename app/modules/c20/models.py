@@ -21,8 +21,9 @@ class C20Job(db.Model):
     zona = db.Column(db.String(5))
     created_at = db.Column(db.DateTime, default=datetime.datetime.now, index=True)
 
-    # C20 no tiene modo Force: los .exp nunca sobrescriben un registro existente.
-    # Si ya existe, lo reportan como Fail y siguen. Por eso no hay columna run_force.
+    # Toggle Force de la UI: en un alta sobrescribe los números que ya existen en
+    # OFC2CODE y DNSCRN. C20_FORCE_ALWAYS lo activa para todas las altas.
+    run_force = db.Column(db.Boolean, default=False)
 
     # Relación con sus fragmentos (chunks)
     tasks = db.relationship('C20Task', backref='job', lazy=True, cascade="all, delete-orphan")
@@ -83,6 +84,7 @@ class C20Task(db.Model):
             "chunk_index": self.chunk_index,
             "chunk_total": self.chunk_total,
             "zona": job.zona,
+            "force": bool(job.run_force),
             "resumen": self.resumen.to_dict() if self.resumen else C20Detail.empty_dict()
         }
 
@@ -98,7 +100,8 @@ class C20Detail(db.Model):
     una produce su propio total/ok/fail y su propio log crudo.
 
     Semántica de los .exp, uniforme en las cuatro tablas:
-      OK   -> se ejecutó la operación (alta en 'add', baja en 'del')
+      OK   -> se ejecutó la operación (alta en 'add', baja en 'del'); incluye
+              los números sobrescritos con Force
       FAIL -> no se hizo nada porque el registro no estaba en el estado esperado
               (en 'add' ya existía; en 'del' no existía). No es un error de ejecución.
     """
